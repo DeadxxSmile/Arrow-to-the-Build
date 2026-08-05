@@ -110,7 +110,7 @@ function validateBuild(data, options = {}) {
   if (!isObj(data)) return ['Root must be a JSON object.']
 
   const schema = Number(data.schema_version) || 0
-  if (schema !== CURRENT_SCHEMA_VERSION) errors.push(`schema_version must be ${CURRENT_SCHEMA_VERSION}. This pre-release build intentionally does not import older build schemas.`)
+  if (schema !== CURRENT_SCHEMA_VERSION) errors.push(`schema_version must be ${CURRENT_SCHEMA_VERSION}. ATTB does not import older pre-release build schemas.`)
   if (badId(data.id)) errors.push('Missing id, or it is not a simple slug (letters, numbers, dot, dash, underscore).')
   if (typeof data.name !== 'string' || !data.name.trim()) errors.push('Missing or non-string name.')
   if (!isObj(data.defaults)) errors.push('Missing defaults object.')
@@ -122,6 +122,9 @@ function validateBuild(data, options = {}) {
   if (!isObj(data.cp_plans)) errors.push('cp_plans must be an object.')
   if (!Array.isArray(data.unlock_order)) errors.push('unlock_order must be an array.')
   if (!Array.isArray(data.gear_stages)) errors.push('gear_stages must be an array.')
+  // Phases drive the Skill Bars and Rotations page. A build with none renders an empty page, so
+  // require at least one rather than letting it slip through as valid.
+  if (!Array.isArray(data.phases) || !data.phases.length) errors.push('phases must be a non-empty array. Every build needs at least one progression phase with hotbars and a rotation.')
   for (const key of ['phases', 'tips', 'concepts', 'variants']) {
     if (data[key] !== undefined && !Array.isArray(data[key])) errors.push(`${key} must be an array when present.`)
   }
@@ -252,8 +255,9 @@ function validateBuild(data, options = {}) {
         const effective = mergeOverrides(base, variant.overrides)
         effective.id = data.id
         effective.variants = []
-        // Null is a useful way to clear optional display-only sections in a loadout.
-        for (const key of ['phases', 'tips', 'concepts']) if (effective[key] === null) effective[key] = []
+        // Null clears an optional display-only section. Phases are required, so clearing them
+        // (leaving no Skill Bars or Rotations) is correctly rejected by the nested validation.
+        for (const key of ['tips', 'concepts']) if (effective[key] === null) effective[key] = []
         if (effective.consumables === null) delete effective.consumables
         const nested = validateBuild(effective, { validateVariants: false })
         errors.push(...nested.map(error => `variants "${variant.id}" effective build: ${error}`))
@@ -318,7 +322,7 @@ function normalizeBuild(input) {
   const data = JSON.parse(JSON.stringify(input))
   const errors = []
   if (Number(data.schema_version) !== CURRENT_SCHEMA_VERSION) {
-    errors.push(`schema_version must be ${CURRENT_SCHEMA_VERSION}; older pre-release schemas are not supported.`)
+    errors.push(`schema_version must be ${CURRENT_SCHEMA_VERSION}; older pre-release build schemas are not supported.`)
   }
   return { data, changed: false, errors }
 }

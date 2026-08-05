@@ -1,6 +1,6 @@
 {
   "schema_version": 3,
-  "id": "magicka-templar-solo-duo-u50",
+  "id": "magicka_templar_solo_duo",
   "name": "Magicka Templar Solo / Duo",
   "short_name": "Magplar",
   "author": "DeadxxSmile / ATTB",
@@ -1305,7 +1305,7 @@
   "phases": [
     {
       "id": "1-15",
-      "label": "Levels 1–15",
+      "label": "Levels 1-15",
       "min_level": 1,
       "max_level": 14,
       "overview": "Open all three class lines and Destruction Staff. Sweeps is the main attack once morphed.",
@@ -1370,7 +1370,7 @@
     },
     {
       "id": "15-30",
-      "label": "Levels 15–30",
+      "label": "Levels 15-30",
       "min_level": 15,
       "max_level": 29,
       "overview": "Add an Ice Staff back bar, Blockade, Susceptibility, Power of the Light, and Degeneration.",
@@ -1461,7 +1461,7 @@
     },
     {
       "id": "30-50",
-      "label": "Levels 30–50",
+      "label": "Levels 30-50",
       "min_level": 30,
       "max_level": 49,
       "overview": "Add Luminous Shards, execute, Focus, and optional cleansing/healing.",
@@ -1768,7 +1768,7 @@
           "source": {
             "location": "Quest/drop or crafted refresh",
             "type": "Crafted",
-            "tradeable": "Yes — another player can craft or trade it"
+            "tradeable": "Yes, another player can craft or trade it"
           },
           "pieces": [
             {
@@ -1866,7 +1866,7 @@
           "source": {
             "location": "Steadfast Hammer and Saw, High Isle; 3 traits",
             "type": "Crafted",
-            "tradeable": "Yes — another player can craft or trade it",
+            "tradeable": "Yes, another player can craft or trade it",
             "requirement": "Crafter must know 3 traits for the item",
             "zone": "High Isle"
           },
@@ -1920,7 +1920,7 @@
           "source": {
             "location": "Tide-Born Foundry, Western Solstice; 5 traits",
             "type": "Crafted",
-            "tradeable": "Yes — another player can craft or trade it",
+            "tradeable": "Yes, another player can craft or trade it",
             "requirement": "Crafter must know 5 traits for the item",
             "zone": "Western Solstice"
           },
@@ -1974,7 +1974,7 @@
           "source": {
             "location": "Leftwheal Granary, West Weald",
             "type": "Crafted",
-            "tradeable": "Yes — another player can craft or trade it",
+            "tradeable": "Yes, another player can craft or trade it",
             "zone": "West Weald"
           },
           "pieces": [
@@ -2065,7 +2065,7 @@
           "source": {
             "location": "Crafted",
             "type": "Crafted",
-            "tradeable": "Yes — another player can craft or trade it"
+            "tradeable": "Yes, another player can craft or trade it"
           },
           "pieces": [
             {
@@ -2130,7 +2130,7 @@
             "type": "Arena weapon",
             "zone": "Wrothgar",
             "access": "Maelstrom Arena / Orsinium access",
-            "tradeable": "No — account-bound collection"
+            "tradeable": "No, account-bound collection"
           },
           "pieces": [
             {
@@ -2168,7 +2168,7 @@
           "source": {
             "location": "Infinite Archive",
             "type": "Infinite Archive class set",
-            "tradeable": "No — collect from Infinite Archive rewards",
+            "tradeable": "No, collect from Infinite Archive rewards",
             "access": "Infinite Archive"
           },
           "pieces": [
@@ -2310,7 +2310,7 @@
             "type": "Arena weapon",
             "zone": "Wrothgar",
             "access": "Maelstrom Arena / Orsinium access",
-            "tradeable": "No — account-bound collection"
+            "tradeable": "No, account-bound collection"
           },
           "pieces": [
             {
@@ -2340,7 +2340,7 @@
           "source": {
             "location": "Infinite Archive",
             "type": "Infinite Archive class set",
-            "tradeable": "No — collect from Infinite Archive rewards",
+            "tradeable": "No, collect from Infinite Archive rewards",
             "access": "Infinite Archive"
           },
           "pieces": [
@@ -2482,7 +2482,7 @@
             "type": "Arena weapon",
             "zone": "Wrothgar",
             "access": "Maelstrom Arena / Orsinium access",
-            "tradeable": "No — account-bound collection"
+            "tradeable": "No, account-bound collection"
           },
           "pieces": [
             {

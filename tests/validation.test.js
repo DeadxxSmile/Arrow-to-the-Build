@@ -83,9 +83,15 @@ test('missing required sections produce readable errors, not crashes', () => {
 })
 
 test('sections the UI iterates over must be arrays when present', () => {
-  assert.ok(matches(errorsFor(b => { b.phases = {} }), /phases must be an array/))
+  assert.ok(matches(errorsFor(b => { b.phases = {} }), /phases must be a non-empty array|phases must be an array/))
   assert.ok(matches(errorsFor(b => { b.tips = 'nope' }), /tips must be an array/))
   assert.ok(matches(errorsFor(b => { b.concepts = 5 }), /concepts must be an array/))
+})
+
+test('a build must define at least one progression phase', () => {
+  // Phases drive the Skill Bars and Rotations page, so an empty or missing phases array is invalid.
+  assert.ok(matches(errorsFor(b => { b.phases = [] }), /phases must be a non-empty array/))
+  assert.ok(matches(errorsFor(b => { delete b.phases }), /phases must be a non-empty array/))
 })
 
 test('a variant with array overrides is rejected before it can erase the build', () => {

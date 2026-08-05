@@ -1,6 +1,6 @@
 {
   "name": "arrow-to-the-build",
-  "version": "0.5.7",
+  "version": "1.0.0",
   "description": "Local ESO character build and progression companion",
   "main": "src/main/main.js",
   "imports": {
@@ -15,7 +15,6 @@
     "build:renderer": "vite build",
     "build": "npm run build:renderer && electron-builder",
     "preview": "vite preview --host 127.0.0.1 --port 4173",
-    "rebuild": "electron-rebuild -f -w better-sqlite3",
     "test": "node tools/run-tests.cjs",
     "check": "npm test && npm run build:renderer",
     "audit:runtime": "npm audit --omit=dev",
@@ -29,7 +28,6 @@
     "react-router-dom": "6.30.4"
   },
   "devDependencies": {
-    "@electron/rebuild": "4.0.3",
     "@vitejs/plugin-react": "5.0.4",
     "concurrently": "9.2.1",
     "electron": "41.2.0",

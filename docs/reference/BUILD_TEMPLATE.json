@@ -1,0 +1,893 @@
+{
+  "schema_version": 3,
+  "id": "example-arcanist-progression",
+  "name": "Example Arcanist Progression",
+  "short_name": "Example Arcanist",
+  "summary": "A compact, importable schema-3 example. Duplicate this file, replace the metadata and recommendations, and keep every id stable after sharing it.",
+  "author": "Your name or community handle",
+  "game_version": "Update 50",
+  "verified_date": "2026-08-05",
+  "format_notes": [
+    "This template intentionally uses real Arcanist catalog ids so it can be imported into ATTB as-is.",
+    "For another class, replace relevant_lines, unlock_order catalog_skill_id values, and phase skill references with entries from resources/data/eso-skill-catalog.json.",
+    "Delete fields you do not need only when the guide marks them optional. Required arrays may be empty, but a useful build should populate them."
+  ],
+  "theme": {
+    "accent": "#69e891",
+    "accent2": "#7bd8ff",
+    "background": "#07110f"
+  },
+  "images": {
+    "hero": null
+  },
+  "defaults": {
+    "class": "Arcanist",
+    "race": "Dark Elf",
+    "alliance": "Ebonheart Pact",
+    "eso_plus": false,
+    "attributes": {
+      "magicka": 0,
+      "health": 0,
+      "stamina": 64
+    },
+    "mundus": "The Thief",
+    "front_weapon": "Dual Daggers",
+    "back_weapon": "Inferno Staff at Level 15",
+    "leveling_armor": "5 Medium / 1 Light / 1 Heavy",
+    "endgame_armor": "6 Medium / 1 Light",
+    "leveling_trait": "Training",
+    "gear_cap": "Level 50 / CP160"
+  },
+  "setup_help": {
+    "class": {
+      "summary": "Explain the build identity and whether it assumes pure-class progression or subclassing."
+    },
+    "race": {
+      "summary": "Explain why the recommended race fits without implying it is mandatory.",
+      "recommended": "Dark Elf",
+      "alternatives": [
+        "Khajiit",
+        "Orc"
+      ],
+      "notes": [
+        "ATTB stores the character's actual race separately from this recommendation."
+      ]
+    },
+    "alliance": {
+      "summary": "Explain whether alliance matters to the build.",
+      "recommended": "Ebonheart Pact",
+      "notes": [
+        "For ordinary PvE damage builds, alliance usually matters more for PvP identity than combat performance."
+      ]
+    },
+    "mundus": {
+      "summary": "Explain the chosen Mundus and when an alternative is useful.",
+      "locations": [
+        "Malabal Tor",
+        "Alik'r Desert",
+        "Eastmarch",
+        "Cyrodiil"
+      ],
+      "notes": [
+        "Activating another Mundus replaces the current blessing."
+      ]
+    },
+    "front_weapon": {
+      "summary": "Explain the front bar's job."
+    },
+    "back_weapon": {
+      "summary": "Explain the back bar's job and remind players that it unlocks at character level 15."
+    },
+    "leveling_armor": {
+      "summary": "Explain the leveling armor mix and why multiple armor lines may be trained."
+    },
+    "endgame_armor": {
+      "summary": "Explain the final armor mix."
+    },
+    "leveling_trait": {
+      "summary": "Explain why Training is used while leveling."
+    },
+    "gear_cap": {
+      "summary": "Permanent gear begins at Level 50 / CP160 because item scaling stops there."
+    }
+  },
+  "concepts": [
+    {
+      "title": "Primary resource",
+      "text": "Put all 64 attribute points into Stamina for this example."
+    },
+    {
+      "title": "Core loop",
+      "text": "Build Crux with Runeblades, then spend it with Pragmatic Fatecarver."
+    }
+  ],
+  "relevant_lines": [
+    {
+      "id": "herald",
+      "name": "Herald of the Tome",
+      "max": 50,
+      "group": "Class"
+    },
+    {
+      "id": "soldier",
+      "name": "Soldier of Apocrypha",
+      "max": 50,
+      "group": "Class"
+    },
+    {
+      "id": "curative",
+      "name": "Curative Runeforms",
+      "max": 50,
+      "group": "Class"
+    },
+    {
+      "id": "dual_wield",
+      "name": "Dual Wield",
+      "max": 50,
+      "group": "Weapon"
+    },
+    {
+      "id": "medium_armor",
+      "name": "Medium Armor",
+      "max": 50,
+      "group": "Armor"
+    }
+  ],
+  "cp_plans": {
+    "warfare": {
+      "label": "Warfare",
+      "color": "blue",
+      "core": [
+        {
+          "id": "precision",
+          "name": "Precision",
+          "max_points": 20,
+          "slottable": false,
+          "jump_points": [
+            10,
+            20
+          ],
+          "note": "Example required connector/passive."
+        }
+      ],
+      "flex": [
+        {
+          "id": "damage",
+          "label": "Damage",
+          "purpose": "damage",
+          "nodes": [
+            {
+              "id": "master_at_arms",
+              "name": "Master-at-Arms",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                25,
+                50
+              ],
+              "note": "Example direct-damage slottable."
+            }
+          ]
+        },
+        {
+          "id": "alternate_damage",
+          "label": "Alternate damage",
+          "purpose": "alternate damage",
+          "optional": true,
+          "nodes": [
+            {
+              "id": "thaumaturge",
+              "name": "Thaumaturge",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                25,
+                50
+              ],
+              "note": "Optional damage-over-time alternative."
+            }
+          ]
+        }
+      ],
+      "final_slots": [
+        "master_at_arms"
+      ]
+    },
+    "fitness": {
+      "label": "Fitness",
+      "color": "red",
+      "core": [],
+      "flex": [
+        {
+          "id": "survival",
+          "label": "Survival",
+          "purpose": "solo defense",
+          "nodes": [
+            {
+              "id": "boundless_vitality",
+              "name": "Boundless Vitality",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Example Health slottable."
+            }
+          ]
+        }
+      ],
+      "final_slots": [
+        "boundless_vitality"
+      ]
+    },
+    "craft": {
+      "label": "Craft",
+      "color": "green",
+      "core": [],
+      "flex": [
+        {
+          "id": "quality_of_life",
+          "label": "Quality of life",
+          "purpose": "utility",
+          "nodes": [
+            {
+              "id": "steeds_blessing",
+              "name": "Steed's Blessing",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Example movement-speed slottable."
+            }
+          ]
+        }
+      ],
+      "final_slots": [
+        "steeds_blessing"
+      ]
+    }
+  },
+  "unlock_order": [
+    {
+      "id": "runeblades",
+      "name": "Runeblades",
+      "catalog_skill_id": "herald__runeblades",
+      "section": "Class",
+      "line": "herald",
+      "required_rank": 1,
+      "kind": "Active",
+      "phase": "Leveling",
+      "status": "temporary",
+      "priority": 10,
+      "notes": "Starter Crux generator.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "runic_jolt",
+      "name": "Runic Jolt",
+      "catalog_skill_id": "soldier__runic_jolt",
+      "section": "Class",
+      "line": "soldier",
+      "required_rank": 1,
+      "kind": "Active",
+      "phase": "Leveling",
+      "status": "temporary",
+      "priority": 20,
+      "notes": "Temporary Soldier of Apocrypha leveling slot. It taunts.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "runemend",
+      "name": "Runemend",
+      "catalog_skill_id": "curative__runemend",
+      "section": "Class",
+      "line": "curative",
+      "required_rank": 1,
+      "kind": "Active",
+      "phase": "Leveling",
+      "status": "temporary",
+      "priority": 30,
+      "notes": "Starter heal and Curative Runeforms leveling slot.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "fatecarver",
+      "name": "Fatecarver",
+      "catalog_skill_id": "herald__fatecarver",
+      "section": "Class",
+      "line": "herald",
+      "required_rank": 4,
+      "kind": "Active",
+      "phase": "Leveling",
+      "status": "final",
+      "priority": 40,
+      "notes": "Base skill required before its morph can be selected.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "pragmatic_fatecarver",
+      "name": "Pragmatic Fatecarver",
+      "catalog_skill_id": "herald__pragmatic_fatecarver",
+      "section": "Morph",
+      "line": "herald",
+      "required_rank": 4,
+      "kind": "Morph",
+      "phase": "Early",
+      "status": "final",
+      "priority": 41,
+      "notes": "Example morph row. The requires array points to the base-skill row id.",
+      "morph_from": "Fatecarver",
+      "image": null,
+      "requires": [
+        "fatecarver"
+      ]
+    },
+    {
+      "id": "fated_fortune_1",
+      "name": "Fated Fortune I",
+      "catalog_skill_id": "herald__fated_fortune",
+      "section": "Passive",
+      "line": "herald",
+      "required_rank": 8,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 50,
+      "notes": "First rank of an example two-rank passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "fated_fortune_2",
+      "name": "Fated Fortune II",
+      "catalog_skill_id": "herald__fated_fortune",
+      "section": "Passive",
+      "line": "herald",
+      "required_rank": 18,
+      "kind": "Passive",
+      "phase": "Late",
+      "status": "final",
+      "priority": 100,
+      "notes": "Second rank of the same passive. ATTB derives the rank-one prerequisite.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    }
+  ],
+  "phases": [
+    {
+      "id": "1-14",
+      "label": "Levels 1-14",
+      "min_level": 1,
+      "max_level": 14,
+      "overview": "Open the three class lines and establish the build's basic resource loop.",
+      "front_bar": {
+        "weapon": "Dual Daggers",
+        "slots": [
+          {
+            "name": "Runeblades",
+            "catalog_skill_id": "herald__runeblades",
+            "temporary": true
+          },
+          {
+            "name": "Fatecarver",
+            "catalog_skill_id": "herald__fatecarver"
+          },
+          {
+            "name": "Runic Jolt",
+            "catalog_skill_id": "soldier__runic_jolt",
+            "temporary": true
+          },
+          {
+            "name": "Runemend",
+            "catalog_skill_id": "curative__runemend",
+            "temporary": true
+          }
+        ],
+        "ultimate": null
+      },
+      "back_bar": {
+        "weapon": "Inferno Staff at Level 15",
+        "locked": "Unlocks at character level 15",
+        "slots": [],
+        "ultimate": null
+      },
+      "rotation": {
+        "type": "sequence",
+        "title": "Starter sequence",
+        "summary": "Build Crux, then channel the spender.",
+        "opener": [],
+        "steps": [
+          {
+            "name": "Runeblades until 3 Crux",
+            "catalog_skill_id": "herald__runeblades"
+          },
+          {
+            "name": "Fatecarver",
+            "catalog_skill_id": "herald__fatecarver"
+          }
+        ],
+        "execute": [],
+        "notes": [
+          "Keep one skill from each class line on the active bar when experience is awarded."
+        ]
+      }
+    },
+    {
+      "id": "15-plus",
+      "label": "Level 15+",
+      "min_level": 15,
+      "max_level": 9999,
+      "overview": "Add the second bar and replace the base spender with its chosen morph.",
+      "front_bar": {
+        "weapon": "Dual Daggers",
+        "slots": [
+          {
+            "name": "Runeblades",
+            "catalog_skill_id": "herald__runeblades",
+            "temporary": true
+          },
+          {
+            "name": "Pragmatic Fatecarver",
+            "catalog_skill_id": "herald__pragmatic_fatecarver"
+          },
+          {
+            "name": "Runic Jolt",
+            "catalog_skill_id": "soldier__runic_jolt",
+            "temporary": true
+          },
+          {
+            "name": "Runemend",
+            "catalog_skill_id": "curative__runemend",
+            "temporary": true
+          }
+        ],
+        "ultimate": null
+      },
+      "back_bar": {
+        "weapon": "Inferno Staff",
+        "slots": [],
+        "ultimate": null
+      },
+      "rotation": {
+        "type": "priority",
+        "title": "Priority system",
+        "summary": "Refresh important effects, build Crux, then spend it.",
+        "opener": [
+          {
+            "name": "Apply long-duration effects"
+          }
+        ],
+        "steps": [
+          {
+            "name": "Build 3 Crux with Runeblades",
+            "catalog_skill_id": "herald__runeblades"
+          },
+          {
+            "name": "Pragmatic Fatecarver",
+            "catalog_skill_id": "herald__pragmatic_fatecarver"
+          }
+        ],
+        "execute": [
+          {
+            "name": "Replace the normal spammable when the final build has an execute skill"
+          }
+        ],
+        "notes": [
+          "Use sequence for a strict loop and priority when effects have different durations."
+        ]
+      }
+    }
+  ],
+  "gear_stages": [
+    {
+      "id": "leveling",
+      "name": "Leveling drops",
+      "min_level": 1,
+      "max_level": 49,
+      "summary": "Use current-level Training gear and replace it freely.",
+      "sets": [
+        {
+          "id": "leveling_armor",
+          "name": "Any current-level armor",
+          "role": "Leveling armor",
+          "bonus": "Keep armor near the character's level.",
+          "source": {
+            "type": "Quest / drop",
+            "location": "Any leveling activity",
+            "zone": "Any zone",
+            "access": "Base game",
+            "requirement": "None",
+            "tradeable": "Varies",
+            "difficulty": "Easy",
+            "notes": "Do not spend heavily upgrading disposable gear.",
+            "alternative": "Crafted Training gear"
+          },
+          "pieces": [
+            {
+              "id": "leveling_head",
+              "slot": "Head",
+              "weight": "Light",
+              "trait": "Training",
+              "enchantment": "Max Stamina",
+              "quality": "Current level"
+            },
+            {
+              "id": "leveling_chest",
+              "slot": "Chest",
+              "weight": "Medium",
+              "trait": "Training",
+              "enchantment": "Max Stamina",
+              "quality": "Current level"
+            },
+            {
+              "id": "leveling_waist",
+              "slot": "Waist",
+              "weight": "Medium",
+              "trait": "Training",
+              "enchantment": "Max Stamina",
+              "quality": "Current level"
+            }
+          ]
+        },
+        {
+          "id": "leveling_remaining_armor",
+          "name": "Any remaining current-level armor",
+          "role": "Remaining armor",
+          "bonus": "Fill the remaining armor slots while keeping the recommended weight mix.",
+          "source": {
+            "type": "Quest / drop",
+            "location": "Any leveling activity",
+            "zone": "Any zone",
+            "access": "Base game",
+            "requirement": "None",
+            "tradeable": "Varies",
+            "difficulty": "Easy",
+            "notes": "Replace pieces freely while leveling.",
+            "alternative": "Crafted Training gear"
+          },
+          "pieces": [
+            {
+              "id": "leveling_shoulders",
+              "slot": "Shoulders",
+              "weight": "Medium",
+              "trait": "Training",
+              "enchantment": "Max Stamina",
+              "quality": "Current level"
+            },
+            {
+              "id": "leveling_hands",
+              "slot": "Hands",
+              "weight": "Medium",
+              "trait": "Training",
+              "enchantment": "Max Stamina",
+              "quality": "Current level"
+            },
+            {
+              "id": "leveling_legs",
+              "slot": "Legs",
+              "weight": "Medium",
+              "trait": "Training",
+              "enchantment": "Max Stamina",
+              "quality": "Current level"
+            },
+            {
+              "id": "leveling_feet",
+              "slot": "Feet",
+              "weight": "Heavy",
+              "trait": "Training",
+              "enchantment": "Max Stamina",
+              "quality": "Current level"
+            }
+          ]
+        },
+        {
+          "id": "leveling_weapons_jewelry",
+          "name": "Current-level weapons and jewelry",
+          "role": "Weapons and jewelry",
+          "source": {
+            "type": "Quest / drop",
+            "location": "Any leveling activity",
+            "zone": "Any zone",
+            "access": "Base game",
+            "requirement": "None",
+            "tradeable": "Varies",
+            "difficulty": "Easy",
+            "notes": "Replace weapons more often than armor because weapon level strongly affects damage.",
+            "alternative": "Crafted Training weapons"
+          },
+          "pieces": [
+            {
+              "id": "leveling_front_weapon_1",
+              "slot": "Front Weapon 1",
+              "weapon_type": "Dagger",
+              "trait": "Training",
+              "enchantment": "Poison Damage",
+              "quality": "Current level"
+            },
+            {
+              "id": "leveling_front_weapon_2",
+              "slot": "Front Weapon 2",
+              "weapon_type": "Dagger",
+              "trait": "Training",
+              "enchantment": "Shock Damage",
+              "quality": "Current level"
+            },
+            {
+              "id": "leveling_back_weapon",
+              "slot": "Back Weapon",
+              "weapon_type": "Inferno Staff",
+              "trait": "Training",
+              "enchantment": "Weapon and Spell Damage",
+              "set_slots": 2,
+              "quality": "Current level"
+            },
+            {
+              "id": "leveling_necklace",
+              "slot": "Necklace",
+              "trait": "Any",
+              "enchantment": "Physical Harm",
+              "quality": "Current level"
+            },
+            {
+              "id": "leveling_ring_1",
+              "slot": "Ring 1",
+              "trait": "Any",
+              "enchantment": "Physical Harm",
+              "quality": "Current level"
+            },
+            {
+              "id": "leveling_ring_2",
+              "slot": "Ring 2",
+              "trait": "Any",
+              "enchantment": "Physical Harm",
+              "quality": "Current level"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cp160-starter",
+      "name": "CP160 starter",
+      "min_level": 50,
+      "max_level": 9999,
+      "summary": "Replace disposable items with a permanent starter setup.",
+      "sets": [
+        {
+          "id": "example_primary_set",
+          "name": "Example Primary Set",
+          "role": "Five body pieces",
+          "bonus": "Describe what the primary set contributes to the build.",
+          "source": {
+            "type": "Crafted",
+            "location": "Replace with the crafting station name",
+            "zone": "Replace with the zone",
+            "access": "Another player can craft tradable pieces",
+            "requirement": "Replace with researched trait count",
+            "tradeable": "Yes",
+            "difficulty": "Easy",
+            "notes": "Replace this example with a real set before publishing the build.",
+            "alternative": "List a no-DLC or easier alternative"
+          },
+          "pieces": [
+            {
+              "id": "starter_shoulders",
+              "slot": "Shoulders",
+              "weight": "Medium",
+              "trait": "Divines",
+              "enchantment": "Max Stamina",
+              "quality": "Purple"
+            },
+            {
+              "id": "starter_hands",
+              "slot": "Hands",
+              "weight": "Medium",
+              "trait": "Divines",
+              "enchantment": "Max Stamina",
+              "quality": "Purple"
+            },
+            {
+              "id": "starter_waist",
+              "slot": "Waist",
+              "weight": "Medium",
+              "trait": "Divines",
+              "enchantment": "Max Stamina",
+              "quality": "Purple"
+            },
+            {
+              "id": "starter_legs",
+              "slot": "Legs",
+              "weight": "Medium",
+              "trait": "Divines",
+              "enchantment": "Max Stamina",
+              "quality": "Purple"
+            },
+            {
+              "id": "starter_feet",
+              "slot": "Feet",
+              "weight": "Medium",
+              "trait": "Divines",
+              "enchantment": "Max Stamina",
+              "quality": "Purple"
+            }
+          ]
+        },
+        {
+          "id": "example_secondary_set",
+          "name": "Example Secondary Set",
+          "role": "Chest, jewelry, and weapons",
+          "bonus": "Describe the secondary five-piece bonus and bar behavior.",
+          "source": {
+            "type": "Dungeon / overland / crafted",
+            "location": "Replace with the exact activity or station",
+            "zone": "Replace with the zone",
+            "access": "Describe DLC or base-game access",
+            "requirement": "Describe difficulty, traits, or unlocks",
+            "tradeable": "Describe binding rules",
+            "difficulty": "Moderate",
+            "notes": "Explain the fastest practical acquisition route.",
+            "alternative": "List an easier or no-DLC replacement"
+          },
+          "pieces": [
+            {
+              "id": "starter_chest",
+              "slot": "Chest",
+              "weight": "Medium",
+              "trait": "Divines",
+              "enchantment": "Max Stamina",
+              "quality": "Purple"
+            },
+            {
+              "id": "starter_necklace",
+              "slot": "Necklace",
+              "trait": "Bloodthirsty",
+              "enchantment": "Physical Harm",
+              "quality": "Purple"
+            },
+            {
+              "id": "starter_ring_1",
+              "slot": "Ring 1",
+              "trait": "Bloodthirsty",
+              "enchantment": "Physical Harm",
+              "quality": "Purple"
+            },
+            {
+              "id": "starter_front_weapon_1",
+              "slot": "Front Weapon 1",
+              "weapon_type": "Dagger",
+              "trait": "Charged",
+              "enchantment": "Poison Damage",
+              "quality": "Gold"
+            },
+            {
+              "id": "starter_front_weapon_2",
+              "slot": "Front Weapon 2",
+              "weapon_type": "Dagger",
+              "trait": "Nirnhoned",
+              "enchantment": "Flame Damage",
+              "quality": "Gold"
+            },
+            {
+              "id": "starter_back_weapon",
+              "slot": "Back Weapon",
+              "weapon_type": "Inferno Staff",
+              "trait": "Infused",
+              "enchantment": "Weapon and Spell Damage",
+              "set_slots": 2,
+              "quality": "Gold"
+            }
+          ]
+        },
+        {
+          "id": "example_flex_pieces",
+          "name": "Example Flex Pieces",
+          "role": "Head and second ring",
+          "bonus": "Use these slots for a one-piece bonus, mythic, arena item, or another documented option.",
+          "source": {
+            "type": "Flexible",
+            "location": "Replace with the actual source",
+            "zone": "Replace with the zone",
+            "access": "Describe access requirements",
+            "requirement": "Describe the unlock or farm",
+            "tradeable": "Varies",
+            "difficulty": "Varies",
+            "notes": "Explain why these two slots are flexible.",
+            "alternative": "List a non-mythic or easier fallback"
+          },
+          "pieces": [
+            {
+              "id": "starter_head",
+              "slot": "Head",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Stamina",
+              "quality": "Purple"
+            },
+            {
+              "id": "starter_ring_2",
+              "slot": "Ring 2",
+              "trait": "Bloodthirsty",
+              "enchantment": "Physical Harm",
+              "quality": "Purple"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "consumables": {
+    "foods": [
+      {
+        "name": "Example food",
+        "use": "Explain when it is used",
+        "source": "Provisioning or guild traders"
+      }
+    ],
+    "potions": [
+      {
+        "name": "Example potion",
+        "use": "Explain the buffs or emergency use"
+      }
+    ],
+    "pvp_alternatives": [
+      {
+        "name": "Example PvP alternative",
+        "use": "Explain why it replaces the PvE option"
+      }
+    ]
+  },
+  "tips": [
+    "Join important Guild skill lines early.",
+    "Keep one skill from every required class line on the active bar when experience is awarded.",
+    "State dangerous group-content behavior clearly, especially taunts and abilities that block ally healing."
+  ],
+  "variants": [
+    {
+      "id": "solo-duo",
+      "name": "Solo / Duo PvE",
+      "summary": "The base build exactly as written.",
+      "available": true,
+      "overrides": null
+    },
+    {
+      "id": "example-alternate",
+      "name": "Example Alternate Variant",
+      "summary": "Demonstrates a small object override.",
+      "available": true,
+      "overrides": {
+        "summary": "The same progression with alternate summary and tips.",
+        "tips": [
+          "Variants may replace ordinary arrays such as tips.",
+          "Arrays of objects with stable id fields can merge by id."
+        ]
+      }
+    },
+    {
+      "id": "future-group-dps",
+      "name": "Future Group DPS",
+      "summary": "Visible placeholder for an unfinished variant.",
+      "available": false,
+      "unavailable_reason": "The complete bars, gear, CP, and consumables have not been authored yet.",
+      "overrides": null
+    }
+  ]
+}

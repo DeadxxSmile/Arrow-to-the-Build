@@ -82,11 +82,17 @@ test('every image referenced anywhere in a bundled build actually exists', () =>
   }
 })
 
+test('obsolete pre-release build conversion tools are not shipped in the repository', () => {
+  for (const file of ['tools/generate_mighty_seven_builds.py', 'tools/upgrade_schema3_builds.py']) {
+    assert.equal(fs.existsSync(path.join(root, file)), false, `${file} should remain removed`)
+  }
+})
+
 test('source, tests, and tooling stay out of the installer', () => {
   const devOnly = [
     'src/renderer/App.jsx', 'src/renderer/utils/buildLogic.js', 'src/index.jsx',
     'tests/persistence.test.js', 'tests/electron-stub.js',
-    'tools/run-tests.cjs', 'tools/fetch-skill-icons.mjs', 'tools/generate_skill_catalog.py', 'tools/generate_mighty_seven_builds.py', 'tools/upgrade_schema3_builds.py', 'docs/reference/BUILD_FORMAT.md', 'docs/index.html',
+    'tools/run-tests.cjs', 'tools/fetch-skill-icons.mjs', 'tools/generate_skill_catalog.py', 'docs/reference/BUILD_FORMAT.md', 'docs/reference/BUILD_JSON_GUIDE.md', 'docs/reference/BUILD_TEMPLATE.json', 'docs/index.html',
     'vite.config.js', 'index.html', 'README.md'
   ]
   for (const file of devOnly) assert.equal(shipped(file), false, `${file} should not be in the installer`)
@@ -105,6 +111,12 @@ test('packaging is Windows-only and names the installer by version', () => {
   assert.equal(pkg.build.nsis.oneClick, false)
   // Wiping the data directory on uninstall would take every character with it.
   assert.notEqual(pkg.build.nsis.deleteAppDataOnUninstall, true)
+})
+
+test('native dependency rebuilding is owned by electron-builder without a duplicate direct tool dependency', () => {
+  assert.equal(pkg.devDependencies['@electron/rebuild'], undefined)
+  assert.equal(pkg.scripts.rebuild, undefined)
+  assert.equal(pkg.scripts.postinstall, 'electron-builder install-app-deps')
 })
 
 test('node_modules is left to electron-builder rather than globbed in by hand', () => {
@@ -166,9 +178,25 @@ test('the public repository has one build script, one root guide, a license, and
   assert.doesNotMatch(script, /start\s+"".*ATTB-Setup|Launching installer/i,
     'the public build script must create the installer without launching it')
 
-  for (const file of ['README.md', 'LICENSE', 'docs/index.html', 'docs/styles.css', 'docs/app.js']) {
+  for (const file of [
+    'README.md', 'LICENSE', 'docs/index.html', 'docs/styles.css', 'docs/app.js',
+    'docs/reference/BUILD_JSON_GUIDE.md', 'docs/reference/BUILD_TEMPLATE.json'
+  ]) {
     assert.equal(fs.existsSync(path.join(root, file)), true, `${file} should be present`)
   }
+
+  const website = fs.readFileSync(path.join(root, 'docs/index.html'), 'utf8') + '\n' + fs.readFileSync(path.join(root, 'docs/app.js'), 'utf8')
+  for (const screenshot of [
+    'welcome.webp', 'character-setup.webp', 'current-levels.webp', 'basic-setup.webp',
+    'skills-passives.webp', 'equipment.webp', 'rotations.webp', 'tips-tools.webp', 'character-settings.webp'
+  ]) {
+    assert.equal(fs.existsSync(path.join(root, 'docs/assets/screenshots', screenshot)), true, `${screenshot} should be present`)
+    assert.match(website, new RegExp(screenshot.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')))
+  }
+
+  const template = JSON.parse(fs.readFileSync(path.join(root, 'docs/reference/BUILD_TEMPLATE.json'), 'utf8'))
+  assert.equal(template.schema_version, 3)
+  assert.ok(template.id && template.name && template.defaults?.class)
   for (const obsolete of ['SETUP.md', 'SECURITY.md', 'Clear-SQL.bat', 'BUILD-AND-INSTALL-ATTB.bat']) {
     assert.equal(fs.existsSync(path.join(root, obsolete)), false, `${obsolete} should not remain in the public root`)
   }

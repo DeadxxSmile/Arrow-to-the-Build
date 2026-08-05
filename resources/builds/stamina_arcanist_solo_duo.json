@@ -1,6 +1,6 @@
 {
   "schema_version": 3,
-  "id": "stamina-arcanist-solo-duo-u50",
+  "id": "stamina_arcanist_solo_duo",
   "name": "Stamina Arcanist Solo / Duo",
   "short_name": "Stam Arcanist",
   "author": "DeadxxSmile / ATTB",
@@ -1749,7 +1749,7 @@
   "phases": [
     {
       "id": "1-15",
-      "label": "Levels 1–15",
+      "label": "Levels 1-15",
       "min_level": 1,
       "max_level": 14,
       "overview": "Open all three class lines, keep them represented, and build Crux with Runeblades before beaming.",
@@ -1811,7 +1811,7 @@
     },
     {
       "id": "15-30",
-      "label": "Levels 15–30",
+      "label": "Levels 15-30",
       "min_level": 15,
       "max_level": 29,
       "overview": "Add the Inferno Staff back bar, Elemental Blockade, Flail, armor, and Quick Cloak as ranks unlock.",
@@ -1895,7 +1895,7 @@
     },
     {
       "id": "30-50",
-      "label": "Levels 30–50",
+      "label": "Levels 30-50",
       "min_level": 30,
       "max_level": 49,
       "overview": "The finished loop takes shape. Add Treatise, Hunter, debuffs, and Languid Eye; train optional survival tools.",
@@ -2194,7 +2194,7 @@
           "name": "Two daggers; Inferno Staff after Level 15",
           "role": "Weapons",
           "source": {
-            "location": "Replace every 5–10 levels",
+            "location": "Replace every 5-10 levels",
             "type": "Activity reward",
             "tradeable": "Check the item collection rules"
           },
@@ -2263,7 +2263,7 @@
           "source": {
             "location": "Leftwheal Granary, West Weald",
             "type": "Crafted",
-            "tradeable": "Yes — another player can craft or trade it",
+            "tradeable": "Yes, another player can craft or trade it",
             "zone": "West Weald"
           },
           "pieces": [
@@ -2291,7 +2291,7 @@
           "source": {
             "location": "Tide-Born Foundry, Western Solstice",
             "type": "Crafted",
-            "tradeable": "Yes — another player can craft or trade it",
+            "tradeable": "Yes, another player can craft or trade it",
             "zone": "Western Solstice"
           },
           "pieces": [
@@ -2344,7 +2344,7 @@
           "source": {
             "location": "Steadfast Hammer and Saw, High Isle",
             "type": "Crafted",
-            "tradeable": "Yes — another player can craft or trade it",
+            "tradeable": "Yes, another player can craft or trade it",
             "zone": "High Isle"
           },
           "pieces": [
@@ -2562,7 +2562,7 @@
             "type": "Arena weapon",
             "zone": "Wrothgar",
             "access": "Maelstrom Arena / Orsinium access",
-            "tradeable": "No — account-bound collection"
+            "tradeable": "No, account-bound collection"
           },
           "pieces": [
             {
@@ -2742,7 +2742,7 @@
             "type": "Arena weapon",
             "zone": "Wrothgar",
             "access": "Maelstrom Arena / Orsinium access",
-            "tradeable": "No — account-bound collection"
+            "tradeable": "No, account-bound collection"
           },
           "pieces": [
             {

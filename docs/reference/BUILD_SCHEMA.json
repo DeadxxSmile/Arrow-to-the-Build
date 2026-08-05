@@ -68,7 +68,8 @@
       "type": "array",
       "items": {
         "$ref": "#/$defs/phase"
-      }
+      },
+      "description": "Progression bands, each with front and back hotbars and a rotation. Required: a build with no phases has nothing to show on the Skill Bars and Rotations page."
     },
     "gear_stages": {
       "type": "array",

@@ -27,7 +27,7 @@ function fill(nodes, remaining) {
 
 /**
  * Spend a constellation total: core path first, then each flex group in order.
- * Anything left once every listed star is full is "unassigned" — free points, not an error.
+ * Anything left once every listed star is full is "unassigned", meaning free points, not an error.
  */
 export function allocateCp(plan, total) {
   const budget = Math.max(0, Math.min(CP_TREE_MAX, Math.trunc(Number(total) || 0)))

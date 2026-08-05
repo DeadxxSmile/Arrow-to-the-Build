@@ -99,7 +99,7 @@ test('schema-3 build import is stored unchanged', () => {
 
 test('character backup carries and restores a schema-3 build', async () => {
   const { ipc, dir } = freshApp()
-  const id = ipc.call('characters:create', { name: 'Schema Hero', build_id: 'stamina-arcanist-solo-duo-u50', level: 42, race: 'Dark Elf', alliance: 'Ebonheart Pact' })
+  const id = ipc.call('characters:create', { name: 'Schema Hero', build_id: 'stamina_arcanist_solo_duo', level: 42, race: 'Dark Elf', alliance: 'Ebonheart Pact' })
   ipc.call('characters:setSkillRank', id, 'herald', 30)
   state.savePath = path.join(dir, 'schema3-backup.json')
   const file = await ipc.call('characters:export', id)

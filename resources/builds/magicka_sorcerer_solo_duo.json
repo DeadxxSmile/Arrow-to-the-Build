@@ -2263,7 +2263,7 @@
   "phases": [
     {
       "id": "1-15",
-      "label": "Levels 1–15",
+      "label": "Levels 1-15",
       "min_level": 1,
       "max_level": 14,
       "overview": "Open all three class lines with Crystal Shard, a Familiar, and Mage’s Fury. Train daggers and light armor.",
@@ -2326,7 +2326,7 @@
     },
     {
       "id": "15-30",
-      "label": "Levels 15–30",
+      "label": "Levels 15-30",
       "min_level": 15,
       "max_level": 29,
       "overview": "Add the Inferno Staff bar, Blockade, Susceptibility, Hurricane, and Liquid Lightning.",
@@ -2400,7 +2400,7 @@
     },
     {
       "id": "30-50",
-      "label": "Levels 30–50",
+      "label": "Levels 30-50",
       "min_level": 30,
       "max_level": 49,
       "overview": "Critical Surge completes the solo engine; add Bound Armaments, Barbed Trap, and Scribing options later.",
@@ -2591,7 +2591,7 @@
           "source": {
             "location": "Quests, drops, or a crafted refresh",
             "type": "Crafted",
-            "tradeable": "Yes — another player can craft or trade it"
+            "tradeable": "Yes, another player can craft or trade it"
           },
           "pieces": [
             {
@@ -2657,7 +2657,7 @@
           "name": "Two current-level daggers",
           "role": "Front bar",
           "source": {
-            "location": "Replace every 5–10 levels",
+            "location": "Replace every 5-10 levels",
             "type": "Activity reward",
             "tradeable": "Check the item collection rules"
           },
@@ -2685,7 +2685,7 @@
           "name": "Current-level Inferno Staff",
           "role": "Back bar after Level 15",
           "source": {
-            "location": "Replace every 5–10 levels",
+            "location": "Replace every 5-10 levels",
             "type": "Activity reward",
             "tradeable": "Check the item collection rules"
           },
@@ -2738,7 +2738,7 @@
           "source": {
             "location": "Steadfast Hammer and Saw, High Isle; crafted or bought",
             "type": "Crafted",
-            "tradeable": "Yes — another player can craft or trade it",
+            "tradeable": "Yes, another player can craft or trade it",
             "zone": "High Isle"
           },
           "pieces": [
@@ -2791,7 +2791,7 @@
           "source": {
             "location": "Tide-Born Foundry, Western Solstice; crafted or bought",
             "type": "Crafted",
-            "tradeable": "Yes — another player can craft or trade it",
+            "tradeable": "Yes, another player can craft or trade it",
             "zone": "Western Solstice"
           },
           "pieces": [
@@ -2842,7 +2842,7 @@
           "source": {
             "location": "Leftwheal Granary, West Weald; crafted or bought",
             "type": "Crafted",
-            "tradeable": "Yes — another player can craft or trade it",
+            "tradeable": "Yes, another player can craft or trade it",
             "zone": "West Weald"
           },
           "pieces": [
@@ -2888,7 +2888,7 @@
           "source": {
             "location": "Sorcerer class set from Infinite Archive",
             "type": "Infinite Archive class set",
-            "tradeable": "No — collect from Infinite Archive rewards",
+            "tradeable": "No, collect from Infinite Archive rewards",
             "access": "Infinite Archive"
           },
           "pieces": [
@@ -2941,7 +2941,7 @@
           "source": {
             "location": "Crafted or guild traders",
             "type": "Crafted",
-            "tradeable": "Yes — another player can craft or trade it"
+            "tradeable": "Yes, another player can craft or trade it"
           },
           "pieces": [
             {
@@ -3014,7 +3014,7 @@
             "type": "Arena weapon",
             "zone": "Wrothgar",
             "access": "Maelstrom Arena / Orsinium access",
-            "tradeable": "No — account-bound collection"
+            "tradeable": "No, account-bound collection"
           },
           "pieces": [
             {
@@ -3052,7 +3052,7 @@
           "source": {
             "location": "Infinite Archive",
             "type": "Infinite Archive class set",
-            "tradeable": "No — collect from Infinite Archive rewards",
+            "tradeable": "No, collect from Infinite Archive rewards",
             "access": "Infinite Archive"
           },
           "pieces": [
@@ -3105,7 +3105,7 @@
           "source": {
             "location": "Trial or dungeon alternative; use a crafted set until acquired",
             "type": "Crafted",
-            "tradeable": "Yes — another player can craft or trade it",
+            "tradeable": "Yes, another player can craft or trade it",
             "notes": "Trial or dungeon alternative; use a crafted set until acquired"
           },
           "pieces": [
@@ -3200,7 +3200,7 @@
             "type": "Arena weapon",
             "zone": "Wrothgar",
             "access": "Maelstrom Arena / Orsinium access",
-            "tradeable": "No — account-bound collection"
+            "tradeable": "No, account-bound collection"
           },
           "pieces": [
             {

@@ -19,7 +19,7 @@ ATTB is built with Electron, React, Vite, SQLite through `better-sqlite3`, and e
 - Dark and light themes, ESO Plus notes, curated ESO resources, and optional trusted remote images.
 - Local SQLite persistence with pre-migration backups and a narrow sandboxed Electron preload API.
 
-## Bundled builds — the Mighty Seven
+## Bundled builds, the Mighty Seven
 
 | Class | Build |
 |---|---|
@@ -118,9 +118,9 @@ The packaged app stores local data under:
 
 Important locations include:
 
-- `attb.db` — active character and settings database
-- `Backups\` — automatic pre-migration database copies
-- `ImageCache\` — optional trusted remote build images
+- `attb.db`, active character and settings database
+- `Backups\`, automatic pre-migration database copies
+- `ImageCache\`, optional trusted remote build images
 
 ATTB has no account system and does not upload character data. External Help & Tools links open in the default browser. Remote build images remain disabled unless the user explicitly enables them.
 
@@ -138,12 +138,14 @@ ATTB currently uses **build schema 3**. The bundled builds demonstrate the compl
 - Champion Point core paths and optional branches
 - variants, consumables, warnings, and tips
 
-Reference material:
+Build-author resources:
 
-- [`docs/reference/BUILD_FORMAT.md`](docs/reference/BUILD_FORMAT.md)
-- [`docs/reference/BUILD_SCHEMA.json`](docs/reference/BUILD_SCHEMA.json)
-- [`docs/reference/SKILL_CATALOG.md`](docs/reference/SKILL_CATALOG.md)
-- [`docs/reference/BUILD_CREATOR_PLAN.md`](docs/reference/BUILD_CREATOR_PLAN.md)
+- [`docs/reference/BUILD_JSON_GUIDE.md`](docs/reference/BUILD_JSON_GUIDE.md), complete setup and field reference
+- [`docs/reference/BUILD_TEMPLATE.json`](docs/reference/BUILD_TEMPLATE.json), valid importable starter build
+- [`docs/reference/BUILD_SCHEMA.json`](docs/reference/BUILD_SCHEMA.json), machine-readable schema
+- [`docs/reference/SKILL_CATALOG.md`](docs/reference/SKILL_CATALOG.md), stable line and skill IDs
+- [`docs/reference/UPDATING_FOR_GAME_PATCHES.md`](docs/reference/UPDATING_FOR_GAME_PATCHES.md), how to update the catalog and builds for a new ESO patch
+- [`docs/reference/BUILD_CREATOR_PLAN.md`](docs/reference/BUILD_CREATOR_PLAN.md), future visual editor plan
 
 Schema 1 and 2 were pre-release formats and are intentionally unsupported by the current importer.
 
@@ -159,7 +161,7 @@ ATTB/
 ├── resources/             Bundled builds, catalog, artwork, and icons
 ├── src/                   Electron main process, shared logic, and React renderer
 ├── tests/                 Node/Electron regression suite
-├── tools/                 Catalog/build generators and test launcher
+├── tools/                 Catalog generator, icon fetcher, and test launcher
 ├── package.json
 └── vite.config.js
 ```
@@ -190,7 +192,7 @@ Contributions are welcome. Before submitting a pull request:
 
 ## Current version
 
-**v0.5.7** retains the v0.5.6 UI and icon improvements while fixing the compact sidebar so its logo, navigation icons, active states, footer actions, divider, and collapse control remain centered inside the 60-pixel rail.
+**v1.0.0** is the first public release. It covers the full character-tracking workflow: first-character setup, multi-character switching, the Mighty Seven bundled builds, next-purchase recommendations, build versus personal Skill Point accounting, piece-by-piece gear tracking, structured hotbars and rotations, Champion Point core and optional branches, attributes, variants, character backup import and export, and build JSON inspection. The visual Build Creator is the next planned module; builds are authored as schema-3 JSON until then.
 
 ## License and game disclaimer
 

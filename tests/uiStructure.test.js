@@ -204,3 +204,26 @@ test('collapsed sidebar uses compact centered controls instead of expanded spaci
   assert.match(css, /\.app-shell\.collapsed \.sidebar-footer \.collapse-btn\{[^}]*height:42px[^}]*place-items:center/,
     'the collapse control should remain centered beneath a full-width divider')
 })
+
+test('shipped text stays free of em and en dashes, which the project style avoids', () => {
+  // The one deliberate exception is the minimize glyph in the window title bar, which is a real dash
+  // character used as an icon, not prose. Everything else uses commas, colons, or hyphens.
+  const EM = '\u2014', EN = '\u2013'
+  const exts = ['.js', '.jsx', '.cjs', '.mjs', '.css', '.md', '.json', '.py', '.html', '.txt', '.sql']
+  const skipDirs = new Set(['node_modules', 'build', 'dist', '.git'])
+  const offenders = []
+  const walk = dir => {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      if (entry.isDirectory()) { if (!skipDirs.has(entry.name)) walk(path.join(dir, entry.name)); continue }
+      if (!exts.some(ext => entry.name.endsWith(ext))) continue
+      const full = path.join(dir, entry.name)
+      const rel = path.relative(root, full)
+      if (rel === path.join('src', 'renderer', 'components', 'TitleBar.jsx')) continue
+      const text = fs.readFileSync(full, 'utf8')
+      const count = (text.split(EM).length - 1) + (text.split(EN).length - 1)
+      if (count) offenders.push(`${rel} (${count})`)
+    }
+  }
+  walk(root)
+  assert.deepEqual(offenders, [], `these files contain em or en dashes:\n${offenders.join('\n')}`)
+})

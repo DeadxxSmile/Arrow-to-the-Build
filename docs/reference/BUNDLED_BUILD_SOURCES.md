@@ -1,18 +1,18 @@
 # Mighty Seven build research
 
-The seven bundled JSON files are ATTB-authored progression guides, not verbatim copies of another creator's page. They combine current Update 50 pure-class skill setups with ATTB's own Level 1–50 unlock order, temporary skills, prerequisite rows, CP graph, gear stages, solo/duo warnings, and disabled placeholders for future organized-group and PvP variants.
+The seven bundled JSON files are ATTB-authored progression guides, not verbatim copies of another creator's page. They combine current Update 50 pure-class skill setups with ATTB's own Level 1-50 unlock order, temporary skills, prerequisite rows, CP graph, gear stages, solo/duo warnings, and disabled placeholders for future organized-group and PvP variants.
 
 Verified: **2026-08-05** for **ESO Update 50**.
 
 ## Primary current references
 
-- Hyperioxes — Magicka Dragonknight Solo Build: `https://hyperioxes.com/eso/solo/magicka-dragonknight-build`
-- Hyperioxes — Magicka Sorcerer Solo Build: `https://hyperioxes.com/eso/solo/magicka-sorcerer-build`
-- Hyperioxes — Stamina Nightblade Solo Build: `https://hyperioxes.com/eso/solo/stamina-nightblade-build`
-- Hyperioxes — Magicka Warden Solo Build: `https://hyperioxes.com/eso/solo/magicka-warden-build`
-- Hyperioxes — Stamina Necromancer Solo Build: `https://hyperioxes.com/eso/solo/stamina-necromancer-build`
-- Skinny Cheeks — Update 50 Arcanist builds: `https://www.skinnycheeks.gg/arcanist`
-- Skinny Cheeks — Update 50 Class Masteries: `https://www.skinnycheeks.gg/class-masteries`
+- Hyperioxes, Magicka Dragonknight Solo Build: `https://hyperioxes.com/eso/solo/magicka-dragonknight-build`
+- Hyperioxes, Magicka Sorcerer Solo Build: `https://hyperioxes.com/eso/solo/magicka-sorcerer-build`
+- Hyperioxes, Stamina Nightblade Solo Build: `https://hyperioxes.com/eso/solo/stamina-nightblade-build`
+- Hyperioxes, Magicka Warden Solo Build: `https://hyperioxes.com/eso/solo/magicka-warden-build`
+- Hyperioxes, Stamina Necromancer Solo Build: `https://hyperioxes.com/eso/solo/stamina-necromancer-build`
+- Skinny Cheeks, Update 50 Arcanist builds: `https://www.skinnycheeks.gg/arcanist`
+- Skinny Cheeks, Update 50 Class Masteries: `https://www.skinnycheeks.gg/class-masteries`
 
 ## Editorial policy
 

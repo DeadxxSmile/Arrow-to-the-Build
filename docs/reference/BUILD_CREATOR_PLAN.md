@@ -1,4 +1,4 @@
-# ATTB Build Creator — Planned Module
+# ATTB Build Creator: Planned Module
 
 The Build Creator is intentionally postponed until the character tracker, skill catalog, and backup format are stable. The sidebar already reserves its future location.
 
