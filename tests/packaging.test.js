@@ -86,7 +86,7 @@ test('source, tests, and tooling stay out of the installer', () => {
   const devOnly = [
     'src/renderer/App.jsx', 'src/renderer/utils/buildLogic.js', 'src/index.jsx',
     'tests/persistence.test.js', 'tests/electron-stub.js',
-    'tools/run-tests.cjs', 'tools/generate_skill_catalog.py', 'tools/generate_mighty_seven_builds.py', 'tools/upgrade_schema3_builds.py', 'docs/reference/BUILD_FORMAT.md', 'docs/index.html',
+    'tools/run-tests.cjs', 'tools/fetch-skill-icons.mjs', 'tools/generate_skill_catalog.py', 'tools/generate_mighty_seven_builds.py', 'tools/upgrade_schema3_builds.py', 'docs/reference/BUILD_FORMAT.md', 'docs/index.html',
     'vite.config.js', 'index.html', 'README.md'
   ]
   for (const file of devOnly) assert.equal(shipped(file), false, `${file} should not be in the installer`)
@@ -160,6 +160,7 @@ test('the public repository has one build script, one root guide, a license, and
   assert.equal(fs.existsSync(buildBat), true, 'BUILD-ATTB.bat should live in the repository root')
   const script = fs.readFileSync(buildBat, 'utf8')
   assert.match(script, /npm ci --include=dev --no-audit --no-fund/i)
+  assert.match(script, /npm run fetch:icons/i)
   assert.match(script, /npm test/i)
   assert.match(script, /npm run build/i)
   assert.doesNotMatch(script, /start\s+"".*ATTB-Setup|Launching installer/i,

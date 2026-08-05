@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { useApp } from '../App'
 import EmptyState from './EmptyState'
-import CachedImage from '../components/CachedImage'
+import SkillIcon from '../components/SkillIcon'
 import { recommendedUnlocks, unlockState } from '../utils/buildLogic'
 import { effectiveAllocation } from '../utils/catalogLogic'
 
@@ -11,7 +11,7 @@ function SkillItem({ item, build, character, lineName, toggleUnlock, compact = f
   const blocked = state === 'blocked' || state === 'locked'
   return <label className={`skill-summary-item ${state} ${compact ? 'compact' : ''}`}>
     <input type="checkbox" checked={state === 'complete'} onChange={e => toggleUnlock(item.id, e.target.checked)} aria-label={item.name} />
-    <CachedImage src={item.image} alt={item.name} className="skill-icon" />
+    <SkillIcon skillId={item.catalog_skill_id} name={item.name} image={item.image} size={compact ? 'compact' : 'list'} />
     <div>
       <div className="skill-title-line">
         <b>{item.name}</b>

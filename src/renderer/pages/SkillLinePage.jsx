@@ -2,7 +2,7 @@ import React from 'react'
 import { Navigate, Link, useParams } from 'react-router-dom'
 import { useApp } from '../App'
 import EmptyState from './EmptyState'
-import CachedImage from '../components/CachedImage'
+import SkillIcon from '../components/SkillIcon'
 import NumberStepper from '../components/NumberStepper'
 import { applyAllocationChange } from '../utils/buildLogic'
 import { buildItemsForCatalogSkill, effectiveAllocation, itemBuildMeta } from '../utils/catalogLogic'
@@ -64,7 +64,7 @@ export default function SkillLinePage() {
     return <article className={`eso-ability-card ${allocation ? 'selected' : ''}`}>
       <div className="eso-ability-main">
         <button className={`eso-skill-toggle ${allocation ? 'selected' : ''}`} onClick={() => updateAllocation(skill, allocation ? 0 : 1)} aria-pressed={!!allocation} aria-label={`${allocation ? 'Unselect' : 'Select'} ${skill.name}`}>{allocation ? '✓' : '+'}</button>
-        <div className="eso-skill-icon">{skillImage(skill) ? <CachedImage src={skillImage(skill)} alt={skill.name} /> : <span aria-hidden="true">{skill.type === 'Ultimate' ? 'U' : 'A'}</span>}</div>
+        <div className="eso-skill-icon"><SkillIcon skillId={skill.id} name={skill.name} image={skillImage(skill)} size="line" /></div>
         <div className="eso-skill-copy">
           <div className="eso-skill-heading"><h3>{skill.name}</h3>{order && <span className="unlock-order">Build #{order}</span>}<SkillBadges skill={skill} /></div>
           <p>{skill.type}{required ? ` · Unlocks at line rank ${required}` : ' · Unlock timing varies by line progression'}</p>
@@ -76,7 +76,7 @@ export default function SkillLinePage() {
         const morphMeta = itemBuildMeta(build, line.id, morph)
         const morphOrder = buildOrderLabel(morph)
         return <button type="button" key={morph.id} className={`morph-choice ${morphPoints ? 'selected' : ''}`} onClick={() => updateAllocation(morph, morphPoints ? 0 : 1)} disabled={!allocation && morphPoints === 0} aria-pressed={!!morphPoints} title={!allocation && morphPoints === 0 ? `Select ${skill.name} first` : undefined}>
-          <span className="branch-mark" aria-hidden="true">{morphPoints ? '◆' : '◇'}</span>
+          <span className="morph-icon-wrap"><SkillIcon skillId={morph.id} name={morph.name} image={skillImage(morph)} size="morph" />{morphPoints > 0 && <i aria-hidden="true">✓</i>}</span>
           <div><div><b>{morph.name}</b>{morphOrder && <em>Build #{morphOrder}</em>}</div><SkillBadges skill={morph} /><small>{morphMeta.notes}</small></div>
         </button>
       })}</div>}
@@ -89,7 +89,7 @@ export default function SkillLinePage() {
     const order = buildOrderLabel(skill)
     const requiredRanks = meta.linked.map(item => item.required_rank).filter(Boolean)
     return <article className={`eso-passive-row ${allocation ? 'selected' : ''}`}>
-      <div className="eso-passive-icon" aria-hidden="true">P</div>
+      <div className="eso-passive-icon"><SkillIcon skillId={skill.id} name={skill.name} image={skillImage(skill)} size="passive" /></div>
       <div className="eso-skill-copy">
         <div className="eso-skill-heading"><h3>{skill.name}</h3>{order && <span className="unlock-order">Build #{order}</span>}<SkillBadges skill={skill} /></div>
         <p>{skill.currency === 'class_mastery_point' ? 'Class Mastery choice' : 'Passive'} · {skill.max_points || 1} rank{(skill.max_points || 1) === 1 ? '' : 's'}{requiredRanks.length ? ` · Build ranks ${requiredRanks.join(' / ')}` : ''}</p>
@@ -104,7 +104,7 @@ export default function SkillLinePage() {
     const meta = itemBuildMeta(build, line.id, skill)
     const order = buildOrderLabel(skill)
     return <article className={`eso-passive-row ${allocation ? 'selected' : ''}`}>
-      <div className="eso-passive-icon" aria-hidden="true">S</div>
+      <div className="eso-passive-icon"><SkillIcon skillId={skill.id} name={skill.name} image={skillImage(skill)} size="passive" /></div>
       <div className="eso-skill-copy">
         <div className="eso-skill-heading"><h3>{skill.name}</h3>{order && <span className="unlock-order">Build #{order}</span>}<SkillBadges skill={skill} /></div>
         <p>{skill.type} · tracking only</p><small>{meta.notes}</small>

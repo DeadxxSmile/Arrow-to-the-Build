@@ -41,7 +41,7 @@ Build research and attribution notes are in [`docs/reference/BUNDLED_BUILD_SOURC
 
 - Windows 10 or Windows 11
 - A current Node.js LTS installation with npm
-- Internet access during dependency installation
+- Internet access during dependency installation and the optional build-time skill-icon download
 
 ### One-step build
 
@@ -52,8 +52,9 @@ Build research and attribution notes are in [`docs/reference/BUNDLED_BUILD_SOURC
 The script performs these steps in order:
 
 1. Installs the exact dependencies from `package-lock.json` with `npm ci`.
-2. Runs the complete test suite through Electron’s embedded Node runtime.
-3. Builds the Vite renderer and creates the NSIS installer.
+2. Downloads available ESO skill icons from UESP into the local build cache; unavailable icons keep ATTB’s initials fallback.
+3. Runs the complete test suite through Electron’s embedded Node runtime.
+4. Builds the Vite renderer and creates the NSIS installer.
 
 The finished installer is written to:
 
@@ -91,6 +92,12 @@ Build only the production renderer:
 
 ```powershell
 npm run build:renderer
+```
+
+Refresh the local skill-icon cache:
+
+```powershell
+npm run fetch:icons
 ```
 
 Build the complete Windows package:
@@ -148,7 +155,7 @@ ATTB/
 ├── LICENSE
 ├── README.md
 ├── docs/                  GitHub Pages site and technical references
-├── public/                Vite public assets
+├── public/                Vite public assets and generated skill-icon cache
 ├── resources/             Bundled builds, catalog, artwork, and icons
 ├── src/                   Electron main process, shared logic, and React renderer
 ├── tests/                 Node/Electron regression suite
@@ -183,7 +190,7 @@ Contributions are welcome. Before submitting a pull request:
 
 ## Current version
 
-**v0.5.5** cleans the public repository layout, consolidates documentation, adds the GitHub Pages site and GPL license, introduces the single non-launching build script, simplifies Race/Alliance labels, and gives the character header three truly balanced columns with aligned controls.
+**v0.5.7** retains the v0.5.6 UI and icon improvements while fixing the compact sidebar so its logo, navigation icons, active states, footer actions, divider, and collapse control remain centered inside the 60-pixel rail.
 
 ## License and game disclaimer
 
@@ -191,4 +198,6 @@ Copyright © 2026 DeadxxSmile.
 
 ATTB is licensed under the **GNU General Public License v3.0 only**. See [`LICENSE`](LICENSE).
 
-Arrow to the Build is an unofficial community project. It is not affiliated with, endorsed by, or sponsored by ZeniMax Media, Bethesda Softworks, or The Elder Scrolls Online. All game names, marks, and game artwork belong to their respective owners.
+Arrow to the Build is an unofficial community project. It is not affiliated with, endorsed by, or sponsored by ZeniMax Media, Bethesda Softworks, or The Elder Scrolls Online. All game names, marks, and game artwork belong to their respective owners. Skill icons downloaded by the build helper remain third-party game assets and are not covered by ATTB’s GPL license.
+
+

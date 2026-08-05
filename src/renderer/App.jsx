@@ -18,7 +18,7 @@ const primaryNav = [
   ['/consumables', 'Consumables / Other', '⚗'], ['/help/tips', 'Help & Tools', '?']
 ]
 const helpNav = [
-  ['/help/tips', 'Gameplay Tips', '◆'], ['/help/import-export', 'Import / Export', '⇄'], ['/help/resources', 'ESO Resources', '↗']
+  ['/help/tips', 'Gameplay Tips', '◆'], ['/help/resources', 'ESO Resources', '↗'], ['/help/import-export', 'Import / Export', '⇄']
 ]
 const groupOrder = ['Class', 'Weapon', 'Armor', 'World', 'Guild', 'Alliance War', 'Racial', 'Craft', 'System']
 
@@ -161,7 +161,7 @@ export default function App() {
     <TitleBar />
     <div className={`app-shell ${collapsed ? 'collapsed' : ''}`}>
       <aside className="sidebar">
-        <div className="sidebar-logo"><img src="./logo.png" alt="" />{!collapsed && <div><strong>ATTB</strong><small>Arrow to the Build</small></div>}</div>
+        <div className="sidebar-logo"><img src="./logo.png" alt="" />{!collapsed && <div><strong>ATTB</strong></div>}</div>
         <nav className="sidebar-nav" aria-label="Main">{primaryNav.map(([to, label, icon]) => <NavLink key={to} to={to} className={({ isActive }) => `nav-item ${(isActive || (to === '/skills' && location.pathname.startsWith('/skills')) || (to === '/help/tips' && location.pathname.startsWith('/help'))) ? 'active' : ''}`} title={collapsed ? label : ''}><span aria-hidden="true">{icon}</span>{collapsed ? <span className="sr-only">{label}</span> : <b>{label}</b>}</NavLink>)}</nav>
         <div className="sidebar-footer">
           <button className="nav-item build-creator-stub" disabled title="Planned after core tracking is stable"><span aria-hidden="true">✎</span>{!collapsed && <><b>Build Creator</b><em>Soon</em></>}</button>

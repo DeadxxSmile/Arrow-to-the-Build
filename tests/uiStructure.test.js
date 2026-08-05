@@ -67,7 +67,7 @@ test('the character header uses balanced columns and aligned field labels', () =
   const bar = [...css.matchAll(/\.character-bar\{[^}]*\}/g)].map(match => match[0]).find(rule => rule.includes('display:grid')) || ''
   assert.match(bar, /grid-template-columns:minmax\(0,1fr\) auto minmax\(0,1fr\)/,
     'equal outer tracks keep the level control at the true center of the window')
-  assert.match(css, /\.topbar-field\{[^}]*grid-template-rows:12px 48px/,
+  assert.match(css, /\.topbar-field\{[^}]*grid-template-rows:14px 58px/,
     'all three controls should share the same label and field rows')
 })
 
@@ -141,4 +141,66 @@ test('collapsible stages use the real open attribute, not the unrecognized defau
     assert.doesNotMatch(source, /defaultOpen/, `${file} must not use defaultOpen on <details>`)
     assert.match(source, /<details[^>]*\bopen=\{/, `${file} should set the initial open state with open={...}`)
   }
+})
+
+test('sidebar rows share one width and the collapse divider spans the full column', () => {
+  const css = read('src/renderer/styles/App.css')
+  assert.match(css, /\.sidebar-nav\{[^}]*scrollbar-gutter:auto[^}]*padding:14px 12px!important/,
+    'the main navigation should not reserve a phantom scrollbar gutter')
+  assert.match(css, /\.sidebar-nav \.nav-item\{[^}]*width:100%[^}]*min-height:48px/,
+    'primary navigation rows should fill the same inner width')
+  assert.match(css, /\.sidebar-footer \.nav-item\{[^}]*margin:0 12px!important/,
+    'footer actions should use the same horizontal inset as primary navigation')
+  assert.match(css, /\.sidebar-footer \.collapse-btn\{[^}]*width:100%[^}]*margin:0[^}]*border-top:/,
+    'the collapse divider should span the complete sidebar')
+})
+
+test('the taller identity and character header use larger aligned controls', () => {
+  const app = read('src/renderer/App.jsx')
+  const css = read('src/renderer/styles/App.css')
+  assert.doesNotMatch(app, /<small>Arrow to the Build<\/small>/,
+    'the sidebar should not repeat the product name beneath ATTB')
+  assert.match(css, /\.sidebar-logo,\.character-bar\{height:108px;min-height:108px\}/)
+  assert.match(css, /\.topbar-field\{[^}]*grid-template-rows:14px 58px/)
+  assert.match(css, /\.character-switcher-trigger\{[^}]*height:58px/)
+  assert.match(css, /\.sidebar-logo img\{width:52px;height:52px\}/)
+})
+
+test('Help and Tools orders reference pages before import and export', () => {
+  const app = read('src/renderer/App.jsx')
+  const tips = app.indexOf("'/help/tips'")
+  const resources = app.indexOf("'/help/resources'")
+  const transfer = app.indexOf("'/help/import-export'")
+  assert.ok(tips >= 0 && resources > tips && transfer > resources,
+    'Gameplay Tips, ESO Resources, then Import / Export should be the visible order')
+})
+
+test('skill icons have a generated local source and appear across bars and skill pages', () => {
+  const component = read('src/renderer/components/SkillIcon.jsx')
+  const skillPage = read('src/renderer/pages/SkillLinePage.jsx')
+  const overview = read('src/renderer/pages/SkillsPage.jsx')
+  const pkg = JSON.parse(read('package.json'))
+  assert.match(component, /\.\/skill-icons\/\$\{encodeURIComponent\(skillId\)\}\.png/)
+  assert.match(component, /onError=\{\(\) => setLocalFailed\(true\)\}/)
+  assert.match(skillPage, /<SkillIcon skillId=\{skill\.id\}/)
+  assert.match(skillPage, /<SkillIcon skillId=\{morph\.id\}/)
+  assert.match(overview, /<SkillIcon skillId=\{item\.catalog_skill_id\}/)
+  assert.equal(pkg.scripts['fetch:icons'], 'node tools/fetch-skill-icons.mjs')
+})
+
+test('the current rotation stage draws one uninterrupted outline', () => {
+  const css = read('src/renderer/styles/App.css')
+  assert.match(css, /\.rotation-stage-v3\.current:after\{[^}]*position:absolute[^}]*inset:0[^}]*border:2px solid var\(--accent\)/)
+})
+
+test('collapsed sidebar uses compact centered controls instead of expanded spacing', () => {
+  const css = read('src/renderer/styles/App.css')
+  assert.match(css, /\.app-shell\.collapsed \.sidebar-logo\{[^}]*padding:0[^}]*justify-content:center/,
+    'the compact logo should be centered without expanded padding')
+  assert.match(css, /\.app-shell\.collapsed \.sidebar-logo img\{[^}]*width:38px[^}]*height:38px/,
+    'the 52px expanded logo cannot fit comfortably in a 60px sidebar')
+  assert.match(css, /\.app-shell\.collapsed \.sidebar-nav \.nav-item,[\s\S]*?width:46px[\s\S]*?justify-content:center/,
+    'collapsed navigation and footer actions should be fixed-width centered squares')
+  assert.match(css, /\.app-shell\.collapsed \.sidebar-footer \.collapse-btn\{[^}]*height:42px[^}]*place-items:center/,
+    'the collapse control should remain centered beneath a full-width divider')
 })

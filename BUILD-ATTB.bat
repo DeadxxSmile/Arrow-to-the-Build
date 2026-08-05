@@ -28,17 +28,24 @@ if not defined ATTB_VERSION (
   goto :failed
 )
 
-echo [1/3] Installing locked dependencies...
+echo [1/4] Installing locked dependencies...
 call npm ci --include=dev --no-audit --no-fund
 if errorlevel 1 goto :failed
 
 echo.
-echo [2/3] Running tests...
+echo [2/4] Downloading and updating ESO skill icons...
+call npm run fetch:icons
+if errorlevel 1 (
+  echo [WARNING] Skill icon download failed. ATTB will use letter fallbacks.
+)
+
+echo.
+echo [3/4] Running tests...
 call npm test
 if errorlevel 1 goto :failed
 
 echo.
-echo [3/3] Building the Windows installer...
+echo [4/4] Building the Windows installer...
 if exist dist rmdir /s /q dist
 call npm run build
 if errorlevel 1 goto :failed

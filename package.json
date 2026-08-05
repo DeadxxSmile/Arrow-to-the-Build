@@ -1,6 +1,6 @@
 {
   "name": "arrow-to-the-build",
-  "version": "0.5.5",
+  "version": "0.5.7",
   "description": "Local ESO character build and progression companion",
   "main": "src/main/main.js",
   "imports": {
@@ -11,6 +11,7 @@
     "dev": "npm run start",
     "dev:renderer": "vite --host 127.0.0.1 --port 5173",
     "dev:electron": "electron .",
+    "fetch:icons": "node tools/fetch-skill-icons.mjs",
     "build:renderer": "vite build",
     "build": "npm run build:renderer && electron-builder",
     "preview": "vite preview --host 127.0.0.1 --port 4173",

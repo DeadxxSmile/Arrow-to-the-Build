@@ -22,3 +22,6 @@ ImageCache/
 Thumbs.db
 desktop.ini
 .DS_Store
+
+# Build-time ESO skill icon cache
+public/skill-icons/*.png
