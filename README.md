@@ -4,7 +4,7 @@
 
 ATTB is built with Electron, React, Vite, SQLite through `better-sqlite3`, and electron-builder/NSIS. Character data stays on the local computer. Build definitions are ordinary human-readable JSON files.
 
-[Project website](https://deadxxsmile.github.io/ATTB/) · [Source repository](https://github.com/DeadxxSmile/ATTB) · [Report an issue](https://github.com/DeadxxSmile/ATTB/issues)
+[Project website](https://deadxxsmile.github.io/Arrow-to-the-Build/) · [Download v1.0.0](https://github.com/DeadxxSmile/Arrow-to-the-Build/releases/tag/v1.0.0) · [Source repository](https://github.com/DeadxxSmile/Arrow-to-the-Build) · [Report an issue](https://github.com/DeadxxSmile/Arrow-to-the-Build/issues)
 
 ## Highlights
 
@@ -168,7 +168,7 @@ ATTB/
 
 ## Security and issue reporting
 
-Please report reproducible bugs through [GitHub Issues](https://github.com/DeadxxSmile/ATTB/issues). For a security-sensitive issue, avoid posting private character backups, local paths, or exploit details publicly; contact the repository owner through the profile information on GitHub first.
+Please report reproducible bugs through [GitHub Issues](https://github.com/DeadxxSmile/Arrow-to-the-Build/issues). For a security-sensitive issue, avoid posting private character backups, local paths, or exploit details publicly; contact the repository owner through the profile information on GitHub first.
 
 Useful diagnostic information includes:
 
@@ -201,5 +201,4 @@ Copyright © 2026 DeadxxSmile.
 ATTB is licensed under the **GNU General Public License v3.0 only**. See [`LICENSE`](LICENSE).
 
 Arrow to the Build is an unofficial community project. It is not affiliated with, endorsed by, or sponsored by ZeniMax Media, Bethesda Softworks, or The Elder Scrolls Online. All game names, marks, and game artwork belong to their respective owners. Skill icons downloaded by the build helper remain third-party game assets and are not covered by ATTB’s GPL license.
-
 
