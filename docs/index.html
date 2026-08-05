@@ -6,14 +6,16 @@
   <title>Arrow to the Build: Interactive ESO character progression</title>
   <meta name="description" content="Arrow to the Build is a free, offline-first Windows companion for The Elder Scrolls Online with starter builds for every class, character-specific progression, gear roadmaps, skill tracking, hotbars, rotations, and human-readable JSON builds.">
   <meta name="theme-color" content="#07131c">
+  <link rel="canonical" href="https://deadxxsmile.github.io/Arrow-to-the-Build/">
   <meta property="og:title" content="Arrow to the Build">
   <meta property="og:description" content="Turn an ESO build guide into a character-specific progression plan. Seven built-in class builds, local tracking, and human-readable JSON.">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="assets/social/attb-og.webp">
+  <meta property="og:url" content="https://deadxxsmile.github.io/Arrow-to-the-Build/">
+  <meta property="og:image" content="https://deadxxsmile.github.io/Arrow-to-the-Build/assets/social/attb-og.webp">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Arrow to the Build">
   <meta name="twitter:description" content="An offline-first ESO progression companion with built-in class builds, skill tracking, gear roadmaps, and structured hotbars.">
-  <meta name="twitter:image" content="assets/social/attb-og.webp">
+  <meta name="twitter:image" content="https://deadxxsmile.github.io/Arrow-to-the-Build/assets/social/attb-og.webp">
   <link rel="icon" href="assets/logo/attb-logo.png">
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -34,7 +36,8 @@
           <a href="#workflow">How it works</a>
           <a href="#screenshots">Screenshots</a>
           <a href="#build-json">Build JSON</a>
-          <a class="button compact" href="https://github.com/DeadxxSmile/ATTB" target="_blank" rel="noreferrer">GitHub</a>
+          <a href="https://github.com/DeadxxSmile/Arrow-to-the-Build/releases" target="_blank" rel="noreferrer">Releases</a>
+          <a class="button compact" href="https://github.com/DeadxxSmile/Arrow-to-the-Build" target="_blank" rel="noreferrer">GitHub</a>
         </div>
       </nav>
 
@@ -44,8 +47,9 @@
           <h1>Your build guide, turned into a plan for <em>your</em> character.</h1>
           <p class="hero-text">Arrow to the Build replaces static endgame screenshots with a character-specific roadmap. Record the level, ranks, skills, gear, and Champion Points you actually have, then see what to unlock, equip, and practice next.</p>
           <div class="cta-row">
-            <a class="button primary" href="https://github.com/DeadxxSmile/ATTB" target="_blank" rel="noreferrer">View source on GitHub</a>
-            <a class="button secondary" href="#build">Build for Windows</a>
+            <a class="button primary" href="https://github.com/DeadxxSmile/Arrow-to-the-Build/releases/tag/v1.0.0" target="_blank" rel="noreferrer">Download v1.0.0</a>
+            <a class="button secondary" href="https://github.com/DeadxxSmile/Arrow-to-the-Build" target="_blank" rel="noreferrer">View source on GitHub</a>
+            <a class="button ghost" href="#build">Build from source</a>
           </div>
           <p class="cta-note">Free and open-source. No account. No cloud sync. Character data stays on your PC.</p>
           <div class="meta-row" aria-label="Project details">
@@ -260,36 +264,47 @@
 <pre><code>{
   "schema_version": 3,
   "id": "my-arcanist-build",
-  "name": "My Arcanist Progression",
+  "name": "My Arcanist Build",
+  "game_version": "Update 50",
   "defaults": {
     "class": "Arcanist",
+    "race": "Dark Elf",
     "attributes": {
       "magicka": 0,
       "health": 0,
       "stamina": 64
     }
   },
-  "relevant_lines": [],
-  "unlock_order": [],
-  "phases": [],
-  "gear_stages": [],
-  "cp_plans": {}
+  "phases": [
+    {
+      "id": "levels-1-15",
+      "min_level": 1,
+      "max_level": 14,
+      "hotbars": {
+        "front": {
+          "slots": [
+            { "slot": 1, "catalog_skill_id": "..." }
+          ]
+        }
+      }
+    }
+  ]
 }</code></pre>
           </div>
         </div>
 
         <div class="author-grid">
-          <article class="card"><b>Start from a valid template</b><p>The included template imports successfully and demonstrates every major schema section without requiring comments or non-JSON syntax.</p></article>
-          <article class="card"><b>Use catalog IDs</b><p>Skill lines and purchases reference the bundled ESO catalog, so renamed display text does not destroy saved character progression.</p></article>
-          <article class="card"><b>Validate inside ATTB</b><p>Help &amp; Tools → Import / Export validates the file and reports duplicate IDs, bad morph chains, unknown skills, broken CP slots, and malformed gear data.</p></article>
+          <article class="card"><b>Start from a valid template</b><p>The included template imports immediately, uses real catalog IDs, and demonstrates every major schema section.</p></article>
+          <article class="card"><b>Validate before sharing</b><p>The app checks schema version, IDs, skill kinds, morph links, prerequisites, progression phases, gear pieces, CP plans, variants, and image safety.</p></article>
+          <article class="card"><b>Let known IDs supply icons</b><p>A build referencing catalog skills automatically inherits the local catalog metadata and downloaded skill artwork.</p></article>
         </div>
       </section>
 
       <section class="section resources-section">
-        <div class="section-heading">
-          <span class="eyebrow">Help &amp; Tools</span>
-          <h2>Guidance without locking you inside the app.</h2>
-          <p>Build-specific tips, JSON import/export, character backups, and trusted ESO references are collected in one place. External links open in the normal browser.</p>
+        <div class="section-heading centered">
+          <span class="eyebrow">Help & Tools</span>
+          <h2>Build guidance without pretending ATTB replaces the ESO community.</h2>
+          <p>The app includes build-specific warnings and curated links to official documentation, databases, build authors, and add-on resources.</p>
         </div>
         <div class="resources-grid">
           <button type="button" class="resources-shot elevated" data-lightbox="assets/screenshots/tips-tools.webp" data-title="Build-specific gameplay tips under Help & Tools">
@@ -311,7 +326,7 @@
           <div class="build-copy">
             <span class="eyebrow">Build for Windows</span>
             <h2>One batch file builds the installer from source.</h2>
-            <p>Clone or download the repository, install a current Node.js LTS release, and run <code>BUILD-ATTB.bat</code>. The script installs locked dependencies, fetches available skill icons, runs the tests, and creates the NSIS installer without launching it.</p>
+            <p>Download the ready-to-install Windows build from the <a href="https://github.com/DeadxxSmile/Arrow-to-the-Build/releases/tag/v1.0.0" target="_blank" rel="noreferrer">v1.0.0 release</a>, or clone the repository, install a current Node.js LTS release, and run <code>BUILD-ATTB.bat</code>. The script installs locked dependencies, fetches available skill icons, runs the tests, and creates the NSIS installer without launching it.</p>
             <ol>
               <li>Download or clone the <code>ATTB</code> repository.</li>
               <li>Open the repository folder and run <code>BUILD-ATTB.bat</code>.</li>
@@ -320,9 +335,9 @@
             <p class="warning"><b>Unsigned installer:</b> Windows may show Unknown Publisher, SmartScreen, or Smart App Control warnings. Review the source and only bypass warnings for a build you trust.</p>
           </div>
           <div class="build-actions">
-            <a class="button primary" href="https://github.com/DeadxxSmile/ATTB" target="_blank" rel="noreferrer">Open GitHub repository</a>
-            <a class="button secondary" href="https://github.com/DeadxxSmile/ATTB/issues" target="_blank" rel="noreferrer">Report an issue</a>
-            <a class="button ghost" href="reference/BUILD_JSON_GUIDE.md">Author a build JSON</a>
+            <a class="button primary" href="https://github.com/DeadxxSmile/Arrow-to-the-Build/releases/tag/v1.0.0" target="_blank" rel="noreferrer">Download v1.0.0</a>
+            <a class="button secondary" href="https://github.com/DeadxxSmile/Arrow-to-the-Build" target="_blank" rel="noreferrer">Open GitHub repository</a>
+            <a class="button ghost" href="https://github.com/DeadxxSmile/Arrow-to-the-Build/issues" target="_blank" rel="noreferrer">Report an issue</a>
           </div>
         </div>
       </section>
@@ -334,7 +349,8 @@
         <span><b>Arrow to the Build</b><small>ESO progression that follows the character you actually made.</small></span>
       </div>
       <div class="footer-links">
-        <a href="https://github.com/DeadxxSmile/ATTB" target="_blank" rel="noreferrer">GitHub</a>
+        <a href="https://github.com/DeadxxSmile/Arrow-to-the-Build" target="_blank" rel="noreferrer">GitHub</a>
+        <a href="https://github.com/DeadxxSmile/Arrow-to-the-Build/releases" target="_blank" rel="noreferrer">Releases</a>
         <a href="reference/BUILD_JSON_GUIDE.md">Build JSON Guide</a>
         <a href="reference/BUILD_TEMPLATE.json">Template</a>
         <a href="#top">Back to top</a>
@@ -348,7 +364,7 @@
     <button type="button" aria-label="Close screenshot">×</button>
     <div class="lightbox-body">
       <h3 id="lightbox-title"></h3>
-      <img src="" alt="">
+      <img id="lightbox-image" src="" alt="">
     </div>
   </dialog>
 
