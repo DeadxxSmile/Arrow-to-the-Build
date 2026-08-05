@@ -1,0 +1,83 @@
+{
+  "name": "arrow-to-the-build",
+  "version": "0.5.5",
+  "description": "Local ESO character build and progression companion",
+  "main": "src/main/main.js",
+  "imports": {
+    "#catalog": "./resources/data/eso-skill-catalog.json"
+  },
+  "scripts": {
+    "start": "concurrently \"npm run dev:renderer\" \"wait-on http://127.0.0.1:5173 && npm run dev:electron\"",
+    "dev": "npm run start",
+    "dev:renderer": "vite --host 127.0.0.1 --port 5173",
+    "dev:electron": "electron .",
+    "build:renderer": "vite build",
+    "build": "npm run build:renderer && electron-builder",
+    "preview": "vite preview --host 127.0.0.1 --port 4173",
+    "rebuild": "electron-rebuild -f -w better-sqlite3",
+    "test": "node tools/run-tests.cjs",
+    "check": "npm test && npm run build:renderer",
+    "audit:runtime": "npm audit --omit=dev",
+    "audit:all": "npm audit",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "dependencies": {
+    "better-sqlite3": "12.9.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-router-dom": "6.30.4"
+  },
+  "devDependencies": {
+    "@electron/rebuild": "4.0.3",
+    "@vitejs/plugin-react": "5.0.4",
+    "concurrently": "9.2.1",
+    "electron": "41.2.0",
+    "electron-builder": "26.8.1",
+    "vite": "7.1.7",
+    "wait-on": "9.0.5"
+  },
+  "build": {
+    "appId": "com.deadxxsmile.attb",
+    "productName": "Arrow to the Build",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "build/**/*",
+      "src/main/**/*",
+      "src/shared/**/*",
+      "resources/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "resources/art/ATTB.ico",
+      "requestedExecutionLevel": "asInvoker"
+    },
+    "artifactName": "ATTB-Setup-${version}.${ext}",
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "allowElevation": true,
+      "installerIcon": "resources/art/ATTB.ico",
+      "uninstallerIcon": "resources/art/ATTB.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Arrow to the Build",
+      "runAfterFinish": true
+    },
+    "asarUnpack": [
+      "**/*.node"
+    ]
+  },
+  "author": "DeadxxSmile",
+  "license": "GPL-3.0-only",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DeadxxSmile/ATTB.git"
+  },
+  "homepage": "https://deadxxsmile.github.io/ATTB/",
+  "bugs": {
+    "url": "https://github.com/DeadxxSmile/ATTB/issues"
+  }
+}

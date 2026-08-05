@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Arrow to the Build — Interactive ESO progression companion</title>
+  <meta name="description" content="Arrow to the Build is a free, open-source Windows companion that turns Elder Scrolls Online build guides into character-specific progression checklists.">
+  <meta property="og:title" content="Arrow to the Build">
+  <meta property="og:description" content="Track ESO skills, Champion Points, gear, hotbars, rotations, and character-specific progression — locally and offline-first.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="assets/screenshots/current-levels.webp">
+  <meta name="theme-color" content="#081018">
+  <link rel="icon" href="assets/logo/attb-logo.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="site-shell">
+    <header class="hero" id="top">
+      <nav class="topbar" aria-label="Primary navigation">
+        <a class="brand" href="#top"><img src="assets/logo/attb-logo.png" alt=""><span>Arrow to the Build</span></a>
+        <div class="topbar-links">
+          <a href="#features">Features</a>
+          <a href="#screenshots">Screenshots</a>
+          <a href="#build">Build</a>
+          <a class="button compact" href="https://github.com/DeadxxSmile/ATTB" target="_blank" rel="noreferrer">GitHub</a>
+        </div>
+      </nav>
+
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <span class="eyebrow">Offline-first ESO progression companion</span>
+          <h1>Static build guides become a plan for <em>your</em> character.</h1>
+          <p>Arrow to the Build tracks the levels, skill lines, purchases, gear, Champion Points, hotbars, and rotations that matter to the character you actually made—without pretending every player unlocks everything at the same character level.</p>
+          <div class="cta-row">
+            <a class="button primary" href="https://github.com/DeadxxSmile/ATTB" target="_blank" rel="noreferrer">View source on GitHub</a>
+            <a class="button secondary" href="#build">Build for Windows</a>
+          </div>
+          <div class="meta-row">
+            <span>v0.5.5</span><span>Windows</span><span>Seven bundled classes</span><span>Local SQLite</span><span>GPL-3.0</span>
+          </div>
+        </div>
+        <button class="hero-shot elevated" type="button" data-lightbox="assets/screenshots/current-levels.webp" aria-label="Open Current Levels screenshot">
+          <img src="assets/screenshots/current-levels.webp" alt="ATTB Current Levels page showing character progression and Skill Point totals">
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <section class="section" id="features">
+        <div class="section-heading"><span class="eyebrow">Why ATTB</span><h2>Progression guidance instead of another static bar screenshot.</h2><p>ATTB keeps recommendations transparent, editable, and tied to the ranks and purchases recorded for each character.</p></div>
+        <div class="feature-grid">
+          <article class="card"><b>Character-specific progression</b><p>Track real level, race, alliance, attributes, CP totals, skill-line ranks, and every selected ability or passive.</p></article>
+          <article class="card"><b>Next-step recommendations</b><p>Catalog IDs, prerequisites, morph requirements, passive ranks, and build priorities determine what is actually available next.</p></article>
+          <article class="card"><b>Piece-by-piece equipment</b><p>Leveling, starter, intermediate, and final stages include individual armor, jewelry, and weapon slots plus acquisition details.</p></article>
+          <article class="card"><b>ESO-inspired hotbars</b><p>Each progression phase shows front bar, back bar, ultimate slots, and the rotation or priority system beneath them.</p></article>
+          <article class="card"><b>The Mighty Seven</b><p>One bundled pure-class Solo / Duo PvE progression build for every ESO class, ready on first launch.</p></article>
+          <article class="card"><b>Offline-first and human-readable</b><p>Characters live in local SQLite. Builds and backups remain ordinary JSON that can be inspected and shared.</p></article>
+        </div>
+      </section>
+
+      <section class="section split-section">
+        <div>
+          <span class="eyebrow">The Mighty Seven</span>
+          <h2>Start with any class.</h2>
+          <p>The launch bundle includes Arcanist, Dragonknight, Necromancer, Nightblade, Sorcerer, Templar, and Warden progression builds. Each is a practical Solo / Duo baseline with structured phases, gear stages, CP paths, consumables, warnings, and final-build goals.</p>
+        </div>
+        <div class="class-grid" aria-label="Bundled classes">
+          <span>Arcanist</span><span>Dragonknight</span><span>Necromancer</span><span>Nightblade</span><span>Sorcerer</span><span>Templar</span><span>Warden</span>
+        </div>
+      </section>
+
+      <section class="section" id="screenshots">
+        <div class="section-heading"><span class="eyebrow">Screenshots</span><h2>Built to feel like a desktop companion, not a spreadsheet.</h2><p>Click a screenshot to open the full-size image.</p></div>
+        <div class="screenshot-grid">
+          <button class="screenshot-card wide" type="button" data-lightbox="assets/screenshots/first-character.webp"><img src="assets/screenshots/first-character.webp" alt="First character setup form"><span><b>First-character flow</b><small>Choose a build while recording the character's real race and alliance.</small></span></button>
+          <button class="screenshot-card" type="button" data-lightbox="assets/screenshots/current-levels.webp"><img src="assets/screenshots/current-levels.webp" alt="Current Levels page"><span><b>Current Levels</b><small>Skill Point accounting, progression band, line ranks, and CP paths.</small></span></button>
+          <button class="screenshot-card" type="button" data-lightbox="assets/screenshots/skills-passives.webp"><img src="assets/screenshots/skills-passives.webp" alt="Skills and Passives page"><span><b>Skills &amp; Passives</b><small>Build-directed suggestions alongside complete tracked skill lines.</small></span></button>
+          <button class="screenshot-card" type="button" data-lightbox="assets/screenshots/settings.webp"><img src="assets/screenshots/settings.webp" alt="Settings page"><span><b>Local controls</b><small>Theme, ESO Plus, remote-image permission, and character settings.</small></span></button>
+        </div>
+      </section>
+
+      <section class="section" id="build">
+        <div class="build-panel elevated">
+          <div>
+            <span class="eyebrow">Build for Windows</span>
+            <h2>One batch file. Tests first. Installer second.</h2>
+            <p>Download or clone the repository, install the current Node.js LTS release, and run <code>BUILD-ATTB.bat</code>. It installs locked dependencies, runs the full suite, builds the renderer, and creates the NSIS installer without launching it.</p>
+            <ol>
+              <li>Download or clone the <code>ATTB</code> repository.</li>
+              <li>Open the folder and run <code>BUILD-ATTB.bat</code>.</li>
+              <li>Find the installer under <code>dist\ATTB-Setup-&lt;version&gt;.exe</code>.</li>
+            </ol>
+            <p class="warning">The installer is unsigned. Windows may show Unknown Publisher or SmartScreen warnings. Review the source and only bypass warnings for files you trust.</p>
+          </div>
+          <div class="build-actions">
+            <a class="button primary" href="https://github.com/DeadxxSmile/ATTB" target="_blank" rel="noreferrer">Open GitHub repository</a>
+            <a class="button secondary" href="https://github.com/DeadxxSmile/ATTB/issues" target="_blank" rel="noreferrer">Report an issue</a>
+            <a class="button ghost" href="https://github.com/DeadxxSmile/ATTB/blob/main/docs/reference/BUILD_FORMAT.md" target="_blank" rel="noreferrer">Build JSON reference</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section resources-section">
+        <div class="section-heading"><span class="eyebrow">ESO resources</span><h2>Useful places to keep learning.</h2><p>ATTB links to independent sites in the user's normal browser and does not send character data with those links.</p></div>
+        <div class="resource-grid">
+          <a href="https://www.elderscrollsonline.com/" target="_blank" rel="noreferrer"><b>Official ESO</b><small>News, patch notes, account help, and community information.</small></a>
+          <a href="https://en.uesp.net/wiki/Online:Online" target="_blank" rel="noreferrer"><b>UESP</b><small>Quests, maps, systems, items, and mechanics reference.</small></a>
+          <a href="https://eso-hub.com/" target="_blank" rel="noreferrer"><b>ESO-Hub</b><small>Skills, sets, maps, antiquities, and database tools.</small></a>
+          <a href="https://www.skinnycheeks.gg/" target="_blank" rel="noreferrer"><b>Skinny Cheeks</b><small>PvE damage-dealer explanations and current class options.</small></a>
+          <a href="https://hyperioxes.com/eso" target="_blank" rel="noreferrer"><b>Hyperioxes</b><small>Detailed solo and role-focused build guidance.</small></a>
+          <a href="https://www.esoui.com/addons.php" target="_blank" rel="noreferrer"><b>ESOUI</b><small>PC add-ons and the ESO add-on developer community.</small></a>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-brand"><img src="assets/logo/attb-logo.png" alt=""><span><b>Arrow to the Build</b><small>Free, open-source, and stored locally.</small></span></div>
+      <p>Unofficial community project. Not affiliated with ZeniMax Media, Bethesda Softworks, or The Elder Scrolls Online.</p>
+      <p>GPL-3.0-only · Copyright © 2026 DeadxxSmile</p>
+    </footer>
+  </div>
+
+  <dialog id="lightbox"><button type="button" aria-label="Close screenshot">×</button><img src="" alt="Expanded ATTB screenshot"></dialog>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,3353 @@
+{
+  "schema_version": 3,
+  "id": "magicka_sorcerer_solo_duo",
+  "name": "Magicka Sorcerer Solo / Duo",
+  "short_name": "Magicka Sorcerer",
+  "author": "DeadxxSmile / ATTB Community Launch Bundle",
+  "game_version": "Update 50",
+  "verified_date": "2026-08-05",
+  "summary": "Pure-class lightning caster with Critical Surge healing, Crystal Fragments procs, Hurricane defense, and flexible Scribing slots.",
+  "theme": {
+    "accent": "#8a70ff"
+  },
+  "images": {},
+  "defaults": {
+    "class": "Sorcerer",
+    "race": "Nord",
+    "alliance": "Ebonheart Pact",
+    "eso_plus": false,
+    "attributes": {
+      "stamina": 0,
+      "magicka": 64,
+      "health": 0
+    },
+    "mundus": "The Thief",
+    "front_weapon": "Dual Daggers",
+    "back_weapon": "Inferno Staff at Level 15",
+    "leveling_armor": "5 Light / 1 Medium / 1 Heavy",
+    "endgame_armor": "5 Light / 2 Medium",
+    "leveling_trait": "Training",
+    "gear_cap": "Level 50 / CP160"
+  },
+  "concepts": [
+    {
+      "title": "Primary resource",
+      "text": "Put normal attribute points into Magicka; the daggers provide offensive stats while the class abilities supply most attacks."
+    },
+    {
+      "title": "Proc discipline",
+      "text": "Crystal Fragments is strongest when its instant proc appears. Continue the normal rotation instead of hard-casting it over and over."
+    },
+    {
+      "title": "Self-healing",
+      "text": "Keep Critical Surge active before combat. Critical damage then supplies steady healing while Hurricane adds armor and movement."
+    },
+    {
+      "title": "No mandatory pets",
+      "text": "A familiar is used early to level Daedric Summoning, but the final setup avoids double-bar pet pressure."
+    }
+  ],
+  "relevant_lines": [
+    {
+      "id": "dark_magic",
+      "name": "Dark Magic",
+      "max": 50,
+      "group": "Class"
+    },
+    {
+      "id": "daedric_summoning",
+      "name": "Daedric Summoning",
+      "max": 50,
+      "group": "Class"
+    },
+    {
+      "id": "storm_calling",
+      "name": "Storm Calling",
+      "max": 50,
+      "group": "Class"
+    },
+    {
+      "id": "sorcerer_mastery",
+      "name": "Sorcerer Class Mastery",
+      "max": 1,
+      "group": "Class"
+    },
+    {
+      "id": "dual_wield",
+      "name": "Dual Wield",
+      "max": 50,
+      "group": "Weapon"
+    },
+    {
+      "id": "destruction_staff",
+      "name": "Destruction Staff",
+      "max": 50,
+      "group": "Weapon"
+    },
+    {
+      "id": "light_armor",
+      "name": "Light Armor",
+      "max": 50,
+      "group": "Armor"
+    },
+    {
+      "id": "medium_armor",
+      "name": "Medium Armor",
+      "max": 50,
+      "group": "Armor"
+    },
+    {
+      "id": "fighters_guild",
+      "name": "Fighters Guild",
+      "max": 10,
+      "group": "Guild"
+    },
+    {
+      "id": "undaunted",
+      "name": "Undaunted",
+      "max": 9,
+      "group": "Guild"
+    },
+    {
+      "id": "nord",
+      "name": "Nord Skills",
+      "max": 50,
+      "group": "Racial"
+    },
+    {
+      "id": "scribing",
+      "name": "Scribing",
+      "max": 1,
+      "group": "System"
+    }
+  ],
+  "cp_plans": {
+    "warfare": {
+      "label": "Warfare",
+      "color": "blue",
+      "core": [
+        {
+          "id": "tireless_discipline",
+          "name": "Tireless Discipline",
+          "max_points": 10,
+          "slottable": false,
+          "jump_points": [
+            10
+          ],
+          "note": "Required path node; also adds Max Stamina."
+        },
+        {
+          "id": "piercing",
+          "name": "Piercing",
+          "max_points": 10,
+          "slottable": false,
+          "jump_points": [
+            10
+          ],
+          "note": "Required path node; adds penetration."
+        }
+      ],
+      "flex": [
+        {
+          "id": "damage",
+          "label": "Damage",
+          "purpose": "damage",
+          "nodes": [
+            {
+              "id": "master_at_arms",
+              "name": "Master-at-Arms",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                25,
+                50
+              ],
+              "note": "Primary direct-damage slottable."
+            },
+            {
+              "id": "biting_aura",
+              "name": "Biting Aura",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                25,
+                50
+              ],
+              "note": "Boosts area damage, including the beam."
+            },
+            {
+              "id": "fighting_finesse",
+              "name": "Fighting Finesse",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                25,
+                50
+              ],
+              "note": "Critical damage and healing."
+            },
+            {
+              "id": "wrathful_strikes",
+              "name": "Wrathful Strikes",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                25,
+                50
+              ],
+              "note": "Weapon and Spell Damage."
+            }
+          ]
+        },
+        {
+          "id": "alternate_damage",
+          "label": "Alternate damage",
+          "purpose": "alternate damage",
+          "optional": true,
+          "note": "Swap these in when the encounter or a full build variant values a different damage profile.",
+          "nodes": [
+            {
+              "id": "thaumaturge",
+              "name": "Thaumaturge",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                25,
+                50
+              ],
+              "note": "Damage-over-time alternative."
+            },
+            {
+              "id": "exploiter",
+              "name": "Exploiter",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Situational damage against Off Balance enemies."
+            },
+            {
+              "id": "weapons_expert",
+              "name": "Weapons Expert",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Light- and Heavy-Attack focused alternative."
+            },
+            {
+              "id": "reaving_blows",
+              "name": "Reaving Blows",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                50
+              ],
+              "note": "Solo sustain through healing from direct damage."
+            }
+          ]
+        },
+        {
+          "id": "pve_defense",
+          "label": "PvE defense passives",
+          "purpose": "solo defense",
+          "optional": true,
+          "note": "Passive defensive spending after the damage route is comfortable.",
+          "nodes": [
+            {
+              "id": "preparation",
+              "name": "Preparation",
+              "max_points": 20,
+              "slottable": false,
+              "jump_points": [
+                10,
+                20
+              ],
+              "note": "Reduces damage taken from non-player attacks."
+            },
+            {
+              "id": "hardy",
+              "name": "Hardy",
+              "max_points": 20,
+              "slottable": false,
+              "jump_points": [
+                10,
+                20
+              ],
+              "note": "Reduces Martial damage taken."
+            },
+            {
+              "id": "elemental_aegis",
+              "name": "Elemental Aegis",
+              "max_points": 20,
+              "slottable": false,
+              "jump_points": [
+                10,
+                20
+              ],
+              "note": "Reduces Magical damage taken."
+            },
+            {
+              "id": "quick_recovery",
+              "name": "Quick Recovery",
+              "max_points": 20,
+              "slottable": false,
+              "jump_points": [
+                10,
+                20
+              ],
+              "note": "Increases healing received."
+            }
+          ]
+        }
+      ],
+      "final_slots": [
+        "master_at_arms",
+        "biting_aura",
+        "fighting_finesse",
+        "wrathful_strikes"
+      ]
+    },
+    "fitness": {
+      "label": "Fitness",
+      "color": "red",
+      "core": [
+        {
+          "id": "sprinter",
+          "name": "Sprinter",
+          "max_points": 10,
+          "slottable": false,
+          "jump_points": [
+            10
+          ],
+          "note": "Start here; this opens the Wind Chaser route."
+        },
+        {
+          "id": "hasty",
+          "name": "Hasty",
+          "max_points": 8,
+          "slottable": false,
+          "jump_points": [
+            8
+          ],
+          "note": "Required connector before Hero’s Vigor."
+        },
+        {
+          "id": "heros_vigor",
+          "name": "Hero’s Vigor",
+          "max_points": 10,
+          "slottable": false,
+          "jump_points": [
+            10
+          ],
+          "note": "Required connector before Bloody Renewal."
+        }
+      ],
+      "flex": [
+        {
+          "id": "sustain",
+          "label": "Sustain",
+          "purpose": "sustain",
+          "nodes": [
+            {
+              "id": "bloody_renewal",
+              "name": "Bloody Renewal",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Restores Stamina after kills; exceptional while leveling."
+            },
+            {
+              "id": "rejuvenation",
+              "name": "Rejuvenation",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Adds resource recovery."
+            }
+          ]
+        },
+        {
+          "id": "solo_defense",
+          "label": "Solo defense",
+          "purpose": "solo defense",
+          "nodes": [
+            {
+              "id": "boundless_vitality",
+              "name": "Boundless Vitality",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Adds Max Health."
+            },
+            {
+              "id": "fortified",
+              "name": "Fortified",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Adds armor."
+            }
+          ]
+        },
+        {
+          "id": "mobility_and_escape",
+          "label": "Mobility & escape",
+          "purpose": "mobility / control",
+          "optional": true,
+          "note": "Useful alternatives for movement-heavy solo play, arenas, or PvP-focused variants.",
+          "nodes": [
+            {
+              "id": "celerity",
+              "name": "Celerity",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Movement-speed option."
+            },
+            {
+              "id": "expert_evasion",
+              "name": "Expert Evasion",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                50
+              ],
+              "note": "Periodic free Roll Dodge."
+            },
+            {
+              "id": "survival_instincts",
+              "name": "Survival Instincts",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Reduces core-combat costs while affected by a status effect."
+            },
+            {
+              "id": "relentlessness",
+              "name": "Relentlessness",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                50
+              ],
+              "note": "Major Protection after being stunned or feared."
+            }
+          ]
+        },
+        {
+          "id": "core_combat_passives",
+          "label": "Core-combat passives",
+          "purpose": "block / dodge / break free",
+          "optional": true,
+          "note": "Spend here when the character needs cheaper defensive actions more than another slottable.",
+          "nodes": [
+            {
+              "id": "tumbling",
+              "name": "Tumbling",
+              "max_points": 30,
+              "slottable": false,
+              "jump_points": [
+                15,
+                30
+              ],
+              "note": "Reduces Roll Dodge cost."
+            },
+            {
+              "id": "defiance",
+              "name": "Defiance",
+              "max_points": 20,
+              "slottable": false,
+              "jump_points": [
+                10,
+                20
+              ],
+              "note": "Reduces Break Free cost."
+            },
+            {
+              "id": "tireless_guardian",
+              "name": "Tireless Guardian",
+              "max_points": 20,
+              "slottable": false,
+              "jump_points": [
+                10,
+                20
+              ],
+              "note": "Reduces Block cost."
+            },
+            {
+              "id": "mystic_tenacity",
+              "name": "Mystic Tenacity",
+              "max_points": 50,
+              "slottable": false,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Reduces elemental status-effect duration."
+            }
+          ]
+        }
+      ],
+      "final_slots": [
+        "boundless_vitality",
+        "bloody_renewal",
+        "rejuvenation",
+        "fortified"
+      ]
+    },
+    "craft": {
+      "label": "Craft",
+      "color": "green",
+      "core": [
+        {
+          "id": "discipline_artisan",
+          "name": "Discipline Artisan",
+          "max_points": 50,
+          "slottable": false,
+          "jump_points": [
+            10,
+            20,
+            30,
+            40,
+            50
+          ],
+          "note": "Increases active skill and skill-line XP."
+        }
+      ],
+      "flex": [
+        {
+          "id": "movement",
+          "label": "Movement",
+          "purpose": "movement",
+          "nodes": [
+            {
+              "id": "steeds_blessing",
+              "name": "Steed’s Blessing",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Out-of-combat movement speed."
+            }
+          ]
+        },
+        {
+          "id": "quality_of_life",
+          "label": "Quality of life",
+          "purpose": "quality of life",
+          "nodes": [
+            {
+              "id": "rationer",
+              "name": "Rationer",
+              "max_points": 30,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30
+              ],
+              "note": "Extends food and drink duration."
+            }
+          ]
+        },
+        {
+          "id": "gathering",
+          "label": "Gathering",
+          "purpose": "gathering",
+          "nodes": [
+            {
+              "id": "treasure_hunter",
+              "name": "Treasure Hunter",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Improves chest loot quality."
+            }
+          ]
+        },
+        {
+          "id": "resource_farming",
+          "label": "Resource farming",
+          "purpose": "gathering / refining",
+          "optional": true,
+          "note": "A farming-focused loadout can promote this branch and change the recommended Craft bar.",
+          "nodes": [
+            {
+              "id": "plentiful_harvest",
+              "name": "Plentiful Harvest",
+              "max_points": 50,
+              "slottable": false,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Chance to double normal resource-node yield."
+            },
+            {
+              "id": "master_gatherer",
+              "name": "Master Gatherer",
+              "max_points": 75,
+              "slottable": true,
+              "jump_points": [
+                15,
+                30,
+                45,
+                60,
+                75
+              ],
+              "note": "Faster harvesting."
+            },
+            {
+              "id": "meticulous_disassembly",
+              "name": "Meticulous Disassembly",
+              "max_points": 50,
+              "slottable": false,
+              "jump_points": [
+                50
+              ],
+              "note": "Improves extraction and refining results."
+            }
+          ]
+        },
+        {
+          "id": "mounts_and_travel",
+          "label": "Mounts & travel",
+          "purpose": "travel",
+          "optional": true,
+          "note": "Useful for exploration, survey routes, and characters that spend a lot of time mounted.",
+          "nodes": [
+            {
+              "id": "gifted_rider",
+              "name": "Gifted Rider",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Increases mount speed."
+            },
+            {
+              "id": "war_mount",
+              "name": "War Mount",
+              "max_points": 75,
+              "slottable": true,
+              "jump_points": [
+                75
+              ],
+              "note": "Removes mount Stamina costs outside combat."
+            },
+            {
+              "id": "breakfall",
+              "name": "Breakfall",
+              "max_points": 50,
+              "slottable": false,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Reduces fall damage."
+            }
+          ]
+        },
+        {
+          "id": "economy_and_crime",
+          "label": "Economy & crime",
+          "purpose": "gold / legerdemain",
+          "optional": true,
+          "note": "Personal utility branch; a thief or economy variant can replace the normal quality-of-life route with this.",
+          "nodes": [
+            {
+              "id": "professional_upkeep",
+              "name": "Professional Upkeep",
+              "max_points": 50,
+              "slottable": false,
+              "note": "Reduces armor-repair costs."
+            },
+            {
+              "id": "infamous",
+              "name": "Infamous",
+              "max_points": 25,
+              "slottable": false,
+              "jump_points": [
+                25
+              ],
+              "note": "Increases the value of fenced items."
+            },
+            {
+              "id": "out_of_sight",
+              "name": "Out of Sight",
+              "max_points": 30,
+              "slottable": false,
+              "jump_points": [
+                10,
+                20,
+                30
+              ],
+              "note": "Reduces detection radius while Sneaking."
+            }
+          ]
+        }
+      ],
+      "final_slots": [
+        "steeds_blessing",
+        "rationer",
+        "treasure_hunter"
+      ]
+    }
+  },
+  "unlock_order": [
+    {
+      "id": "crystal_shard",
+      "name": "Crystal Shard",
+      "catalog_skill_id": "dark_magic__crystal_shard",
+      "section": "Class",
+      "line": "dark_magic",
+      "required_rank": 1,
+      "kind": "Active",
+      "phase": "Early",
+      "status": "final",
+      "priority": 10,
+      "notes": "Train Crystal Shard to rank IV, then take Crystal Fragments.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "crystal_fragments",
+      "name": "Crystal Fragments",
+      "catalog_skill_id": "dark_magic__crystal_fragments",
+      "section": "Morph",
+      "line": "dark_magic",
+      "required_rank": 1,
+      "kind": "Morph",
+      "phase": "Early",
+      "status": "final",
+      "priority": 20,
+      "notes": "Cast the highlighted instant proc; do not hard-cast it repeatedly unless the situation demands it.",
+      "morph_from": "Crystal Shard",
+      "image": null,
+      "requires": [
+        "crystal_shard"
+      ]
+    },
+    {
+      "id": "summon_unstable_familiar",
+      "name": "Summon Unstable Familiar",
+      "catalog_skill_id": "daedric_summoning__summon_unstable_familiar",
+      "section": "Class",
+      "line": "daedric_summoning",
+      "required_rank": 1,
+      "kind": "Active",
+      "phase": "Leveling",
+      "status": "temporary",
+      "priority": 30,
+      "notes": "Starter Daedric Summoning leveling slot. This launch build is not pet-dependent.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "mage_s_fury",
+      "name": "Mage's Fury",
+      "catalog_skill_id": "storm_calling__mage_s_fury",
+      "section": "Class",
+      "line": "storm_calling",
+      "required_rank": 1,
+      "kind": "Active",
+      "phase": "Leveling",
+      "status": "temporary",
+      "priority": 40,
+      "notes": "Starter Storm Calling attack; replace it when the final bar takes shape.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "lightning_splash",
+      "name": "Lightning Splash",
+      "catalog_skill_id": "storm_calling__lightning_splash",
+      "section": "Class",
+      "line": "storm_calling",
+      "required_rank": 20,
+      "kind": "Active",
+      "phase": "Middle",
+      "status": "final",
+      "priority": 50,
+      "notes": "Train Lightning Splash to rank IV, then take Liquid Lightning.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "liquid_lightning",
+      "name": "Liquid Lightning",
+      "catalog_skill_id": "storm_calling__liquid_lightning",
+      "section": "Morph",
+      "line": "storm_calling",
+      "required_rank": 20,
+      "kind": "Morph",
+      "phase": "Middle",
+      "status": "final",
+      "priority": 60,
+      "notes": "Ground DoT for stationary targets and packs.",
+      "morph_from": "Lightning Splash",
+      "image": null,
+      "requires": [
+        "lightning_splash"
+      ]
+    },
+    {
+      "id": "bound_armor",
+      "name": "Bound Armor",
+      "catalog_skill_id": "daedric_summoning__bound_armor",
+      "section": "Class",
+      "line": "daedric_summoning",
+      "required_rank": 42,
+      "kind": "Active",
+      "phase": "Late",
+      "status": "final",
+      "priority": 70,
+      "notes": "Train Bound Armor to rank IV, then take Bound Armaments.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "bound_armaments",
+      "name": "Bound Armaments",
+      "catalog_skill_id": "daedric_summoning__bound_armaments",
+      "section": "Morph",
+      "line": "daedric_summoning",
+      "required_rank": 42,
+      "kind": "Morph",
+      "phase": "Late",
+      "status": "final",
+      "priority": 80,
+      "notes": "Passive bar value plus a timed projectile when enough daggers are stored.",
+      "morph_from": "Bound Armor",
+      "image": null,
+      "requires": [
+        "bound_armor"
+      ]
+    },
+    {
+      "id": "lightning_form",
+      "name": "Lightning Form",
+      "catalog_skill_id": "storm_calling__lightning_form",
+      "section": "Class",
+      "line": "storm_calling",
+      "required_rank": 4,
+      "kind": "Active",
+      "phase": "Early",
+      "status": "final",
+      "priority": 90,
+      "notes": "Train Lightning Form to rank IV, then take Hurricane.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "hurricane",
+      "name": "Hurricane",
+      "catalog_skill_id": "storm_calling__hurricane",
+      "section": "Morph",
+      "line": "storm_calling",
+      "required_rank": 4,
+      "kind": "Morph",
+      "phase": "Early",
+      "status": "final",
+      "priority": 100,
+      "notes": "Armor, mobility, and close-range damage.",
+      "morph_from": "Lightning Form",
+      "image": null,
+      "requires": [
+        "lightning_form"
+      ]
+    },
+    {
+      "id": "surge",
+      "name": "Surge",
+      "catalog_skill_id": "storm_calling__surge",
+      "section": "Class",
+      "line": "storm_calling",
+      "required_rank": 30,
+      "kind": "Active",
+      "phase": "Middle",
+      "status": "final",
+      "priority": 110,
+      "notes": "Train Surge to rank IV, then take Critical Surge.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "critical_surge",
+      "name": "Critical Surge",
+      "catalog_skill_id": "storm_calling__critical_surge",
+      "section": "Morph",
+      "line": "storm_calling",
+      "required_rank": 30,
+      "kind": "Morph",
+      "phase": "Middle",
+      "status": "final",
+      "priority": 120,
+      "notes": "Core solo healing and long-duration offensive buff.",
+      "morph_from": "Surge",
+      "image": null,
+      "requires": [
+        "surge"
+      ]
+    },
+    {
+      "id": "overload",
+      "name": "Overload",
+      "catalog_skill_id": "storm_calling__overload",
+      "section": "Ultimate",
+      "line": "storm_calling",
+      "required_rank": 12,
+      "kind": "Ultimate",
+      "phase": "Middle",
+      "status": "final",
+      "priority": 130,
+      "notes": "Train Overload to rank IV, then take Power Overload.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "power_overload",
+      "name": "Power Overload",
+      "catalog_skill_id": "storm_calling__power_overload",
+      "section": "Morph",
+      "line": "storm_calling",
+      "required_rank": 12,
+      "kind": "Morph",
+      "phase": "Middle",
+      "status": "final",
+      "priority": 140,
+      "notes": "Flexible front-bar ultimate for sustained single-target pressure.",
+      "morph_from": "Overload",
+      "image": null,
+      "requires": [
+        "overload"
+      ]
+    },
+    {
+      "id": "summon_storm_atronach",
+      "name": "Summon Storm Atronach",
+      "catalog_skill_id": "daedric_summoning__summon_storm_atronach",
+      "section": "Ultimate",
+      "line": "daedric_summoning",
+      "required_rank": 12,
+      "kind": "Ultimate",
+      "phase": "Middle",
+      "status": "final",
+      "priority": 150,
+      "notes": "Train Summon Storm Atronach to rank IV, then take Charged Atronach.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "charged_atronach",
+      "name": "Charged Atronach",
+      "catalog_skill_id": "daedric_summoning__charged_atronach",
+      "section": "Morph",
+      "line": "daedric_summoning",
+      "required_rank": 12,
+      "kind": "Morph",
+      "phase": "Middle",
+      "status": "final",
+      "priority": 160,
+      "notes": "Back-bar boss ultimate and group synergy.",
+      "morph_from": "Summon Storm Atronach",
+      "image": null,
+      "requires": [
+        "summon_storm_atronach"
+      ]
+    },
+    {
+      "id": "wall_of_elements",
+      "name": "Wall of Elements",
+      "catalog_skill_id": "destruction_staff__wall_of_elements",
+      "section": "Weapon",
+      "line": "destruction_staff",
+      "required_rank": 4,
+      "kind": "Active",
+      "phase": "Early",
+      "status": "final",
+      "priority": 170,
+      "notes": "Train Wall of Elements to rank IV, then take Elemental Blockade.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "elemental_blockade",
+      "name": "Elemental Blockade",
+      "catalog_skill_id": "destruction_staff__elemental_blockade",
+      "section": "Morph",
+      "line": "destruction_staff",
+      "required_rank": 4,
+      "kind": "Morph",
+      "phase": "Early",
+      "status": "final",
+      "priority": 180,
+      "notes": "Back-bar ground DoT and Crushing Wall trigger.",
+      "morph_from": "Wall of Elements",
+      "image": null,
+      "requires": [
+        "wall_of_elements"
+      ]
+    },
+    {
+      "id": "weakness_to_elements",
+      "name": "Weakness to Elements",
+      "catalog_skill_id": "destruction_staff__weakness_to_elements",
+      "section": "Weapon",
+      "line": "destruction_staff",
+      "required_rank": 20,
+      "kind": "Active",
+      "phase": "Middle",
+      "status": "final",
+      "priority": 190,
+      "notes": "Train Weakness to Elements to rank IV, then take Elemental Susceptibility.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "elemental_susceptibility",
+      "name": "Elemental Susceptibility",
+      "catalog_skill_id": "destruction_staff__elemental_susceptibility",
+      "section": "Morph",
+      "line": "destruction_staff",
+      "required_rank": 20,
+      "kind": "Morph",
+      "phase": "Middle",
+      "status": "final",
+      "priority": 200,
+      "notes": "Solo penetration and status-effect support.",
+      "morph_from": "Weakness to Elements",
+      "image": null,
+      "requires": [
+        "weakness_to_elements"
+      ]
+    },
+    {
+      "id": "trap_beast",
+      "name": "Trap Beast",
+      "catalog_skill_id": "fighters_guild__trap_beast",
+      "section": "Guild",
+      "line": "fighters_guild",
+      "required_rank": 8,
+      "kind": "Active",
+      "phase": "Late",
+      "status": "final",
+      "priority": 210,
+      "notes": "Train Trap Beast to rank IV, then take Barbed Trap.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "barbed_trap",
+      "name": "Barbed Trap",
+      "catalog_skill_id": "fighters_guild__barbed_trap",
+      "section": "Morph",
+      "line": "fighters_guild",
+      "required_rank": 8,
+      "kind": "Morph",
+      "phase": "Late",
+      "status": "final",
+      "priority": 220,
+      "notes": "Critical-damage buff and single-target DoT; replace for ranged or defensive needs.",
+      "morph_from": "Trap Beast",
+      "image": null,
+      "requires": [
+        "trap_beast"
+      ]
+    },
+    {
+      "id": "traveling_knife",
+      "name": "Traveling Knife",
+      "catalog_skill_id": "scribing__traveling_knife",
+      "section": "Scribing",
+      "line": "scribing",
+      "required_rank": 0,
+      "kind": "Scribing",
+      "phase": "Late",
+      "status": "final",
+      "priority": 230,
+      "notes": "Optional Scribing spammable/utility slot; use Force Shock or a class skill until unlocked.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "ulfsild_s_contingency",
+      "name": "Ulfsild's Contingency",
+      "catalog_skill_id": "scribing__ulfsild_s_contingency",
+      "section": "Scribing",
+      "line": "scribing",
+      "required_rank": 0,
+      "kind": "Scribing",
+      "phase": "Late",
+      "status": "final",
+      "priority": 240,
+      "notes": "Optional Scribing AoE/utility slot.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "unholy_knowledge_1",
+      "name": "Unholy Knowledge I",
+      "catalog_skill_id": "dark_magic__unholy_knowledge",
+      "section": "Passive",
+      "line": "dark_magic",
+      "required_rank": 8,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 250,
+      "notes": "Permanent Dark Magic passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "unholy_knowledge_2",
+      "name": "Unholy Knowledge II",
+      "catalog_skill_id": "dark_magic__unholy_knowledge",
+      "section": "Passive",
+      "line": "dark_magic",
+      "required_rank": 18,
+      "kind": "Passive",
+      "phase": "Middle",
+      "status": "final",
+      "priority": 260,
+      "notes": "Permanent Dark Magic passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "blood_magic_1",
+      "name": "Blood Magic I",
+      "catalog_skill_id": "dark_magic__blood_magic",
+      "section": "Passive",
+      "line": "dark_magic",
+      "required_rank": 14,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 270,
+      "notes": "Permanent Dark Magic passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "blood_magic_2",
+      "name": "Blood Magic II",
+      "catalog_skill_id": "dark_magic__blood_magic",
+      "section": "Passive",
+      "line": "dark_magic",
+      "required_rank": 27,
+      "kind": "Passive",
+      "phase": "Middle",
+      "status": "final",
+      "priority": 280,
+      "notes": "Permanent Dark Magic passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "persistence_1",
+      "name": "Persistence I",
+      "catalog_skill_id": "dark_magic__persistence",
+      "section": "Passive",
+      "line": "dark_magic",
+      "required_rank": 22,
+      "kind": "Passive",
+      "phase": "Middle",
+      "status": "final",
+      "priority": 290,
+      "notes": "Permanent Dark Magic passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "persistence_2",
+      "name": "Persistence II",
+      "catalog_skill_id": "dark_magic__persistence",
+      "section": "Passive",
+      "line": "dark_magic",
+      "required_rank": 36,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 300,
+      "notes": "Permanent Dark Magic passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "exploitation_1",
+      "name": "Exploitation I",
+      "catalog_skill_id": "dark_magic__exploitation",
+      "section": "Passive",
+      "line": "dark_magic",
+      "required_rank": 39,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 310,
+      "notes": "Permanent Dark Magic passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "exploitation_2",
+      "name": "Exploitation II",
+      "catalog_skill_id": "dark_magic__exploitation",
+      "section": "Passive",
+      "line": "dark_magic",
+      "required_rank": 50,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 320,
+      "notes": "Permanent Dark Magic passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "rebate_1",
+      "name": "Rebate I",
+      "catalog_skill_id": "daedric_summoning__rebate",
+      "section": "Passive",
+      "line": "daedric_summoning",
+      "required_rank": 8,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 330,
+      "notes": "Permanent Daedric Summoning passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "rebate_2",
+      "name": "Rebate II",
+      "catalog_skill_id": "daedric_summoning__rebate",
+      "section": "Passive",
+      "line": "daedric_summoning",
+      "required_rank": 18,
+      "kind": "Passive",
+      "phase": "Middle",
+      "status": "final",
+      "priority": 340,
+      "notes": "Permanent Daedric Summoning passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "power_stone_1",
+      "name": "Power Stone I",
+      "catalog_skill_id": "daedric_summoning__power_stone",
+      "section": "Passive",
+      "line": "daedric_summoning",
+      "required_rank": 14,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 350,
+      "notes": "Permanent Daedric Summoning passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "power_stone_2",
+      "name": "Power Stone II",
+      "catalog_skill_id": "daedric_summoning__power_stone",
+      "section": "Passive",
+      "line": "daedric_summoning",
+      "required_rank": 27,
+      "kind": "Passive",
+      "phase": "Middle",
+      "status": "final",
+      "priority": 360,
+      "notes": "Permanent Daedric Summoning passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "daedric_protection_1",
+      "name": "Daedric Protection I",
+      "catalog_skill_id": "daedric_summoning__daedric_protection",
+      "section": "Passive",
+      "line": "daedric_summoning",
+      "required_rank": 22,
+      "kind": "Passive",
+      "phase": "Middle",
+      "status": "final",
+      "priority": 370,
+      "notes": "Permanent Daedric Summoning passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "daedric_protection_2",
+      "name": "Daedric Protection II",
+      "catalog_skill_id": "daedric_summoning__daedric_protection",
+      "section": "Passive",
+      "line": "daedric_summoning",
+      "required_rank": 36,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 380,
+      "notes": "Permanent Daedric Summoning passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "expert_summoner_1",
+      "name": "Expert Summoner I",
+      "catalog_skill_id": "daedric_summoning__expert_summoner",
+      "section": "Passive",
+      "line": "daedric_summoning",
+      "required_rank": 39,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 390,
+      "notes": "Permanent Daedric Summoning passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "expert_summoner_2",
+      "name": "Expert Summoner II",
+      "catalog_skill_id": "daedric_summoning__expert_summoner",
+      "section": "Passive",
+      "line": "daedric_summoning",
+      "required_rank": 50,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 400,
+      "notes": "Permanent Daedric Summoning passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "capacitor_1",
+      "name": "Capacitor I",
+      "catalog_skill_id": "storm_calling__capacitor",
+      "section": "Passive",
+      "line": "storm_calling",
+      "required_rank": 8,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 410,
+      "notes": "Permanent Storm Calling passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "capacitor_2",
+      "name": "Capacitor II",
+      "catalog_skill_id": "storm_calling__capacitor",
+      "section": "Passive",
+      "line": "storm_calling",
+      "required_rank": 18,
+      "kind": "Passive",
+      "phase": "Middle",
+      "status": "final",
+      "priority": 420,
+      "notes": "Permanent Storm Calling passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "energized_1",
+      "name": "Energized I",
+      "catalog_skill_id": "storm_calling__energized",
+      "section": "Passive",
+      "line": "storm_calling",
+      "required_rank": 14,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 430,
+      "notes": "Permanent Storm Calling passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "energized_2",
+      "name": "Energized II",
+      "catalog_skill_id": "storm_calling__energized",
+      "section": "Passive",
+      "line": "storm_calling",
+      "required_rank": 27,
+      "kind": "Passive",
+      "phase": "Middle",
+      "status": "final",
+      "priority": 440,
+      "notes": "Permanent Storm Calling passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "amplitude_1",
+      "name": "Amplitude I",
+      "catalog_skill_id": "storm_calling__amplitude",
+      "section": "Passive",
+      "line": "storm_calling",
+      "required_rank": 22,
+      "kind": "Passive",
+      "phase": "Middle",
+      "status": "final",
+      "priority": 450,
+      "notes": "Permanent Storm Calling passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "amplitude_2",
+      "name": "Amplitude II",
+      "catalog_skill_id": "storm_calling__amplitude",
+      "section": "Passive",
+      "line": "storm_calling",
+      "required_rank": 36,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 460,
+      "notes": "Permanent Storm Calling passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "expert_mage_1",
+      "name": "Expert Mage I",
+      "catalog_skill_id": "storm_calling__expert_mage",
+      "section": "Passive",
+      "line": "storm_calling",
+      "required_rank": 39,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 470,
+      "notes": "Permanent Storm Calling passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "expert_mage_2",
+      "name": "Expert Mage II",
+      "catalog_skill_id": "storm_calling__expert_mage",
+      "section": "Passive",
+      "line": "storm_calling",
+      "required_rank": 50,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 480,
+      "notes": "Permanent Storm Calling passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "focused_killer_1",
+      "name": "Focused Killer I",
+      "catalog_skill_id": "dual_wield__focused_killer",
+      "section": "Passive",
+      "line": "dual_wield",
+      "required_rank": 10,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 490,
+      "notes": "Permanent Dual Wield damage passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "focused_killer_2",
+      "name": "Focused Killer II",
+      "catalog_skill_id": "dual_wield__focused_killer",
+      "section": "Passive",
+      "line": "dual_wield",
+      "required_rank": 30,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 500,
+      "notes": "Permanent Dual Wield damage passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "ambidextrous_1",
+      "name": "Ambidextrous I",
+      "catalog_skill_id": "dual_wield__ambidextrous",
+      "section": "Passive",
+      "line": "dual_wield",
+      "required_rank": 10,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 510,
+      "notes": "Permanent Dual Wield damage passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "ambidextrous_2",
+      "name": "Ambidextrous II",
+      "catalog_skill_id": "dual_wield__ambidextrous",
+      "section": "Passive",
+      "line": "dual_wield",
+      "required_rank": 30,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 520,
+      "notes": "Permanent Dual Wield damage passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "controlled_fury_1",
+      "name": "Controlled Fury I",
+      "catalog_skill_id": "dual_wield__controlled_fury",
+      "section": "Passive",
+      "line": "dual_wield",
+      "required_rank": 10,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 530,
+      "notes": "Permanent Dual Wield damage passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "controlled_fury_2",
+      "name": "Controlled Fury II",
+      "catalog_skill_id": "dual_wield__controlled_fury",
+      "section": "Passive",
+      "line": "dual_wield",
+      "required_rank": 30,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 540,
+      "notes": "Permanent Dual Wield damage passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "twin_blade_and_blunt_1",
+      "name": "Twin Blade and Blunt I",
+      "catalog_skill_id": "dual_wield__twin_blade_and_blunt",
+      "section": "Passive",
+      "line": "dual_wield",
+      "required_rank": 10,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 550,
+      "notes": "Permanent Dual Wield damage passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "twin_blade_and_blunt_2",
+      "name": "Twin Blade and Blunt II",
+      "catalog_skill_id": "dual_wield__twin_blade_and_blunt",
+      "section": "Passive",
+      "line": "dual_wield",
+      "required_rank": 30,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 560,
+      "notes": "Permanent Dual Wield damage passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "penetrating_magic_1",
+      "name": "Penetrating Magic I",
+      "catalog_skill_id": "destruction_staff__penetrating_magic",
+      "section": "Passive",
+      "line": "destruction_staff",
+      "required_rank": 10,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 570,
+      "notes": "Permanent Destruction Staff passive; skip Tri Focus for this setup.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "penetrating_magic_2",
+      "name": "Penetrating Magic II",
+      "catalog_skill_id": "destruction_staff__penetrating_magic",
+      "section": "Passive",
+      "line": "destruction_staff",
+      "required_rank": 30,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 580,
+      "notes": "Permanent Destruction Staff passive; skip Tri Focus for this setup.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "elemental_force_1",
+      "name": "Elemental Force I",
+      "catalog_skill_id": "destruction_staff__elemental_force",
+      "section": "Passive",
+      "line": "destruction_staff",
+      "required_rank": 10,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 590,
+      "notes": "Permanent Destruction Staff passive; skip Tri Focus for this setup.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "elemental_force_2",
+      "name": "Elemental Force II",
+      "catalog_skill_id": "destruction_staff__elemental_force",
+      "section": "Passive",
+      "line": "destruction_staff",
+      "required_rank": 30,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 600,
+      "notes": "Permanent Destruction Staff passive; skip Tri Focus for this setup.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "ancient_knowledge_1",
+      "name": "Ancient Knowledge I",
+      "catalog_skill_id": "destruction_staff__ancient_knowledge",
+      "section": "Passive",
+      "line": "destruction_staff",
+      "required_rank": 10,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 610,
+      "notes": "Permanent Destruction Staff passive; skip Tri Focus for this setup.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "ancient_knowledge_2",
+      "name": "Ancient Knowledge II",
+      "catalog_skill_id": "destruction_staff__ancient_knowledge",
+      "section": "Passive",
+      "line": "destruction_staff",
+      "required_rank": 30,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 620,
+      "notes": "Permanent Destruction Staff passive; skip Tri Focus for this setup.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "destruction_expert_1",
+      "name": "Destruction Expert I",
+      "catalog_skill_id": "destruction_staff__destruction_expert",
+      "section": "Passive",
+      "line": "destruction_staff",
+      "required_rank": 10,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 630,
+      "notes": "Permanent Destruction Staff passive; skip Tri Focus for this setup.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "destruction_expert_2",
+      "name": "Destruction Expert II",
+      "catalog_skill_id": "destruction_staff__destruction_expert",
+      "section": "Passive",
+      "line": "destruction_staff",
+      "required_rank": 30,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 640,
+      "notes": "Permanent Destruction Staff passive; skip Tri Focus for this setup.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "evocation_1",
+      "name": "Evocation I",
+      "catalog_skill_id": "light_armor__evocation",
+      "section": "Passive",
+      "line": "light_armor",
+      "required_rank": 12,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 650,
+      "notes": "Core Light Armor passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "evocation_2",
+      "name": "Evocation II",
+      "catalog_skill_id": "light_armor__evocation",
+      "section": "Passive",
+      "line": "light_armor",
+      "required_rank": 36,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 660,
+      "notes": "Core Light Armor passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "spell_warding_1",
+      "name": "Spell Warding I",
+      "catalog_skill_id": "light_armor__spell_warding",
+      "section": "Passive",
+      "line": "light_armor",
+      "required_rank": 12,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 670,
+      "notes": "Core Light Armor passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "spell_warding_2",
+      "name": "Spell Warding II",
+      "catalog_skill_id": "light_armor__spell_warding",
+      "section": "Passive",
+      "line": "light_armor",
+      "required_rank": 36,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 680,
+      "notes": "Core Light Armor passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "prodigy_1",
+      "name": "Prodigy I",
+      "catalog_skill_id": "light_armor__prodigy",
+      "section": "Passive",
+      "line": "light_armor",
+      "required_rank": 12,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 690,
+      "notes": "Core Light Armor passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "prodigy_2",
+      "name": "Prodigy II",
+      "catalog_skill_id": "light_armor__prodigy",
+      "section": "Passive",
+      "line": "light_armor",
+      "required_rank": 36,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 700,
+      "notes": "Core Light Armor passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "concentration_1",
+      "name": "Concentration I",
+      "catalog_skill_id": "light_armor__concentration",
+      "section": "Passive",
+      "line": "light_armor",
+      "required_rank": 12,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 710,
+      "notes": "Core Light Armor passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "concentration_2",
+      "name": "Concentration II",
+      "catalog_skill_id": "light_armor__concentration",
+      "section": "Passive",
+      "line": "light_armor",
+      "required_rank": 36,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 720,
+      "notes": "Core Light Armor passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "dexterity_1",
+      "name": "Dexterity I",
+      "catalog_skill_id": "medium_armor__dexterity",
+      "section": "Passive",
+      "line": "medium_armor",
+      "required_rank": 2,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 730,
+      "notes": "Improves the value of the Medium pieces in the final mix.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "dexterity_2",
+      "name": "Dexterity II",
+      "catalog_skill_id": "medium_armor__dexterity",
+      "section": "Passive",
+      "line": "medium_armor",
+      "required_rank": 20,
+      "kind": "Passive",
+      "phase": "Middle",
+      "status": "final",
+      "priority": 740,
+      "notes": "Improves the value of the Medium pieces in the final mix.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "dexterity_3",
+      "name": "Dexterity III",
+      "catalog_skill_id": "medium_armor__dexterity",
+      "section": "Passive",
+      "line": "medium_armor",
+      "required_rank": 40,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 750,
+      "notes": "Improves the value of the Medium pieces in the final mix.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "agility_1",
+      "name": "Agility I",
+      "catalog_skill_id": "medium_armor__agility",
+      "section": "Passive",
+      "line": "medium_armor",
+      "required_rank": 18,
+      "kind": "Passive",
+      "phase": "Middle",
+      "status": "final",
+      "priority": 760,
+      "notes": "Improves damage from the Medium pieces in the final mix.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "agility_2",
+      "name": "Agility II",
+      "catalog_skill_id": "medium_armor__agility",
+      "section": "Passive",
+      "line": "medium_armor",
+      "required_rank": 36,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 770,
+      "notes": "Improves damage from the Medium pieces in the final mix.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "undaunted_mettle_1",
+      "name": "Undaunted Mettle I",
+      "catalog_skill_id": "undaunted__undaunted_mettle",
+      "section": "Passive",
+      "line": "undaunted",
+      "required_rank": 5,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 780,
+      "notes": "Rewards the mixed armor weights used by the build.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "undaunted_mettle_2",
+      "name": "Undaunted Mettle II",
+      "catalog_skill_id": "undaunted__undaunted_mettle",
+      "section": "Passive",
+      "line": "undaunted",
+      "required_rank": 9,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 790,
+      "notes": "Rewards the mixed armor weights used by the build.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "reveler_1",
+      "name": "Reveler I",
+      "catalog_skill_id": "nord__reveler",
+      "section": "Passive",
+      "line": "nord",
+      "required_rank": 1,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 800,
+      "notes": "Recommended racial passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "reveler_2",
+      "name": "Reveler II",
+      "catalog_skill_id": "nord__reveler",
+      "section": "Passive",
+      "line": "nord",
+      "required_rank": 10,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 810,
+      "notes": "Recommended racial passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "stalwart_1",
+      "name": "Stalwart I",
+      "catalog_skill_id": "nord__stalwart",
+      "section": "Passive",
+      "line": "nord",
+      "required_rank": 5,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 820,
+      "notes": "Recommended racial passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "stalwart_2",
+      "name": "Stalwart II",
+      "catalog_skill_id": "nord__stalwart",
+      "section": "Passive",
+      "line": "nord",
+      "required_rank": 15,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 830,
+      "notes": "Recommended racial passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "stalwart_3",
+      "name": "Stalwart III",
+      "catalog_skill_id": "nord__stalwart",
+      "section": "Passive",
+      "line": "nord",
+      "required_rank": 30,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 840,
+      "notes": "Recommended racial passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "resist_frost_1",
+      "name": "Resist Frost I",
+      "catalog_skill_id": "nord__resist_frost",
+      "section": "Passive",
+      "line": "nord",
+      "required_rank": 10,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 850,
+      "notes": "Recommended racial passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "resist_frost_2",
+      "name": "Resist Frost II",
+      "catalog_skill_id": "nord__resist_frost",
+      "section": "Passive",
+      "line": "nord",
+      "required_rank": 20,
+      "kind": "Passive",
+      "phase": "Middle",
+      "status": "final",
+      "priority": 860,
+      "notes": "Recommended racial passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "resist_frost_3",
+      "name": "Resist Frost III",
+      "catalog_skill_id": "nord__resist_frost",
+      "section": "Passive",
+      "line": "nord",
+      "required_rank": 40,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 870,
+      "notes": "Recommended racial passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "rugged_1",
+      "name": "Rugged I",
+      "catalog_skill_id": "nord__rugged",
+      "section": "Passive",
+      "line": "nord",
+      "required_rank": 25,
+      "kind": "Passive",
+      "phase": "Middle",
+      "status": "final",
+      "priority": 880,
+      "notes": "Recommended racial passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "rugged_2",
+      "name": "Rugged II",
+      "catalog_skill_id": "nord__rugged",
+      "section": "Passive",
+      "line": "nord",
+      "required_rank": 35,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 890,
+      "notes": "Recommended racial passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "rugged_3",
+      "name": "Rugged III",
+      "catalog_skill_id": "nord__rugged",
+      "section": "Passive",
+      "line": "nord",
+      "required_rank": 50,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 900,
+      "notes": "Recommended racial passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "static_reverberation",
+      "name": "Static Reverberation",
+      "catalog_skill_id": "sorcerer_mastery__storm_lashed",
+      "section": "Passive",
+      "line": "sorcerer_mastery",
+      "required_rank": 1,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 910,
+      "notes": "One of the build's two recommended Class Mastery choices. Requires all three native class lines at rank 50; subclassing disables Class Mastery.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "conservation_of_energy",
+      "name": "Conservation of Energy",
+      "catalog_skill_id": "sorcerer_mastery__daedric_reservoir",
+      "section": "Passive",
+      "line": "sorcerer_mastery",
+      "required_rank": 1,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 920,
+      "notes": "One of the build's two recommended Class Mastery choices. Requires all three native class lines at rank 50; subclassing disables Class Mastery.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    }
+  ],
+  "phases": [
+    {
+      "id": "1-15",
+      "label": "Levels 1–15",
+      "min_level": 1,
+      "max_level": 14,
+      "overview": "Open all three class lines with Crystal Shard, a Familiar, and Mage’s Fury. Train daggers and light armor.",
+      "front_bar": {
+        "weapon": "Dual Daggers",
+        "slots": [
+          {
+            "name": "Crystal Shard",
+            "catalog_skill_id": "dark_magic__crystal_shard"
+          },
+          {
+            "name": "Summon Unstable Familiar",
+            "catalog_skill_id": "daedric_summoning__summon_unstable_familiar",
+            "temporary": true
+          },
+          {
+            "name": "Mage's Fury",
+            "catalog_skill_id": "storm_calling__mage_s_fury",
+            "temporary": true
+          },
+          {
+            "name": "Any Dual Wield skill",
+            "placeholder": true
+          },
+          {
+            "name": "flex slot",
+            "placeholder": true
+          }
+        ],
+        "ultimate": null
+      },
+      "back_bar": {
+        "weapon": "Inferno Staff at Level 15",
+        "slots": [],
+        "ultimate": null,
+        "locked": "Unlocks at character level 15"
+      },
+      "rotation": {
+        "type": "sequence",
+        "title": "Main sequence",
+        "summary": "Use this as a practical magicka Sorcerer starting point; refresh effects early rather than letting them fall off.",
+        "steps": [
+          {
+            "name": "summon Familiar"
+          },
+          {
+            "name": "Mage's Fury",
+            "catalog_skill_id": "storm_calling__mage_s_fury",
+            "temporary": true
+          },
+          {
+            "name": "Crystal Shard",
+            "catalog_skill_id": "dark_magic__crystal_shard"
+          }
+        ],
+        "notes": [
+          "Light-attack weave when comfortable, but learn the order and survival tools before chasing speed."
+        ]
+      }
+    },
+    {
+      "id": "15-30",
+      "label": "Levels 15–30",
+      "min_level": 15,
+      "max_level": 29,
+      "overview": "Add the Inferno Staff bar, Blockade, Susceptibility, Hurricane, and Liquid Lightning.",
+      "front_bar": {
+        "weapon": "Dual Daggers",
+        "slots": [
+          {
+            "name": "Crystal Fragments",
+            "catalog_skill_id": "dark_magic__crystal_fragments"
+          },
+          {
+            "name": "Hurricane",
+            "catalog_skill_id": "storm_calling__hurricane"
+          },
+          {
+            "name": "class-line leveling slots",
+            "placeholder": true
+          }
+        ],
+        "ultimate": null
+      },
+      "back_bar": {
+        "weapon": "Inferno Staff at Level 15",
+        "slots": [
+          {
+            "name": "Elemental Blockade",
+            "catalog_skill_id": "destruction_staff__elemental_blockade"
+          },
+          {
+            "name": "Elemental Susceptibility",
+            "catalog_skill_id": "destruction_staff__elemental_susceptibility"
+          },
+          {
+            "name": "Liquid Lightning",
+            "catalog_skill_id": "storm_calling__liquid_lightning"
+          },
+          {
+            "name": "class-line leveling slot",
+            "placeholder": true
+          }
+        ],
+        "ultimate": null
+      },
+      "rotation": {
+        "type": "sequence",
+        "title": "Main sequence",
+        "summary": "Use this as a practical magicka Sorcerer starting point; refresh effects early rather than letting them fall off.",
+        "steps": [
+          {
+            "name": "Hurricane",
+            "catalog_skill_id": "storm_calling__hurricane"
+          },
+          {
+            "name": "Blockade"
+          },
+          {
+            "name": "Susceptibility"
+          },
+          {
+            "name": "Liquid Lightning",
+            "catalog_skill_id": "storm_calling__liquid_lightning"
+          },
+          {
+            "name": "Crystal Fragments when proc is ready"
+          }
+        ],
+        "notes": [
+          "Light-attack weave when comfortable, but learn the order and survival tools before chasing speed."
+        ]
+      }
+    },
+    {
+      "id": "30-50",
+      "label": "Levels 30–50",
+      "min_level": 30,
+      "max_level": 49,
+      "overview": "Critical Surge completes the solo engine; add Bound Armaments, Barbed Trap, and Scribing options later.",
+      "front_bar": {
+        "weapon": "Dual Daggers",
+        "slots": [
+          {
+            "name": "Traveling Knife",
+            "catalog_skill_id": "scribing__traveling_knife"
+          },
+          {
+            "name": "Liquid Lightning",
+            "catalog_skill_id": "storm_calling__liquid_lightning"
+          },
+          {
+            "name": "Bound Armaments",
+            "catalog_skill_id": "daedric_summoning__bound_armaments"
+          },
+          {
+            "name": "Crystal Fragments",
+            "catalog_skill_id": "dark_magic__crystal_fragments"
+          },
+          {
+            "name": "Ulfsild's Contingency",
+            "catalog_skill_id": "scribing__ulfsild_s_contingency"
+          }
+        ],
+        "ultimate": null
+      },
+      "back_bar": {
+        "weapon": "Inferno Staff at Level 15",
+        "slots": [
+          {
+            "name": "Hurricane",
+            "catalog_skill_id": "storm_calling__hurricane"
+          },
+          {
+            "name": "Critical Surge",
+            "catalog_skill_id": "storm_calling__critical_surge"
+          },
+          {
+            "name": "Elemental Susceptibility",
+            "catalog_skill_id": "destruction_staff__elemental_susceptibility"
+          },
+          {
+            "name": "Elemental Blockade",
+            "catalog_skill_id": "destruction_staff__elemental_blockade"
+          },
+          {
+            "name": "Barbed Trap",
+            "catalog_skill_id": "fighters_guild__barbed_trap"
+          }
+        ],
+        "ultimate": null
+      },
+      "rotation": {
+        "type": "sequence",
+        "title": "Main sequence",
+        "summary": "Use this as a practical magicka Sorcerer starting point; refresh effects early rather than letting them fall off.",
+        "steps": [
+          {
+            "name": "Critical Surge",
+            "catalog_skill_id": "storm_calling__critical_surge"
+          },
+          {
+            "name": "Blockade and Susceptibility"
+          },
+          {
+            "name": "ground effects"
+          },
+          {
+            "name": "spammable"
+          },
+          {
+            "name": "instant Crystal Fragments procs"
+          }
+        ],
+        "notes": [
+          "Light-attack weave when comfortable, but learn the order and survival tools before chasing speed."
+        ]
+      }
+    },
+    {
+      "id": "final",
+      "label": "Level 50 / CP160+",
+      "min_level": 50,
+      "max_level": 9999,
+      "overview": "Finish class passives and Mastery, then use the same proc-based loop while progressing through permanent gear.",
+      "front_bar": {
+        "weapon": "Dual Daggers",
+        "slots": [
+          {
+            "name": "Traveling Knife",
+            "catalog_skill_id": "scribing__traveling_knife"
+          },
+          {
+            "name": "Liquid Lightning",
+            "catalog_skill_id": "storm_calling__liquid_lightning"
+          },
+          {
+            "name": "Bound Armaments",
+            "catalog_skill_id": "daedric_summoning__bound_armaments"
+          },
+          {
+            "name": "Crystal Fragments",
+            "catalog_skill_id": "dark_magic__crystal_fragments"
+          },
+          {
+            "name": "Ulfsild's Contingency",
+            "catalog_skill_id": "scribing__ulfsild_s_contingency"
+          }
+        ],
+        "ultimate": {
+          "name": "Power Overload",
+          "catalog_skill_id": "storm_calling__power_overload"
+        }
+      },
+      "back_bar": {
+        "weapon": "Inferno Staff at Level 15",
+        "slots": [
+          {
+            "name": "Hurricane",
+            "catalog_skill_id": "storm_calling__hurricane"
+          },
+          {
+            "name": "Critical Surge",
+            "catalog_skill_id": "storm_calling__critical_surge"
+          },
+          {
+            "name": "Elemental Susceptibility",
+            "catalog_skill_id": "destruction_staff__elemental_susceptibility"
+          },
+          {
+            "name": "Elemental Blockade",
+            "catalog_skill_id": "destruction_staff__elemental_blockade"
+          },
+          {
+            "name": "Barbed Trap",
+            "catalog_skill_id": "fighters_guild__barbed_trap"
+          }
+        ],
+        "ultimate": {
+          "name": "Charged Atronach",
+          "catalog_skill_id": "daedric_summoning__charged_atronach"
+        }
+      },
+      "rotation": {
+        "type": "sequence",
+        "title": "Main sequence",
+        "summary": "Use this as a practical magicka Sorcerer starting point; refresh effects early rather than letting them fall off.",
+        "steps": [
+          {
+            "name": "Critical Surge",
+            "catalog_skill_id": "storm_calling__critical_surge"
+          },
+          {
+            "name": "Blockade, Susceptibility, Liquid Lightning, Trap"
+          },
+          {
+            "name": "Traveling Knife",
+            "catalog_skill_id": "scribing__traveling_knife"
+          },
+          {
+            "name": "instant Fragments"
+          },
+          {
+            "name": "fire Bound Armaments at full stacks"
+          }
+        ],
+        "notes": [
+          "Light-attack weave when comfortable, but learn the order and survival tools before chasing speed."
+        ]
+      }
+    }
+  ],
+  "gear_stages": [
+    {
+      "id": "leveling",
+      "name": "Leveling drops",
+      "min_level": 1,
+      "max_level": 49,
+      "summary": "Use Training gear, keep weapons near your level, and work toward 5 Light / 1 Medium / 1 Heavy. Do not farm permanent sets before CP160.",
+      "sets": [
+        {
+          "id": "leveling_any_current_level_pieces",
+          "name": "Any current-level pieces",
+          "role": "Armor",
+          "source": {
+            "location": "Quests, drops, or a crafted refresh",
+            "type": "Crafted",
+            "tradeable": "Yes — another player can craft or trade it"
+          },
+          "pieces": [
+            {
+              "id": "any_current_level_pieces_head_leveling",
+              "slot": "Head",
+              "weight": "Light",
+              "trait": "Training",
+              "enchantment": "Max Magicka",
+              "quality": "Current level"
+            },
+            {
+              "id": "any_current_level_pieces_shoulders_leveling",
+              "slot": "Shoulders",
+              "weight": "Light",
+              "trait": "Training",
+              "enchantment": "Max Magicka",
+              "quality": "Current level"
+            },
+            {
+              "id": "any_current_level_pieces_chest_leveling",
+              "slot": "Chest",
+              "weight": "Light",
+              "trait": "Training",
+              "enchantment": "Max Magicka",
+              "quality": "Current level"
+            },
+            {
+              "id": "any_current_level_pieces_hands_leveling",
+              "slot": "Hands",
+              "weight": "Light",
+              "trait": "Training",
+              "enchantment": "Max Magicka",
+              "quality": "Current level"
+            },
+            {
+              "id": "any_current_level_pieces_waist_leveling",
+              "slot": "Waist",
+              "weight": "Light",
+              "trait": "Training",
+              "enchantment": "Max Magicka",
+              "quality": "Current level"
+            },
+            {
+              "id": "any_current_level_pieces_legs_leveling",
+              "slot": "Legs",
+              "weight": "Medium",
+              "trait": "Training",
+              "enchantment": "Max Magicka",
+              "quality": "Current level"
+            },
+            {
+              "id": "any_current_level_pieces_feet_leveling",
+              "slot": "Feet",
+              "weight": "Heavy",
+              "trait": "Training",
+              "enchantment": "Max Magicka",
+              "quality": "Current level"
+            }
+          ]
+        },
+        {
+          "id": "leveling_two_current_level_daggers",
+          "name": "Two current-level daggers",
+          "role": "Front bar",
+          "source": {
+            "location": "Replace every 5–10 levels",
+            "type": "Activity reward",
+            "tradeable": "Check the item collection rules"
+          },
+          "pieces": [
+            {
+              "id": "two_current_level_daggers_front_weapon_1_leveling",
+              "slot": "Front Weapon 1",
+              "weapon_type": "Dagger",
+              "trait": "Training",
+              "enchantment": "Poison Damage",
+              "quality": "Current level"
+            },
+            {
+              "id": "two_current_level_daggers_front_weapon_2_leveling",
+              "slot": "Front Weapon 2",
+              "weapon_type": "Dagger",
+              "trait": "Training",
+              "enchantment": "Shock Damage",
+              "quality": "Current level"
+            }
+          ]
+        },
+        {
+          "id": "leveling_current_level_inferno_staff",
+          "name": "Current-level Inferno Staff",
+          "role": "Back bar after Level 15",
+          "source": {
+            "location": "Replace every 5–10 levels",
+            "type": "Activity reward",
+            "tradeable": "Check the item collection rules"
+          },
+          "pieces": [
+            {
+              "id": "current_level_inferno_staff_back_weapon_leveling",
+              "slot": "Back Weapon",
+              "weapon_type": "Inferno Staff at Level 15",
+              "trait": "Training",
+              "enchantment": "Weapon and Spell Damage",
+              "set_slots": 2,
+              "quality": "Current level"
+            },
+            {
+              "id": "current_level_inferno_staff_necklace_leveling",
+              "slot": "Necklace",
+              "trait": "Healthy / Arcane / Robust",
+              "enchantment": "Magical Harm",
+              "quality": "Current level"
+            },
+            {
+              "id": "current_level_inferno_staff_ring_1_leveling",
+              "slot": "Ring 1",
+              "trait": "Healthy / Arcane / Robust",
+              "enchantment": "Magical Harm",
+              "quality": "Current level"
+            },
+            {
+              "id": "current_level_inferno_staff_ring_2_leveling",
+              "slot": "Ring 2",
+              "trait": "Healthy / Arcane / Robust",
+              "enchantment": "Magical Harm",
+              "quality": "Current level"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "starter",
+      "name": "CP160 crafted starter",
+      "min_level": 50,
+      "max_level": 9999,
+      "summary": "Order’s Wrath + Tide-Born Wildstalker + Highland Sentinel. These craftable sets are a dependable first permanent loadout.",
+      "sets": [
+        {
+          "id": "starter_order_s_wrath",
+          "name": "Order’s Wrath",
+          "role": "Five body pieces",
+          "source": {
+            "location": "Steadfast Hammer and Saw, High Isle; crafted or bought",
+            "type": "Crafted",
+            "tradeable": "Yes — another player can craft or trade it",
+            "zone": "High Isle"
+          },
+          "pieces": [
+            {
+              "id": "order_s_wrath_shoulders_starter",
+              "slot": "Shoulders",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "order_s_wrath_hands_starter",
+              "slot": "Hands",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "order_s_wrath_waist_starter",
+              "slot": "Waist",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "order_s_wrath_legs_starter",
+              "slot": "Legs",
+              "weight": "Medium",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "order_s_wrath_feet_starter",
+              "slot": "Feet",
+              "weight": "Medium",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            }
+          ]
+        },
+        {
+          "id": "starter_tide_born_wildstalker",
+          "name": "Tide-Born Wildstalker",
+          "role": "Weapons and jewelry",
+          "source": {
+            "location": "Tide-Born Foundry, Western Solstice; crafted or bought",
+            "type": "Crafted",
+            "tradeable": "Yes — another player can craft or trade it",
+            "zone": "Western Solstice"
+          },
+          "pieces": [
+            {
+              "id": "tide_born_wildstalker_chest_starter",
+              "slot": "Chest",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "tide_born_wildstalker_necklace_starter",
+              "slot": "Necklace",
+              "trait": "Bloodthirsty",
+              "enchantment": "Magical Harm",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "tide_born_wildstalker_ring_1_starter",
+              "slot": "Ring 1",
+              "trait": "Bloodthirsty",
+              "enchantment": "Magical Harm",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "tide_born_wildstalker_front_weapon_1_starter",
+              "slot": "Front Weapon 1",
+              "weapon_type": "Dagger",
+              "trait": "Charged",
+              "enchantment": "Poison Damage",
+              "quality": "Gold weapons first"
+            },
+            {
+              "id": "tide_born_wildstalker_front_weapon_2_starter",
+              "slot": "Front Weapon 2",
+              "weapon_type": "Dagger",
+              "trait": "Charged",
+              "enchantment": "Shock Damage",
+              "quality": "Gold weapons first"
+            }
+          ]
+        },
+        {
+          "id": "starter_highland_sentinel",
+          "name": "Highland Sentinel",
+          "role": "Remaining armor or jewelry",
+          "source": {
+            "location": "Leftwheal Granary, West Weald; crafted or bought",
+            "type": "Crafted",
+            "tradeable": "Yes — another player can craft or trade it",
+            "zone": "West Weald"
+          },
+          "pieces": [
+            {
+              "id": "highland_sentinel_head_starter",
+              "slot": "Head",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "highland_sentinel_ring_2_starter",
+              "slot": "Ring 2",
+              "trait": "Bloodthirsty",
+              "enchantment": "Magical Harm",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "highland_sentinel_back_weapon_starter",
+              "slot": "Back Weapon",
+              "weapon_type": "Inferno Staff at Level 15",
+              "trait": "Infused",
+              "enchantment": "Weapon and Spell Damage",
+              "set_slots": 2,
+              "quality": "Gold weapons first"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mid",
+      "name": "Strong non-trial bridge",
+      "min_level": 50,
+      "max_level": 9999,
+      "summary": "Farm Beacon of Oblivion, keep one strong crafted five-piece while filling gaps, then add a solo mythic and arena staff when available.",
+      "sets": [
+        {
+          "id": "mid_beacon_of_oblivion",
+          "name": "Beacon of Oblivion",
+          "role": "Body or weapons/jewelry",
+          "source": {
+            "location": "Sorcerer class set from Infinite Archive",
+            "type": "Infinite Archive class set",
+            "tradeable": "No — collect from Infinite Archive rewards",
+            "access": "Infinite Archive"
+          },
+          "pieces": [
+            {
+              "id": "beacon_of_oblivion_shoulders_mid",
+              "slot": "Shoulders",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "beacon_of_oblivion_hands_mid",
+              "slot": "Hands",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "beacon_of_oblivion_waist_mid",
+              "slot": "Waist",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "beacon_of_oblivion_legs_mid",
+              "slot": "Legs",
+              "weight": "Medium",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "beacon_of_oblivion_feet_mid",
+              "slot": "Feet",
+              "weight": "Medium",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            }
+          ]
+        },
+        {
+          "id": "mid_order_s_wrath_or_tide_born_wildstalker",
+          "name": "Order’s Wrath or Tide-Born Wildstalker",
+          "role": "Other five-piece",
+          "source": {
+            "location": "Crafted or guild traders",
+            "type": "Crafted",
+            "tradeable": "Yes — another player can craft or trade it"
+          },
+          "pieces": [
+            {
+              "id": "order_s_wrath_or_tide_born_wildstalker_chest_mid",
+              "slot": "Chest",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "order_s_wrath_or_tide_born_wildstalker_necklace_mid",
+              "slot": "Necklace",
+              "trait": "Bloodthirsty",
+              "enchantment": "Magical Harm",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "order_s_wrath_or_tide_born_wildstalker_ring_1_mid",
+              "slot": "Ring 1",
+              "trait": "Bloodthirsty",
+              "enchantment": "Magical Harm",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "order_s_wrath_or_tide_born_wildstalker_front_weapon_1_mid",
+              "slot": "Front Weapon 1",
+              "weapon_type": "Dagger",
+              "trait": "Charged",
+              "enchantment": "Poison Damage",
+              "quality": "Gold weapons first"
+            },
+            {
+              "id": "order_s_wrath_or_tide_born_wildstalker_front_weapon_2_mid",
+              "slot": "Front Weapon 2",
+              "weapon_type": "Dagger",
+              "trait": "Charged",
+              "enchantment": "Shock Damage",
+              "quality": "Gold weapons first"
+            }
+          ]
+        },
+        {
+          "id": "mid_ring_of_the_pale_order",
+          "name": "Ring of the Pale Order",
+          "role": "Ring",
+          "source": {
+            "location": "Antiquities; optional for solo play",
+            "type": "Antiquity / Mythic",
+            "access": "Antiquities system",
+            "tradeable": "No",
+            "notes": "Antiquities; optional for solo play"
+          },
+          "pieces": [
+            {
+              "id": "ring_of_the_pale_order_ring_2_mid",
+              "slot": "Ring 2",
+              "trait": "Bloodthirsty",
+              "enchantment": "Magical Harm",
+              "quality": "Purple or better"
+            }
+          ]
+        },
+        {
+          "id": "mid_crushing_wall_inferno_staff",
+          "name": "Crushing Wall Inferno Staff",
+          "role": "Back bar",
+          "source": {
+            "location": "Maelstrom Arena",
+            "type": "Arena weapon",
+            "zone": "Wrothgar",
+            "access": "Maelstrom Arena / Orsinium access",
+            "tradeable": "No — account-bound collection"
+          },
+          "pieces": [
+            {
+              "id": "crushing_wall_inferno_staff_back_weapon_mid",
+              "slot": "Back Weapon",
+              "weapon_type": "Inferno Staff at Level 15",
+              "trait": "Infused",
+              "enchantment": "Weapon and Spell Damage",
+              "set_slots": 2,
+              "quality": "Gold weapons first"
+            },
+            {
+              "id": "crushing_wall_inferno_staff_head_mid",
+              "slot": "Head",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "final",
+      "name": "Optimized solo / duo endpoint",
+      "min_level": 50,
+      "max_level": 9999,
+      "summary": "Use Beacon of Oblivion with Sul-Xan’s Torment or Whorl of the Depths. Treat this as an endpoint menu rather than a rule: penetration, encounter movement, DLC access, and the presence of an outside healer can change the best combination.",
+      "sets": [
+        {
+          "id": "final_beacon_of_oblivion",
+          "name": "Beacon of Oblivion",
+          "role": "Primary five-piece",
+          "source": {
+            "location": "Infinite Archive",
+            "type": "Infinite Archive class set",
+            "tradeable": "No — collect from Infinite Archive rewards",
+            "access": "Infinite Archive"
+          },
+          "pieces": [
+            {
+              "id": "beacon_of_oblivion_shoulders_final",
+              "slot": "Shoulders",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "beacon_of_oblivion_hands_final",
+              "slot": "Hands",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "beacon_of_oblivion_waist_final",
+              "slot": "Waist",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "beacon_of_oblivion_legs_final",
+              "slot": "Legs",
+              "weight": "Medium",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "beacon_of_oblivion_feet_final",
+              "slot": "Feet",
+              "weight": "Medium",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            }
+          ]
+        },
+        {
+          "id": "final_sul_xan_s_torment_or_whorl_of_the_depths",
+          "name": "Sul-Xan’s Torment or Whorl of the Depths",
+          "role": "Second five-piece",
+          "source": {
+            "location": "Trial or dungeon alternative; use a crafted set until acquired",
+            "type": "Crafted",
+            "tradeable": "Yes — another player can craft or trade it",
+            "notes": "Trial or dungeon alternative; use a crafted set until acquired"
+          },
+          "pieces": [
+            {
+              "id": "sul_xan_s_torment_or_whorl_of_the_depths_chest_final",
+              "slot": "Chest",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "sul_xan_s_torment_or_whorl_of_the_depths_necklace_final",
+              "slot": "Necklace",
+              "trait": "Bloodthirsty",
+              "enchantment": "Magical Harm",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "sul_xan_s_torment_or_whorl_of_the_depths_ring_1_final",
+              "slot": "Ring 1",
+              "trait": "Bloodthirsty",
+              "enchantment": "Magical Harm",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "sul_xan_s_torment_or_whorl_of_the_depths_front_weapon_1_final",
+              "slot": "Front Weapon 1",
+              "weapon_type": "Dagger",
+              "trait": "Charged",
+              "enchantment": "Poison Damage",
+              "quality": "Gold weapons first"
+            },
+            {
+              "id": "sul_xan_s_torment_or_whorl_of_the_depths_front_weapon_2_final",
+              "slot": "Front Weapon 2",
+              "weapon_type": "Dagger",
+              "trait": "Charged",
+              "enchantment": "Shock Damage",
+              "quality": "Gold weapons first"
+            }
+          ]
+        },
+        {
+          "id": "final_slimecraw_or_valkyn_skoria_1_piece",
+          "name": "Slimecraw or Valkyn Skoria (1 piece)",
+          "role": "Head or shoulder",
+          "source": {
+            "location": "Wayrest Sewers I or City of Ash II",
+            "type": "Dungeon",
+            "tradeable": "Group-bound briefly, then account-bound",
+            "zone": "Stormhaven",
+            "access": "Base game"
+          },
+          "pieces": [
+            {
+              "id": "slimecraw_or_valkyn_skoria_1_piece_head_final",
+              "slot": "Head",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            }
+          ]
+        },
+        {
+          "id": "final_ring_of_the_pale_order",
+          "name": "Ring of the Pale Order",
+          "role": "Ring",
+          "source": {
+            "location": "Antiquities; remove when an outside healer needs to heal you",
+            "type": "Antiquity / Mythic",
+            "access": "Antiquities system",
+            "tradeable": "No"
+          },
+          "pieces": [
+            {
+              "id": "ring_of_the_pale_order_ring_2_final",
+              "slot": "Ring 2",
+              "trait": "Bloodthirsty",
+              "enchantment": "Magical Harm",
+              "quality": "Purple or better"
+            }
+          ]
+        },
+        {
+          "id": "final_crushing_wall_inferno_staff",
+          "name": "Crushing Wall Inferno Staff",
+          "role": "Back bar",
+          "source": {
+            "location": "Maelstrom Arena",
+            "type": "Arena weapon",
+            "zone": "Wrothgar",
+            "access": "Maelstrom Arena / Orsinium access",
+            "tradeable": "No — account-bound collection"
+          },
+          "pieces": [
+            {
+              "id": "crushing_wall_inferno_staff_back_weapon_final",
+              "slot": "Back Weapon",
+              "weapon_type": "Inferno Staff at Level 15",
+              "trait": "Infused",
+              "enchantment": "Weapon and Spell Damage",
+              "set_slots": 2,
+              "quality": "Gold weapons first"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "consumables": {
+    "foods": [
+      {
+        "name": "Clockwork Citrus Filet",
+        "use": "Premium solo Health, Magicka, and recovery"
+      },
+      {
+        "name": "Witchmother’s Potent Brew",
+        "use": "Budget Health and Magicka sustain"
+      },
+      {
+        "name": "Artaeum Pickled Fish Bowl",
+        "use": "Larger Health and Magicka pools when sustain is already comfortable"
+      }
+    ],
+    "potions": [
+      {
+        "name": "Tri-stat potion",
+        "use": "Default solo emergency recovery"
+      },
+      {
+        "name": "Spell Power potion",
+        "use": "Damage option when the build is not already supplying the major offensive buffs"
+      },
+      {
+        "name": "Armor potion",
+        "use": "Situational defensive option for difficult solo encounters"
+      }
+    ],
+    "pvp_alternatives": [
+      {
+        "name": "Bewitched Sugar Skulls",
+        "use": "Larger pools for a future PvP variant"
+      },
+      {
+        "name": "Immovability or detection potion",
+        "use": "Future PvP utility; the launch JSON is not a PvP build"
+      }
+    ]
+  },
+  "tips": [
+    "Keep one skill from each native Sorcerer line on the active bar whenever XP lands until all three reach rank 50.",
+    "Join Fighters Guild, Mages Guild, and Undaunted early; train mount Speed every day.",
+    "Unlock all three armor lines by equipping three pieces of each weight once, then return to the build’s leveling mix.",
+    "Do not buy Destruction Staff Tri Focus for this setup; it can change blocking behavior with an Ice Staff and is not needed here.",
+    "Ring of the Pale Order blocks outside healing. Remove it when a duo partner or group healer needs to heal you.",
+    "The two listed Class Mastery choices require all three native class lines at rank 50. Subclassing disables Class Mastery.",
+    "Scribing abilities are optional progression gates. Use the named temporary class or weapon skill until the Grimoire and scripts are unlocked.",
+    "Keep Critical Surge active before entering a dangerous pull; it is the build’s main passive healing engine.",
+    "Permanent pets consume a slot on both bars. This launch setup uses them only as optional alternatives."
+  ],
+  "variants": [
+    {
+      "id": "solo-duo",
+      "name": "Solo / Duo PvE",
+      "summary": "The progression-oriented launch build exactly as written.",
+      "available": true,
+      "overrides": null
+    },
+    {
+      "id": "group-dps",
+      "name": "Organized Group DPS",
+      "summary": "Planned encounter-focused variant.",
+      "available": false,
+      "unavailable_reason": "This launch file intentionally does not pretend the solo/duo bars and gear are an optimized organized-group loadout.",
+      "overrides": null
+    },
+    {
+      "id": "pvp",
+      "name": "PvP",
+      "summary": "Planned PvP variant.",
+      "available": false,
+      "unavailable_reason": "PvP needs its own attributes, defenses, bars, gear, and consumables. Those overrides are not authored yet.",
+      "overrides": null
+    }
+  ],
+  "setup_help": {
+    "class": {
+      "summary": "This build keeps all three native Sorcerer skill lines for pure-class progression and Class Mastery access."
+    },
+    "race": {
+      "summary": "Race changes damage, sustain, and utility slightly, but ordinary PvE content does not require the recommended option.",
+      "recommended": "Nord",
+      "alternatives": [
+        "High Elf",
+        "Dark Elf",
+        "Khajiit"
+      ],
+      "notes": [
+        "Record the race you actually chose; ATTB keeps it separate from the build recommendation."
+      ]
+    },
+    "alliance": {
+      "summary": "Alliance primarily determines PvP faction and some story context. It does not change this PvE combat setup.",
+      "recommended": "Ebonheart Pact",
+      "notes": [
+        "Any Race, Any Alliance and Alliance Change Tokens can make race and alliance independent."
+      ]
+    },
+    "mundus": {
+      "summary": "The Thief increases Critical Chance and is the default damage Mundus for this launch build.",
+      "locations": [
+        "Malabal Tor (Aldmeri Dominion)",
+        "Alik’r Desert (Daggerfall Covenant)",
+        "Eastmarch (Ebonheart Pact)",
+        "Cyrodiil"
+      ],
+      "notes": [
+        "Activate a different Mundus stone at any time to replace the current blessing."
+      ]
+    },
+    "front_weapon": {
+      "summary": "The front bar holds the main spammable, class burst, and offensive passives."
+    },
+    "back_weapon": {
+      "summary": "The second weapon bar unlocks at character level 15 and normally carries longer-duration effects and support skills."
+    },
+    "leveling_armor": {
+      "summary": "Mixed armor weights level multiple armor skill lines while Training traits accelerate experience gain."
+    },
+    "endgame_armor": {
+      "summary": "The final weight mix balances damage passives, penetration, sustain, and Undaunted Mettle."
+    },
+    "leveling_trait": {
+      "summary": "Training increases experience gained from kills. Replace leveling pieces freely rather than upgrading them heavily."
+    },
+    "gear_cap": {
+      "summary": "Equipment stops scaling at Level 50 / CP160, so that is the first point where farming and upgrading permanent sets makes sense."
+    }
+  },
+  "format_notes": [
+    "Schema 3: explicit hotbars, structured rotations, individual equipment slots, and acquisition-aware set groups."
+  ]
+}

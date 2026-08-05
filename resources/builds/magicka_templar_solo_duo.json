@@ -1,0 +1,2685 @@
+{
+  "schema_version": 3,
+  "id": "magicka-templar-solo-duo-u50",
+  "name": "Magicka Templar Solo / Duo",
+  "short_name": "Magplar",
+  "author": "DeadxxSmile / ATTB",
+  "game_version": "Update 50",
+  "verified_date": "2026-08-05",
+  "summary": "Lightning-and-Ice holy battlemage with self-healing Sweeps, strong execute pressure, group resource synergy, and optional off-healing.",
+  "theme": {
+    "accent": "#ffd76a",
+    "accent2": "#68c9ff",
+    "background": "#080b14"
+  },
+  "images": {
+    "hero": "assets/templar-official-eso-aedric-spear-class-artwork.webp"
+  },
+  "defaults": {
+    "class": "Templar",
+    "race": "Dark Elf",
+    "alliance": "Ebonheart Pact",
+    "eso_plus": false,
+    "attributes": {
+      "stamina": 0,
+      "magicka": 64,
+      "health": 0
+    },
+    "mundus": "The Thief",
+    "front_weapon": "Lightning Staff",
+    "back_weapon": "Ice Staff at Level 15",
+    "leveling_armor": "5 Light / 1 Medium / 1 Heavy",
+    "endgame_armor": "4 Light / 3 Medium overland; 6 Light / 1 Medium instanced",
+    "leveling_trait": "Training",
+    "gear_cap": "Level 50 / CP160"
+  },
+  "concepts": [
+    {
+      "title": "Primary resource",
+      "text": "Put every normal attribute point into Magicka. Power of the Light costs Stamina but hybrid scaling does not justify splitting attributes."
+    },
+    {
+      "title": "Holy battlemage",
+      "text": "Puncturing Sweeps makes this a close-to-mid-range magical fighter rather than a distant staff turret."
+    },
+    {
+      "title": "Execute",
+      "text": "Below roughly 28% target Health, shift heavily into Radiant Glory while maintaining important long effects."
+    },
+    {
+      "title": "Duo value",
+      "text": "Luminous Shards restores resources through its synergy; Extended Ritual or Breath of Life can replace damage when the duo needs safety."
+    }
+  ],
+  "relevant_lines": [
+    {
+      "id": "aedric_spear",
+      "name": "Aedric Spear",
+      "max": 50,
+      "group": "Class"
+    },
+    {
+      "id": "dawns_wrath",
+      "name": "Dawn’s Wrath",
+      "max": 50,
+      "group": "Class"
+    },
+    {
+      "id": "restoring_light",
+      "name": "Restoring Light",
+      "max": 50,
+      "group": "Class"
+    },
+    {
+      "id": "destruction_staff",
+      "name": "Destruction Staff",
+      "max": 50,
+      "group": "Weapon"
+    },
+    {
+      "id": "light_armor",
+      "name": "Light Armor",
+      "max": 50,
+      "group": "Armor"
+    },
+    {
+      "id": "medium_armor",
+      "name": "Medium Armor",
+      "max": 50,
+      "group": "Armor"
+    },
+    {
+      "id": "dark_elf",
+      "name": "Dark Elf Skills",
+      "max": 50,
+      "group": "Racial"
+    },
+    {
+      "id": "mages_guild",
+      "name": "Mages Guild",
+      "max": 10,
+      "group": "Guild"
+    },
+    {
+      "id": "fighters_guild",
+      "name": "Fighters Guild",
+      "max": 10,
+      "group": "Guild"
+    },
+    {
+      "id": "undaunted",
+      "name": "Undaunted",
+      "max": 10,
+      "group": "Guild"
+    },
+    {
+      "id": "assault",
+      "name": "Assault",
+      "max": 10,
+      "group": "Alliance War"
+    },
+    {
+      "id": "scribing",
+      "name": "Scribing",
+      "max": 1,
+      "group": "System"
+    },
+    {
+      "id": "templar_mastery",
+      "name": "Templar Class Mastery",
+      "max": 1,
+      "group": "Class"
+    }
+  ],
+  "cp_plans": {
+    "warfare": {
+      "label": "Warfare",
+      "color": "blue",
+      "core": [
+        {
+          "id": "precision",
+          "name": "Precision",
+          "max_points": 10,
+          "slottable": false,
+          "jump_points": [
+            10
+          ],
+          "note": "Required path node; adds Critical Chance."
+        },
+        {
+          "id": "piercing",
+          "name": "Piercing",
+          "max_points": 10,
+          "slottable": false,
+          "jump_points": [
+            10
+          ],
+          "note": "Required path node; adds penetration."
+        }
+      ],
+      "flex": [
+        {
+          "id": "damage",
+          "label": "Damage",
+          "purpose": "damage",
+          "nodes": [
+            {
+              "id": "master_at_arms",
+              "name": "Master-at-Arms",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                25,
+                50
+              ],
+              "note": "Boosts direct damage."
+            },
+            {
+              "id": "deadly_aim",
+              "name": "Deadly Aim",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                25,
+                50
+              ],
+              "note": "Boosts single-target damage."
+            },
+            {
+              "id": "fighting_finesse",
+              "name": "Fighting Finesse",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                25,
+                50
+              ],
+              "note": "Critical damage and healing."
+            },
+            {
+              "id": "wrathful_strikes",
+              "name": "Wrathful Strikes",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                25,
+                50
+              ],
+              "note": "Weapon and Spell Damage."
+            }
+          ]
+        },
+        {
+          "id": "alternate_damage",
+          "label": "Alternate damage",
+          "purpose": "alternate damage",
+          "optional": true,
+          "note": "Swap these in when the encounter or a full build variant values a different damage profile.",
+          "nodes": [
+            {
+              "id": "thaumaturge",
+              "name": "Thaumaturge",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                25,
+                50
+              ],
+              "note": "Damage-over-time alternative."
+            },
+            {
+              "id": "exploiter",
+              "name": "Exploiter",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Situational damage against Off Balance enemies."
+            },
+            {
+              "id": "weapons_expert",
+              "name": "Weapons Expert",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Light- and Heavy-Attack focused alternative."
+            },
+            {
+              "id": "reaving_blows",
+              "name": "Reaving Blows",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                50
+              ],
+              "note": "Solo sustain through healing from direct damage."
+            }
+          ]
+        },
+        {
+          "id": "pve_defense",
+          "label": "PvE defense passives",
+          "purpose": "solo defense",
+          "optional": true,
+          "note": "Passive defensive spending after the damage route is comfortable.",
+          "nodes": [
+            {
+              "id": "preparation",
+              "name": "Preparation",
+              "max_points": 20,
+              "slottable": false,
+              "jump_points": [
+                10,
+                20
+              ],
+              "note": "Reduces damage taken from non-player attacks."
+            },
+            {
+              "id": "hardy",
+              "name": "Hardy",
+              "max_points": 20,
+              "slottable": false,
+              "jump_points": [
+                10,
+                20
+              ],
+              "note": "Reduces Martial damage taken."
+            },
+            {
+              "id": "elemental_aegis",
+              "name": "Elemental Aegis",
+              "max_points": 20,
+              "slottable": false,
+              "jump_points": [
+                10,
+                20
+              ],
+              "note": "Reduces Magical damage taken."
+            },
+            {
+              "id": "quick_recovery",
+              "name": "Quick Recovery",
+              "max_points": 20,
+              "slottable": false,
+              "jump_points": [
+                10,
+                20
+              ],
+              "note": "Increases healing received."
+            }
+          ]
+        }
+      ],
+      "final_slots": [
+        "master_at_arms",
+        "deadly_aim",
+        "fighting_finesse",
+        "wrathful_strikes"
+      ]
+    },
+    "fitness": {
+      "label": "Fitness",
+      "color": "red",
+      "core": [
+        {
+          "id": "sprinter",
+          "name": "Sprinter",
+          "max_points": 10,
+          "slottable": false,
+          "jump_points": [
+            10
+          ],
+          "note": "Start here to open the route."
+        },
+        {
+          "id": "hasty",
+          "name": "Hasty",
+          "max_points": 8,
+          "slottable": false,
+          "jump_points": [
+            8
+          ],
+          "note": "Required connector before Hero’s Vigor."
+        },
+        {
+          "id": "heros_vigor",
+          "name": "Hero’s Vigor",
+          "max_points": 10,
+          "slottable": false,
+          "jump_points": [
+            10
+          ],
+          "note": "Required connector before Siphoning Spells."
+        }
+      ],
+      "flex": [
+        {
+          "id": "sustain",
+          "label": "Sustain",
+          "purpose": "sustain",
+          "nodes": [
+            {
+              "id": "siphoning_spells",
+              "name": "Siphoning Spells",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Restores Magicka after kills."
+            },
+            {
+              "id": "rejuvenation",
+              "name": "Rejuvenation",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Adds recovery."
+            }
+          ]
+        },
+        {
+          "id": "solo_defense",
+          "label": "Solo defense",
+          "purpose": "solo defense",
+          "nodes": [
+            {
+              "id": "boundless_vitality",
+              "name": "Boundless Vitality",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Adds Max Health."
+            },
+            {
+              "id": "fortified",
+              "name": "Fortified",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Adds armor."
+            }
+          ]
+        },
+        {
+          "id": "mobility_and_escape",
+          "label": "Mobility & escape",
+          "purpose": "mobility / control",
+          "optional": true,
+          "note": "Useful alternatives for movement-heavy solo play, arenas, or PvP-focused variants.",
+          "nodes": [
+            {
+              "id": "celerity",
+              "name": "Celerity",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Movement-speed option."
+            },
+            {
+              "id": "expert_evasion",
+              "name": "Expert Evasion",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                50
+              ],
+              "note": "Periodic free Roll Dodge."
+            },
+            {
+              "id": "survival_instincts",
+              "name": "Survival Instincts",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Reduces core-combat costs while affected by a status effect."
+            },
+            {
+              "id": "relentlessness",
+              "name": "Relentlessness",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                50
+              ],
+              "note": "Major Protection after being stunned or feared."
+            }
+          ]
+        },
+        {
+          "id": "core_combat_passives",
+          "label": "Core-combat passives",
+          "purpose": "block / dodge / break free",
+          "optional": true,
+          "note": "Spend here when the character needs cheaper defensive actions more than another slottable.",
+          "nodes": [
+            {
+              "id": "tumbling",
+              "name": "Tumbling",
+              "max_points": 30,
+              "slottable": false,
+              "jump_points": [
+                15,
+                30
+              ],
+              "note": "Reduces Roll Dodge cost."
+            },
+            {
+              "id": "defiance",
+              "name": "Defiance",
+              "max_points": 20,
+              "slottable": false,
+              "jump_points": [
+                10,
+                20
+              ],
+              "note": "Reduces Break Free cost."
+            },
+            {
+              "id": "tireless_guardian",
+              "name": "Tireless Guardian",
+              "max_points": 20,
+              "slottable": false,
+              "jump_points": [
+                10,
+                20
+              ],
+              "note": "Reduces Block cost."
+            },
+            {
+              "id": "mystic_tenacity",
+              "name": "Mystic Tenacity",
+              "max_points": 50,
+              "slottable": false,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Reduces elemental status-effect duration."
+            }
+          ]
+        }
+      ],
+      "final_slots": [
+        "boundless_vitality",
+        "siphoning_spells",
+        "rejuvenation",
+        "fortified"
+      ]
+    },
+    "craft": {
+      "label": "Craft",
+      "color": "green",
+      "core": [
+        {
+          "id": "discipline_artisan",
+          "name": "Discipline Artisan",
+          "max_points": 50,
+          "slottable": false,
+          "jump_points": [
+            10,
+            20,
+            30,
+            40,
+            50
+          ],
+          "note": "Increases active skill and skill-line XP."
+        }
+      ],
+      "flex": [
+        {
+          "id": "movement",
+          "label": "Movement",
+          "purpose": "movement",
+          "nodes": [
+            {
+              "id": "steeds_blessing",
+              "name": "Steed’s Blessing",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Out-of-combat movement."
+            }
+          ]
+        },
+        {
+          "id": "quality_of_life",
+          "label": "Quality of life",
+          "purpose": "quality of life",
+          "nodes": [
+            {
+              "id": "rationer",
+              "name": "Rationer",
+              "max_points": 30,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30
+              ],
+              "note": "Extends food and drink duration."
+            }
+          ]
+        },
+        {
+          "id": "gathering",
+          "label": "Gathering",
+          "purpose": "gathering",
+          "nodes": [
+            {
+              "id": "treasure_hunter",
+              "name": "Treasure Hunter",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Improves chest loot quality."
+            }
+          ]
+        },
+        {
+          "id": "resource_farming",
+          "label": "Resource farming",
+          "purpose": "gathering / refining",
+          "optional": true,
+          "note": "A farming-focused loadout can promote this branch and change the recommended Craft bar.",
+          "nodes": [
+            {
+              "id": "plentiful_harvest",
+              "name": "Plentiful Harvest",
+              "max_points": 50,
+              "slottable": false,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Chance to double normal resource-node yield."
+            },
+            {
+              "id": "master_gatherer",
+              "name": "Master Gatherer",
+              "max_points": 75,
+              "slottable": true,
+              "jump_points": [
+                15,
+                30,
+                45,
+                60,
+                75
+              ],
+              "note": "Faster harvesting."
+            },
+            {
+              "id": "meticulous_disassembly",
+              "name": "Meticulous Disassembly",
+              "max_points": 50,
+              "slottable": false,
+              "jump_points": [
+                50
+              ],
+              "note": "Improves extraction and refining results."
+            }
+          ]
+        },
+        {
+          "id": "mounts_and_travel",
+          "label": "Mounts & travel",
+          "purpose": "travel",
+          "optional": true,
+          "note": "Useful for exploration, survey routes, and characters that spend a lot of time mounted.",
+          "nodes": [
+            {
+              "id": "gifted_rider",
+              "name": "Gifted Rider",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Increases mount speed."
+            },
+            {
+              "id": "war_mount",
+              "name": "War Mount",
+              "max_points": 75,
+              "slottable": true,
+              "jump_points": [
+                75
+              ],
+              "note": "Removes mount Stamina costs outside combat."
+            },
+            {
+              "id": "breakfall",
+              "name": "Breakfall",
+              "max_points": 50,
+              "slottable": false,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Reduces fall damage."
+            }
+          ]
+        },
+        {
+          "id": "economy_and_crime",
+          "label": "Economy & crime",
+          "purpose": "gold / legerdemain",
+          "optional": true,
+          "note": "Personal utility branch; a thief or economy variant can replace the normal quality-of-life route with this.",
+          "nodes": [
+            {
+              "id": "professional_upkeep",
+              "name": "Professional Upkeep",
+              "max_points": 50,
+              "slottable": false,
+              "note": "Reduces armor-repair costs."
+            },
+            {
+              "id": "infamous",
+              "name": "Infamous",
+              "max_points": 25,
+              "slottable": false,
+              "jump_points": [
+                25
+              ],
+              "note": "Increases the value of fenced items."
+            },
+            {
+              "id": "out_of_sight",
+              "name": "Out of Sight",
+              "max_points": 30,
+              "slottable": false,
+              "jump_points": [
+                10,
+                20,
+                30
+              ],
+              "note": "Reduces detection radius while Sneaking."
+            }
+          ]
+        }
+      ],
+      "final_slots": [
+        "steeds_blessing",
+        "rationer",
+        "treasure_hunter"
+      ]
+    }
+  },
+  "unlock_order": [
+    {
+      "id": "puncturing_strikes",
+      "name": "Puncturing Strikes",
+      "catalog_skill_id": "aedric_spear__puncturing_strikes",
+      "section": "Class",
+      "line": "aedric_spear",
+      "required_rank": 1,
+      "kind": "Active",
+      "phase": "Leveling",
+      "status": "final",
+      "priority": 10,
+      "notes": "Starter and permanent spammable base.",
+      "morph_from": null,
+      "image": "assets/templar-puncturing-sweeps-icon.webp",
+      "requires": []
+    },
+    {
+      "id": "sun_fire",
+      "name": "Sun Fire",
+      "catalog_skill_id": "dawns_wrath__sun_fire",
+      "section": "Class",
+      "line": "dawns_wrath",
+      "required_rank": 1,
+      "kind": "Active",
+      "phase": "Leveling",
+      "status": "final",
+      "priority": 20,
+      "notes": "Opens Dawn’s Wrath and becomes Vampire’s Bane.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "rushed_ceremony",
+      "name": "Rushed Ceremony",
+      "catalog_skill_id": "restoring_light__rushed_ceremony",
+      "section": "Class",
+      "line": "restoring_light",
+      "required_rank": 1,
+      "kind": "Active",
+      "phase": "Leveling",
+      "status": "optional",
+      "priority": 30,
+      "notes": "Starter Restoring Light slot and panic heal.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "force_shock",
+      "name": "Force Shock",
+      "catalog_skill_id": "destruction_staff__force_shock",
+      "section": "Weapon",
+      "line": "destruction_staff",
+      "required_rank": 1,
+      "kind": "Active",
+      "phase": "Leveling",
+      "status": "temporary",
+      "priority": 40,
+      "notes": "Temporary ranged filler.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "solar_flare",
+      "name": "Solar Flare",
+      "catalog_skill_id": "dawns_wrath__solar_flare",
+      "section": "Class",
+      "line": "dawns_wrath",
+      "required_rank": 4,
+      "kind": "Active",
+      "phase": "Early",
+      "status": "final",
+      "priority": 50,
+      "notes": "Becomes Solar Barrage.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "wall_elements",
+      "name": "Wall of Elements",
+      "catalog_skill_id": "destruction_staff__wall_of_elements",
+      "section": "Weapon",
+      "line": "destruction_staff",
+      "required_rank": 4,
+      "kind": "Active",
+      "phase": "Early",
+      "status": "final",
+      "priority": 60,
+      "notes": "Core back-bar ground effect.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "puncturing_sweeps",
+      "name": "Puncturing Sweeps",
+      "catalog_skill_id": "aedric_spear__puncturing_sweeps",
+      "section": "Morph",
+      "line": "aedric_spear",
+      "required_rank": 1,
+      "kind": "Morph",
+      "phase": "Early",
+      "status": "final",
+      "priority": 70,
+      "notes": "Main spammable and self-heal.",
+      "morph_from": "Puncturing Strikes",
+      "image": "assets/templar-puncturing-sweeps-icon.webp",
+      "requires": [
+        "puncturing_strikes"
+      ]
+    },
+    {
+      "id": "vampires_bane",
+      "name": "Vampire’s Bane",
+      "catalog_skill_id": "dawns_wrath__vampire_s_bane",
+      "section": "Morph",
+      "line": "dawns_wrath",
+      "required_rank": 1,
+      "kind": "Morph",
+      "phase": "Early",
+      "status": "final",
+      "priority": 80,
+      "notes": "Long fire DoT and crit buff.",
+      "morph_from": "Sun Fire",
+      "image": "assets/templar-vampire-s-bane-icon.webp",
+      "requires": [
+        "sun_fire"
+      ]
+    },
+    {
+      "id": "solar_barrage",
+      "name": "Solar Barrage",
+      "catalog_skill_id": "dawns_wrath__solar_barrage",
+      "section": "Morph",
+      "line": "dawns_wrath",
+      "required_rank": 4,
+      "kind": "Morph",
+      "phase": "Early",
+      "status": "final",
+      "priority": 90,
+      "notes": "AoE pulse and class-damage boost.",
+      "morph_from": "Solar Flare",
+      "image": "assets/templar-solar-barrage-icon.webp",
+      "requires": [
+        "solar_flare"
+      ]
+    },
+    {
+      "id": "elemental_blockade",
+      "name": "Elemental Blockade",
+      "catalog_skill_id": "destruction_staff__elemental_blockade",
+      "section": "Morph",
+      "line": "destruction_staff",
+      "required_rank": 4,
+      "kind": "Morph",
+      "phase": "Early",
+      "status": "final",
+      "priority": 100,
+      "notes": "Permanent back-bar ground DoT.",
+      "morph_from": "Wall of Elements",
+      "image": "assets/templar-elemental-blockade-icon.webp",
+      "requires": [
+        "wall_elements"
+      ]
+    },
+    {
+      "id": "radial_sweep",
+      "name": "Radial Sweep",
+      "catalog_skill_id": "aedric_spear__radial_sweep",
+      "section": "Ultimate",
+      "line": "aedric_spear",
+      "required_rank": 12,
+      "kind": "Ultimate",
+      "phase": "Early",
+      "status": "final",
+      "priority": 110,
+      "notes": "Cheap front-bar ultimate.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "everlasting_sweep",
+      "name": "Everlasting Sweep",
+      "catalog_skill_id": "aedric_spear__everlasting_sweep",
+      "section": "Morph",
+      "line": "aedric_spear",
+      "required_rank": 12,
+      "kind": "Morph",
+      "phase": "Early",
+      "status": "final",
+      "priority": 120,
+      "notes": "Permanent cheap AoE ultimate morph.",
+      "morph_from": "Radial Sweep",
+      "image": "assets/templar-everlasting-sweep-icon.webp",
+      "requires": [
+        "radial_sweep"
+      ]
+    },
+    {
+      "id": "backlash",
+      "name": "Backlash",
+      "catalog_skill_id": "dawns_wrath__backlash",
+      "section": "Class",
+      "line": "dawns_wrath",
+      "required_rank": 20,
+      "kind": "Active",
+      "phase": "Mid",
+      "status": "final",
+      "priority": 130,
+      "notes": "Core burst/debuff skill.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "power_light",
+      "name": "Power of the Light",
+      "catalog_skill_id": "dawns_wrath__power_of_the_light",
+      "section": "Morph",
+      "line": "dawns_wrath",
+      "required_rank": 20,
+      "kind": "Morph",
+      "phase": "Mid",
+      "status": "final",
+      "priority": 140,
+      "notes": "Stamina-cost morph; still use all Magicka attributes.",
+      "morph_from": "Backlash",
+      "image": "assets/templar-power-of-the-light-icon.webp",
+      "requires": [
+        "backlash"
+      ]
+    },
+    {
+      "id": "weakness_elements",
+      "name": "Weakness to Elements",
+      "catalog_skill_id": "destruction_staff__weakness_to_elements",
+      "section": "Weapon",
+      "line": "destruction_staff",
+      "required_rank": 20,
+      "kind": "Active",
+      "phase": "Mid",
+      "status": "final",
+      "priority": 150,
+      "notes": "Free Major Breach base skill.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "elemental_susceptibility",
+      "name": "Elemental Susceptibility",
+      "catalog_skill_id": "destruction_staff__elemental_susceptibility",
+      "section": "Morph",
+      "line": "destruction_staff",
+      "required_rank": 20,
+      "kind": "Morph",
+      "phase": "Mid",
+      "status": "final",
+      "priority": 160,
+      "notes": "Permanent Major Breach/status morph.",
+      "morph_from": "Weakness to Elements",
+      "image": "assets/templar-elemental-susceptibility-icon.webp",
+      "requires": [
+        "weakness_elements"
+      ]
+    },
+    {
+      "id": "entropy",
+      "name": "Entropy",
+      "catalog_skill_id": "mages_guild__entropy",
+      "section": "Guild",
+      "line": "mages_guild",
+      "required_rank": 4,
+      "kind": "Active",
+      "phase": "Mid",
+      "status": "final",
+      "priority": 170,
+      "notes": "Mages Guild DoT and damage-buff base.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "degeneration",
+      "name": "Degeneration",
+      "catalog_skill_id": "mages_guild__degeneration",
+      "section": "Morph",
+      "line": "mages_guild",
+      "required_rank": 4,
+      "kind": "Morph",
+      "phase": "Mid",
+      "status": "final",
+      "priority": 180,
+      "notes": "Long DoT and Major Sorcery/Brutality.",
+      "morph_from": "Entropy",
+      "image": "assets/templar-degeneration-icon.webp",
+      "requires": [
+        "entropy"
+      ]
+    },
+    {
+      "id": "spear_shards",
+      "name": "Spear Shards",
+      "catalog_skill_id": "aedric_spear__spear_shards",
+      "section": "Class",
+      "line": "aedric_spear",
+      "required_rank": 30,
+      "kind": "Active",
+      "phase": "Late",
+      "status": "final",
+      "priority": 190,
+      "notes": "Duo resource synergy base.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "luminous_shards",
+      "name": "Luminous Shards",
+      "catalog_skill_id": "aedric_spear__luminous_shards",
+      "section": "Morph",
+      "line": "aedric_spear",
+      "required_rank": 30,
+      "kind": "Morph",
+      "phase": "Late",
+      "status": "final",
+      "priority": 200,
+      "notes": "Permanent DoT and resource-restoring synergy.",
+      "morph_from": "Spear Shards",
+      "image": "assets/templar-luminous-shards-icon.webp",
+      "requires": [
+        "spear_shards"
+      ]
+    },
+    {
+      "id": "cleansing_ritual",
+      "name": "Cleansing Ritual",
+      "catalog_skill_id": "restoring_light__cleansing_ritual",
+      "section": "Class",
+      "line": "restoring_light",
+      "required_rank": 30,
+      "kind": "Active",
+      "phase": "Late",
+      "status": "optional",
+      "priority": 210,
+      "notes": "Optional group cleanse/heal base.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "extended_ritual",
+      "name": "Extended Ritual",
+      "catalog_skill_id": "restoring_light__extended_ritual",
+      "section": "Morph",
+      "line": "restoring_light",
+      "required_rank": 30,
+      "kind": "Morph",
+      "phase": "Late",
+      "status": "optional",
+      "priority": 220,
+      "notes": "Duo safety cleanse/heal.",
+      "morph_from": "Cleansing Ritual",
+      "image": null,
+      "requires": [
+        "cleansing_ritual"
+      ]
+    },
+    {
+      "id": "radiant_destruction",
+      "name": "Radiant Destruction",
+      "catalog_skill_id": "dawns_wrath__radiant_destruction",
+      "section": "Class",
+      "line": "dawns_wrath",
+      "required_rank": 42,
+      "kind": "Active",
+      "phase": "Late",
+      "status": "final",
+      "priority": 230,
+      "notes": "Core execute base.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "radiant_glory",
+      "name": "Radiant Glory",
+      "catalog_skill_id": "dawns_wrath__radiant_glory",
+      "section": "Morph",
+      "line": "dawns_wrath",
+      "required_rank": 42,
+      "kind": "Morph",
+      "phase": "Late",
+      "status": "final",
+      "priority": 240,
+      "notes": "Permanent execute and self-heal.",
+      "morph_from": "Radiant Destruction",
+      "image": "assets/templar-radiant-glory-icon.webp",
+      "requires": [
+        "radiant_destruction"
+      ]
+    },
+    {
+      "id": "rune_focus",
+      "name": "Rune Focus",
+      "catalog_skill_id": "restoring_light__rune_focus",
+      "section": "Class",
+      "line": "restoring_light",
+      "required_rank": 42,
+      "kind": "Active",
+      "phase": "Late",
+      "status": "final",
+      "priority": 250,
+      "notes": "Core armor/sustain base.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "channeled_focus",
+      "name": "Channeled Focus",
+      "catalog_skill_id": "restoring_light__channeled_focus",
+      "section": "Morph",
+      "line": "restoring_light",
+      "required_rank": 42,
+      "kind": "Morph",
+      "phase": "Late",
+      "status": "final",
+      "priority": 260,
+      "notes": "Permanent armor, sustain, and healing rune.",
+      "morph_from": "Rune Focus",
+      "image": "assets/templar-channeled-focus-icon.webp",
+      "requires": [
+        "rune_focus"
+      ]
+    },
+    {
+      "id": "meteor",
+      "name": "Meteor",
+      "catalog_skill_id": "mages_guild__meteor",
+      "section": "Guild",
+      "line": "mages_guild",
+      "required_rank": 10,
+      "kind": "Ultimate",
+      "phase": "Final",
+      "status": "final",
+      "priority": 270,
+      "notes": "Main ranged ultimate base.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "shooting_star",
+      "name": "Shooting Star",
+      "catalog_skill_id": "mages_guild__shooting_star",
+      "section": "Morph",
+      "line": "mages_guild",
+      "required_rank": 10,
+      "kind": "Morph",
+      "phase": "Final",
+      "status": "final",
+      "priority": 280,
+      "notes": "Permanent ranged opener ultimate.",
+      "morph_from": "Meteor",
+      "image": "assets/templar-shooting-star-icon.webp",
+      "requires": [
+        "meteor"
+      ]
+    },
+    {
+      "id": "breath_life",
+      "name": "Breath of Life",
+      "catalog_skill_id": "restoring_light__breath_of_life",
+      "section": "Morph",
+      "line": "restoring_light",
+      "required_rank": 1,
+      "kind": "Morph",
+      "phase": "Optional",
+      "status": "optional",
+      "priority": 290,
+      "notes": "Emergency duo heal.",
+      "morph_from": "Rushed Ceremony",
+      "image": null,
+      "requires": [
+        "rushed_ceremony"
+      ]
+    },
+    {
+      "id": "judgment_s_brand",
+      "name": "Judgment's Brand",
+      "catalog_skill_id": "templar_mastery__judgment_s_brand",
+      "section": "Passive",
+      "line": "templar_mastery",
+      "required_rank": 1,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 300,
+      "notes": "One of the build's two recommended Class Mastery choices. Requires all three native class lines at rank 50; subclassing disables Class Mastery.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "bright_harbinger",
+      "name": "Bright Harbinger",
+      "catalog_skill_id": "templar_mastery__bright_harbinger",
+      "section": "Passive",
+      "line": "templar_mastery",
+      "required_rank": 1,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 310,
+      "notes": "One of the build's two recommended Class Mastery choices. Requires all three native class lines at rank 50; subclassing disables Class Mastery.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    }
+  ],
+  "phases": [
+    {
+      "id": "1-15",
+      "label": "Levels 1–15",
+      "min_level": 1,
+      "max_level": 14,
+      "overview": "Open all three class lines and Destruction Staff. Sweeps is the main attack once morphed.",
+      "front_bar": {
+        "weapon": "Lightning Staff",
+        "slots": [
+          {
+            "name": "Puncturing Strikes",
+            "catalog_skill_id": "aedric_spear__puncturing_strikes",
+            "image": "assets/templar-puncturing-sweeps-icon.webp"
+          },
+          {
+            "name": "Vampire’s Bane",
+            "catalog_skill_id": "dawns_wrath__vampire_s_bane",
+            "image": "assets/templar-vampire-s-bane-icon.webp"
+          },
+          {
+            "name": "Rushed Ceremony",
+            "catalog_skill_id": "restoring_light__rushed_ceremony"
+          },
+          {
+            "name": "Force Shock",
+            "catalog_skill_id": "destruction_staff__force_shock",
+            "temporary": true
+          },
+          {
+            "name": "Solar Flare",
+            "catalog_skill_id": "dawns_wrath__solar_flare"
+          }
+        ],
+        "ultimate": null
+      },
+      "back_bar": {
+        "weapon": "Ice Staff at Level 15",
+        "slots": [],
+        "ultimate": null,
+        "locked": "Unlocks at character level 15"
+      },
+      "rotation": {
+        "type": "sequence",
+        "title": "Main sequence",
+        "summary": "Use this as a practical magicka Templar starting point; refresh effects early rather than letting them fall off.",
+        "steps": [
+          {
+            "name": "Vampire’s Bane",
+            "catalog_skill_id": "dawns_wrath__vampire_s_bane",
+            "image": "assets/templar-vampire-s-bane-icon.webp"
+          },
+          {
+            "name": "Solar Barrage when available"
+          },
+          {
+            "name": "Puncturing Sweeps",
+            "catalog_skill_id": "aedric_spear__puncturing_sweeps",
+            "image": "assets/templar-puncturing-sweeps-icon.webp"
+          }
+        ],
+        "notes": [
+          "Light-attack weave when comfortable, but learn the order and survival tools before chasing speed."
+        ]
+      }
+    },
+    {
+      "id": "15-30",
+      "label": "Levels 15–30",
+      "min_level": 15,
+      "max_level": 29,
+      "overview": "Add an Ice Staff back bar, Blockade, Susceptibility, Power of the Light, and Degeneration.",
+      "front_bar": {
+        "weapon": "Lightning Staff",
+        "slots": [
+          {
+            "name": "Puncturing Sweeps",
+            "catalog_skill_id": "aedric_spear__puncturing_sweeps",
+            "image": "assets/templar-puncturing-sweeps-icon.webp"
+          },
+          {
+            "name": "Power of the Light",
+            "catalog_skill_id": "dawns_wrath__power_of_the_light",
+            "image": "assets/templar-power-of-the-light-icon.webp"
+          },
+          {
+            "name": "Vampire’s Bane",
+            "catalog_skill_id": "dawns_wrath__vampire_s_bane",
+            "image": "assets/templar-vampire-s-bane-icon.webp"
+          },
+          {
+            "name": "Degeneration",
+            "catalog_skill_id": "mages_guild__degeneration",
+            "image": "assets/templar-degeneration-icon.webp"
+          },
+          {
+            "name": "Class-line leveling slot",
+            "placeholder": true
+          }
+        ],
+        "ultimate": null
+      },
+      "back_bar": {
+        "weapon": "Ice Staff at Level 15",
+        "slots": [
+          {
+            "name": "Elemental Blockade",
+            "catalog_skill_id": "destruction_staff__elemental_blockade",
+            "image": "assets/templar-elemental-blockade-icon.webp"
+          },
+          {
+            "name": "Elemental Susceptibility",
+            "catalog_skill_id": "destruction_staff__elemental_susceptibility",
+            "image": "assets/templar-elemental-susceptibility-icon.webp"
+          },
+          {
+            "name": "Solar Barrage",
+            "catalog_skill_id": "dawns_wrath__solar_barrage",
+            "image": "assets/templar-solar-barrage-icon.webp"
+          },
+          {
+            "name": "Restoring Light leveling slot",
+            "placeholder": true
+          }
+        ],
+        "ultimate": null
+      },
+      "rotation": {
+        "type": "sequence",
+        "title": "Main sequence",
+        "summary": "Use this as a practical magicka Templar starting point; refresh effects early rather than letting them fall off.",
+        "steps": [
+          {
+            "name": "Blockade"
+          },
+          {
+            "name": "Susceptibility"
+          },
+          {
+            "name": "Degeneration",
+            "catalog_skill_id": "mages_guild__degeneration",
+            "image": "assets/templar-degeneration-icon.webp"
+          },
+          {
+            "name": "Power of the Light",
+            "catalog_skill_id": "dawns_wrath__power_of_the_light",
+            "image": "assets/templar-power-of-the-light-icon.webp"
+          },
+          {
+            "name": "Sweeps"
+          }
+        ],
+        "notes": [
+          "Light-attack weave when comfortable, but learn the order and survival tools before chasing speed."
+        ]
+      }
+    },
+    {
+      "id": "30-50",
+      "label": "Levels 30–50",
+      "min_level": 30,
+      "max_level": 49,
+      "overview": "Add Luminous Shards, execute, Focus, and optional cleansing/healing.",
+      "front_bar": {
+        "weapon": "Lightning Staff",
+        "slots": [
+          {
+            "name": "Puncturing Sweeps",
+            "catalog_skill_id": "aedric_spear__puncturing_sweeps",
+            "image": "assets/templar-puncturing-sweeps-icon.webp"
+          },
+          {
+            "name": "Radiant Glory",
+            "catalog_skill_id": "dawns_wrath__radiant_glory",
+            "image": "assets/templar-radiant-glory-icon.webp"
+          },
+          {
+            "name": "Power of the Light",
+            "catalog_skill_id": "dawns_wrath__power_of_the_light",
+            "image": "assets/templar-power-of-the-light-icon.webp"
+          },
+          {
+            "name": "Luminous Shards",
+            "catalog_skill_id": "aedric_spear__luminous_shards",
+            "image": "assets/templar-luminous-shards-icon.webp"
+          },
+          {
+            "name": "Degeneration",
+            "catalog_skill_id": "mages_guild__degeneration",
+            "image": "assets/templar-degeneration-icon.webp"
+          }
+        ],
+        "ultimate": {
+          "name": "Everlasting Sweep",
+          "catalog_skill_id": "aedric_spear__everlasting_sweep",
+          "image": "assets/templar-everlasting-sweep-icon.webp"
+        }
+      },
+      "back_bar": {
+        "weapon": "Ice Staff at Level 15",
+        "slots": [
+          {
+            "name": "Channeled Focus",
+            "catalog_skill_id": "restoring_light__channeled_focus",
+            "image": "assets/templar-channeled-focus-icon.webp"
+          },
+          {
+            "name": "Solar Barrage",
+            "catalog_skill_id": "dawns_wrath__solar_barrage",
+            "image": "assets/templar-solar-barrage-icon.webp"
+          },
+          {
+            "name": "Elemental Susceptibility",
+            "catalog_skill_id": "destruction_staff__elemental_susceptibility",
+            "image": "assets/templar-elemental-susceptibility-icon.webp"
+          },
+          {
+            "name": "Elemental Blockade",
+            "catalog_skill_id": "destruction_staff__elemental_blockade",
+            "image": "assets/templar-elemental-blockade-icon.webp"
+          },
+          {
+            "name": "Vampire’s Bane",
+            "catalog_skill_id": "dawns_wrath__vampire_s_bane",
+            "image": "assets/templar-vampire-s-bane-icon.webp"
+          }
+        ],
+        "ultimate": {
+          "name": "Shooting Star",
+          "catalog_skill_id": "mages_guild__shooting_star",
+          "image": "assets/templar-shooting-star-icon.webp"
+        }
+      },
+      "rotation": {
+        "type": "sequence",
+        "title": "Main sequence",
+        "summary": "Use this as a practical magicka Templar starting point; refresh effects early rather than letting them fall off.",
+        "steps": [
+          {
+            "name": "Focus"
+          },
+          {
+            "name": "Susceptibility"
+          },
+          {
+            "name": "Degeneration",
+            "catalog_skill_id": "mages_guild__degeneration",
+            "image": "assets/templar-degeneration-icon.webp"
+          },
+          {
+            "name": "Power of the Light",
+            "catalog_skill_id": "dawns_wrath__power_of_the_light",
+            "image": "assets/templar-power-of-the-light-icon.webp"
+          },
+          {
+            "name": "Blockade"
+          },
+          {
+            "name": "Shards"
+          },
+          {
+            "name": "Barrage"
+          },
+          {
+            "name": "Vampire’s Bane",
+            "catalog_skill_id": "dawns_wrath__vampire_s_bane",
+            "image": "assets/templar-vampire-s-bane-icon.webp"
+          },
+          {
+            "name": "Sweeps"
+          },
+          {
+            "name": "Radiant Glory under 28%"
+          }
+        ],
+        "notes": [
+          "Light-attack weave when comfortable, but learn the order and survival tools before chasing speed."
+        ]
+      }
+    },
+    {
+      "id": "final",
+      "label": "Level 50 / CP160+",
+      "min_level": 50,
+      "max_level": 9999,
+      "overview": "Full holy-battlemage setup with optional off-heal swaps.",
+      "front_bar": {
+        "weapon": "Lightning Staff",
+        "slots": [
+          {
+            "name": "Puncturing Sweeps",
+            "catalog_skill_id": "aedric_spear__puncturing_sweeps",
+            "image": "assets/templar-puncturing-sweeps-icon.webp"
+          },
+          {
+            "name": "Radiant Glory",
+            "catalog_skill_id": "dawns_wrath__radiant_glory",
+            "image": "assets/templar-radiant-glory-icon.webp"
+          },
+          {
+            "name": "Power of the Light",
+            "catalog_skill_id": "dawns_wrath__power_of_the_light",
+            "image": "assets/templar-power-of-the-light-icon.webp"
+          },
+          {
+            "name": "Luminous Shards",
+            "catalog_skill_id": "aedric_spear__luminous_shards",
+            "image": "assets/templar-luminous-shards-icon.webp"
+          },
+          {
+            "name": "Degeneration",
+            "catalog_skill_id": "mages_guild__degeneration",
+            "image": "assets/templar-degeneration-icon.webp"
+          }
+        ],
+        "ultimate": {
+          "name": "Everlasting Sweep",
+          "catalog_skill_id": "aedric_spear__everlasting_sweep",
+          "image": "assets/templar-everlasting-sweep-icon.webp"
+        }
+      },
+      "back_bar": {
+        "weapon": "Ice Staff at Level 15",
+        "slots": [
+          {
+            "name": "Channeled Focus",
+            "catalog_skill_id": "restoring_light__channeled_focus",
+            "image": "assets/templar-channeled-focus-icon.webp"
+          },
+          {
+            "name": "Solar Barrage",
+            "catalog_skill_id": "dawns_wrath__solar_barrage",
+            "image": "assets/templar-solar-barrage-icon.webp"
+          },
+          {
+            "name": "Elemental Susceptibility",
+            "catalog_skill_id": "destruction_staff__elemental_susceptibility",
+            "image": "assets/templar-elemental-susceptibility-icon.webp"
+          },
+          {
+            "name": "Elemental Blockade",
+            "catalog_skill_id": "destruction_staff__elemental_blockade",
+            "image": "assets/templar-elemental-blockade-icon.webp"
+          },
+          {
+            "name": "Vampire’s Bane",
+            "catalog_skill_id": "dawns_wrath__vampire_s_bane",
+            "image": "assets/templar-vampire-s-bane-icon.webp"
+          }
+        ],
+        "ultimate": {
+          "name": "Shooting Star",
+          "catalog_skill_id": "mages_guild__shooting_star",
+          "image": "assets/templar-shooting-star-icon.webp"
+        }
+      },
+      "rotation": {
+        "type": "sequence",
+        "title": "Main sequence",
+        "summary": "Use this as a practical magicka Templar starting point; refresh effects early rather than letting them fall off.",
+        "steps": [
+          {
+            "name": "Shooting Star",
+            "catalog_skill_id": "mages_guild__shooting_star",
+            "image": "assets/templar-shooting-star-icon.webp"
+          },
+          {
+            "name": "Focus"
+          },
+          {
+            "name": "Susceptibility"
+          },
+          {
+            "name": "Degeneration",
+            "catalog_skill_id": "mages_guild__degeneration",
+            "image": "assets/templar-degeneration-icon.webp"
+          },
+          {
+            "name": "Power of the Light",
+            "catalog_skill_id": "dawns_wrath__power_of_the_light",
+            "image": "assets/templar-power-of-the-light-icon.webp"
+          },
+          {
+            "name": "Blockade"
+          },
+          {
+            "name": "Shards"
+          },
+          {
+            "name": "Barrage"
+          },
+          {
+            "name": "Vampire’s Bane",
+            "catalog_skill_id": "dawns_wrath__vampire_s_bane",
+            "image": "assets/templar-vampire-s-bane-icon.webp"
+          },
+          {
+            "name": "Sweeps"
+          },
+          {
+            "name": "Radiant Glory under 28%"
+          }
+        ],
+        "notes": [
+          "Light-attack weave when comfortable, but learn the order and survival tools before chasing speed."
+        ]
+      }
+    }
+  ],
+  "gear_stages": [
+    {
+      "id": "leveling",
+      "name": "Leveling drops",
+      "min_level": 1,
+      "max_level": 49,
+      "summary": "Use the best current Lightning Staff, add an Ice Staff at Level 15, and wear 5 Light / 1 Medium / 1 Heavy with Training when possible.",
+      "sets": [
+        {
+          "id": "leveling_current_level_lightning_staff",
+          "name": "Current-level Lightning Staff",
+          "role": "Front weapon",
+          "source": {
+            "location": "Quest/drop",
+            "type": "Quest / drop",
+            "tradeable": "Varies"
+          },
+          "pieces": [
+            {
+              "id": "current_level_lightning_staff_front_weapon_leveling",
+              "slot": "Front Weapon",
+              "weapon_type": "Lightning Staff",
+              "trait": "Training",
+              "enchantment": "Flame or Shock Damage",
+              "set_slots": 2,
+              "quality": "Current level"
+            }
+          ]
+        },
+        {
+          "id": "leveling_current_level_ice_staff_after_level_15",
+          "name": "Current-level Ice Staff after Level 15",
+          "role": "Back weapon",
+          "source": {
+            "location": "Quest/drop",
+            "type": "Quest / drop",
+            "tradeable": "Varies"
+          },
+          "pieces": [
+            {
+              "id": "current_level_ice_staff_after_level_15_back_weapon_leveling",
+              "slot": "Back Weapon",
+              "weapon_type": "Ice Staff at Level 15",
+              "trait": "Training",
+              "enchantment": "Weapon and Spell Damage",
+              "set_slots": 2,
+              "quality": "Current level"
+            }
+          ]
+        },
+        {
+          "id": "leveling_any_current_level_gear",
+          "name": "Any current-level gear",
+          "role": "Armor",
+          "source": {
+            "location": "Quest/drop or crafted refresh",
+            "type": "Crafted",
+            "tradeable": "Yes — another player can craft or trade it"
+          },
+          "pieces": [
+            {
+              "id": "any_current_level_gear_head_leveling",
+              "slot": "Head",
+              "weight": "Light",
+              "trait": "Training",
+              "enchantment": "Max Magicka",
+              "quality": "Current level"
+            },
+            {
+              "id": "any_current_level_gear_shoulders_leveling",
+              "slot": "Shoulders",
+              "weight": "Light",
+              "trait": "Training",
+              "enchantment": "Max Magicka",
+              "quality": "Current level"
+            },
+            {
+              "id": "any_current_level_gear_chest_leveling",
+              "slot": "Chest",
+              "weight": "Light",
+              "trait": "Training",
+              "enchantment": "Max Magicka",
+              "quality": "Current level"
+            },
+            {
+              "id": "any_current_level_gear_hands_leveling",
+              "slot": "Hands",
+              "weight": "Light",
+              "trait": "Training",
+              "enchantment": "Max Magicka",
+              "quality": "Current level"
+            },
+            {
+              "id": "any_current_level_gear_waist_leveling",
+              "slot": "Waist",
+              "weight": "Light",
+              "trait": "Training",
+              "enchantment": "Max Magicka",
+              "quality": "Current level"
+            },
+            {
+              "id": "any_current_level_gear_legs_leveling",
+              "slot": "Legs",
+              "weight": "Medium",
+              "trait": "Training",
+              "enchantment": "Max Magicka",
+              "quality": "Current level"
+            },
+            {
+              "id": "any_current_level_gear_feet_leveling",
+              "slot": "Feet",
+              "weight": "Heavy",
+              "trait": "Training",
+              "enchantment": "Max Magicka",
+              "quality": "Current level"
+            },
+            {
+              "id": "any_current_level_gear_necklace_leveling",
+              "slot": "Necklace",
+              "trait": "Healthy / Arcane / Robust",
+              "enchantment": "Magical Harm",
+              "quality": "Current level"
+            },
+            {
+              "id": "any_current_level_gear_ring_1_leveling",
+              "slot": "Ring 1",
+              "trait": "Healthy / Arcane / Robust",
+              "enchantment": "Magical Harm",
+              "quality": "Current level"
+            },
+            {
+              "id": "any_current_level_gear_ring_2_leveling",
+              "slot": "Ring 2",
+              "trait": "Healthy / Arcane / Robust",
+              "enchantment": "Magical Harm",
+              "quality": "Current level"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "starter",
+      "name": "CP160 crafted starter",
+      "min_level": 50,
+      "max_level": 9999,
+      "summary": "Order’s Wrath + Tide-Born Wildstalker + Highland Sentinel. Crafted pieces can be traded even without personal DLC access.",
+      "sets": [
+        {
+          "id": "starter_order_s_wrath",
+          "name": "Order’s Wrath",
+          "role": "Shoulders / Hands / Belt / Legs / Feet",
+          "source": {
+            "location": "Steadfast Hammer and Saw, High Isle; 3 traits",
+            "type": "Crafted",
+            "tradeable": "Yes — another player can craft or trade it",
+            "requirement": "Crafter must know 3 traits for the item",
+            "zone": "High Isle"
+          },
+          "pieces": [
+            {
+              "id": "order_s_wrath_shoulders_starter",
+              "slot": "Shoulders",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "order_s_wrath_hands_starter",
+              "slot": "Hands",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "order_s_wrath_waist_starter",
+              "slot": "Waist",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "order_s_wrath_legs_starter",
+              "slot": "Legs",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "order_s_wrath_feet_starter",
+              "slot": "Feet",
+              "weight": "Medium",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            }
+          ]
+        },
+        {
+          "id": "starter_tide_born_wildstalker",
+          "name": "Tide-Born Wildstalker",
+          "role": "Chest / Necklace / Ring 1 / both staves",
+          "source": {
+            "location": "Tide-Born Foundry, Western Solstice; 5 traits",
+            "type": "Crafted",
+            "tradeable": "Yes — another player can craft or trade it",
+            "requirement": "Crafter must know 5 traits for the item",
+            "zone": "Western Solstice"
+          },
+          "pieces": [
+            {
+              "id": "tide_born_wildstalker_chest_starter",
+              "slot": "Chest",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "tide_born_wildstalker_necklace_starter",
+              "slot": "Necklace",
+              "trait": "Bloodthirsty",
+              "enchantment": "Magical Harm",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "tide_born_wildstalker_ring_1_starter",
+              "slot": "Ring 1",
+              "trait": "Bloodthirsty",
+              "enchantment": "Magical Harm",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "tide_born_wildstalker_front_weapon_starter",
+              "slot": "Front Weapon",
+              "weapon_type": "Lightning Staff",
+              "trait": "Charged",
+              "enchantment": "Flame or Shock Damage",
+              "set_slots": 2,
+              "quality": "Gold weapons first"
+            },
+            {
+              "id": "tide_born_wildstalker_back_weapon_starter",
+              "slot": "Back Weapon",
+              "weapon_type": "Ice Staff at Level 15",
+              "trait": "Infused",
+              "enchantment": "Weapon and Spell Damage",
+              "set_slots": 2,
+              "quality": "Gold weapons first"
+            }
+          ]
+        },
+        {
+          "id": "starter_highland_sentinel",
+          "name": "Highland Sentinel",
+          "role": "Head / Ring 2",
+          "source": {
+            "location": "Leftwheal Granary, West Weald",
+            "type": "Crafted",
+            "tradeable": "Yes — another player can craft or trade it",
+            "zone": "West Weald"
+          },
+          "pieces": [
+            {
+              "id": "highland_sentinel_head_starter",
+              "slot": "Head",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "highland_sentinel_ring_2_starter",
+              "slot": "Ring 2",
+              "trait": "Bloodthirsty",
+              "enchantment": "Magical Harm",
+              "quality": "Purple or better"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mid",
+      "name": "Bridge setup",
+      "min_level": 50,
+      "max_level": 9999,
+      "summary": "Tide-Born plus Tzogvin; crafted Order’s Wrath remains useful while farming.",
+      "sets": [
+        {
+          "id": "mid_tzogvin_s_warband",
+          "name": "Tzogvin’s Warband",
+          "role": "Body or weapons/jewelry",
+          "source": {
+            "location": "Frostvault dungeon",
+            "type": "Dungeon",
+            "tradeable": "Group-bound briefly, then account-bound",
+            "zone": "Eastmarch",
+            "access": "Wrathstone DLC or ESO Plus"
+          },
+          "pieces": [
+            {
+              "id": "tzogvin_s_warband_shoulders_mid",
+              "slot": "Shoulders",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "tzogvin_s_warband_hands_mid",
+              "slot": "Hands",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "tzogvin_s_warband_waist_mid",
+              "slot": "Waist",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "tzogvin_s_warband_legs_mid",
+              "slot": "Legs",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "tzogvin_s_warband_feet_mid",
+              "slot": "Feet",
+              "weight": "Medium",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            }
+          ]
+        },
+        {
+          "id": "mid_tide_born_wildstalker_or_order_s_wrath",
+          "name": "Tide-Born Wildstalker or Order’s Wrath",
+          "role": "Other five-piece",
+          "source": {
+            "location": "Crafted",
+            "type": "Crafted",
+            "tradeable": "Yes — another player can craft or trade it"
+          },
+          "pieces": [
+            {
+              "id": "tide_born_wildstalker_or_order_s_wrath_chest_mid",
+              "slot": "Chest",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "tide_born_wildstalker_or_order_s_wrath_necklace_mid",
+              "slot": "Necklace",
+              "trait": "Bloodthirsty",
+              "enchantment": "Magical Harm",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "tide_born_wildstalker_or_order_s_wrath_ring_1_mid",
+              "slot": "Ring 1",
+              "trait": "Bloodthirsty",
+              "enchantment": "Magical Harm",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "tide_born_wildstalker_or_order_s_wrath_front_weapon_mid",
+              "slot": "Front Weapon",
+              "weapon_type": "Lightning Staff",
+              "trait": "Charged",
+              "enchantment": "Flame or Shock Damage",
+              "set_slots": 2,
+              "quality": "Gold weapons first"
+            }
+          ]
+        },
+        {
+          "id": "mid_ring_of_the_pale_order",
+          "name": "Ring of the Pale Order",
+          "role": "Ring",
+          "source": {
+            "location": "Antiquities / Greymoor system",
+            "type": "Antiquity / Mythic",
+            "access": "Antiquities system",
+            "tradeable": "No"
+          },
+          "pieces": [
+            {
+              "id": "ring_of_the_pale_order_ring_2_mid",
+              "slot": "Ring 2",
+              "trait": "Bloodthirsty",
+              "enchantment": "Magical Harm",
+              "quality": "Purple or better"
+            }
+          ]
+        },
+        {
+          "id": "mid_crushing_wall_ice_staff",
+          "name": "Crushing Wall Ice Staff",
+          "role": "Back bar",
+          "source": {
+            "location": "Maelstrom Arena",
+            "type": "Arena weapon",
+            "zone": "Wrothgar",
+            "access": "Maelstrom Arena / Orsinium access",
+            "tradeable": "No — account-bound collection"
+          },
+          "pieces": [
+            {
+              "id": "crushing_wall_ice_staff_back_weapon_mid",
+              "slot": "Back Weapon",
+              "weapon_type": "Ice Staff at Level 15",
+              "trait": "Infused",
+              "enchantment": "Weapon and Spell Damage",
+              "set_slots": 2,
+              "quality": "Gold weapons first"
+            },
+            {
+              "id": "crushing_wall_ice_staff_head_mid",
+              "slot": "Head",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "final-solo",
+      "name": "Final general solo / overland",
+      "min_level": 50,
+      "max_level": 9999,
+      "summary": "Aetheric Lancer body + Tzogvin weapons/jewelry + one Slimecraw + Pale Order + Crushing Wall.",
+      "sets": [
+        {
+          "id": "final_solo_aetheric_lancer",
+          "name": "Aetheric Lancer",
+          "role": "Body",
+          "source": {
+            "location": "Infinite Archive",
+            "type": "Infinite Archive class set",
+            "tradeable": "No — collect from Infinite Archive rewards",
+            "access": "Infinite Archive"
+          },
+          "pieces": [
+            {
+              "id": "aetheric_lancer_shoulders_final_solo",
+              "slot": "Shoulders",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "aetheric_lancer_hands_final_solo",
+              "slot": "Hands",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "aetheric_lancer_waist_final_solo",
+              "slot": "Waist",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "aetheric_lancer_legs_final_solo",
+              "slot": "Legs",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "aetheric_lancer_feet_final_solo",
+              "slot": "Feet",
+              "weight": "Medium",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            }
+          ]
+        },
+        {
+          "id": "final_solo_tzogvin_s_warband",
+          "name": "Tzogvin’s Warband",
+          "role": "Weapons / jewelry",
+          "source": {
+            "location": "Frostvault",
+            "type": "Dungeon",
+            "tradeable": "Group-bound briefly, then account-bound",
+            "zone": "Eastmarch",
+            "access": "Wrathstone DLC or ESO Plus"
+          },
+          "pieces": [
+            {
+              "id": "tzogvin_s_warband_chest_final_solo",
+              "slot": "Chest",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "tzogvin_s_warband_necklace_final_solo",
+              "slot": "Necklace",
+              "trait": "Bloodthirsty",
+              "enchantment": "Magical Harm",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "tzogvin_s_warband_ring_1_final_solo",
+              "slot": "Ring 1",
+              "trait": "Bloodthirsty",
+              "enchantment": "Magical Harm",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "tzogvin_s_warband_front_weapon_final_solo",
+              "slot": "Front Weapon",
+              "weapon_type": "Lightning Staff",
+              "trait": "Charged",
+              "enchantment": "Flame or Shock Damage",
+              "set_slots": 2,
+              "quality": "Gold weapons first"
+            }
+          ]
+        },
+        {
+          "id": "final_solo_slimecraw_1_piece",
+          "name": "Slimecraw (1 piece)",
+          "role": "Head or shoulder",
+          "source": {
+            "location": "Wayrest Sewers I",
+            "type": "Dungeon",
+            "tradeable": "Group-bound briefly, then account-bound",
+            "zone": "Stormhaven",
+            "access": "Base game"
+          },
+          "pieces": [
+            {
+              "id": "slimecraw_1_piece_head_final_solo",
+              "slot": "Head",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            }
+          ]
+        },
+        {
+          "id": "final_solo_ring_of_the_pale_order",
+          "name": "Ring of the Pale Order",
+          "role": "Ring",
+          "source": {
+            "location": "Antiquities",
+            "type": "Antiquity / Mythic",
+            "access": "Antiquities system",
+            "tradeable": "No"
+          },
+          "pieces": [
+            {
+              "id": "ring_of_the_pale_order_ring_2_final_solo",
+              "slot": "Ring 2",
+              "trait": "Bloodthirsty",
+              "enchantment": "Magical Harm",
+              "quality": "Purple or better"
+            }
+          ]
+        },
+        {
+          "id": "final_solo_crushing_wall_ice_staff",
+          "name": "Crushing Wall Ice Staff",
+          "role": "Back bar",
+          "source": {
+            "location": "Maelstrom Arena",
+            "type": "Arena weapon",
+            "zone": "Wrothgar",
+            "access": "Maelstrom Arena / Orsinium access",
+            "tradeable": "No — account-bound collection"
+          },
+          "pieces": [
+            {
+              "id": "crushing_wall_ice_staff_back_weapon_final_solo",
+              "slot": "Back Weapon",
+              "weapon_type": "Ice Staff at Level 15",
+              "trait": "Infused",
+              "enchantment": "Weapon and Spell Damage",
+              "set_slots": 2,
+              "quality": "Gold weapons first"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "final-instance",
+      "name": "Final arenas / dungeons",
+      "min_level": 50,
+      "max_level": 9999,
+      "summary": "Aetheric Lancer body + Ansuul weapons/jewelry + one Valkyn Skoria + Pale Order + Crushing Wall.",
+      "sets": [
+        {
+          "id": "final_instance_aetheric_lancer",
+          "name": "Aetheric Lancer",
+          "role": "Body",
+          "source": {
+            "location": "Infinite Archive",
+            "type": "Infinite Archive class set",
+            "tradeable": "No — collect from Infinite Archive rewards",
+            "access": "Infinite Archive"
+          },
+          "pieces": [
+            {
+              "id": "aetheric_lancer_shoulders_final_instance",
+              "slot": "Shoulders",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "aetheric_lancer_hands_final_instance",
+              "slot": "Hands",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "aetheric_lancer_waist_final_instance",
+              "slot": "Waist",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "aetheric_lancer_legs_final_instance",
+              "slot": "Legs",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "aetheric_lancer_feet_final_instance",
+              "slot": "Feet",
+              "weight": "Medium",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            }
+          ]
+        },
+        {
+          "id": "final_instance_ansuul_s_torment",
+          "name": "Ansuul’s Torment",
+          "role": "Weapons / jewelry",
+          "source": {
+            "location": "Sanity’s Edge trial",
+            "type": "Trial",
+            "tradeable": "Group-bound briefly, then account-bound",
+            "zone": "Telvanni Peninsula",
+            "access": "Necrom chapter trial access"
+          },
+          "pieces": [
+            {
+              "id": "ansuul_s_torment_chest_final_instance",
+              "slot": "Chest",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "ansuul_s_torment_necklace_final_instance",
+              "slot": "Necklace",
+              "trait": "Bloodthirsty",
+              "enchantment": "Magical Harm",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "ansuul_s_torment_ring_1_final_instance",
+              "slot": "Ring 1",
+              "trait": "Bloodthirsty",
+              "enchantment": "Magical Harm",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "ansuul_s_torment_front_weapon_final_instance",
+              "slot": "Front Weapon",
+              "weapon_type": "Lightning Staff",
+              "trait": "Charged",
+              "enchantment": "Flame or Shock Damage",
+              "set_slots": 2,
+              "quality": "Gold weapons first"
+            }
+          ]
+        },
+        {
+          "id": "final_instance_valkyn_skoria_1_piece",
+          "name": "Valkyn Skoria (1 piece)",
+          "role": "Head or shoulder",
+          "source": {
+            "location": "City of Ash II / Undaunted chest",
+            "type": "Dungeon",
+            "tradeable": "Group-bound briefly, then account-bound",
+            "zone": "Greenshade",
+            "access": "Base game"
+          },
+          "pieces": [
+            {
+              "id": "valkyn_skoria_1_piece_head_final_instance",
+              "slot": "Head",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            }
+          ]
+        },
+        {
+          "id": "final_instance_ring_of_the_pale_order",
+          "name": "Ring of the Pale Order",
+          "role": "Ring",
+          "source": {
+            "location": "Antiquities",
+            "type": "Antiquity / Mythic",
+            "access": "Antiquities system",
+            "tradeable": "No"
+          },
+          "pieces": [
+            {
+              "id": "ring_of_the_pale_order_ring_2_final_instance",
+              "slot": "Ring 2",
+              "trait": "Bloodthirsty",
+              "enchantment": "Magical Harm",
+              "quality": "Purple or better"
+            }
+          ]
+        },
+        {
+          "id": "final_instance_crushing_wall_ice_staff",
+          "name": "Crushing Wall Ice Staff",
+          "role": "Back bar",
+          "source": {
+            "location": "Maelstrom Arena",
+            "type": "Arena weapon",
+            "zone": "Wrothgar",
+            "access": "Maelstrom Arena / Orsinium access",
+            "tradeable": "No — account-bound collection"
+          },
+          "pieces": [
+            {
+              "id": "crushing_wall_ice_staff_back_weapon_final_instance",
+              "slot": "Back Weapon",
+              "weapon_type": "Ice Staff at Level 15",
+              "trait": "Infused",
+              "enchantment": "Weapon and Spell Damage",
+              "set_slots": 2,
+              "quality": "Gold weapons first"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "consumables": {
+    "foods": [
+      {
+        "name": "Ghastly Eye Bowl",
+        "use": "High Magicka and Magicka recovery for general PvE"
+      },
+      {
+        "name": "Clockwork Citrus Filet",
+        "use": "Premium Health + Magicka + recovery solo food"
+      },
+      {
+        "name": "Witchmother’s Potent Brew",
+        "use": "Budget Health/Magicka sustain"
+      },
+      {
+        "name": "Bewitched Sugar Skulls",
+        "use": "PvP or difficult solo content needing larger pools"
+      }
+    ],
+    "potions": [
+      {
+        "name": "Spell Power potion",
+        "use": "Maximum damage when Major Sorcery/Prophecy are not fully covered"
+      },
+      {
+        "name": "Tri-stat potion",
+        "use": "General solo survival and resource recovery"
+      },
+      {
+        "name": "Immovability potion",
+        "use": "Cyrodiil pressure and crowd-control protection"
+      }
+    ],
+    "pvp_alternatives": [
+      {
+        "name": "Defensive staff/bar",
+        "use": "Keep Ice Staff, Channeled Focus, Extended Ritual, and Breath of Life available."
+      },
+      {
+        "name": "Detection potion",
+        "use": "Reveal stealth targets in Cyrodiil."
+      },
+      {
+        "name": "Attribute alternative",
+        "use": "Use an Armory loadout with some Health only for a dedicated PvP/solo survival variant; default PvE remains 64 Magicka."
+      }
+    ]
+  },
+  "tips": [
+    "Keep one Aedric Spear, Dawn’s Wrath, and Restoring Light skill on the active bar whenever XP lands.",
+    "Do not buy Tri Focus while using an Ice Staff; it changes blocking to consume Magicka.",
+    "Join Mages Guild early and collect lorebooks toward Meteor / Shooting Star.",
+    "Luminous Shards is valuable in a duo because the partner can activate the synergy for resources.",
+    "Ring of the Pale Order prevents other players from healing its wearer. Coordinate who equips it.",
+    "ESO Plus benefits belong to the subscribed account only. Crafted gear can still be traded to a player without access.",
+    "Recommended Class Mastery: Judgment’s Brand + Bright Harbinger after all three native class lines reach rank 50; subclassing disables them."
+  ],
+  "variants": [
+    {
+      "id": "solo-duo",
+      "name": "Solo / Duo PvE",
+      "summary": "The build exactly as written. Nothing is overridden.",
+      "available": true,
+      "overrides": null
+    },
+    {
+      "id": "off-heal",
+      "name": "Duo Off-Heal",
+      "summary": "Planned. Needs its own bars, gear, and attribute split before it can change anything.",
+      "available": false,
+      "unavailable_reason": "This build file does not contain off-heal bars, gear, or an attribute split, and ATTB will not invent them. Pick Solo / Duo PvE, or add off-heal overrides to the JSON.",
+      "overrides": null
+    },
+    {
+      "id": "cyrodiil",
+      "name": "Cyrodiil Alternative",
+      "summary": "Swaps the consumables to the PvP options this build already lists, and adds the matching bar and attribute notes.",
+      "available": true,
+      "overrides": {
+        "summary": "Lightning-and-Ice holy battlemage with self-healing Sweeps, strong execute pressure, group resource synergy, and optional off-healing. In Cyrodiil the same skills are used with larger pools and PvP consumables.",
+        "consumables": {
+          "foods": [
+            {
+              "name": "Bewitched Sugar Skulls",
+              "use": "PvP or difficult solo content needing larger pools"
+            }
+          ],
+          "potions": [
+            {
+              "name": "Immovability potion",
+              "use": "Cyrodiil pressure and crowd-control protection"
+            },
+            {
+              "name": "Tri-stat potion",
+              "use": "General solo survival and resource recovery"
+            }
+          ],
+          "pvp_alternatives": [
+            {
+              "name": "Defensive staff/bar",
+              "use": "Keep Ice Staff, Channeled Focus, Extended Ritual, and Breath of Life available."
+            },
+            {
+              "name": "Detection potion",
+              "use": "Reveal stealth targets in Cyrodiil."
+            },
+            {
+              "name": "Attribute alternative",
+              "use": "Use an Armory loadout with some Health only for a dedicated PvP/solo survival variant; default PvE remains 64 Magicka."
+            }
+          ]
+        },
+        "tips": [
+          "Keep one Aedric Spear, Dawn’s Wrath, and Restoring Light skill on the active bar whenever XP lands.",
+          "Do not buy Tri Focus while using an Ice Staff; it changes blocking to consume Magicka.",
+          "Join Mages Guild early and collect lorebooks toward Meteor / Shooting Star.",
+          "Luminous Shards is valuable in a duo because the partner can activate the synergy for resources.",
+          "Ring of the Pale Order prevents other players from healing its wearer. Coordinate who equips it.",
+          "ESO Plus benefits belong to the subscribed account only. Crafted gear can still be traded to a player without access.",
+          "Cyrodiil: keep Ice Staff, Channeled Focus, Extended Ritual, and Breath of Life available, as this build file notes under PvP alternatives.",
+          "Cyrodiil: carry detection potions for stealthed targets.",
+          "Cyrodiil: the PvP alternatives note suggests an Armory loadout with some Health rather than the 64 Magicka PvE split. ATTB keeps your recorded attributes as they are and only changes the recommended target."
+        ]
+      }
+    }
+  ],
+  "setup_help": {
+    "class": {
+      "summary": "This build keeps all three native Templar skill lines for pure-class progression and Class Mastery access."
+    },
+    "race": {
+      "summary": "Race changes damage, sustain, and utility slightly, but ordinary PvE content does not require the recommended option.",
+      "recommended": "Dark Elf",
+      "alternatives": [
+        "High Elf",
+        "Khajiit",
+        "Breton"
+      ],
+      "notes": [
+        "Record the race you actually chose; ATTB keeps it separate from the build recommendation."
+      ]
+    },
+    "alliance": {
+      "summary": "Alliance primarily determines PvP faction and some story context. It does not change this PvE combat setup.",
+      "recommended": "Ebonheart Pact",
+      "notes": [
+        "Any Race, Any Alliance and Alliance Change Tokens can make race and alliance independent."
+      ]
+    },
+    "mundus": {
+      "summary": "The Thief increases Critical Chance and is the default damage Mundus for this launch build.",
+      "locations": [
+        "Malabal Tor (Aldmeri Dominion)",
+        "Alik’r Desert (Daggerfall Covenant)",
+        "Eastmarch (Ebonheart Pact)",
+        "Cyrodiil"
+      ],
+      "notes": [
+        "Activate a different Mundus stone at any time to replace the current blessing."
+      ]
+    },
+    "front_weapon": {
+      "summary": "The front bar holds the main spammable, class burst, and offensive passives."
+    },
+    "back_weapon": {
+      "summary": "The second weapon bar unlocks at character level 15 and normally carries longer-duration effects and support skills."
+    },
+    "leveling_armor": {
+      "summary": "Mixed armor weights level multiple armor skill lines while Training traits accelerate experience gain."
+    },
+    "endgame_armor": {
+      "summary": "The final weight mix balances damage passives, penetration, sustain, and Undaunted Mettle."
+    },
+    "leveling_trait": {
+      "summary": "Training increases experience gained from kills. Replace leveling pieces freely rather than upgrading them heavily."
+    },
+    "gear_cap": {
+      "summary": "Equipment stops scaling at Level 50 / CP160, so that is the first point where farming and upgrading permanent sets makes sense."
+    }
+  },
+  "format_notes": [
+    "Schema 3: explicit hotbars, structured rotations, individual equipment slots, and acquisition-aware set groups."
+  ]
+}

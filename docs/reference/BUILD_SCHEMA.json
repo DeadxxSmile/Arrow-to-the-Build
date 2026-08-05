@@ -1,0 +1,429 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Arrow to the Build JSON (schema 3)",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "id",
+    "name",
+    "defaults",
+    "relevant_lines",
+    "cp_plans",
+    "unlock_order",
+    "phases",
+    "gear_stages"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 3
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "defaults": {
+      "type": "object",
+      "required": [
+        "class",
+        "attributes"
+      ],
+      "properties": {
+        "class": {
+          "type": "string"
+        },
+        "race": {
+          "type": "string"
+        },
+        "alliance": {
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/attributes"
+        }
+      }
+    },
+    "setup_help": {
+      "type": "object"
+    },
+    "relevant_lines": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/line"
+      }
+    },
+    "unlock_order": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/unlock"
+      }
+    },
+    "cp_plans": {
+      "type": "object"
+    },
+    "phases": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/phase"
+      }
+    },
+    "gear_stages": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/gear_stage"
+      }
+    },
+    "consumables": {
+      "type": "object"
+    },
+    "tips": {
+      "type": "array"
+    },
+    "concepts": {
+      "type": "array"
+    },
+    "variants": {
+      "type": "array"
+    }
+  },
+  "$defs": {
+    "attributes": {
+      "type": "object",
+      "properties": {
+        "magicka": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "health": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "stamina": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "line": {
+      "type": "object",
+      "required": [
+        "id",
+        "name"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+        },
+        "name": {
+          "type": "string"
+        },
+        "group": {
+          "type": "string"
+        },
+        "max": {
+          "type": "integer"
+        }
+      }
+    },
+    "skill_ref": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "catalog_skill_id": {
+          "type": "string"
+        },
+        "image": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "note": {
+          "type": "string"
+        },
+        "temporary": {
+          "type": "boolean"
+        },
+        "locked": {
+          "type": "string"
+        }
+      }
+    },
+    "bar": {
+      "type": "object",
+      "required": [
+        "slots"
+      ],
+      "properties": {
+        "weapon": {
+          "type": "string"
+        },
+        "locked": {
+          "type": "string"
+        },
+        "slots": {
+          "type": "array",
+          "maxItems": 5,
+          "items": {
+            "$ref": "#/$defs/skill_ref"
+          }
+        },
+        "ultimate": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/skill_ref"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "rotation": {
+      "type": "object",
+      "required": [
+        "type",
+        "steps"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "sequence",
+            "priority"
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "opener": {
+          "type": "array"
+        },
+        "steps": {
+          "type": "array"
+        },
+        "execute": {
+          "type": "array"
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "phase": {
+      "type": "object",
+      "required": [
+        "id",
+        "front_bar",
+        "back_bar",
+        "rotation"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+        },
+        "label": {
+          "type": "string"
+        },
+        "min_level": {
+          "type": "integer"
+        },
+        "max_level": {
+          "type": "integer"
+        },
+        "overview": {
+          "type": "string"
+        },
+        "front_bar": {
+          "$ref": "#/$defs/bar"
+        },
+        "back_bar": {
+          "$ref": "#/$defs/bar"
+        },
+        "rotation": {
+          "$ref": "#/$defs/rotation"
+        }
+      }
+    },
+    "piece": {
+      "type": "object",
+      "required": [
+        "id",
+        "slot"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+        },
+        "slot": {
+          "type": "string"
+        },
+        "weight": {
+          "type": "string"
+        },
+        "weapon_type": {
+          "type": "string"
+        },
+        "trait": {
+          "type": "string"
+        },
+        "enchantment": {
+          "type": "string"
+        },
+        "quality": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    },
+    "set": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "source",
+        "pieces"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+        },
+        "name": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "bonus": {
+          "type": "string"
+        },
+        "source": {
+          "type": "object"
+        },
+        "pieces": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/piece"
+          }
+        }
+      }
+    },
+    "gear_stage": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "sets"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+        },
+        "name": {
+          "type": "string"
+        },
+        "min_level": {
+          "type": "integer"
+        },
+        "max_level": {
+          "type": "integer"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "sets": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/set"
+          }
+        }
+      }
+    },
+    "unlock": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "catalog_skill_id",
+        "line"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+        },
+        "name": {
+          "type": "string"
+        },
+        "catalog_skill_id": {
+          "type": "string"
+        },
+        "line": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "Active",
+            "Ultimate",
+            "Morph",
+            "Passive",
+            "Scribing"
+          ]
+        },
+        "status": {
+          "enum": [
+            "final",
+            "temporary",
+            "optional"
+          ]
+        },
+        "required_rank": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "priority": {
+          "type": "number"
+        },
+        "requires": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "image": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

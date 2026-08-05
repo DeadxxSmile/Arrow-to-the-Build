@@ -1,0 +1,2935 @@
+{
+  "schema_version": 3,
+  "id": "stamina-arcanist-solo-duo-u50",
+  "name": "Stamina Arcanist Solo / Duo",
+  "short_name": "Stam Arcanist",
+  "author": "DeadxxSmile / ATTB",
+  "game_version": "Update 50",
+  "verified_date": "2026-08-05",
+  "summary": "Medium-armored Crux builder with dual daggers, an Inferno Staff, strong self-healing, shielding, and a full-strength AoE beam.",
+  "theme": {
+    "accent": "#69e891",
+    "accent2": "#7bd8ff",
+    "background": "#07110f"
+  },
+  "images": {
+    "hero": "assets/arcanist-stamina-arcanist-character-setup.webp"
+  },
+  "defaults": {
+    "class": "Arcanist",
+    "race": "Dark Elf",
+    "alliance": "Ebonheart Pact",
+    "eso_plus": true,
+    "attributes": {
+      "stamina": 64,
+      "magicka": 0,
+      "health": 0
+    },
+    "mundus": "The Thief",
+    "front_weapon": "Dual Daggers",
+    "back_weapon": "Inferno Staff at Level 15",
+    "leveling_armor": "5 Medium / 1 Light / 1 Heavy",
+    "endgame_armor": "6 Medium / 1 Light",
+    "leveling_trait": "Training",
+    "gear_cap": "Level 50 / CP160"
+  },
+  "concepts": [
+    {
+      "title": "Primary resource",
+      "text": "Put every attribute point into Stamina. Magicka still pays for utility and back-bar skills; hybrid scaling uses the stronger offensive stats."
+    },
+    {
+      "title": "Crux loop",
+      "text": "Generate three Crux with Runeblades early and Cephaliarch’s Flail later, then spend them on Pragmatic Fatecarver."
+    },
+    {
+      "title": "Class-line leveling",
+      "text": "Keep one skill from Herald of the Tome, Soldier of Apocrypha, and Curative Runeforms on the active bar whenever XP lands."
+    },
+    {
+      "title": "Weapon identity",
+      "text": "The daggers are offensive stat sticks. Most damage comes from Arcanist abilities rather than ordinary dagger attacks."
+    }
+  ],
+  "relevant_lines": [
+    {
+      "id": "herald",
+      "name": "Herald of the Tome",
+      "max": 50,
+      "group": "Class"
+    },
+    {
+      "id": "soldier",
+      "name": "Soldier of Apocrypha",
+      "max": 50,
+      "group": "Class"
+    },
+    {
+      "id": "curative",
+      "name": "Curative Runeforms",
+      "max": 50,
+      "group": "Class"
+    },
+    {
+      "id": "dual_wield",
+      "name": "Dual Wield",
+      "max": 50,
+      "group": "Weapon"
+    },
+    {
+      "id": "destruction_staff",
+      "name": "Destruction Staff",
+      "max": 50,
+      "group": "Weapon"
+    },
+    {
+      "id": "medium_armor",
+      "name": "Medium Armor",
+      "max": 50,
+      "group": "Armor"
+    },
+    {
+      "id": "light_armor",
+      "name": "Light Armor",
+      "max": 50,
+      "group": "Armor"
+    },
+    {
+      "id": "dark_elf",
+      "name": "Dark Elf Skills",
+      "max": 50,
+      "group": "Racial"
+    },
+    {
+      "id": "fighters_guild",
+      "name": "Fighters Guild",
+      "max": 10,
+      "group": "Guild"
+    },
+    {
+      "id": "undaunted",
+      "name": "Undaunted",
+      "max": 10,
+      "group": "Guild"
+    },
+    {
+      "id": "assault",
+      "name": "Assault",
+      "max": 10,
+      "group": "Alliance War"
+    },
+    {
+      "id": "scribing",
+      "name": "Scribing",
+      "max": 1,
+      "group": "System"
+    },
+    {
+      "id": "arcanist_mastery",
+      "name": "Arcanist Class Mastery",
+      "max": 1,
+      "group": "Class"
+    }
+  ],
+  "cp_plans": {
+    "warfare": {
+      "label": "Warfare",
+      "color": "blue",
+      "core": [
+        {
+          "id": "tireless_discipline",
+          "name": "Tireless Discipline",
+          "max_points": 10,
+          "slottable": false,
+          "jump_points": [
+            10
+          ],
+          "note": "Required path node; also adds Max Stamina."
+        },
+        {
+          "id": "piercing",
+          "name": "Piercing",
+          "max_points": 10,
+          "slottable": false,
+          "jump_points": [
+            10
+          ],
+          "note": "Required path node; adds penetration."
+        }
+      ],
+      "flex": [
+        {
+          "id": "damage",
+          "label": "Damage",
+          "purpose": "damage",
+          "nodes": [
+            {
+              "id": "master_at_arms",
+              "name": "Master-at-Arms",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                25,
+                50
+              ],
+              "note": "Primary direct-damage slottable."
+            },
+            {
+              "id": "biting_aura",
+              "name": "Biting Aura",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                25,
+                50
+              ],
+              "note": "Boosts area damage, including the beam."
+            },
+            {
+              "id": "fighting_finesse",
+              "name": "Fighting Finesse",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                25,
+                50
+              ],
+              "note": "Critical damage and healing."
+            },
+            {
+              "id": "wrathful_strikes",
+              "name": "Wrathful Strikes",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                25,
+                50
+              ],
+              "note": "Weapon and Spell Damage."
+            }
+          ]
+        },
+        {
+          "id": "alternate_damage",
+          "label": "Alternate damage",
+          "purpose": "alternate damage",
+          "optional": true,
+          "note": "Swap these in when the encounter or a full build variant values a different damage profile.",
+          "nodes": [
+            {
+              "id": "thaumaturge",
+              "name": "Thaumaturge",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                25,
+                50
+              ],
+              "note": "Damage-over-time alternative."
+            },
+            {
+              "id": "exploiter",
+              "name": "Exploiter",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Situational damage against Off Balance enemies."
+            },
+            {
+              "id": "weapons_expert",
+              "name": "Weapons Expert",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Light- and Heavy-Attack focused alternative."
+            },
+            {
+              "id": "reaving_blows",
+              "name": "Reaving Blows",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                50
+              ],
+              "note": "Solo sustain through healing from direct damage."
+            }
+          ]
+        },
+        {
+          "id": "pve_defense",
+          "label": "PvE defense passives",
+          "purpose": "solo defense",
+          "optional": true,
+          "note": "Passive defensive spending after the damage route is comfortable.",
+          "nodes": [
+            {
+              "id": "preparation",
+              "name": "Preparation",
+              "max_points": 20,
+              "slottable": false,
+              "jump_points": [
+                10,
+                20
+              ],
+              "note": "Reduces damage taken from non-player attacks."
+            },
+            {
+              "id": "hardy",
+              "name": "Hardy",
+              "max_points": 20,
+              "slottable": false,
+              "jump_points": [
+                10,
+                20
+              ],
+              "note": "Reduces Martial damage taken."
+            },
+            {
+              "id": "elemental_aegis",
+              "name": "Elemental Aegis",
+              "max_points": 20,
+              "slottable": false,
+              "jump_points": [
+                10,
+                20
+              ],
+              "note": "Reduces Magical damage taken."
+            },
+            {
+              "id": "quick_recovery",
+              "name": "Quick Recovery",
+              "max_points": 20,
+              "slottable": false,
+              "jump_points": [
+                10,
+                20
+              ],
+              "note": "Increases healing received."
+            }
+          ]
+        }
+      ],
+      "final_slots": [
+        "master_at_arms",
+        "biting_aura",
+        "fighting_finesse",
+        "wrathful_strikes"
+      ]
+    },
+    "fitness": {
+      "label": "Fitness",
+      "color": "red",
+      "core": [
+        {
+          "id": "sprinter",
+          "name": "Sprinter",
+          "max_points": 10,
+          "slottable": false,
+          "jump_points": [
+            10
+          ],
+          "note": "Start here; this opens the Wind Chaser route."
+        },
+        {
+          "id": "hasty",
+          "name": "Hasty",
+          "max_points": 8,
+          "slottable": false,
+          "jump_points": [
+            8
+          ],
+          "note": "Required connector before Hero’s Vigor."
+        },
+        {
+          "id": "heros_vigor",
+          "name": "Hero’s Vigor",
+          "max_points": 10,
+          "slottable": false,
+          "jump_points": [
+            10
+          ],
+          "note": "Required connector before Bloody Renewal."
+        }
+      ],
+      "flex": [
+        {
+          "id": "sustain",
+          "label": "Sustain",
+          "purpose": "sustain",
+          "nodes": [
+            {
+              "id": "bloody_renewal",
+              "name": "Bloody Renewal",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Restores Stamina after kills; exceptional while leveling."
+            },
+            {
+              "id": "rejuvenation",
+              "name": "Rejuvenation",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Adds resource recovery."
+            }
+          ]
+        },
+        {
+          "id": "solo_defense",
+          "label": "Solo defense",
+          "purpose": "solo defense",
+          "nodes": [
+            {
+              "id": "boundless_vitality",
+              "name": "Boundless Vitality",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Adds Max Health."
+            },
+            {
+              "id": "fortified",
+              "name": "Fortified",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Adds armor."
+            }
+          ]
+        },
+        {
+          "id": "mobility_and_escape",
+          "label": "Mobility & escape",
+          "purpose": "mobility / control",
+          "optional": true,
+          "note": "Useful alternatives for movement-heavy solo play, arenas, or PvP-focused variants.",
+          "nodes": [
+            {
+              "id": "celerity",
+              "name": "Celerity",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Movement-speed option."
+            },
+            {
+              "id": "expert_evasion",
+              "name": "Expert Evasion",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                50
+              ],
+              "note": "Periodic free Roll Dodge."
+            },
+            {
+              "id": "survival_instincts",
+              "name": "Survival Instincts",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Reduces core-combat costs while affected by a status effect."
+            },
+            {
+              "id": "relentlessness",
+              "name": "Relentlessness",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                50
+              ],
+              "note": "Major Protection after being stunned or feared."
+            }
+          ]
+        },
+        {
+          "id": "core_combat_passives",
+          "label": "Core-combat passives",
+          "purpose": "block / dodge / break free",
+          "optional": true,
+          "note": "Spend here when the character needs cheaper defensive actions more than another slottable.",
+          "nodes": [
+            {
+              "id": "tumbling",
+              "name": "Tumbling",
+              "max_points": 30,
+              "slottable": false,
+              "jump_points": [
+                15,
+                30
+              ],
+              "note": "Reduces Roll Dodge cost."
+            },
+            {
+              "id": "defiance",
+              "name": "Defiance",
+              "max_points": 20,
+              "slottable": false,
+              "jump_points": [
+                10,
+                20
+              ],
+              "note": "Reduces Break Free cost."
+            },
+            {
+              "id": "tireless_guardian",
+              "name": "Tireless Guardian",
+              "max_points": 20,
+              "slottable": false,
+              "jump_points": [
+                10,
+                20
+              ],
+              "note": "Reduces Block cost."
+            },
+            {
+              "id": "mystic_tenacity",
+              "name": "Mystic Tenacity",
+              "max_points": 50,
+              "slottable": false,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Reduces elemental status-effect duration."
+            }
+          ]
+        }
+      ],
+      "final_slots": [
+        "boundless_vitality",
+        "bloody_renewal",
+        "rejuvenation",
+        "fortified"
+      ]
+    },
+    "craft": {
+      "label": "Craft",
+      "color": "green",
+      "core": [
+        {
+          "id": "discipline_artisan",
+          "name": "Discipline Artisan",
+          "max_points": 50,
+          "slottable": false,
+          "jump_points": [
+            10,
+            20,
+            30,
+            40,
+            50
+          ],
+          "note": "Increases active skill and skill-line XP."
+        }
+      ],
+      "flex": [
+        {
+          "id": "movement",
+          "label": "Movement",
+          "purpose": "movement",
+          "nodes": [
+            {
+              "id": "steeds_blessing",
+              "name": "Steed’s Blessing",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Out-of-combat movement speed."
+            }
+          ]
+        },
+        {
+          "id": "quality_of_life",
+          "label": "Quality of life",
+          "purpose": "quality of life",
+          "nodes": [
+            {
+              "id": "rationer",
+              "name": "Rationer",
+              "max_points": 30,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30
+              ],
+              "note": "Extends food and drink duration."
+            }
+          ]
+        },
+        {
+          "id": "gathering",
+          "label": "Gathering",
+          "purpose": "gathering",
+          "nodes": [
+            {
+              "id": "treasure_hunter",
+              "name": "Treasure Hunter",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Improves chest loot quality."
+            }
+          ]
+        },
+        {
+          "id": "resource_farming",
+          "label": "Resource farming",
+          "purpose": "gathering / refining",
+          "optional": true,
+          "note": "A farming-focused loadout can promote this branch and change the recommended Craft bar.",
+          "nodes": [
+            {
+              "id": "plentiful_harvest",
+              "name": "Plentiful Harvest",
+              "max_points": 50,
+              "slottable": false,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Chance to double normal resource-node yield."
+            },
+            {
+              "id": "master_gatherer",
+              "name": "Master Gatherer",
+              "max_points": 75,
+              "slottable": true,
+              "jump_points": [
+                15,
+                30,
+                45,
+                60,
+                75
+              ],
+              "note": "Faster harvesting."
+            },
+            {
+              "id": "meticulous_disassembly",
+              "name": "Meticulous Disassembly",
+              "max_points": 50,
+              "slottable": false,
+              "jump_points": [
+                50
+              ],
+              "note": "Improves extraction and refining results."
+            }
+          ]
+        },
+        {
+          "id": "mounts_and_travel",
+          "label": "Mounts & travel",
+          "purpose": "travel",
+          "optional": true,
+          "note": "Useful for exploration, survey routes, and characters that spend a lot of time mounted.",
+          "nodes": [
+            {
+              "id": "gifted_rider",
+              "name": "Gifted Rider",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Increases mount speed."
+            },
+            {
+              "id": "war_mount",
+              "name": "War Mount",
+              "max_points": 75,
+              "slottable": true,
+              "jump_points": [
+                75
+              ],
+              "note": "Removes mount Stamina costs outside combat."
+            },
+            {
+              "id": "breakfall",
+              "name": "Breakfall",
+              "max_points": 50,
+              "slottable": false,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Reduces fall damage."
+            }
+          ]
+        },
+        {
+          "id": "economy_and_crime",
+          "label": "Economy & crime",
+          "purpose": "gold / legerdemain",
+          "optional": true,
+          "note": "Personal utility branch; a thief or economy variant can replace the normal quality-of-life route with this.",
+          "nodes": [
+            {
+              "id": "professional_upkeep",
+              "name": "Professional Upkeep",
+              "max_points": 50,
+              "slottable": false,
+              "note": "Reduces armor-repair costs."
+            },
+            {
+              "id": "infamous",
+              "name": "Infamous",
+              "max_points": 25,
+              "slottable": false,
+              "jump_points": [
+                25
+              ],
+              "note": "Increases the value of fenced items."
+            },
+            {
+              "id": "out_of_sight",
+              "name": "Out of Sight",
+              "max_points": 30,
+              "slottable": false,
+              "jump_points": [
+                10,
+                20,
+                30
+              ],
+              "note": "Reduces detection radius while Sneaking."
+            }
+          ]
+        }
+      ],
+      "final_slots": [
+        "steeds_blessing",
+        "rationer",
+        "treasure_hunter"
+      ]
+    }
+  },
+  "unlock_order": [
+    {
+      "id": "runeblades",
+      "name": "Runeblades",
+      "catalog_skill_id": "herald__runeblades",
+      "section": "Class",
+      "line": "herald",
+      "required_rank": 1,
+      "kind": "Active",
+      "phase": "Leveling",
+      "status": "temporary",
+      "priority": 10,
+      "notes": "Starter Crux generator. Leave unmorphed unless you have spare points.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "runic_jolt",
+      "name": "Runic Jolt",
+      "catalog_skill_id": "soldier__runic_jolt",
+      "section": "Class",
+      "line": "soldier",
+      "required_rank": 1,
+      "kind": "Active",
+      "phase": "Leveling",
+      "status": "temporary",
+      "priority": 20,
+      "notes": "Slot to level Soldier. It taunts; do not cast casually in group content.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "runemend",
+      "name": "Runemend",
+      "catalog_skill_id": "curative__runemend",
+      "section": "Class",
+      "line": "curative",
+      "required_rank": 1,
+      "kind": "Active",
+      "phase": "Leveling",
+      "status": "temporary",
+      "priority": 30,
+      "notes": "Starter emergency heal and Curative leveling slot.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "twin_slashes",
+      "name": "Twin Slashes",
+      "catalog_skill_id": "dual_wield__twin_slashes",
+      "section": "Weapon",
+      "line": "dual_wield",
+      "required_rank": 4,
+      "kind": "Active",
+      "phase": "Leveling",
+      "status": "temporary",
+      "priority": 35,
+      "notes": "Temporary Dual Wield leveling skill. Leave unmorphed and replace it when Quick Cloak arrives.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "fatecarver",
+      "name": "Fatecarver",
+      "catalog_skill_id": "herald__fatecarver",
+      "section": "Class",
+      "line": "herald",
+      "required_rank": 4,
+      "kind": "Active",
+      "phase": "Leveling",
+      "status": "final",
+      "priority": 40,
+      "notes": "Core Crux spender.",
+      "morph_from": null,
+      "image": "assets/arcanist-pragmatic-fatecarver-icon.webp",
+      "requires": []
+    },
+    {
+      "id": "pragmatic_fatecarver",
+      "name": "Pragmatic Fatecarver",
+      "catalog_skill_id": "herald__pragmatic_fatecarver",
+      "section": "Morph",
+      "line": "herald",
+      "required_rank": 4,
+      "kind": "Morph",
+      "phase": "Early",
+      "status": "final",
+      "priority": 41,
+      "notes": "Take the shield/interrupt-protection morph as soon as Fatecarver IV is ready.",
+      "morph_from": "Fatecarver",
+      "image": "assets/arcanist-pragmatic-fatecarver-icon.webp",
+      "requires": [
+        "fatecarver"
+      ]
+    },
+    {
+      "id": "fated_fortune_1",
+      "name": "Fated Fortune I",
+      "catalog_skill_id": "herald__fated_fortune",
+      "section": "Passive",
+      "line": "herald",
+      "required_rank": 8,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 50,
+      "notes": "Permanent class damage passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "aegis_unseen_1",
+      "name": "Aegis of the Unseen I",
+      "catalog_skill_id": "soldier__aegis_of_the_unseen",
+      "section": "Passive",
+      "line": "soldier",
+      "required_rank": 8,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 60,
+      "notes": "Permanent resistance passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "healing_tides_1",
+      "name": "Healing Tides I",
+      "catalog_skill_id": "curative__healing_tides",
+      "section": "Passive",
+      "line": "curative",
+      "required_rank": 8,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 70,
+      "notes": "Improves healing based on Crux.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "ambidextrous_1",
+      "name": "Ambidextrous I",
+      "catalog_skill_id": "dual_wield__ambidextrous",
+      "section": "Passive",
+      "line": "dual_wield",
+      "required_rank": 10,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 80,
+      "notes": "Permanent Dual Wield damage passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "unblinking_eye",
+      "name": "The Unblinking Eye",
+      "catalog_skill_id": "herald__the_unblinking_eye",
+      "section": "Ultimate",
+      "line": "herald",
+      "required_rank": 12,
+      "kind": "Ultimate",
+      "phase": "Early",
+      "status": "final",
+      "priority": 90,
+      "notes": "Main damage ultimate before its morph.",
+      "morph_from": "assets/arcanist-the-languid-eye-icon.webp",
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "harnessed_quintessence_1",
+      "name": "Harnessed Quintessence I",
+      "catalog_skill_id": "herald__harnessed_quintessence",
+      "section": "Passive",
+      "line": "herald",
+      "required_rank": 14,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 100,
+      "notes": "Restoring either resource grants damage.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "wellspring_abyss_1",
+      "name": "Wellspring of the Abyss I",
+      "catalog_skill_id": "soldier__wellspring_of_the_abyss",
+      "section": "Passive",
+      "line": "soldier",
+      "required_rank": 14,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 110,
+      "notes": "Adds recovery for each Soldier ability slotted.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "hideous_clarity_1",
+      "name": "Hideous Clarity I",
+      "catalog_skill_id": "curative__hideous_clarity",
+      "section": "Passive",
+      "line": "curative",
+      "required_rank": 14,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 120,
+      "notes": "Generating Crux restores resources.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "fated_fortune_2",
+      "name": "Fated Fortune II",
+      "catalog_skill_id": "herald__fated_fortune",
+      "section": "Passive",
+      "line": "herald",
+      "required_rank": 18,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 125,
+      "notes": "Second rank of the permanent class damage passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "aegis_unseen_2",
+      "name": "Aegis of the Unseen II",
+      "catalog_skill_id": "soldier__aegis_of_the_unseen",
+      "section": "Passive",
+      "line": "soldier",
+      "required_rank": 18,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 126,
+      "notes": "Second resistance rank; prioritize once Cruxweaver Armor is active.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "healing_tides_2",
+      "name": "Healing Tides II",
+      "catalog_skill_id": "curative__healing_tides",
+      "section": "Passive",
+      "line": "curative",
+      "required_rank": 18,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 127,
+      "notes": "Second healing rank; useful but below core damage and sustain purchases.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "languid_eye",
+      "name": "The Languid Eye",
+      "catalog_skill_id": "herald__the_languid_eye",
+      "section": "Morph",
+      "line": "herald",
+      "required_rank": 12,
+      "kind": "Morph",
+      "phase": "Early",
+      "status": "final",
+      "priority": 130,
+      "notes": "Permanent damage-ultimate morph.",
+      "morph_from": "The Unblinking Eye",
+      "image": "assets/arcanist-the-languid-eye-icon.webp",
+      "requires": [
+        "unblinking_eye"
+      ]
+    },
+    {
+      "id": "abyssal_impact",
+      "name": "Abyssal Impact",
+      "catalog_skill_id": "herald__abyssal_impact",
+      "section": "Class",
+      "line": "herald",
+      "required_rank": 20,
+      "kind": "Active",
+      "phase": "Mid",
+      "status": "final",
+      "priority": 140,
+      "notes": "Buy immediately at rank 20; it becomes Flail.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "fatewoven_armor",
+      "name": "Fatewoven Armor",
+      "catalog_skill_id": "soldier__fatewoven_armor",
+      "section": "Class",
+      "line": "soldier",
+      "required_rank": 20,
+      "kind": "Active",
+      "phase": "Mid",
+      "status": "final",
+      "priority": 150,
+      "notes": "Core armor skill.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "blade_cloak",
+      "name": "Blade Cloak",
+      "catalog_skill_id": "dual_wield__blade_cloak",
+      "section": "Weapon",
+      "line": "dual_wield",
+      "required_rank": 20,
+      "kind": "Active",
+      "phase": "Mid",
+      "status": "final",
+      "priority": 160,
+      "notes": "Core Dual Wield buff and AoE.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "cephaliarch_flail",
+      "name": "Cephaliarch’s Flail",
+      "catalog_skill_id": "herald__cephaliarch_s_flail",
+      "section": "Morph",
+      "line": "herald",
+      "required_rank": 20,
+      "kind": "Morph",
+      "phase": "Mid",
+      "status": "final",
+      "priority": 170,
+      "notes": "Permanent Crux generator, heal, and Abyssal Ink.",
+      "morph_from": "Abyssal Impact",
+      "image": "assets/arcanist-cephaliarch-s-flail-icon.webp",
+      "requires": [
+        "abyssal_impact"
+      ]
+    },
+    {
+      "id": "cruxweaver_armor",
+      "name": "Cruxweaver Armor",
+      "catalog_skill_id": "soldier__cruxweaver_armor",
+      "section": "Morph",
+      "line": "soldier",
+      "required_rank": 20,
+      "kind": "Morph",
+      "phase": "Mid",
+      "status": "final",
+      "priority": 180,
+      "notes": "Permanent Major Resolve morph.",
+      "morph_from": "Fatewoven Armor",
+      "image": "assets/arcanist-cruxweaver-armor-icon.webp",
+      "requires": [
+        "fatewoven_armor"
+      ]
+    },
+    {
+      "id": "quick_cloak",
+      "name": "Quick Cloak",
+      "catalog_skill_id": "dual_wield__quick_cloak",
+      "section": "Morph",
+      "line": "dual_wield",
+      "required_rank": 20,
+      "kind": "Morph",
+      "phase": "Mid",
+      "status": "final",
+      "priority": 190,
+      "notes": "Permanent movement, Major Evasion, and AoE morph.",
+      "morph_from": "Blade Cloak",
+      "image": "assets/arcanist-quick-cloak-icon.webp",
+      "requires": [
+        "blade_cloak"
+      ]
+    },
+    {
+      "id": "wall_of_elements",
+      "name": "Wall of Elements",
+      "catalog_skill_id": "destruction_staff__wall_of_elements",
+      "section": "Weapon",
+      "line": "destruction_staff",
+      "required_rank": 4,
+      "kind": "Active",
+      "phase": "Early",
+      "status": "final",
+      "priority": 192,
+      "notes": "Core back-bar ground damage after the second weapon bar unlocks.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "elemental_blockade",
+      "name": "Elemental Blockade",
+      "catalog_skill_id": "destruction_staff__elemental_blockade",
+      "section": "Morph",
+      "line": "destruction_staff",
+      "required_rank": 4,
+      "kind": "Morph",
+      "phase": "Early",
+      "status": "final",
+      "priority": 193,
+      "notes": "Chosen Wall of Elements morph for the permanent back bar.",
+      "morph_from": "Wall of Elements",
+      "image": null,
+      "requires": [
+        "wall_of_elements"
+      ]
+    },
+    {
+      "id": "psychic_lesion_1",
+      "name": "Psychic Lesion I",
+      "catalog_skill_id": "herald__psychic_lesion",
+      "section": "Passive",
+      "line": "herald",
+      "required_rank": 22,
+      "kind": "Passive",
+      "phase": "Mid",
+      "status": "final",
+      "priority": 200,
+      "notes": "Improves status effects and class damage.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "circumvented_fate_1",
+      "name": "Circumvented Fate I",
+      "catalog_skill_id": "soldier__circumvented_fate",
+      "section": "Passive",
+      "line": "soldier",
+      "required_rank": 22,
+      "kind": "Passive",
+      "phase": "Mid",
+      "status": "final",
+      "priority": 210,
+      "notes": "Improves group mitigation/damage while class abilities are active.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "erudition_1",
+      "name": "Erudition I",
+      "catalog_skill_id": "curative__erudition",
+      "section": "Passive",
+      "line": "curative",
+      "required_rank": 22,
+      "kind": "Passive",
+      "phase": "Mid",
+      "status": "final",
+      "priority": 220,
+      "notes": "Adds recovery.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "weakness_elements",
+      "name": "Weakness to Elements",
+      "catalog_skill_id": "destruction_staff__weakness_to_elements",
+      "section": "Weapon",
+      "line": "destruction_staff",
+      "required_rank": 20,
+      "kind": "Active",
+      "phase": "Mid",
+      "status": "final",
+      "priority": 230,
+      "notes": "Free single-target debuff starter.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "elemental_susceptibility",
+      "name": "Elemental Susceptibility",
+      "catalog_skill_id": "destruction_staff__elemental_susceptibility",
+      "section": "Morph",
+      "line": "destruction_staff",
+      "required_rank": 20,
+      "kind": "Morph",
+      "phase": "Mid",
+      "status": "final",
+      "priority": 240,
+      "notes": "Permanent Major Breach/status morph.",
+      "morph_from": "Weakness to Elements",
+      "image": "assets/arcanist-elemental-susceptibility-icon.webp",
+      "requires": [
+        "weakness_elements"
+      ]
+    },
+    {
+      "id": "harnessed_quintessence_2",
+      "name": "Harnessed Quintessence II",
+      "catalog_skill_id": "herald__harnessed_quintessence",
+      "section": "Passive",
+      "line": "herald",
+      "required_rank": 27,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 245,
+      "notes": "Second rank of the resource-restoration damage passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "wellspring_abyss_2",
+      "name": "Wellspring of the Abyss II",
+      "catalog_skill_id": "soldier__wellspring_of_the_abyss",
+      "section": "Passive",
+      "line": "soldier",
+      "required_rank": 27,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 246,
+      "notes": "Second recovery rank for Soldier abilities slotted.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "hideous_clarity_2",
+      "name": "Hideous Clarity II",
+      "catalog_skill_id": "curative__hideous_clarity",
+      "section": "Passive",
+      "line": "curative",
+      "required_rank": 27,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 247,
+      "notes": "Second rank of Crux-based Magicka and Stamina sustain.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "tome_bearer",
+      "name": "Tome-Bearer’s Inspiration",
+      "catalog_skill_id": "herald__tome_bearer_s_inspiration",
+      "section": "Class",
+      "line": "herald",
+      "required_rank": 30,
+      "kind": "Active",
+      "phase": "Late",
+      "status": "final",
+      "priority": 250,
+      "notes": "Core sustain and damage buff.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "runic_defense",
+      "name": "Runic Defense",
+      "catalog_skill_id": "soldier__runic_defense",
+      "section": "Class",
+      "line": "soldier",
+      "required_rank": 30,
+      "kind": "Active",
+      "phase": "Late",
+      "status": "optional",
+      "priority": 260,
+      "notes": "No-Scribing defensive option.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "recuperative_treatise",
+      "name": "Recuperative Treatise",
+      "catalog_skill_id": "herald__recuperative_treatise",
+      "section": "Morph",
+      "line": "herald",
+      "required_rank": 30,
+      "kind": "Morph",
+      "phase": "Late",
+      "status": "final",
+      "priority": 270,
+      "notes": "Permanent sustain morph.",
+      "morph_from": "Tome-Bearer’s Inspiration",
+      "image": "assets/arcanist-recuperative-treatise-icon.webp",
+      "requires": [
+        "tome_bearer"
+      ]
+    },
+    {
+      "id": "runeguard_still_waters",
+      "name": "Runeguard of Still Waters",
+      "catalog_skill_id": "soldier__runeguard_of_still_waters",
+      "section": "Morph",
+      "line": "soldier",
+      "required_rank": 30,
+      "kind": "Morph",
+      "phase": "Late",
+      "status": "optional",
+      "priority": 280,
+      "notes": "Use until Ulfsild’s Contingency is ready.",
+      "morph_from": "Runic Defense",
+      "image": null,
+      "requires": [
+        "runic_defense"
+      ]
+    },
+    {
+      "id": "expert_hunter",
+      "name": "Expert Hunter",
+      "catalog_skill_id": "fighters_guild__expert_hunter",
+      "section": "Guild",
+      "line": "fighters_guild",
+      "required_rank": 6,
+      "kind": "Active",
+      "phase": "Mid",
+      "status": "final",
+      "priority": 288,
+      "notes": "Purchase the base ability before selecting Camouflaged Hunter.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "camouflaged_hunter",
+      "name": "Camouflaged Hunter",
+      "catalog_skill_id": "fighters_guild__camouflaged_hunter",
+      "section": "Morph",
+      "line": "fighters_guild",
+      "required_rank": 6,
+      "kind": "Morph",
+      "phase": "Late",
+      "status": "final",
+      "priority": 290,
+      "notes": "Front-bar passive damage and detection.",
+      "morph_from": "Expert Hunter",
+      "image": "assets/arcanist-camouflaged-hunter-icon.webp",
+      "requires": [
+        "expert_hunter"
+      ]
+    },
+    {
+      "id": "psychic_lesion_2",
+      "name": "Psychic Lesion II",
+      "catalog_skill_id": "herald__psychic_lesion",
+      "section": "Passive",
+      "line": "herald",
+      "required_rank": 36,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 295,
+      "notes": "Second rank of the status-effect damage passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "circumvented_fate_2",
+      "name": "Circumvented Fate II",
+      "catalog_skill_id": "soldier__circumvented_fate",
+      "section": "Passive",
+      "line": "soldier",
+      "required_rank": 36,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 296,
+      "notes": "Second rank of the group mitigation passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "erudition_2",
+      "name": "Erudition II",
+      "catalog_skill_id": "curative__erudition",
+      "section": "Passive",
+      "line": "curative",
+      "required_rank": 36,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 297,
+      "notes": "Second resource-recovery rank.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "imperfect_ring",
+      "name": "The Imperfect Ring",
+      "catalog_skill_id": "herald__the_imperfect_ring",
+      "section": "Class",
+      "line": "herald",
+      "required_rank": 42,
+      "kind": "Active",
+      "phase": "Late",
+      "status": "optional",
+      "priority": 300,
+      "notes": "Temporary back-bar AoE before Scribing.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "fulminating_rune",
+      "name": "Fulminating Rune",
+      "catalog_skill_id": "herald__fulminating_rune",
+      "section": "Morph",
+      "line": "herald",
+      "required_rank": 42,
+      "kind": "Morph",
+      "phase": "Late",
+      "status": "optional",
+      "priority": 310,
+      "notes": "Temporary no-Scribing AoE.",
+      "morph_from": "The Imperfect Ring",
+      "image": null,
+      "requires": [
+        "imperfect_ring"
+      ]
+    },
+    {
+      "id": "dawnbreaker",
+      "name": "Dawnbreaker",
+      "catalog_skill_id": "fighters_guild__dawnbreaker",
+      "section": "Guild",
+      "line": "fighters_guild",
+      "required_rank": 10,
+      "kind": "Ultimate",
+      "phase": "Late",
+      "status": "final",
+      "priority": 318,
+      "notes": "Purchase the Fighters Guild ultimate before selecting Flawless Dawnbreaker.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "flawless_dawnbreaker",
+      "name": "Flawless Dawnbreaker",
+      "catalog_skill_id": "fighters_guild__flawless_dawnbreaker",
+      "section": "Morph",
+      "line": "fighters_guild",
+      "required_rank": 10,
+      "kind": "Morph",
+      "phase": "Final",
+      "status": "final",
+      "priority": 320,
+      "notes": "Front-bar passive ultimate morph.",
+      "morph_from": "Dawnbreaker",
+      "image": "assets/arcanist-flawless-dawnbreaker-icon.webp",
+      "requires": [
+        "dawnbreaker"
+      ]
+    },
+    {
+      "id": "ulfsild_contingency",
+      "name": "Ulfsild’s Contingency",
+      "catalog_skill_id": "scribing__ulfsild_s_contingency",
+      "section": "Scribing",
+      "line": "scribing",
+      "required_rank": 1,
+      "kind": "Scribing",
+      "phase": "Final",
+      "status": "final",
+      "priority": 330,
+      "notes": "Final Scribing AoE/utility slot.",
+      "morph_from": null,
+      "image": "assets/arcanist-ulfsild-s-contingency-icon.webp",
+      "requires": []
+    },
+    {
+      "id": "soul_burst",
+      "name": "Soul Burst",
+      "catalog_skill_id": "scribing__soul_burst",
+      "section": "Scribing",
+      "line": "scribing",
+      "required_rank": 1,
+      "kind": "Scribing",
+      "phase": "Final",
+      "status": "final",
+      "priority": 340,
+      "notes": "Final Scribing AoE/utility slot.",
+      "morph_from": null,
+      "image": "assets/arcanist-soul-burst-icon.webp",
+      "requires": []
+    },
+    {
+      "id": "twin_blade_blunt_1",
+      "name": "Twin Blade and Blunt I",
+      "catalog_skill_id": "dual_wield__twin_blade_and_blunt",
+      "section": "Passive",
+      "line": "dual_wield",
+      "required_rank": 41,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 350,
+      "notes": "Permanent dagger passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "twin_blade_blunt_2",
+      "name": "Twin Blade and Blunt II",
+      "catalog_skill_id": "dual_wield__twin_blade_and_blunt",
+      "section": "Passive",
+      "line": "dual_wield",
+      "required_rank": 50,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 360,
+      "notes": "Max the dagger passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "splintered_secrets_1",
+      "name": "Splintered Secrets I",
+      "catalog_skill_id": "herald__splintered_secrets",
+      "section": "Passive",
+      "line": "herald",
+      "required_rank": 39,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 370,
+      "notes": "Permanent penetration passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "implacable_outcome_1",
+      "name": "Implacable Outcome I",
+      "catalog_skill_id": "soldier__implacable_outcome",
+      "section": "Passive",
+      "line": "soldier",
+      "required_rank": 39,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 380,
+      "notes": "Permanent ultimate-related passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "intricate_runeforms_1",
+      "name": "Intricate Runeforms I",
+      "catalog_skill_id": "curative__intricate_runeforms",
+      "section": "Passive",
+      "line": "curative",
+      "required_rank": 39,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 390,
+      "notes": "Permanent healing/critical passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "splintered_secrets_2",
+      "name": "Splintered Secrets II",
+      "catalog_skill_id": "herald__splintered_secrets",
+      "section": "Passive",
+      "line": "herald",
+      "required_rank": 50,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 395,
+      "notes": "Final rank of the high-value penetration passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "implacable_outcome_2",
+      "name": "Implacable Outcome II",
+      "catalog_skill_id": "soldier__implacable_outcome",
+      "section": "Passive",
+      "line": "soldier",
+      "required_rank": 50,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 396,
+      "notes": "Final rank of the ultimate-generation passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "intricate_runeforms_2",
+      "name": "Intricate Runeforms II",
+      "catalog_skill_id": "curative__intricate_runeforms",
+      "section": "Passive",
+      "line": "curative",
+      "required_rank": 50,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 397,
+      "notes": "Final rank of the class ability cost-reduction passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "unbound_potential",
+      "name": "Unbound Potential",
+      "catalog_skill_id": "arcanist_mastery__unbound_potential",
+      "section": "Passive",
+      "line": "arcanist_mastery",
+      "required_rank": 1,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 407,
+      "notes": "One of the build's two recommended Class Mastery choices. Requires all three native class lines at rank 50; subclassing disables Class Mastery.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "ink_scribe_s_verve",
+      "name": "Ink-Scribe's Verve",
+      "catalog_skill_id": "arcanist_mastery__ink_scribe_s_verve",
+      "section": "Passive",
+      "line": "arcanist_mastery",
+      "required_rank": 1,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 417,
+      "notes": "One of the build's two recommended Class Mastery choices. Requires all three native class lines at rank 50; subclassing disables Class Mastery.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    }
+  ],
+  "phases": [
+    {
+      "id": "1-15",
+      "label": "Levels 1–15",
+      "min_level": 1,
+      "max_level": 14,
+      "overview": "Open all three class lines, keep them represented, and build Crux with Runeblades before beaming.",
+      "front_bar": {
+        "weapon": "Dual Daggers",
+        "slots": [
+          {
+            "name": "Runeblades",
+            "catalog_skill_id": "herald__runeblades",
+            "temporary": true
+          },
+          {
+            "name": "Pragmatic Fatecarver",
+            "catalog_skill_id": "herald__pragmatic_fatecarver",
+            "image": "assets/arcanist-pragmatic-fatecarver-icon.webp"
+          },
+          {
+            "name": "Runic Jolt",
+            "catalog_skill_id": "soldier__runic_jolt",
+            "temporary": true
+          },
+          {
+            "name": "Runemend",
+            "catalog_skill_id": "curative__runemend",
+            "temporary": true
+          },
+          {
+            "name": "Twin Slashes",
+            "catalog_skill_id": "dual_wield__twin_slashes",
+            "temporary": true
+          }
+        ],
+        "ultimate": null
+      },
+      "back_bar": {
+        "weapon": "Inferno Staff at Level 15",
+        "slots": [],
+        "ultimate": null,
+        "locked": "Unlocks at character level 15"
+      },
+      "rotation": {
+        "type": "sequence",
+        "title": "Main sequence",
+        "summary": "Use this as a practical stamina Arcanist starting point; refresh effects early rather than letting them fall off.",
+        "steps": [
+          {
+            "name": "Runeblades until 3 Crux"
+          },
+          {
+            "name": "Pragmatic Fatecarver",
+            "catalog_skill_id": "herald__pragmatic_fatecarver",
+            "image": "assets/arcanist-pragmatic-fatecarver-icon.webp"
+          }
+        ],
+        "notes": [
+          "Light-attack weave when comfortable, but learn the order and survival tools before chasing speed."
+        ]
+      }
+    },
+    {
+      "id": "15-30",
+      "label": "Levels 15–30",
+      "min_level": 15,
+      "max_level": 29,
+      "overview": "Add the Inferno Staff back bar, Elemental Blockade, Flail, armor, and Quick Cloak as ranks unlock.",
+      "front_bar": {
+        "weapon": "Dual Daggers",
+        "slots": [
+          {
+            "name": "Cephaliarch’s Flail",
+            "catalog_skill_id": "herald__cephaliarch_s_flail",
+            "image": "assets/arcanist-cephaliarch-s-flail-icon.webp"
+          },
+          {
+            "name": "Pragmatic Fatecarver",
+            "catalog_skill_id": "herald__pragmatic_fatecarver",
+            "image": "assets/arcanist-pragmatic-fatecarver-icon.webp"
+          },
+          {
+            "name": "Runic Jolt",
+            "catalog_skill_id": "soldier__runic_jolt",
+            "temporary": true
+          },
+          {
+            "name": "Quick Cloak",
+            "catalog_skill_id": "dual_wield__quick_cloak",
+            "image": "assets/arcanist-quick-cloak-icon.webp"
+          },
+          {
+            "name": "Runemend",
+            "catalog_skill_id": "curative__runemend",
+            "temporary": true
+          }
+        ],
+        "ultimate": null
+      },
+      "back_bar": {
+        "weapon": "Inferno Staff at Level 15",
+        "slots": [
+          {
+            "name": "Cruxweaver Armor",
+            "catalog_skill_id": "soldier__cruxweaver_armor",
+            "image": "assets/arcanist-cruxweaver-armor-icon.webp"
+          },
+          {
+            "name": "Elemental Blockade",
+            "catalog_skill_id": "destruction_staff__elemental_blockade"
+          },
+          {
+            "name": "Elemental Susceptibility",
+            "catalog_skill_id": "destruction_staff__elemental_susceptibility",
+            "image": "assets/arcanist-elemental-susceptibility-icon.webp"
+          },
+          {
+            "name": "Class-line leveling slots",
+            "placeholder": true
+          }
+        ],
+        "ultimate": null
+      },
+      "rotation": {
+        "type": "sequence",
+        "title": "Main sequence",
+        "summary": "Use this as a practical stamina Arcanist starting point; refresh effects early rather than letting them fall off.",
+        "steps": [
+          {
+            "name": "Armor"
+          },
+          {
+            "name": "Blockade"
+          },
+          {
+            "name": "Flail to 3 Crux"
+          },
+          {
+            "name": "Beam"
+          }
+        ],
+        "notes": [
+          "Light-attack weave when comfortable, but learn the order and survival tools before chasing speed."
+        ]
+      }
+    },
+    {
+      "id": "30-50",
+      "label": "Levels 30–50",
+      "min_level": 30,
+      "max_level": 49,
+      "overview": "The finished loop takes shape. Add Treatise, Hunter, debuffs, and Languid Eye; train optional survival tools.",
+      "front_bar": {
+        "weapon": "Dual Daggers",
+        "slots": [
+          {
+            "name": "Cephaliarch’s Flail",
+            "catalog_skill_id": "herald__cephaliarch_s_flail",
+            "image": "assets/arcanist-cephaliarch-s-flail-icon.webp"
+          },
+          {
+            "name": "Pragmatic Fatecarver",
+            "catalog_skill_id": "herald__pragmatic_fatecarver",
+            "image": "assets/arcanist-pragmatic-fatecarver-icon.webp"
+          },
+          {
+            "name": "Camouflaged Hunter",
+            "catalog_skill_id": "fighters_guild__camouflaged_hunter",
+            "image": "assets/arcanist-camouflaged-hunter-icon.webp"
+          },
+          {
+            "name": "Quick Cloak",
+            "catalog_skill_id": "dual_wield__quick_cloak",
+            "image": "assets/arcanist-quick-cloak-icon.webp"
+          },
+          {
+            "name": "Recuperative Treatise",
+            "catalog_skill_id": "herald__recuperative_treatise",
+            "image": "assets/arcanist-recuperative-treatise-icon.webp"
+          }
+        ],
+        "ultimate": null
+      },
+      "back_bar": {
+        "weapon": "Inferno Staff at Level 15",
+        "slots": [
+          {
+            "name": "Cruxweaver Armor",
+            "catalog_skill_id": "soldier__cruxweaver_armor",
+            "image": "assets/arcanist-cruxweaver-armor-icon.webp"
+          },
+          {
+            "name": "Runeguard of Still Waters",
+            "catalog_skill_id": "soldier__runeguard_of_still_waters"
+          },
+          {
+            "name": "Elemental Susceptibility",
+            "catalog_skill_id": "destruction_staff__elemental_susceptibility",
+            "image": "assets/arcanist-elemental-susceptibility-icon.webp"
+          },
+          {
+            "name": "Elemental Blockade",
+            "catalog_skill_id": "destruction_staff__elemental_blockade"
+          },
+          {
+            "name": "Fulminating Rune",
+            "catalog_skill_id": "herald__fulminating_rune"
+          }
+        ],
+        "ultimate": null
+      },
+      "rotation": {
+        "type": "sequence",
+        "title": "Main sequence",
+        "summary": "Use this as a practical stamina Arcanist starting point; refresh effects early rather than letting them fall off.",
+        "steps": [
+          {
+            "name": "Treatise"
+          },
+          {
+            "name": "Quick Cloak",
+            "catalog_skill_id": "dual_wield__quick_cloak",
+            "image": "assets/arcanist-quick-cloak-icon.webp"
+          },
+          {
+            "name": "Flail to 3 Crux"
+          },
+          {
+            "name": "Beam"
+          }
+        ],
+        "notes": [
+          "Light-attack weave when comfortable, but learn the order and survival tools before chasing speed."
+        ]
+      }
+    },
+    {
+      "id": "final",
+      "label": "Level 50 / CP160+",
+      "min_level": 50,
+      "max_level": 9999,
+      "overview": "Use the full pure-class solo/duo setup and replace temporary skills with Scribing when ready.",
+      "front_bar": {
+        "weapon": "Dual Daggers",
+        "slots": [
+          {
+            "name": "Cephaliarch’s Flail",
+            "catalog_skill_id": "herald__cephaliarch_s_flail",
+            "image": "assets/arcanist-cephaliarch-s-flail-icon.webp"
+          },
+          {
+            "name": "Pragmatic Fatecarver",
+            "catalog_skill_id": "herald__pragmatic_fatecarver",
+            "image": "assets/arcanist-pragmatic-fatecarver-icon.webp"
+          },
+          {
+            "name": "Camouflaged Hunter",
+            "catalog_skill_id": "fighters_guild__camouflaged_hunter",
+            "image": "assets/arcanist-camouflaged-hunter-icon.webp"
+          },
+          {
+            "name": "Quick Cloak",
+            "catalog_skill_id": "dual_wield__quick_cloak",
+            "image": "assets/arcanist-quick-cloak-icon.webp"
+          },
+          {
+            "name": "Recuperative Treatise",
+            "catalog_skill_id": "herald__recuperative_treatise",
+            "image": "assets/arcanist-recuperative-treatise-icon.webp"
+          }
+        ],
+        "ultimate": {
+          "name": "Flawless Dawnbreaker",
+          "catalog_skill_id": "fighters_guild__flawless_dawnbreaker",
+          "image": "assets/arcanist-flawless-dawnbreaker-icon.webp"
+        }
+      },
+      "back_bar": {
+        "weapon": "Inferno Staff at Level 15",
+        "slots": [
+          {
+            "name": "Cruxweaver Armor",
+            "catalog_skill_id": "soldier__cruxweaver_armor",
+            "image": "assets/arcanist-cruxweaver-armor-icon.webp"
+          },
+          {
+            "name": "Ulfsild’s Contingency",
+            "catalog_skill_id": "scribing__ulfsild_s_contingency",
+            "image": "assets/arcanist-ulfsild-s-contingency-icon.webp"
+          },
+          {
+            "name": "Elemental Susceptibility",
+            "catalog_skill_id": "destruction_staff__elemental_susceptibility",
+            "image": "assets/arcanist-elemental-susceptibility-icon.webp"
+          },
+          {
+            "name": "Elemental Blockade",
+            "catalog_skill_id": "destruction_staff__elemental_blockade"
+          },
+          {
+            "name": "Soul Burst",
+            "catalog_skill_id": "scribing__soul_burst",
+            "image": "assets/arcanist-soul-burst-icon.webp"
+          }
+        ],
+        "ultimate": {
+          "name": "The Languid Eye",
+          "catalog_skill_id": "herald__the_languid_eye",
+          "image": "assets/arcanist-the-languid-eye-icon.webp"
+        }
+      },
+      "rotation": {
+        "type": "sequence",
+        "title": "Main sequence",
+        "summary": "Use this as a practical stamina Arcanist starting point; refresh effects early rather than letting them fall off.",
+        "steps": [
+          {
+            "name": "Cruxweaver Armor",
+            "catalog_skill_id": "soldier__cruxweaver_armor",
+            "image": "assets/arcanist-cruxweaver-armor-icon.webp"
+          },
+          {
+            "name": "Treatise"
+          },
+          {
+            "name": "Quick Cloak",
+            "catalog_skill_id": "dual_wield__quick_cloak",
+            "image": "assets/arcanist-quick-cloak-icon.webp"
+          },
+          {
+            "name": "Susceptibility"
+          },
+          {
+            "name": "Blockade"
+          },
+          {
+            "name": "Languid Eye"
+          },
+          {
+            "name": "Flail to 3 Crux"
+          },
+          {
+            "name": "Beam"
+          },
+          {
+            "name": "Refresh only expiring effects"
+          }
+        ],
+        "notes": [
+          "Light-attack weave when comfortable, but learn the order and survival tools before chasing speed."
+        ]
+      }
+    }
+  ],
+  "gear_stages": [
+    {
+      "id": "leveling",
+      "name": "Leveling drops",
+      "min_level": 1,
+      "max_level": 49,
+      "summary": "Use Training gear, keep weapons near your level, and wear 5 Medium / 1 Light / 1 Heavy. Do not farm permanent sets.",
+      "sets": [
+        {
+          "id": "leveling_any_current_level_piece",
+          "name": "Any current-level piece",
+          "role": "Head",
+          "source": {
+            "location": "Quest/drop",
+            "type": "Quest / drop",
+            "tradeable": "Varies"
+          },
+          "pieces": [
+            {
+              "id": "any_current_level_piece_head_leveling",
+              "slot": "Head",
+              "weight": "Light",
+              "trait": "Training",
+              "enchantment": "Max Stamina",
+              "quality": "Current level"
+            },
+            {
+              "id": "any_current_level_piece_chest_leveling",
+              "slot": "Chest",
+              "weight": "Medium",
+              "trait": "Training",
+              "enchantment": "Max Stamina",
+              "quality": "Current level"
+            },
+            {
+              "id": "any_current_level_piece_waist_leveling",
+              "slot": "Waist",
+              "weight": "Medium",
+              "trait": "Training",
+              "enchantment": "Max Stamina",
+              "quality": "Current level"
+            }
+          ]
+        },
+        {
+          "id": "leveling_any_current_level_pieces",
+          "name": "Any current-level pieces",
+          "role": "Remaining armor",
+          "source": {
+            "location": "Quest/drop",
+            "type": "Quest / drop",
+            "tradeable": "Varies"
+          },
+          "pieces": [
+            {
+              "id": "any_current_level_pieces_shoulders_leveling",
+              "slot": "Shoulders",
+              "weight": "Medium",
+              "trait": "Training",
+              "enchantment": "Max Stamina",
+              "quality": "Current level"
+            },
+            {
+              "id": "any_current_level_pieces_hands_leveling",
+              "slot": "Hands",
+              "weight": "Medium",
+              "trait": "Training",
+              "enchantment": "Max Stamina",
+              "quality": "Current level"
+            },
+            {
+              "id": "any_current_level_pieces_legs_leveling",
+              "slot": "Legs",
+              "weight": "Medium",
+              "trait": "Training",
+              "enchantment": "Max Stamina",
+              "quality": "Current level"
+            },
+            {
+              "id": "any_current_level_pieces_feet_leveling",
+              "slot": "Feet",
+              "weight": "Heavy",
+              "trait": "Training",
+              "enchantment": "Max Stamina",
+              "quality": "Current level"
+            }
+          ]
+        },
+        {
+          "id": "leveling_two_daggers_inferno_staff_after_level_15",
+          "name": "Two daggers; Inferno Staff after Level 15",
+          "role": "Weapons",
+          "source": {
+            "location": "Replace every 5–10 levels",
+            "type": "Activity reward",
+            "tradeable": "Check the item collection rules"
+          },
+          "pieces": [
+            {
+              "id": "two_daggers_inferno_staff_after_level_15_front_weapon_1_leveling",
+              "slot": "Front Weapon 1",
+              "weapon_type": "Dagger",
+              "trait": "Training",
+              "enchantment": "Poison Damage",
+              "quality": "Current level"
+            },
+            {
+              "id": "two_daggers_inferno_staff_after_level_15_front_weapon_2_leveling",
+              "slot": "Front Weapon 2",
+              "weapon_type": "Dagger",
+              "trait": "Training",
+              "enchantment": "Shock Damage",
+              "quality": "Current level"
+            },
+            {
+              "id": "two_daggers_inferno_staff_after_level_15_back_weapon_leveling",
+              "slot": "Back Weapon",
+              "weapon_type": "Inferno Staff at Level 15",
+              "trait": "Training",
+              "enchantment": "Weapon and Spell Damage",
+              "set_slots": 2,
+              "quality": "Current level"
+            },
+            {
+              "id": "two_daggers_inferno_staff_after_level_15_necklace_leveling",
+              "slot": "Necklace",
+              "trait": "Healthy / Arcane / Robust",
+              "enchantment": "Physical Harm",
+              "quality": "Current level"
+            },
+            {
+              "id": "two_daggers_inferno_staff_after_level_15_ring_1_leveling",
+              "slot": "Ring 1",
+              "trait": "Healthy / Arcane / Robust",
+              "enchantment": "Physical Harm",
+              "quality": "Current level"
+            },
+            {
+              "id": "two_daggers_inferno_staff_after_level_15_ring_2_leveling",
+              "slot": "Ring 2",
+              "trait": "Healthy / Arcane / Robust",
+              "enchantment": "Physical Harm",
+              "quality": "Current level"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "starter",
+      "name": "CP160 crafted starter",
+      "min_level": 50,
+      "max_level": 9999,
+      "summary": "Order’s Wrath + Tide-Born Wildstalker + Highland Sentinel. Craftable and tradeable.",
+      "sets": [
+        {
+          "id": "starter_highland_sentinel",
+          "name": "Highland Sentinel",
+          "role": "Head",
+          "source": {
+            "location": "Leftwheal Granary, West Weald",
+            "type": "Crafted",
+            "tradeable": "Yes — another player can craft or trade it",
+            "zone": "West Weald"
+          },
+          "pieces": [
+            {
+              "id": "highland_sentinel_head_starter",
+              "slot": "Head",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Stamina",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "highland_sentinel_ring_2_starter",
+              "slot": "Ring 2",
+              "trait": "Bloodthirsty",
+              "enchantment": "Physical Harm",
+              "quality": "Purple or better"
+            }
+          ]
+        },
+        {
+          "id": "starter_tide_born_wildstalker",
+          "name": "Tide-Born Wildstalker",
+          "role": "Shoulders",
+          "source": {
+            "location": "Tide-Born Foundry, Western Solstice",
+            "type": "Crafted",
+            "tradeable": "Yes — another player can craft or trade it",
+            "zone": "Western Solstice"
+          },
+          "pieces": [
+            {
+              "id": "tide_born_wildstalker_shoulders_starter",
+              "slot": "Shoulders",
+              "weight": "Medium",
+              "trait": "Divines",
+              "enchantment": "Max Stamina",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "tide_born_wildstalker_hands_starter",
+              "slot": "Hands",
+              "weight": "Medium",
+              "trait": "Divines",
+              "enchantment": "Max Stamina",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "tide_born_wildstalker_waist_starter",
+              "slot": "Waist",
+              "weight": "Medium",
+              "trait": "Divines",
+              "enchantment": "Max Stamina",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "tide_born_wildstalker_legs_starter",
+              "slot": "Legs",
+              "weight": "Medium",
+              "trait": "Divines",
+              "enchantment": "Max Stamina",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "tide_born_wildstalker_feet_starter",
+              "slot": "Feet",
+              "weight": "Medium",
+              "trait": "Divines",
+              "enchantment": "Max Stamina",
+              "quality": "Purple or better"
+            }
+          ]
+        },
+        {
+          "id": "starter_order_s_wrath",
+          "name": "Order’s Wrath",
+          "role": "Chest",
+          "source": {
+            "location": "Steadfast Hammer and Saw, High Isle",
+            "type": "Crafted",
+            "tradeable": "Yes — another player can craft or trade it",
+            "zone": "High Isle"
+          },
+          "pieces": [
+            {
+              "id": "order_s_wrath_chest_starter",
+              "slot": "Chest",
+              "weight": "Medium",
+              "trait": "Divines",
+              "enchantment": "Max Stamina",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "order_s_wrath_necklace_starter",
+              "slot": "Necklace",
+              "trait": "Bloodthirsty",
+              "enchantment": "Physical Harm",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "order_s_wrath_ring_1_starter",
+              "slot": "Ring 1",
+              "trait": "Bloodthirsty",
+              "enchantment": "Physical Harm",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "order_s_wrath_front_weapon_1_starter",
+              "slot": "Front Weapon 1",
+              "weapon_type": "Dagger",
+              "trait": "Charged",
+              "enchantment": "Poison Damage",
+              "quality": "Gold weapons first"
+            },
+            {
+              "id": "order_s_wrath_front_weapon_2_starter",
+              "slot": "Front Weapon 2",
+              "weapon_type": "Dagger",
+              "trait": "Charged",
+              "enchantment": "Shock Damage",
+              "quality": "Gold weapons first"
+            },
+            {
+              "id": "order_s_wrath_back_weapon_starter",
+              "slot": "Back Weapon",
+              "weapon_type": "Inferno Staff at Level 15",
+              "trait": "Infused",
+              "enchantment": "Weapon and Spell Damage",
+              "set_slots": 2,
+              "quality": "Gold weapons first"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mid",
+      "name": "Strong non-trial bridge",
+      "min_level": 50,
+      "max_level": 9999,
+      "summary": "Tzogvin + Deadly Strike, one Slimecraw piece, Pale Order, and a Maelstrom staff.",
+      "sets": [
+        {
+          "id": "mid_tzogvin_s_warband",
+          "name": "Tzogvin’s Warband",
+          "role": "Body set",
+          "source": {
+            "location": "Frostvault dungeon",
+            "type": "Dungeon",
+            "tradeable": "Group-bound briefly, then account-bound",
+            "zone": "Eastmarch",
+            "access": "Wrathstone DLC or ESO Plus"
+          },
+          "pieces": [
+            {
+              "id": "tzogvin_s_warband_shoulders_mid",
+              "slot": "Shoulders",
+              "weight": "Medium",
+              "trait": "Divines",
+              "enchantment": "Max Stamina",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "tzogvin_s_warband_hands_mid",
+              "slot": "Hands",
+              "weight": "Medium",
+              "trait": "Divines",
+              "enchantment": "Max Stamina",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "tzogvin_s_warband_waist_mid",
+              "slot": "Waist",
+              "weight": "Medium",
+              "trait": "Divines",
+              "enchantment": "Max Stamina",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "tzogvin_s_warband_legs_mid",
+              "slot": "Legs",
+              "weight": "Medium",
+              "trait": "Divines",
+              "enchantment": "Max Stamina",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "tzogvin_s_warband_feet_mid",
+              "slot": "Feet",
+              "weight": "Medium",
+              "trait": "Divines",
+              "enchantment": "Max Stamina",
+              "quality": "Purple or better"
+            }
+          ]
+        },
+        {
+          "id": "mid_deadly_strike",
+          "name": "Deadly Strike",
+          "role": "Weapons / jewelry",
+          "source": {
+            "location": "Cyrodiil Elite Gear vendors or guild traders",
+            "type": "PvP vendor / guild trader",
+            "zone": "Cyrodiil",
+            "tradeable": "Usually yes before binding"
+          },
+          "pieces": [
+            {
+              "id": "deadly_strike_chest_mid",
+              "slot": "Chest",
+              "weight": "Medium",
+              "trait": "Divines",
+              "enchantment": "Max Stamina",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "deadly_strike_necklace_mid",
+              "slot": "Necklace",
+              "trait": "Bloodthirsty",
+              "enchantment": "Physical Harm",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "deadly_strike_ring_1_mid",
+              "slot": "Ring 1",
+              "trait": "Bloodthirsty",
+              "enchantment": "Physical Harm",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "deadly_strike_front_weapon_1_mid",
+              "slot": "Front Weapon 1",
+              "weapon_type": "Dagger",
+              "trait": "Charged",
+              "enchantment": "Poison Damage",
+              "quality": "Gold weapons first"
+            },
+            {
+              "id": "deadly_strike_front_weapon_2_mid",
+              "slot": "Front Weapon 2",
+              "weapon_type": "Dagger",
+              "trait": "Charged",
+              "enchantment": "Shock Damage",
+              "quality": "Gold weapons first"
+            }
+          ]
+        },
+        {
+          "id": "mid_slimecraw_1_piece",
+          "name": "Slimecraw (1 piece)",
+          "role": "Head or shoulder",
+          "source": {
+            "location": "Wayrest Sewers I final boss / Undaunted chest",
+            "type": "Dungeon",
+            "tradeable": "Group-bound briefly, then account-bound",
+            "zone": "Stormhaven",
+            "access": "Base game"
+          },
+          "pieces": [
+            {
+              "id": "slimecraw_1_piece_head_mid",
+              "slot": "Head",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Stamina",
+              "quality": "Purple or better"
+            }
+          ]
+        },
+        {
+          "id": "mid_ring_of_the_pale_order",
+          "name": "Ring of the Pale Order",
+          "role": "Ring",
+          "source": {
+            "location": "Antiquities / Greymoor system",
+            "type": "Antiquity / Mythic",
+            "access": "Antiquities system",
+            "tradeable": "No"
+          },
+          "pieces": [
+            {
+              "id": "ring_of_the_pale_order_ring_2_mid",
+              "slot": "Ring 2",
+              "trait": "Bloodthirsty",
+              "enchantment": "Physical Harm",
+              "quality": "Purple or better"
+            }
+          ]
+        },
+        {
+          "id": "mid_crushing_wall_inferno_staff",
+          "name": "Crushing Wall Inferno Staff",
+          "role": "Back bar",
+          "source": {
+            "location": "Maelstrom Arena",
+            "type": "Arena weapon",
+            "zone": "Wrothgar",
+            "access": "Maelstrom Arena / Orsinium access",
+            "tradeable": "No — account-bound collection"
+          },
+          "pieces": [
+            {
+              "id": "crushing_wall_inferno_staff_back_weapon_mid",
+              "slot": "Back Weapon",
+              "weapon_type": "Inferno Staff at Level 15",
+              "trait": "Infused",
+              "enchantment": "Weapon and Spell Damage",
+              "set_slots": 2,
+              "quality": "Gold weapons first"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "final",
+      "name": "Final solo / duo",
+      "min_level": 50,
+      "max_level": 9999,
+      "summary": "Tzogvin body, Sul-Xan front-bar set, Slimecraw, Pale Order, and Crushing Wall. Use Whorl or Order’s Wrath when no souls can spawn.",
+      "sets": [
+        {
+          "id": "final_slimecraw_1_piece",
+          "name": "Slimecraw (1 piece)",
+          "role": "Head",
+          "source": {
+            "location": "Wayrest Sewers I",
+            "type": "Dungeon",
+            "tradeable": "Group-bound briefly, then account-bound",
+            "zone": "Stormhaven",
+            "access": "Base game"
+          },
+          "pieces": [
+            {
+              "id": "slimecraw_1_piece_head_final",
+              "slot": "Head",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Stamina",
+              "quality": "Purple or better"
+            }
+          ]
+        },
+        {
+          "id": "final_tzogvin_s_warband",
+          "name": "Tzogvin’s Warband",
+          "role": "Shoulders / Hands / Belt / Legs / Feet",
+          "source": {
+            "location": "Frostvault",
+            "type": "Dungeon",
+            "tradeable": "Group-bound briefly, then account-bound",
+            "zone": "Eastmarch",
+            "access": "Wrathstone DLC or ESO Plus"
+          },
+          "pieces": [
+            {
+              "id": "tzogvin_s_warband_shoulders_final",
+              "slot": "Shoulders",
+              "weight": "Medium",
+              "trait": "Divines",
+              "enchantment": "Max Stamina",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "tzogvin_s_warband_hands_final",
+              "slot": "Hands",
+              "weight": "Medium",
+              "trait": "Divines",
+              "enchantment": "Max Stamina",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "tzogvin_s_warband_waist_final",
+              "slot": "Waist",
+              "weight": "Medium",
+              "trait": "Divines",
+              "enchantment": "Max Stamina",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "tzogvin_s_warband_legs_final",
+              "slot": "Legs",
+              "weight": "Medium",
+              "trait": "Divines",
+              "enchantment": "Max Stamina",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "tzogvin_s_warband_feet_final",
+              "slot": "Feet",
+              "weight": "Medium",
+              "trait": "Divines",
+              "enchantment": "Max Stamina",
+              "quality": "Purple or better"
+            }
+          ]
+        },
+        {
+          "id": "final_sul_xan_s_torment",
+          "name": "Sul-Xan’s Torment",
+          "role": "Chest / Necklace / Ring 1 / Daggers",
+          "source": {
+            "location": "Rockgrove trial",
+            "type": "Trial",
+            "tradeable": "Group-bound briefly, then account-bound",
+            "zone": "Blackwood",
+            "access": "Blackwood trial access"
+          },
+          "pieces": [
+            {
+              "id": "sul_xan_s_torment_chest_final",
+              "slot": "Chest",
+              "weight": "Medium",
+              "trait": "Divines",
+              "enchantment": "Max Stamina",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "sul_xan_s_torment_necklace_final",
+              "slot": "Necklace",
+              "trait": "Bloodthirsty",
+              "enchantment": "Physical Harm",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "sul_xan_s_torment_ring_1_final",
+              "slot": "Ring 1",
+              "trait": "Bloodthirsty",
+              "enchantment": "Physical Harm",
+              "quality": "Purple or better"
+            },
+            {
+              "id": "sul_xan_s_torment_front_weapon_1_final",
+              "slot": "Front Weapon 1",
+              "weapon_type": "Dagger",
+              "trait": "Charged",
+              "enchantment": "Poison Damage",
+              "quality": "Gold weapons first"
+            },
+            {
+              "id": "sul_xan_s_torment_front_weapon_2_final",
+              "slot": "Front Weapon 2",
+              "weapon_type": "Dagger",
+              "trait": "Charged",
+              "enchantment": "Shock Damage",
+              "quality": "Gold weapons first"
+            }
+          ]
+        },
+        {
+          "id": "final_ring_of_the_pale_order",
+          "name": "Ring of the Pale Order",
+          "role": "Ring 2",
+          "source": {
+            "location": "Antiquities",
+            "type": "Antiquity / Mythic",
+            "access": "Antiquities system",
+            "tradeable": "No"
+          },
+          "pieces": [
+            {
+              "id": "ring_of_the_pale_order_ring_2_final",
+              "slot": "Ring 2",
+              "trait": "Bloodthirsty",
+              "enchantment": "Physical Harm",
+              "quality": "Purple or better"
+            }
+          ]
+        },
+        {
+          "id": "final_crushing_wall_inferno_staff",
+          "name": "Crushing Wall Inferno Staff",
+          "role": "Back bar",
+          "source": {
+            "location": "Maelstrom Arena",
+            "type": "Arena weapon",
+            "zone": "Wrothgar",
+            "access": "Maelstrom Arena / Orsinium access",
+            "tradeable": "No — account-bound collection"
+          },
+          "pieces": [
+            {
+              "id": "crushing_wall_inferno_staff_back_weapon_final",
+              "slot": "Back Weapon",
+              "weapon_type": "Inferno Staff at Level 15",
+              "trait": "Infused",
+              "enchantment": "Weapon and Spell Damage",
+              "set_slots": 2,
+              "quality": "Gold weapons first"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "consumables": {
+    "foods": [
+      {
+        "name": "Orzorga’s Smoked Bear Haunch",
+        "use": "General solo / forgiving sustain",
+        "source": "Recipe / guild traders"
+      },
+      {
+        "name": "Braised Rabbit with Spring Vegetables",
+        "use": "Maximum-damage Stamina food",
+        "source": "Provisioning / guild traders"
+      },
+      {
+        "name": "Dubious Camoran Throne",
+        "use": "Budget Stamina sustain",
+        "source": "Provisioning / guild traders"
+      }
+    ],
+    "potions": [
+      {
+        "name": "Tri-stat potion",
+        "use": "Best general solo emergency potion"
+      },
+      {
+        "name": "Weapon Power potion",
+        "use": "Group damage when Treatise or other buffs do not already cover the bonuses"
+      },
+      {
+        "name": "Armor potion",
+        "use": "Situational defensive option; Bugloss + Mountain Flower + Mudcrab Chitin"
+      }
+    ],
+    "pvp_alternatives": [
+      {
+        "name": "Bewitched Sugar Skulls",
+        "use": "More Health and all-resource pools in Cyrodiil"
+      },
+      {
+        "name": "Immovability / detection potions",
+        "use": "Break pressure or reveal Nightblades"
+      },
+      {
+        "name": "Defensive bar changes",
+        "use": "Slot Resolving Vigor, Runeguard, and a crowd-control tool; replace pure PvE DoTs as needed"
+      }
+    ]
+  },
+  "tips": [
+    "Join Fighters Guild, Mages Guild, and Undaunted early; train mount Speed every day.",
+    "Unlock all three armor lines by equipping three pieces of each weight once, then return to the leveling mix.",
+    "Runic Jolt is a taunt. Keep it for Soldier XP but do not use it casually in group dungeons.",
+    "Do not buy the Destruction Staff passive Tri Focus for this setup.",
+    "Ring of the Pale Order blocks other players from healing you. Coordinate with your duo partner.",
+    "ESO Plus accelerates XP and grants DLC access, but Scribing is claimed separately through the current free base-game route.",
+    "Recommended Class Mastery: Unbound Potential + Ink-Scribe’s Verve after all three native class lines reach rank 50; subclassing disables them."
+  ],
+  "variants": [
+    {
+      "id": "solo-duo",
+      "name": "Solo / Duo PvE",
+      "summary": "The build exactly as written. Nothing is overridden.",
+      "available": true,
+      "overrides": null
+    },
+    {
+      "id": "cyrodiil",
+      "name": "Cyrodiil Alternative",
+      "summary": "Swaps the consumables to the PvP options this build already lists, and adds the matching bar notes.",
+      "available": true,
+      "overrides": {
+        "summary": "Medium-armored Crux builder with dual daggers, an Inferno Staff, strong self-healing, shielding, and a full-strength AoE beam. In Cyrodiil the same skills are used with larger pools and PvP consumables.",
+        "consumables": {
+          "foods": [
+            {
+              "name": "Bewitched Sugar Skulls",
+              "use": "More Health and all-resource pools in Cyrodiil"
+            }
+          ],
+          "potions": [
+            {
+              "name": "Tri-stat potion",
+              "use": "Best general solo emergency potion"
+            },
+            {
+              "name": "Armor potion",
+              "use": "Situational defensive option; Bugloss + Mountain Flower + Mudcrab Chitin"
+            }
+          ],
+          "pvp_alternatives": [
+            {
+              "name": "Bewitched Sugar Skulls",
+              "use": "More Health and all-resource pools in Cyrodiil"
+            },
+            {
+              "name": "Immovability / detection potions",
+              "use": "Break pressure or reveal Nightblades"
+            },
+            {
+              "name": "Defensive bar changes",
+              "use": "Slot Resolving Vigor, Runeguard, and a crowd-control tool; replace pure PvE DoTs as needed"
+            }
+          ]
+        },
+        "tips": [
+          "Join Fighters Guild, Mages Guild, and Undaunted early; train mount Speed every day.",
+          "Unlock all three armor lines by equipping three pieces of each weight once, then return to the leveling mix.",
+          "Runic Jolt is a taunt. Keep it for Soldier XP but do not use it casually in group dungeons.",
+          "Do not buy the Destruction Staff passive Tri Focus for this setup.",
+          "Ring of the Pale Order blocks other players from healing you. Coordinate with your duo partner.",
+          "ESO Plus accelerates XP and grants DLC access, but Scribing is claimed separately through the current free base-game route.",
+          "Cyrodiil: this build file suggests slotting Resolving Vigor, Runeguard, and a crowd-control tool, replacing a pure PvE slot.",
+          "Cyrodiil: carry immovability and detection potions."
+        ]
+      }
+    }
+  ],
+  "setup_help": {
+    "class": {
+      "summary": "This build keeps all three native Arcanist skill lines for pure-class progression and Class Mastery access."
+    },
+    "race": {
+      "summary": "Race changes damage, sustain, and utility slightly, but ordinary PvE content does not require the recommended option.",
+      "recommended": "Dark Elf",
+      "alternatives": [
+        "Orc",
+        "Khajiit",
+        "Wood Elf"
+      ],
+      "notes": [
+        "Record the race you actually chose; ATTB keeps it separate from the build recommendation."
+      ]
+    },
+    "alliance": {
+      "summary": "Alliance primarily determines PvP faction and some story context. It does not change this PvE combat setup.",
+      "recommended": "Ebonheart Pact",
+      "notes": [
+        "Any Race, Any Alliance and Alliance Change Tokens can make race and alliance independent."
+      ]
+    },
+    "mundus": {
+      "summary": "The Thief increases Critical Chance and is the default damage Mundus for this launch build.",
+      "locations": [
+        "Malabal Tor (Aldmeri Dominion)",
+        "Alik’r Desert (Daggerfall Covenant)",
+        "Eastmarch (Ebonheart Pact)",
+        "Cyrodiil"
+      ],
+      "notes": [
+        "Activate a different Mundus stone at any time to replace the current blessing."
+      ]
+    },
+    "front_weapon": {
+      "summary": "The front bar holds the main spammable, class burst, and offensive passives."
+    },
+    "back_weapon": {
+      "summary": "The second weapon bar unlocks at character level 15 and normally carries longer-duration effects and support skills."
+    },
+    "leveling_armor": {
+      "summary": "Mixed armor weights level multiple armor skill lines while Training traits accelerate experience gain."
+    },
+    "endgame_armor": {
+      "summary": "The final weight mix balances damage passives, penetration, sustain, and Undaunted Mettle."
+    },
+    "leveling_trait": {
+      "summary": "Training increases experience gained from kills. Replace leveling pieces freely rather than upgrading them heavily."
+    },
+    "gear_cap": {
+      "summary": "Equipment stops scaling at Level 50 / CP160, so that is the first point where farming and upgrading permanent sets makes sense."
+    }
+  },
+  "format_notes": [
+    "Schema 3: explicit hotbars, structured rotations, individual equipment slots, and acquisition-aware set groups."
+  ]
+}
