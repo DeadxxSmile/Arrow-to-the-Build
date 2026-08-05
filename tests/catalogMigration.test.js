@@ -64,7 +64,7 @@ test('older pre-release schemas are rejected rather than migrated', () => {
   const old = base(); old.schema_version = 2
   const normalized = normalizeBuild(old)
   assert.equal(normalized.changed, false)
-  assert.ok(matches(normalized.errors, /older pre-release schemas are not supported/))
+  assert.ok(matches(normalized.errors, /older pre-release build schemas are not supported/))
   assert.ok(matches(validateBuild(old), /schema_version must be 3/))
 })
 
