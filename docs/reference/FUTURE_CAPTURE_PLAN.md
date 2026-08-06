@@ -1,6 +1,6 @@
 # Future ESO Data Capture
 
-Direct capture is not part of ATTB v1.0.0. The current SQLite and catalog model is deliberately structured so later capture tools can write through the same validation layer used by manual entry.
+Direct capture is not part of ATTB v1.0.2. The current SQLite and catalog model is deliberately structured so later capture tools can write through the same validation layer used by manual entry.
 
 ## Possible future inputs
 

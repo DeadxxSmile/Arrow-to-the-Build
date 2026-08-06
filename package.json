@@ -1,6 +1,6 @@
 {
   "name": "arrow-to-the-build",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Local ESO character build and progression companion",
   "main": "src/main/main.js",
   "imports": {
@@ -73,10 +73,10 @@
   "license": "GPL-3.0-only",
   "repository": {
     "type": "git",
-    "url": "https://github.com/DeadxxSmile/ATTB.git"
+    "url": "https://github.com/DeadxxSmile/Arrow-to-the-Build.git"
   },
-  "homepage": "https://deadxxsmile.github.io/ATTB/",
+  "homepage": "https://deadxxsmile.github.io/Arrow-to-the-Build/",
   "bugs": {
-    "url": "https://github.com/DeadxxSmile/ATTB/issues"
+    "url": "https://github.com/DeadxxSmile/Arrow-to-the-Build/issues"
   }
 }

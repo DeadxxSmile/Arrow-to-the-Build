@@ -4,14 +4,16 @@
 
 ATTB is built with Electron, React, Vite, SQLite through `better-sqlite3`, and electron-builder/NSIS. Character data stays on the local computer. Build definitions are ordinary human-readable JSON files.
 
-[Project website](https://deadxxsmile.github.io/ATTB/) · [Source repository](https://github.com/DeadxxSmile/ATTB) · [Report an issue](https://github.com/DeadxxSmile/ATTB/issues)
+[Project website](https://deadxxsmile.github.io/Arrow-to-the-Build/) · [Source repository](https://github.com/DeadxxSmile/Arrow-to-the-Build) · [Report an issue](https://github.com/DeadxxSmile/Arrow-to-the-Build/issues)
 
 ## Highlights
 
 - A centered first-character flow followed by multi-character switching.
 - One bundled Solo / Duo PvE progression build for every ESO class: the **Mighty Seven**.
-- Character level, race, alliance, attributes, Champion Points, skill-line ranks, skills, morphs, passives, and ultimates.
+- Character level, race, alliance, recorded attributes, three Champion Point budgets, skill-line ranks, skills, morphs, passives, and ultimates.
 - Dynamic “what should I buy next?” recommendations based on real prerequisites and entered line ranks.
+- A dedicated Champion Points workspace with required connection paths, recommended branches, optional alternatives, and final slottable bars.
+- Numeric-only Current Levels entry for character level, attributes, CP totals, skill-line ranks, and multi-rank passives.
 - Build-related versus personal Skill Point accounting.
 - Piece-by-piece equipment tracking across leveling, starter, intermediate, and final stages.
 - ESO-inspired front and back hotbars with structured rotations or priority systems.
@@ -168,7 +170,7 @@ ATTB/
 
 ## Security and issue reporting
 
-Please report reproducible bugs through [GitHub Issues](https://github.com/DeadxxSmile/ATTB/issues). For a security-sensitive issue, avoid posting private character backups, local paths, or exploit details publicly; contact the repository owner through the profile information on GitHub first.
+Please report reproducible bugs through [GitHub Issues](https://github.com/DeadxxSmile/Arrow-to-the-Build/issues). For a security-sensitive issue, avoid posting private character backups, local paths, or exploit details publicly; contact the repository owner through the profile information on GitHub first.
 
 Useful diagnostic information includes:
 
@@ -192,7 +194,7 @@ Contributions are welcome. Before submitting a pull request:
 
 ## Current version
 
-**v1.0.0** is the first public release. It covers the full character-tracking workflow: first-character setup, multi-character switching, the Mighty Seven bundled builds, next-purchase recommendations, build versus personal Skill Point accounting, piece-by-piece gear tracking, structured hotbars and rotations, Champion Point core and optional branches, attributes, variants, character backup import and export, and build JSON inspection. The visual Build Creator is the next planned module; builds are authored as schema-3 JSON until then.
+**v1.0.2** builds on the Champion Point and attribute overhaul with a focused usability and readability pass. Character creation can now be dismissed at any time, restore a character backup directly, and import a new build from the build selector. Builds without hero artwork no longer show a stray letter placeholder, skill purchases use the same clear square-checkbox language as equipment, tiny interface text has been raised to a readable minimum, and the project website carousel and source-build links have been cleaned up. The visual Build Creator remains the next planned module; builds are authored as schema-3 JSON until then.
 
 ## License and game disclaimer
 

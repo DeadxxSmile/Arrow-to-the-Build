@@ -165,10 +165,10 @@ code, pre { font-family: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
 .carousel-caption { display: grid; grid-template-columns: .65fr 1.35fr; gap: 26px; align-items: end; padding: 20px 12px 14px; }
 .carousel-caption h3 { margin: 4px 0 0; font-size: 1.65rem; }
 .carousel-caption p { margin: 0; color: var(--muted); }
-.carousel-thumbs { display: grid; grid-template-columns: repeat(9,minmax(0,1fr)); gap: 8px; padding: 6px 6px 5px; overflow-x: auto; }
-.carousel-thumbs button { min-width: 88px; padding: 4px; border: 1px solid transparent; border-radius: 9px; background: #07151e; cursor: pointer; opacity: .6; }
+.carousel-thumbs { display: grid; grid-template-columns: repeat(9,minmax(0,1fr)); gap: 8px; padding: 6px 6px 5px; }
+.carousel-thumbs button { min-width: 0; padding: 4px; border: 1px solid transparent; border-radius: 9px; background: #07151e; cursor: pointer; opacity: .6; }
 .carousel-thumbs button:hover, .carousel-thumbs button.active { opacity: 1; border-color: var(--cyan); }
-.carousel-thumbs img { width: 100%; aspect-ratio: 16/10; object-fit: cover; object-position: top; border-radius: 6px; }
+.carousel-thumbs img { width: 100%; aspect-ratio: 1490/1090; object-fit: cover; object-position: top; border-radius: 6px; }
 
 .build-json-section { border-block: 1px solid var(--line-soft); }
 .json-panel { display: grid; grid-template-columns: 1.06fr .94fr; gap: 28px; padding: 30px; }
@@ -213,7 +213,7 @@ footer { display: grid; grid-template-columns: 1fr auto; gap: 18px 28px; align-i
   .showcase-row, .showcase-row.reverse { grid-template-columns: 1fr; }
   .showcase-row.reverse .showcase-copy, .showcase-row.reverse .showcase-shot { order: initial; }
   .resources-grid { grid-template-columns: 1fr; }
-  .carousel-thumbs { grid-template-columns: repeat(9, 110px); }
+  .carousel-thumbs { grid-template-columns: repeat(9, minmax(0,1fr)); }
 }
 @media (max-width: 900px) {
   .hero-grid, .mighty-section, .json-panel, .build-panel { grid-template-columns: 1fr; }

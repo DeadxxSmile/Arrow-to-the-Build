@@ -9,8 +9,16 @@ import { effectiveAllocation } from '../utils/catalogLogic'
 function SkillItem({ item, build, character, lineName, toggleUnlock, compact = false }) {
   const state = unlockState(item, character, build)
   const blocked = state === 'blocked' || state === 'locked'
-  return <label className={`skill-summary-item ${state} ${compact ? 'compact' : ''}`}>
-    <input type="checkbox" checked={state === 'complete'} onChange={e => toggleUnlock(item.id, e.target.checked)} aria-label={item.name} />
+  const complete = state === 'complete'
+  return <article className={`skill-summary-item ${state} ${compact ? 'compact' : ''}`}>
+    <button
+      type="button"
+      className={`completion-box skill-summary-toggle ${complete ? 'selected' : ''}`}
+      role="checkbox"
+      aria-checked={complete}
+      aria-label={`${complete ? 'Mark incomplete' : 'Mark complete'}: ${item.name}`}
+      onClick={() => toggleUnlock(item.id, !complete)}
+    ><span aria-hidden="true">{complete ? '✓' : ''}</span></button>
     <SkillIcon skillId={item.catalog_skill_id} name={item.name} image={item.image} size={compact ? 'compact' : 'list'} />
     <div>
       <div className="skill-title-line">
@@ -23,7 +31,7 @@ function SkillItem({ item, build, character, lineName, toggleUnlock, compact = f
       {item.kind === 'Morph' && <em>Train {item.morph_from || 'the base skill'} to Rank IV, then select this morph.</em>}
       {blocked && compact && <em>{state === 'locked' ? `Needs line rank ${item.required_rank}` : 'Needs an earlier purchase'}</em>}
     </div>
-  </label>
+  </article>
 }
 
 export default function SkillsPage() {

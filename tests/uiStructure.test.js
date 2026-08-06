@@ -85,8 +85,8 @@ test('CharacterModal seeds its form without referencing an undefined identifier'
   // was never bound (the local was `buildId`), so opening the modal threw ReferenceError: build_id
   // is not defined and blanked the renderer. The reset must pass the resolved value explicitly.
   const modal = read('src/renderer/components/CharacterModal.jsx')
-  assert.match(modal, /setForm\(\{ \.\.\.EMPTY, build_id: buildId \}\)/,
-    'the form reset must assign build_id from the resolved buildId')
+  assert.match(modal, /setForm\(emptyForm\(buildId\)\)/,
+    'the form reset must pass the resolved buildId through the fresh-form helper')
   assert.doesNotMatch(modal, /\{ \.\.\.EMPTY,[^}]*\bbuild_id\b(?!\s*:)/,
     'never spread EMPTY with a bare build_id shorthand; the identifier is not in scope')
 })
@@ -226,4 +226,120 @@ test('shipped text stays free of em and en dashes, which the project style avoid
   }
   walk(root)
   assert.deepEqual(offenders, [], `these files contain em or en dashes:\n${offenders.join('\n')}`)
+})
+
+test('Basic Setup leads navigation and owns the build hero and target attributes', () => {
+  const app = read('src/renderer/App.jsx')
+  const routes = read('src/index.jsx')
+  const setup = read('src/renderer/pages/SetupPage.jsx')
+  const status = read('src/renderer/pages/StatusPage.jsx')
+  assert.ok(app.indexOf("'/setup'") < app.indexOf("'/status'"), 'Basic Setup should appear before Current Levels')
+  assert.match(routes, /Navigate to="\/setup"/)
+  assert.match(setup, /className="hero-panel"/)
+  assert.match(setup, /Build attribute target/)
+  assert.match(setup, /Build Progress/)
+  assert.match(setup, /attributes\.spent\}\/\{attributes\.targetTotal/)
+  assert.doesNotMatch(status, /className="hero-panel"/)
+})
+
+test('Current Levels is numeric-only progression for level, CP, line ranks, and multi-rank passives', () => {
+  const status = read('src/renderer/pages/StatusPage.jsx')
+  assert.match(status, /Current levels/)
+  assert.match(status, /cp_craft/)
+  assert.match(status, /cp_warfare/)
+  assert.match(status, /cp_fitness/)
+  assert.match(status, /Current line ranks/)
+  assert.match(status, /Multi-rank passive levels/)
+  assert.match(status, /applyAllocationChange/)
+  assert.doesNotMatch(status, /What to take next|recommendedUnlocks|toggleUnlock/)
+})
+
+test('Champion Points has a dedicated route, rail, overview, and constellation path pages', () => {
+  const app = read('src/renderer/App.jsx')
+  const routes = read('src/index.jsx')
+  const page = read('src/renderer/pages/ChampionPointsPage.jsx')
+  const card = read('src/renderer/components/CPCard.jsx')
+  assert.match(app, /Champion Points/)
+  assert.match(app, /\/champion-points\/craft/)
+  assert.match(app, /\/champion-points\/warfare/)
+  assert.match(app, /\/champion-points\/fitness/)
+  assert.match(routes, /champion-points\/:tree/)
+  assert.match(page, /CP_ACCOUNT_MAX/)
+  assert.match(card, /Spend here next/)
+  assert.match(card, /Required connection path/)
+  assert.match(card, /Recommended Champion Bar/)
+})
+
+test('character creation records real attributes and always exposes three CP fields', () => {
+  const modal = read('src/renderer/components/CharacterModal.jsx')
+  const handlers = read('src/main/ipc/characterHandlers.js')
+  assert.match(modal, /attributes: ZERO_ATTRIBUTES/)
+  assert.match(modal, /Attribute points/)
+  assert.match(modal, /Craft CP/)
+  assert.match(modal, /Warfare CP/)
+  assert.match(modal, /Fitness CP/)
+  assert.doesNotMatch(modal, /form\.level\s*>=\s*50/)
+  assert.match(handlers, /const attributes = sanitizeAttributes\(payload\.attributes\)/)
+  assert.doesNotMatch(handlers, /sanitizeAttributes\(payload\.attributes,\s*defaults\.attributes\)/)
+})
+
+test('the character modal can always be dismissed, including on first run', () => {
+  // Regression: first-run mode hid the close X, disabled Escape, and ignored backdrop clicks, so the
+  // setup dialog had no way out. Every path must be able to close now.
+  const modal = read('src/renderer/components/CharacterModal.jsx')
+  // Escape closes regardless of firstCharacter
+  assert.match(modal, /event\.key === 'Escape'\) onClose\(\)/)
+  assert.doesNotMatch(modal, /Escape' && !firstCharacter/)
+  // Backdrop click closes regardless of firstCharacter
+  assert.doesNotMatch(modal, /!firstCharacter && event\.target === event\.currentTarget/)
+  // The close X and a Cancel button are always rendered
+  assert.doesNotMatch(modal, /\{!firstCharacter && <button type="button" className="icon-btn"/)
+  assert.doesNotMatch(modal, /\{!firstCharacter && <button type="button" className="btn ghost"/)
+})
+
+test('the modal offers backup restore and an in-dropdown build import', () => {
+  const modal = read('src/renderer/components/CharacterModal.jsx')
+  assert.match(modal, /characters\.importBackup\(\)/, 'restore path calls the backup importer')
+  assert.match(modal, /Import character backup/, 'a restore button is shown')
+  assert.match(modal, /__import__/, 'the build dropdown has an import sentinel')
+})
+
+test('CachedImage renders nothing rather than a stray letter when a hero image is absent', () => {
+  // Regression: builds without images.hero showed the first letter of the alt text ("M" for Magicka...)
+  // floating in the hero because the placeholder kept position:absolute. fallback="none" drops it.
+  const cached = read('src/renderer/components/CachedImage.jsx')
+  const setup = read('src/renderer/pages/SetupPage.jsx')
+  assert.match(cached, /fallback === 'none'/)
+  assert.match(cached, /if \(!src && fallback === 'none'\) return null/)
+  assert.match(setup, /className="hero-image" fallback="none"/)
+})
+
+
+test('Skills overview uses the same square completion control as equipment and line pages', () => {
+  const page = read('src/renderer/pages/SkillsPage.jsx')
+  const css = read('src/renderer/styles/App.css')
+  assert.match(page, /className={`completion-box skill-summary-toggle/)
+  assert.match(page, /role="checkbox"/)
+  assert.match(page, /aria-checked={complete}/)
+  assert.doesNotMatch(page, /<input type="checkbox"/)
+  assert.match(css, /\.skill-summary-toggle\.selected\{background:#1d8659;border-color:#62d99c\}/)
+})
+
+test('skill line abilities use the square equipment-style checkbox', () => {
+  const page = read('src/renderer/pages/SkillLinePage.jsx')
+  const css = read('src/renderer/styles/App.css')
+  assert.match(page, /role="checkbox" aria-checked=\{!!allocation\}/, 'toggle is a real checkbox role')
+  assert.doesNotMatch(page, /\{allocation \? '✓' : '\+'\}/, 'no plus-sign toggle glyph remains')
+  const toggle = css.match(/\.eso-skill-toggle\{[^}]*\}/)?.[0] || ''
+  assert.match(toggle, /border-radius:8px/, 'toggle is a rounded square, not a circle')
+})
+
+test('no shipped font size is smaller than the readable floor', () => {
+  // The tiny CP text prompted a type-scale pass. Nothing should render below 0.72rem (~10.8px).
+  for (const file of ['src/renderer/styles/App.css', 'src/renderer/styles/global.css']) {
+    const css = read(file)
+    const sizes = [...css.matchAll(/font-size:([0-9.]+)rem/g)].map(m => parseFloat(m[1]))
+    const tooSmall = sizes.filter(size => size < 0.72)
+    assert.deepEqual(tooSmall, [], `${file} has font sizes below 0.72rem: ${tooSmall.join(', ')}`)
+  }
 })

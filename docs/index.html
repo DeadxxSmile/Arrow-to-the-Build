@@ -34,7 +34,8 @@
           <a href="#workflow">How it works</a>
           <a href="#screenshots">Screenshots</a>
           <a href="#build-json">Build JSON</a>
-          <a class="button compact" href="https://github.com/DeadxxSmile/ATTB" target="_blank" rel="noreferrer">GitHub</a>
+          <a href="https://github.com/DeadxxSmile/Arrow-to-the-Build/releases" target="_blank" rel="noreferrer">Releases</a>
+          <a class="button compact" href="https://github.com/DeadxxSmile/Arrow-to-the-Build" target="_blank" rel="noreferrer">GitHub</a>
         </div>
       </nav>
 
@@ -44,12 +45,13 @@
           <h1>Your build guide, turned into a plan for <em>your</em> character.</h1>
           <p class="hero-text">Arrow to the Build replaces static endgame screenshots with a character-specific roadmap. Record the level, ranks, skills, gear, and Champion Points you actually have, then see what to unlock, equip, and practice next.</p>
           <div class="cta-row">
-            <a class="button primary" href="https://github.com/DeadxxSmile/ATTB" target="_blank" rel="noreferrer">View source on GitHub</a>
-            <a class="button secondary" href="#build">Build for Windows</a>
+            <a class="button primary" href="https://github.com/DeadxxSmile/Arrow-to-the-Build/releases/latest" target="_blank" rel="noreferrer">Download latest release</a>
+            <a class="button secondary" href="https://github.com/DeadxxSmile/Arrow-to-the-Build" target="_blank" rel="noreferrer">View source on GitHub</a>
+            <a class="button ghost" href="https://github.com/DeadxxSmile/Arrow-to-the-Build#build-the-windows-installer" target="_blank" rel="noreferrer">Build from source</a>
           </div>
           <p class="cta-note">Free and open-source. No account. No cloud sync. Character data stays on your PC.</p>
           <div class="meta-row" aria-label="Project details">
-            <span class="meta-pill version">v1.0.0</span>
+            <span class="meta-pill version">v1.0.2</span>
             <span class="meta-pill">Windows</span>
             <span class="meta-pill">7 built-in class builds</span>
             <span class="meta-pill">Local SQLite</span>
@@ -305,27 +307,6 @@
           </div>
         </div>
       </section>
-
-      <section class="section" id="build">
-        <div class="build-panel elevated">
-          <div class="build-copy">
-            <span class="eyebrow">Build for Windows</span>
-            <h2>One batch file builds the installer from source.</h2>
-            <p>Clone or download the repository, install a current Node.js LTS release, and run <code>BUILD-ATTB.bat</code>. The script installs locked dependencies, fetches available skill icons, runs the tests, and creates the NSIS installer without launching it.</p>
-            <ol>
-              <li>Download or clone the <code>ATTB</code> repository.</li>
-              <li>Open the repository folder and run <code>BUILD-ATTB.bat</code>.</li>
-              <li>Find <code>dist\ATTB-Setup-&lt;version&gt;.exe</code>.</li>
-            </ol>
-            <p class="warning"><b>Unsigned installer:</b> Windows may show Unknown Publisher, SmartScreen, or Smart App Control warnings. Review the source and only bypass warnings for a build you trust.</p>
-          </div>
-          <div class="build-actions">
-            <a class="button primary" href="https://github.com/DeadxxSmile/ATTB" target="_blank" rel="noreferrer">Open GitHub repository</a>
-            <a class="button secondary" href="https://github.com/DeadxxSmile/ATTB/issues" target="_blank" rel="noreferrer">Report an issue</a>
-            <a class="button ghost" href="reference/BUILD_JSON_GUIDE.md">Author a build JSON</a>
-          </div>
-        </div>
-      </section>
     </main>
 
     <footer>
@@ -334,7 +315,8 @@
         <span><b>Arrow to the Build</b><small>ESO progression that follows the character you actually made.</small></span>
       </div>
       <div class="footer-links">
-        <a href="https://github.com/DeadxxSmile/ATTB" target="_blank" rel="noreferrer">GitHub</a>
+        <a href="https://github.com/DeadxxSmile/Arrow-to-the-Build" target="_blank" rel="noreferrer">GitHub</a>
+        <a href="https://github.com/DeadxxSmile/Arrow-to-the-Build/releases" target="_blank" rel="noreferrer">Releases</a>
         <a href="reference/BUILD_JSON_GUIDE.md">Build JSON Guide</a>
         <a href="reference/BUILD_TEMPLATE.json">Template</a>
         <a href="#top">Back to top</a>

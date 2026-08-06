@@ -63,7 +63,7 @@ export default function SkillLinePage() {
     const order = buildOrderLabel(skill)
     return <article className={`eso-ability-card ${allocation ? 'selected' : ''}`}>
       <div className="eso-ability-main">
-        <button className={`eso-skill-toggle ${allocation ? 'selected' : ''}`} onClick={() => updateAllocation(skill, allocation ? 0 : 1)} aria-pressed={!!allocation} aria-label={`${allocation ? 'Unselect' : 'Select'} ${skill.name}`}>{allocation ? '✓' : '+'}</button>
+        <button type="button" role="checkbox" aria-checked={!!allocation} className={`eso-skill-toggle ${allocation ? 'selected' : ''}`} onClick={() => updateAllocation(skill, allocation ? 0 : 1)} aria-label={`${allocation ? 'Unselect' : 'Select'} ${skill.name}`}><span aria-hidden="true">{allocation ? '✓' : ''}</span></button>
         <div className="eso-skill-icon"><SkillIcon skillId={skill.id} name={skill.name} image={skillImage(skill)} size="line" /></div>
         <div className="eso-skill-copy">
           <div className="eso-skill-heading"><h3>{skill.name}</h3>{order && <span className="unlock-order">Build #{order}</span>}<SkillBadges skill={skill} /></div>

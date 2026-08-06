@@ -192,8 +192,8 @@ function insertCharacter(payload, build, forcedId = null) {
     if (typeof key === 'string' && points) allocations[key] = points
   }
 
-  // Old backups stored only attribute_points; start from the build target when there is no split.
-  const attributes = sanitizeAttributes(payload.attributes, defaults.attributes)
+  // Recorded attributes belong to the character. Build defaults are a recommendation only.
+  const attributes = sanitizeAttributes(payload.attributes)
 
   const variantIds = new Set((build.variants || []).filter(v => v?.available !== false).map(v => v.id))
   const requested = payload.variant_id

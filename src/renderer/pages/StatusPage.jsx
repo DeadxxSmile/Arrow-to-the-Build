@@ -1,83 +1,52 @@
 import React from 'react'
 import { useApp } from '../App'
 import EmptyState from './EmptyState'
-import CachedImage from '../components/CachedImage'
-import CPCard from '../components/CPCard'
 import NumberStepper from '../components/NumberStepper'
-import { CP_ACCOUNT_MAX, currentPhase, recommendedUnlocks } from '../utils/buildLogic'
-import { skillPointUsage } from '../utils/catalogLogic'
+import AttributesEditor from '../components/AttributesEditor'
+import { applyAllocationChange } from '../utils/buildLogic'
+import { effectiveAllocation } from '../utils/catalogLogic'
 
-const REASON = {
-  locked: item => `Needs skill-line rank ${item.required_rank}`,
-  blocked: () => 'Needs an earlier purchase first'
-}
+const CP_FIELDS = [
+  ['craft', 'Craft CP', 'cp_craft'],
+  ['warfare', 'Warfare CP', 'cp_warfare'],
+  ['fitness', 'Fitness CP', 'cp_fitness']
+]
 
 export default function StatusPage() {
-  const { character, build, skillLines, updateCharacter, setSkillRank, toggleUnlock, esoPlus } = useApp()
+  const { character, build, skillGroups, updateCharacter, setSkillRank, setSkillTracking } = useApp()
   if (!character || !build) return <EmptyState />
 
-  const phase = currentPhase(build, character.level)
-  const recs = recommendedUnlocks(build, character)
-  const available = recs.filter(x => x.state === 'available' || x.state === 'train').slice(0, 5)
-  const upcoming = recs.filter(x => x.state === 'locked' || x.state === 'blocked').slice(0, 6)
-  const variant = build.active_variant
-  const skillUsage = skillPointUsage(character, build)
-  const usageGroups = Object.entries(skillUsage.groups).sort((a, b) => b[1] - a[1])
-  const lineName = id => skillLines.find(l => l.id === id)?.name || id
-  const cpPlans = build.cp_plans || {}
-  const cpTotal = character.cp_craft + character.cp_warfare + character.cp_fitness
+  const multiRankPassives = skillGroups.map(([group, lines]) => [group, lines.map(line => ({
+    line,
+    passives: (line.skills || []).filter(skill => skill.type === 'Passive' && Number(skill.max_points || 1) > 1)
+  })).filter(entry => entry.passives.length)]).filter(([, lines]) => lines.length)
 
-  return <div className="page">
-    <section className="hero-panel" style={{ '--hero-accent': build.theme?.accent || '#69e891' }}>
-      <div className="hero-copy">
-        <span className="eyebrow">{[build.defaults?.class, build.defaults?.race, build.defaults?.alliance].filter(Boolean).join(' · ')}</span>
-        <h1>{character.name}</h1><p>{build.summary}</p>
-        <div className="badge-row">{[build.defaults?.mundus, build.defaults?.front_weapon, build.defaults?.back_weapon].filter(Boolean).map(x => <span key={x}>{x}</span>)}{variant && <span title={variant.summary || ''}>{variant.name}{variant.changes?.length ? '' : ' (base)'}</span>}{esoPlus && <span className="plus">ESO Plus</span>}</div>
+  const updatePassive = (line, skill, points) => {
+    const { allocations, completed } = applyAllocationChange(build, character, line.id, skill, points, line.skills || [])
+    return setSkillTracking(allocations, completed)
+  }
+
+  return <div className="page current-levels-page">
+    <div className="page-title"><span className="eyebrow">Live numeric progress</span><h1>Current levels</h1><p>Record the numbers this character actually has right now. Build recommendations stay on Basic Setup, Skills &amp; Passives, and Champion Points.</p></div>
+
+    <section className="panel current-core-panel">
+      <div className="section-head"><div><span className="eyebrow">Character progression</span><h2>Level and Champion Points</h2></div><p>Champion Points are character-specific in ATTB for now and remain available to enter even when this character is below Level 50.</p></div>
+      <div className="current-number-grid">
+        <article className="current-number-card level"><small>Overall character level</small><NumberStepper value={character.level} min={1} max={50} onChange={level => updateCharacter({ level })} label="Overall character level" /></article>
+        {CP_FIELDS.map(([tree, label, field]) => <article className={`current-number-card ${tree}`} key={field}><small>{label}</small><NumberStepper value={character[field] || 0} min={0} max={1200} onChange={value => updateCharacter({ [field]: value })} label={label} /></article>)}
       </div>
-      <CachedImage src={build.images?.hero} alt={build.name} className="hero-image" />
     </section>
 
-    <section className="panel status-profile-full">
-      <div className="section-head"><div><span className="eyebrow">Live profile</span><h2>Current levels &amp; Skill Points used</h2></div><p>ATTB no longer tries to guess how many Skill Points the character should have. It simply counts the points recorded as purchased across every tracked skill line.</p></div>
-      <div className="status-core-grid skill-usage-cards">
-        <div className="status-step-card"><small>Overall character level</small><NumberStepper value={character.level} min={1} max={50} onChange={level => updateCharacter({ level })} label="Overall character level" /></div>
-        <div className="status-step-card metric"><small>Total Skill Points used</small><b className="skill-point-number">{skillUsage.total}</b><em>Base abilities, morphs, ultimates, and passive ranks selected in ATTB</em></div>
-        <div className="status-step-card metric"><small>Build-related points</small><b className="skill-point-number">{skillUsage.buildRelated}</b><em>Selections connected to this build&rsquo;s ordered progression</em></div>
-        <div className="status-step-card metric"><small>Personal / extra points</small><b className="skill-point-number">{skillUsage.personal}</b><em>Crafting, guild, world, alternate morphs, and other non-build selections</em></div>
-      </div>
-      <div className="skill-usage-breakdown">
-        <div className="skill-usage-title"><b>Used-point breakdown</b><span>Updates automatically as skill ranks and selections change</span></div>
-        {usageGroups.length ? <div className="skill-usage-groups">{usageGroups.map(([group, points]) => <div key={group}><span>{group}</span><b>{points}</b></div>)}</div> : <div className="quiet-box">No Skill Points recorded yet. Select abilities, morphs, and passive ranks on the Skills &amp; Passives pages.</div>}
-      </div>
-      {phase && <div className="phase-banner"><small>Current progression band</small><strong>{phase.label}</strong><p>{phase.overview}</p></div>}
-      <div className="line-ranks status-line-ranks">{skillLines.map(line => <label key={line.id}><span><b>{line.name}</b><small>{line.group}{line.tracked_only ? ' · personal tracking' : ''}</small></span><NumberStepper value={character.skill_ranks[line.id] ?? 0} min={0} max={line.max || 50} onChange={rank => setSkillRank(line.id, rank)} label={`${line.name} rank`} /></label>)}</div>
+    <AttributesEditor character={character} build={build} onChange={attributes => updateCharacter({ attributes })} />
+
+    <section className="panel numeric-tracking-panel">
+      <div className="section-head"><div><span className="eyebrow">Skill-line progression</span><h2>Current line ranks</h2></div><p>Use this page for fast numeric entry. Ability purchases and morph choices remain under Skills &amp; Passives.</p></div>
+      <div className="numeric-groups">{skillGroups.map(([group, lines]) => <section className="numeric-group" key={group}><header><h3>{group}</h3><span>{lines.length} line{lines.length === 1 ? '' : 's'}</span></header><div className="numeric-row-list">{lines.map(line => <label className="numeric-row" key={line.id}><span><b>{line.name}</b><small>{line.tracked_only ? 'Personal tracking' : 'Build-related line'}</small></span><NumberStepper value={character.skill_ranks[line.id] ?? 0} min={0} max={line.max || 50} onChange={rank => setSkillRank(line.id, rank)} label={`${line.name} rank`} /></label>)}</div></section>)}</div>
     </section>
 
-    <section className="panel status-next-panel">
-      <div className="section-head"><div><span className="eyebrow">Dynamic queue</span><h2>What to take next</h2></div><small>Top five based on entered line ranks and selected build items</small></div>
-      <div className="recommend-list">{available.length ? available.map(item => <label className={`recommend ${item.state}`} key={item.id}>
-        <input type="checkbox" checked={false} onChange={() => toggleUnlock(item.id, true)} aria-label={`Mark ${item.name} as purchased`} />
-        <div>
-          <div className="rec-title"><b>{item.name}</b><span className={`mini-tag ${item.status}`}>{item.status}</span></div>
-          <p>{item.section} · {lineName(item.line)} · Rank {item.required_rank}</p>
-          <small>{item.kind === 'Morph' ? 'Train the base ability to Rank IV, then choose this morph. ' : ''}{item.notes}</small>
-        </div>
-      </label>) : <div className="quiet-box">No immediately available recommendations. Update line ranks or mark purchased items on Skills &amp; Passives.</div>}</div>
-      <h3 className="subhead">Unlocking soon</h3>
-      {upcoming.length ? <div className="upcoming-list">{upcoming.map(item => <div key={item.id}><b>{item.name}</b><span>{lineName(item.line)} · {(REASON[item.state] || (() => ''))(item)}</span></div>)}</div> : <div className="quiet-box">Nothing else is waiting on a rank or prerequisite.</div>}
+    <section className="panel numeric-tracking-panel">
+      <div className="section-head"><div><span className="eyebrow">Passive progression</span><h2>Multi-rank passive levels</h2></div><p>Only passives with more than one purchasable rank appear here. One-rank purchases, active skills, morphs, and ultimates stay on their full skill-line pages.</p></div>
+      {multiRankPassives.length ? <div className="numeric-groups passive-groups">{multiRankPassives.map(([group, lines]) => <section className="numeric-group" key={group}><header><h3>{group}</h3><span>{lines.reduce((sum, entry) => sum + entry.passives.length, 0)} passives</span></header><div className="numeric-row-list">{lines.flatMap(({ line, passives }) => passives.map(skill => <label className="numeric-row" key={skill.id}><span><b>{skill.name}</b><small>{line.name} · {skill.max_points} ranks</small></span><NumberStepper value={effectiveAllocation(character, build, line.id, skill)} min={0} max={skill.max_points || 1} onChange={points => updatePassive(line, skill, points)} label={`${skill.name} passive rank`} /></label>))}</div></section>)}</div> : <div className="quiet-box">No multi-rank passives are available in the tracked skill lines.</div>}
     </section>
-
-    {character.level >= 50 && <section className="section-block">
-      <div className="section-head">
-        <div><span className="eyebrow">Automatic allocation</span><h2>Champion Points</h2></div>
-        <p>Each constellation follows the required path, then the build's recommended flex route. Optional branches are shown as alternatives instead of being auto-spent. A full build variant can replace the CP plan entirely. Enter the points you actually have in each tree; a single constellation holds up to 1,200. Slottables still need dragging into the in-game slots.</p>
-      </div>
-      <div className="cp-account-total"><small>Entered across all three constellations</small><b>{cpTotal}</b><span>of {CP_ACCOUNT_MAX.toLocaleString()} account maximum</span></div>
-      <div className="cp-grid">
-        <CPCard tree="craft" plan={cpPlans.craft} total={character.cp_craft} />
-        <CPCard tree="warfare" plan={cpPlans.warfare} total={character.cp_warfare} />
-        <CPCard tree="fitness" plan={cpPlans.fitness} total={character.cp_fitness} />
-      </div>
-    </section>}
   </div>
 }

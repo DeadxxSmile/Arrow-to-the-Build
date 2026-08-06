@@ -9,6 +9,7 @@ export default function AttributesEditor({ character, build, onChange }) {
   const [busy, setBusy] = useState(false)
 
   const set = (key, value) => onChange({ ...summary.actual, [key]: value })
+  const targetAvailable = summary.targetTotal <= summary.available
   const useTarget = async () => {
     if (summary.matchesTarget) return
     if (!window.confirm(`Replace the recorded split (${describe(summary.actual)}) with this build's recommendation (${describe(summary.target)})? This only changes ATTB, not your character in ESO.`)) return
@@ -25,8 +26,10 @@ export default function AttributesEditor({ character, build, onChange }) {
     <div className="attribute-editor">{ATTRIBUTE_KEYS.map(key => {
       const value = summary.actual[key]
       const diff = summary.difference[key]
-      // Do not clamp below what is already recorded, or lowering a level would silently eat points.
-      const max = Math.max(64, value)
+      // Preserve an already-recorded value after a level decrease, but do not let new edits
+      // push the total above the points currently available.
+      const otherSpent = summary.spent - value
+      const max = Math.max(value, Math.min(64, summary.available - otherSpent))
       return <div className={`attribute-row ${key}`} key={key}>
         <div><b>{LABEL[key]}</b><small>Build target {summary.target[key]}{diff ? ` · ${diff > 0 ? '+' : ''}${diff}` : ' · matches'}</small></div>
         <NumberStepper value={value} min={0} max={max} onChange={v => set(key, v)} label={`${LABEL[key]} attribute points`} />
@@ -47,8 +50,8 @@ export default function AttributesEditor({ character, build, onChange }) {
 
 
     <div className="button-row">
-      <button className="btn secondary" onClick={useTarget} disabled={busy || summary.matchesTarget}>
-        {summary.matchesTarget ? 'Already matches the build target' : 'Use build target'}
+      <button className="btn secondary" onClick={useTarget} disabled={busy || summary.matchesTarget || !targetAvailable} title={!targetAvailable ? `The full build target needs ${summary.targetTotal} points; Level ${character.level} provides ${summary.available}.` : ''}>
+        {summary.matchesTarget ? 'Already matches the build target' : targetAvailable ? 'Use build target' : 'Build target unlocks later'}
       </button>
     </div>
   </section>

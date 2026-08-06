@@ -13,12 +13,17 @@ const AppContext = createContext(null)
 export const useApp = () => useContext(AppContext)
 
 const primaryNav = [
-  ['/status', 'Current Levels', '◈'], ['/setup', 'Basic Setup', '⌁'], ['/skills', 'Skills & Passives', '✦'],
+  ['/setup', 'Basic Setup', '⌁'], ['/status', 'Current Levels', '◈'], ['/skills', 'Skills & Passives', '✦'],
   ['/equipment', 'Equipment', '◫'], ['/rotations', 'Skill Bars & Rotations', '↻'],
-  ['/consumables', 'Consumables / Other', '⚗'], ['/help/tips', 'Help & Tools', '?']
+  ['/champion-points', 'Champion Points', '✧'], ['/consumables', 'Consumables / Other', '⚗'],
+  ['/help/tips', 'Help & Tools', '?']
 ]
 const helpNav = [
   ['/help/tips', 'Gameplay Tips', '◆'], ['/help/resources', 'ESO Resources', '↗'], ['/help/import-export', 'Import / Export', '⇄']
+]
+const cpNav = [
+  ['/champion-points', 'Overview', '✧', null], ['/champion-points/craft', 'Craft', '◇', 'cp_craft'],
+  ['/champion-points/warfare', 'Warfare', '◇', 'cp_warfare'], ['/champion-points/fitness', 'Fitness', '◇', 'cp_fitness']
 ]
 const groupOrder = ['Class', 'Weapon', 'Armor', 'World', 'Guild', 'Alliance War', 'Racial', 'Craft', 'System']
 
@@ -29,6 +34,11 @@ function SectionRail({ location, skillGroups, character }) {
     <div className="section-rail-scroll">{skillGroups.map(([group, lines]) => <section key={group} className="section-rail-group"><small>{group}</small>{lines.map(line => <NavLink key={line.id} to={`/skills/${line.id}`} className={({ isActive }) => `section-rail-link ${isActive ? 'active' : ''}`}>
       <span aria-hidden="true">{line.tracked_only ? '＋' : '·'}</span><b>{line.name}</b><em>{character?.skill_ranks?.[line.id] ?? 0}/{line.max || 50}</em>
     </NavLink>)}</section>)}</div>
+  </aside>
+
+  if (location.pathname.startsWith('/champion-points')) return <aside className="section-rail cp-rail" aria-label="Champion Point constellations">
+    <div className="section-rail-head"><span className="eyebrow">Champion Points</span><h2>Constellations</h2><p>Enter each tree's budget, then follow the build's required path and recommended branches.</p></div>
+    {cpNav.map(([to, label, icon, field], index) => <NavLink end={index === 0} key={to} to={to} className={({ isActive }) => `section-rail-link ${isActive ? 'active' : ''}`}><span>{icon}</span><b>{label}</b>{field && <em>{character?.[field] ?? 0}</em>}</NavLink>)}
   </aside>
 
   if (location.pathname.startsWith('/help')) return <aside className="section-rail tools-rail" aria-label="Help and tools">
@@ -156,7 +166,7 @@ export default function App() {
     <CharacterModal open={modal} builds={builds} firstCharacter onClose={() => setModal(false)} onImported={reloadBuilds} onCreated={async id => { setModal(false); await reloadCharacters(id); setActiveId(id) }} />
   </div></AppContext.Provider>
 
-  const showRail = location.pathname.startsWith('/skills') || location.pathname.startsWith('/help')
+  const showRail = location.pathname.startsWith('/skills') || location.pathname.startsWith('/champion-points') || location.pathname.startsWith('/help')
   return <AppContext.Provider value={ctx}><div className="app-root">
     <TitleBar />
     <div className={`app-shell ${collapsed ? 'collapsed' : ''}`}>

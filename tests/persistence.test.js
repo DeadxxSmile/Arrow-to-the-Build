@@ -337,8 +337,8 @@ test('corrupt JSON columns fall back to empty instead of throwing', () => {
 test('attributes persist, clamp, and survive a reload', () => {
   const { ipc } = freshApp()
   const id = ipc.call('characters:create', { name: 'Attr', build_id: 'stamina_arcanist_solo_duo', level: 50 })
-  assert.deepEqual(ipc.call('characters:get', id).attributes, { magicka: 0, health: 0, stamina: 64 },
-    'a new character starts on the build target')
+  assert.deepEqual(ipc.call('characters:get', id).attributes, { magicka: 0, health: 0, stamina: 0 },
+    'a new character starts with no recorded attributes instead of copying the build target')
 
   ipc.call('characters:update', id, { attributes: { magicka: 10, health: 20, stamina: 30 } })
   const saved = ipc.call('characters:get', id)
@@ -348,6 +348,21 @@ test('attributes persist, clamp, and survive a reload', () => {
   ipc.call('characters:update', id, { attributes: { magicka: -5, health: 2.9, stamina: 'x' } })
   assert.deepEqual(ipc.call('characters:get', id).attributes, { magicka: 0, health: 2, stamina: 0 },
     'negative, fractional, and junk values are cleaned')
+})
+
+test('character creation stores explicit attributes and Champion Points even below level 50', () => {
+  const { ipc } = freshApp()
+  const id = ipc.call('characters:create', {
+    name: 'Alt', build_id: 'stamina_arcanist_solo_duo', level: 16,
+    attributes: { magicka: 0, health: 0, stamina: 19 },
+    cp_craft: 70, cp_warfare: 70, cp_fitness: 69
+  })
+  const c = ipc.call('characters:get', id)
+  assert.deepEqual(c.attributes, { magicka: 0, health: 0, stamina: 19 })
+  assert.equal(c.attribute_points, 19)
+  assert.equal(c.cp_craft, 70)
+  assert.equal(c.cp_warfare, 70)
+  assert.equal(c.cp_fitness, 69)
 })
 
 test('an attribute split over 64 is trimmed rather than stored', () => {
