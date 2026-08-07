@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export default function CharacterSwitcher({ characters, activeId, onSelect, onAdd }) {
   const [open, setOpen] = useState(false)

@@ -1,882 +1,839 @@
-# Creating an ATTB build JSON
+# Manual Schema 4 JSON Authoring
 
-This guide explains how to author a build for **Arrow to the Build (ATTB)** using **build schema 3**.
-Bundled builds and builds imported by a user use the same JSON format. The visual Build Creator is
-planned for a later release; until then, JSON is the complete authoring format.
+This is the field-level guide for authors who want to **hand-make or directly edit ATTB build JSON**. The visual Build Editor and manual JSON use the same Schema 4 object, so a build can move between the two workflows without conversion.
 
-Start with these files:
+Read **Start Here** for the basic app model and **Visual Build Editor Guide** for normal in-app authoring. Use this document when you need exact fields, subclassing, Scribing, loadout overrides, merge behavior, extensions, or direct text-editor control.
 
-- [`BUILD_TEMPLATE.json`](BUILD_TEMPLATE.json), a valid, importable starter build
-- [`BUILD_SCHEMA.json`](BUILD_SCHEMA.json), the machine-readable schema
-- [`../../resources/data/eso-skill-catalog.json`](../../resources/data/eso-skill-catalog.json), valid skill-line and skill IDs
-- [`../../resources/builds/`](../../resources/builds/), the seven complete bundled examples
+## Recommended manual workflow
 
-The starter template uses real **Arcanist** catalog IDs so it can be imported as-is. When creating a
-build for another class, replace its `relevant_lines`, `unlock_order` catalog IDs, and phase skill
-references with entries from the bundled catalog.
+1. Open **Build Editor → Import / Export**.
+2. Export the blank template, or export/fork a complete working build.
+3. Edit a separate copy in a JSON-aware text editor.
+4. Preserve permanent IDs unless you are deliberately creating a distinct fork.
+5. Keep the file valid JSON: no comments, trailing commas, or unquoted keys.
+6. Import or validate the file through ATTB.
+7. Fix every validation error.
+8. Save the build to create an immutable revision and managed JSON mirror.
+9. Test the build in the Character Tracker at several level and CP ranges.
 
----
+ATTB normalizes valid Schema 3 files to Schema 4 during import, but all new files should use `schema_version: 4`.
 
-## 1. Recommended authoring workflow
+# 1. Root structure
 
-1. Copy `BUILD_TEMPLATE.json` and give the copy a meaningful filename.
-2. Change the top-level metadata: `id`, `name`, `short_name`, `summary`, `author`, game version, and date.
-3. Set the recommended profile under `defaults`.
-4. Select real skill-line IDs from `eso-skill-catalog.json` and add them to `relevant_lines`.
-5. Build an ordered `unlock_order` using real `catalog_skill_id` values.
-6. Define level/progression `phases`, including both hotbars and a rotation.
-7. Define piece-by-piece `gear_stages`.
-8. Add Champion Point paths, consumables, tips, and variants.
-9. Open ATTB and use **Help & Tools → Import / Export → Validate Build JSON**.
-10. Correct every reported validation error before sharing or bundling the file.
 
-For a bundled build, place the finished JSON in `resources/builds/` and document research sources in
-`BUNDLED_BUILD_SOURCES.md`. Imported community builds can live anywhere on the user's computer.
+### Build Editor storage
 
----
+Manual JSON and visually edited builds use the same Schema 4 object. A successful **Save Build** stores an immutable revision inside ATTB and mirrors the latest saved user build to `<build-id>.json` in the configured user build folder. Recovery drafts stay in SQLite because they may be intentionally incomplete or temporarily invalid. Bundled builds remain read-only and are never mirrored into the user folder.
 
-## 2. JSON rules
+The default folder is `Documents\Arrow to the Build\Builds`; it can be changed under Build Editor Settings. ATTB preserves files that were modified outside the app instead of silently overwriting them.
 
-ATTB build files are ordinary UTF-8 JSON.
-
-- JSON does **not** support comments.
-- Property names and string values require double quotes.
-- Do not leave a trailing comma after the final item in an object or array.
-- The importer rejects files larger than 8 MB.
-- Schema 3 is the only public build format accepted by the current importer.
-- Schema 1 and 2 were pre-release formats and are intentionally unsupported.
-
-### Stable slug IDs
-
-Build, line, phase, gear, set, piece, variant, CP group, CP node, and unlock row IDs use this pattern:
-
-```text
-^[a-z0-9][a-z0-9_.-]*$
-```
-
-Good IDs:
-
-```text
-stamina_arcanist_solo_duo
-15-30
-cp160_starter
-orders-wrath
-starter_ring_1
-```
-
-Bad IDs:
-
-```text
-My Build
-/skills/example
-https://example.com
-```
-
-Once a build has been shared, do not casually change IDs. Saved characters track unlocks, equipment,
-and variants by those stable IDs.
-
----
-
-## 3. Top-level object
-
-A practical build normally contains the following sections:
-
-```json
-{
-  "schema_version": 3,
-  "id": "unique-build-id",
-  "name": "Readable Build Name",
-  "short_name": "Short Name",
-  "summary": "What the build is and who it is for.",
-  "author": "Author or community handle",
-  "game_version": "Update 50",
-  "verified_date": "2026-08-05",
-  "format_notes": [],
-  "theme": {},
-  "images": {},
-  "defaults": {},
-  "setup_help": {},
-  "concepts": [],
-  "relevant_lines": [],
-  "cp_plans": {},
-  "unlock_order": [],
-  "phases": [],
-  "gear_stages": [],
-  "consumables": {},
-  "tips": [],
-  "variants": []
-}
-```
-
-### Required by validation
+## Required fields
 
 | Field | Type | Purpose |
 |---|---|---|
-| `schema_version` | number | Must be exactly `3`. |
-| `id` | slug string | Stable build identifier. |
+| `schema_version` | integer | Must be `4`. |
+| `id` | string | Permanent build identifier. |
 | `name` | string | Full display name. |
-| `defaults` | object | Must include `class`; normally includes attributes and setup defaults. |
-| `relevant_lines` | array | Skill lines used or tracked by the build. |
-| `cp_plans` | object | Champion Point plans. It may be empty while drafting. |
-| `unlock_order` | array | Ordered recommended purchases with catalog IDs. |
-| `phases` | array | At least one progression band with both hotbars and a rotation. Drives the Skill Bars and Rotations page. |
-| `gear_stages` | array | Gear progression. Every stage must contain at least one set with pieces. |
+| `metadata` | object | Searchable build type and compatibility information. |
+| `class_configuration` | object | Base class, active class lines, and Class Mastery choices. |
+| `defaults` | object | Recommended character setup. |
+| `relevant_lines` | array | Skill lines tracked by the build. |
+| `cp_plans` | object | Craft, Warfare, and Fitness paths. |
+| `unlock_order` | array | Ordered purchases and recommendations. |
+| `phases` | array | Progression bars and rotations. |
+| `gear_stages` | array | Piece-by-piece equipment stages. |
 
-### Strongly recommended metadata
+The required progression arrays are not placeholders: `relevant_lines`, `unlock_order`, `phases`, and `gear_stages` must contain usable entries. Every active class line must also be listed in `relevant_lines`.
+
+## Optional fields
 
 | Field | Purpose |
 |---|---|
-| `short_name` | Compact name used in character summaries. |
-| `summary` | One- or two-sentence identity of the build. |
-| `author` | Attribution for the build author or source community. |
-| `game_version` | ESO update for which the build was checked. |
-| `verified_date` | ISO date (`YYYY-MM-DD`) of the last review. |
-| `format_notes` | Authoring or maintenance notes. The app does not treat these as progression steps. |
-| `theme` | Optional accent colors for the build presentation. |
-| `images.hero` | Optional hero artwork reference. |
+| `short_name` | Compact display name. |
+| `author` | Build author or team. |
+| `game_version` | ESO update or patch target. |
+| `verified_date` | Last manually checked date in `YYYY-MM-DD`. |
+| `summary` | Short description. |
+| `notes` | Optional long-form plain-text build notes shown in Basic Setup and edited in Build Editor. |
+| `theme` | Build-page accent colors. |
+| `images` | Hero and screenshot references. |
+| `requirements` | DLC, chapter, quest, level, system, or item requirements. |
+| `transformations` | None, Vampire, or Werewolf setup. |
+| `scribed_skills` | Exact Grimoire and script recipes. |
+| `quickslots` | Recommended quickslot wheel entries. |
+| `companions` | Companion setup recommendations. |
+| `performance` | Stats, duties, buffs, debuffs, and testing notes. |
+| `sources` | Research and attribution. |
+| `setup_help` | Human-readable explanations of default choices. |
+| `concepts` | Build concepts shown on Basic Setup. |
+| `consumables` | Food, drinks, potions, poisons, and alternatives. |
+| `tips` | Numbered or grouped gameplay tips. |
+| `default_loadout_id` | Loadout selected by default. |
+| `loadouts` | Complete named setups. |
+| `variants` | Smaller situational overrides. |
+| `format_notes` | Notes for authors and maintainers. |
+| `extensions` | Namespaced data for other tools and future systems. |
 
----
+# 2. IDs and display text
 
-## 4. Recommended character defaults
-
-`defaults` describes the **build recommendation**, not the player's immutable profile. When a character
-is created, ATTB stores the race and alliance the player actually chose separately.
-
-```json
-"defaults": {
-  "class": "Arcanist",
-  "race": "Dark Elf",
-  "alliance": "Ebonheart Pact",
-  "eso_plus": false,
-  "attributes": {
-    "magicka": 0,
-    "health": 0,
-    "stamina": 64
-  },
-  "mundus": "The Thief",
-  "front_weapon": "Dual Daggers",
-  "back_weapon": "Inferno Staff at Level 15",
-  "leveling_armor": "5 Medium / 1 Light / 1 Heavy",
-  "endgame_armor": "6 Medium / 1 Light",
-  "leveling_trait": "Training",
-  "gear_cap": "Level 50 / CP160"
-}
-```
-
-Rules for `attributes`:
-
-- Allowed keys are `magicka`, `health`, and `stamina`.
-- Values must be whole numbers of zero or more.
-- The total cannot exceed 64.
-- ATTB does not automatically rewrite a character's recorded split when the level or variant changes.
-
-`eso_plus` is a recommendation/access hint. The user's actual ESO Plus setting is account-wide in ATTB.
-
----
-
-## 5. Setup help and build concepts
-
-`setup_help` powers the information buttons on Basic Setup. Each key corresponds to a setup card.
-The renderer accepts normal descriptive fields; the bundled builds commonly use `summary`,
-`recommended`, `alternatives`, `locations`, and `notes`.
-
-```json
-"setup_help": {
-  "race": {
-    "summary": "Why the recommended race fits.",
-    "recommended": "Dark Elf",
-    "alternatives": ["Khajiit", "Orc"],
-    "notes": ["Race is an optimization, not a requirement."]
-  },
-  "mundus": {
-    "summary": "Why the build uses this Mundus.",
-    "locations": ["Malabal Tor", "Alik'r Desert", "Eastmarch", "Cyrodiil"]
-  }
-}
-```
-
-Useful setup-help keys are:
-
-```text
-class
-race
-alliance
-mundus
-front_weapon
-back_weapon
-leveling_armor
-endgame_armor
-leveling_trait
-gear_cap
-```
-
-`concepts` provides short explanatory cards for the build's core ideas:
-
-```json
-"concepts": [
-  {
-    "title": "Crux loop",
-    "text": "Generate three Crux, then spend them on Fatecarver."
-  }
-]
-```
-
----
-
-## 6. Skill lines and the bundled catalog
-
-ATTB does not accept arbitrary skill-line names for build logic. Every `relevant_lines[].id` must match
-a line in `resources/data/eso-skill-catalog.json`.
-
-```json
-"relevant_lines": [
-  {
-    "id": "herald",
-    "name": "Herald of the Tome",
-    "max": 50,
-    "group": "Class"
-  },
-  {
-    "id": "dual_wield",
-    "name": "Dual Wield",
-    "max": 50,
-    "group": "Weapon"
-  }
-]
-```
-
-The line `name`, `max`, and `group` are presentation fields. The stable catalog `id` controls matching.
-Typical groups include Class, Weapon, Armor, World, Guild, Alliance War, Racial, Craft, and System.
-
-To find IDs:
-
-1. Open `resources/data/eso-skill-catalog.json`.
-2. Find the line by its display name.
-3. Copy its `id` into `relevant_lines`.
-4. Copy skill `id` values into `catalog_skill_id` fields.
-
-The catalog also records base-to-morph relationships, maximum passive ranks, unlock ranks, and whether
-an entry is an Ultimate, Active, Morph, Passive, Scribing skill, Class Mastery, or tracking-only entry.
-
----
-
-## 7. Ordered skill and passive recommendations
-
-`unlock_order` is the build's recommendation queue. Each row needs a unique build-row `id` and a real
-`catalog_skill_id`.
+Every persistent row should use a stable slug ID:
 
 ```json
 {
-  "id": "pragmatic_fatecarver",
-  "name": "Pragmatic Fatecarver",
-  "catalog_skill_id": "herald__pragmatic_fatecarver",
-  "section": "Morph",
-  "line": "herald",
-  "required_rank": 4,
-  "kind": "Morph",
-  "phase": "Early",
-  "status": "final",
-  "priority": 41,
-  "notes": "Take the defensive Fatecarver morph.",
-  "morph_from": "Fatecarver",
-  "image": null,
-  "requires": ["fatecarver"]
+  "id": "starter_cp160",
+  "name": "Starter CP160 Gear"
 }
 ```
 
-### Important fields
+Allowed ID characters are letters, numbers, dot, dash, and underscore. Lowercase snake_case is recommended.
 
-| Field | Meaning |
-|---|---|
-| `id` | Stable ID for this recommendation row. |
-| `name` | Display label. It may contain rank suffixes such as `Fated Fortune II`. |
-| `catalog_skill_id` | Stable skill ID from the catalog. Required in schema 3. |
-| `line` | Catalog line ID. It must also appear in `relevant_lines`. |
-| `required_rank` | Whole line rank of zero or more. |
-| `kind` | Usually `Ultimate`, `Active`, `Morph`, or `Passive`; it must agree with the catalog type. |
-| `status` | `final`, `temporary`, or `optional`. |
-| `priority` | Lower numbers are recommended earlier. Missing priorities are tolerated but explicit values are clearer. |
-| `phase` | Human-readable author label such as Leveling, Early, Mid, Late, or Final. |
-| `requires` | Array of other **unlock row IDs**, not catalog IDs. |
-| `notes` | Guidance shown with the recommendation. |
-| `image` | Optional image reference. Catalog-linked skills can use ATTB's local icon cache without this field. |
+Names can change. IDs should not. ATTB uses IDs for saved character progress, merge behavior, routes, equipment checks, and references.
 
-### Base skill and morph requirements
+# 3. Metadata
 
-A morph row should require the base-skill row:
-
-```json
-[
-  {
-    "id": "fatecarver",
-    "catalog_skill_id": "herald__fatecarver",
-    "name": "Fatecarver",
-    "line": "herald",
-    "kind": "Active",
-    "status": "final",
-    "required_rank": 4,
-    "requires": []
-  },
-  {
-    "id": "pragmatic_fatecarver",
-    "catalog_skill_id": "herald__pragmatic_fatecarver",
-    "name": "Pragmatic Fatecarver",
-    "line": "herald",
-    "kind": "Morph",
-    "status": "final",
-    "required_rank": 4,
-    "requires": ["fatecarver"]
-  }
-]
-```
-
-ATTB validates that a morph's required row really maps to its catalog base ability. Two alternate morphs
-of the same base ability cannot both be marked `final`.
-
-### Passive ranks
-
-Repeat a passive's catalog ID once per purchasable rank, using unique row IDs and display labels:
-
-```json
-[
-  {
-    "id": "fated_fortune_1",
-    "name": "Fated Fortune I",
-    "catalog_skill_id": "herald__fated_fortune",
-    "line": "herald",
-    "kind": "Passive",
-    "status": "final",
-    "required_rank": 8
-  },
-  {
-    "id": "fated_fortune_2",
-    "name": "Fated Fortune II",
-    "catalog_skill_id": "herald__fated_fortune",
-    "line": "herald",
-    "kind": "Passive",
-    "status": "final",
-    "required_rank": 18
-  }
-]
-```
-
-ATTB derives the earlier passive-rank requirement and rejects more ranks than the catalog allows.
-
-### Dependency rules
-
-- Every `requires` ID must exist in the same build.
-- Circular requirement chains are rejected.
-- A recommendation's `line` must be declared in `relevant_lines`.
-- Display text may change without breaking progress as long as the stable IDs remain unchanged.
-
----
-
-## 8. Progression phases, hotbars, and rotations
-
-Each phase describes a level/progression band. Character levels use 1 through 50; `max_level` may extend
-to 9999 so the final phase can represent Champion Point progression.
+`metadata` describes where the build belongs without using a closed enum that would become obsolete when ESO adds content.
 
 ```json
 {
-  "id": "15-plus",
-  "label": "Level 15+",
-  "min_level": 15,
-  "max_level": 9999,
-  "overview": "Add the second bar and establish the final loop.",
-  "front_bar": {},
-  "back_bar": {},
-  "rotation": {}
-}
-```
-
-Rules:
-
-- Phase IDs must be unique slugs.
-- `min_level` must be a whole number from 1 to 50.
-- `max_level` must be a whole number from `min_level` through 9999.
-- Every phase needs `front_bar`, `back_bar`, and `rotation` objects.
-
-### Hotbars
-
-A bar contains no more than five ordinary slots and one optional ultimate.
-
-```json
-"front_bar": {
-  "weapon": "Dual Daggers",
-  "slots": [
-    {
-      "name": "Runeblades",
-      "catalog_skill_id": "herald__runeblades",
-      "temporary": true,
-      "note": "Replace later."
-    }
-  ],
-  "ultimate": {
-    "name": "The Languid Eye",
-    "catalog_skill_id": "herald__the_languid_eye"
+  "metadata": {
+    "roles": ["damage", "solo"],
+    "content": ["overland", "dungeons", "arenas", "trials"],
+    "group_sizes": ["solo", "duo", "4-player", "12-player"],
+    "resource": "stamina",
+    "bar_count": 2,
+    "class_style": "pure_class",
+    "playstyles": ["flexible-pve", "beam"],
+    "difficulty": ["normal", "veteran"],
+    "platforms": ["PC", "Xbox", "PlayStation"],
+    "language": "en",
+    "tags": ["arcanist", "starter", "group-pve"]
   }
 }
 ```
 
-Supported skill-reference fields include:
+Required metadata fields are `roles`, `content`, `resource`, `bar_count`, and `class_style`.
 
-| Field | Meaning |
-|---|---|
-| `name` | Required display name. |
-| `catalog_skill_id` | Optional but strongly recommended. It supplies validation and the local catalog icon. |
-| `image` | Optional explicit build image or remote HTTPS image. |
-| `note` | Additional slot guidance. |
-| `temporary` | Displays the temporary badge. |
-| `locked` | Displays why a slot or bar is unavailable. |
+`bar_count` is `1` or `2`. A one-bar build can still include a locked or explanatory back bar in phases, but the metadata tells future filtering and the visual editor what the intended final setup is.
 
-Before character level 15, the back bar can be empty and carry a lock message:
+# 4. Class configuration, subclassing, and Class Mastery
+
+## Pure class
 
 ```json
-"back_bar": {
-  "weapon": "Inferno Staff at Level 15",
-  "locked": "Unlocks at character level 15",
-  "slots": [],
-  "ultimate": null
-}
-```
-
-### Rotations
-
-`rotation.type` must be `sequence` or `priority`.
-
-Use `sequence` when a repeatable order is genuinely useful. Use `priority` when different durations,
-resources, procs, or encounter conditions make a rigid loop misleading.
-
-```json
-"rotation": {
-  "type": "priority",
-  "title": "Main priority",
-  "summary": "Keep long effects active, then spend the build resource.",
-  "opener": [
-    { "name": "Apply long-duration effects" }
-  ],
-  "steps": [
-    {
-      "name": "Build three Crux",
-      "catalog_skill_id": "herald__runeblades"
+{
+  "class_configuration": {
+    "base_class": "Arcanist",
+    "active_class_lines": [
+      { "line_id": "curative", "source_class": "Arcanist", "mode": "native", "notes": [] },
+      { "line_id": "herald", "source_class": "Arcanist", "mode": "native", "notes": [] },
+      { "line_id": "soldier", "source_class": "Arcanist", "mode": "native", "notes": [] }
+    ],
+    "class_mastery": {
+      "enabled": true,
+      "points_available": 2,
+      "choices": [
+        "arcanist_mastery__unbound_potential",
+        "arcanist_mastery__ink_scribe_s_verve"
+      ],
+      "notes": []
     },
+    "notes": []
+  }
+}
+```
+
+## Subclass or mastered foreign line
+
+```json
+{
+  "class_configuration": {
+    "base_class": "Dragonknight",
+    "active_class_lines": [
+      { "line_id": "ardent_flame", "source_class": "Dragonknight", "mode": "native", "notes": [] },
+      { "line_id": "earthen_heart", "source_class": "Dragonknight", "mode": "native", "notes": [] },
+      { "line_id": "animal_companions", "source_class": "Warden", "mode": "mastered", "notes": [] }
+    ],
+    "class_mastery": {
+      "enabled": false,
+      "points_available": 2,
+      "choices": [],
+      "notes": ["Class Mastery is disabled while a foreign class line is equipped."]
+    },
+    "notes": []
+  }
+}
+```
+
+Rules enforced by ATTB:
+
+- exactly three active class lines;
+- every active class line also listed in `relevant_lines`;
+- at least one native line from the base class;
+- no more than one active line from each foreign class;
+- `native` only for the base class;
+- foreign rows use `subclassing` or `mastered`;
+- Class Mastery cannot be enabled with a foreign line active;
+- mastery choice IDs must belong to the base class's mastery line;
+- selected mastery choices cannot exceed `points_available`.
+
+Foreign class abilities and passives cost two ordinary Skill Points. Set `skill_point_cost: 2` on every corresponding `unlock_order` row.
+
+# 5. Requirements and transformations
+
+## Requirements
+
+```json
+{
+  "requirements": [
     {
-      "name": "Pragmatic Fatecarver",
-      "catalog_skill_id": "herald__pragmatic_fatecarver"
+      "id": "scribing_access",
+      "name": "Scribing unlocked",
+      "type": "system",
+      "required": false,
+      "access": "Complete the Scribing introduction or use the non-Scribing alternative.",
+      "url": "https://help.elderscrollsonline.com/app/answers/detail/a_id/65808/",
+      "notes": []
     }
-  ],
-  "execute": [
-    { "name": "Replace the normal spammable with the execute below its threshold" }
-  ],
-  "notes": [
-    "Explain light-attack weaving, bar swapping, sustain, or common mistakes here."
   ]
 }
 ```
 
-`steps` is required. `opener`, `execute`, and `notes` are optional arrays.
+Requirements can describe chapters, DLC, quests, level gates, systems, items, group support, or platform limitations. The strings are intentionally open-ended.
 
----
-
-## 9. Gear stages, sets, sources, and pieces
-
-`gear_stages` defines the leveling-to-final roadmap. Each stage must contain at least one set object,
-and every set must contain a non-empty piece array.
+## Transformations
 
 ```json
 {
-  "id": "cp160-starter",
-  "name": "CP160 crafted starter",
-  "min_level": 50,
-  "max_level": 9999,
-  "summary": "Accessible permanent starter gear.",
-  "sets": []
-}
-```
-
-### Set object
-
-```json
-{
-  "id": "orders_wrath",
-  "name": "Order's Wrath",
-  "role": "Primary five-piece set",
-  "bonus": "Critical chance and critical damage.",
-  "source": {
-    "type": "Crafted",
-    "location": "Steadfast Hammer and Saw",
-    "zone": "High Isle",
-    "access": "Tradable; another player can craft it",
-    "requirement": "3 researched traits",
-    "tradeable": "Yes",
-    "difficulty": "Easy",
-    "notes": "Ask a guild crafter if needed.",
-    "alternative": "Another accessible damage set"
-  },
-  "pieces": []
-}
-```
-
-Validation requires `source.type` and `source.location`. The remaining source fields are optional but
-make the Equipment page substantially more useful.
-
-### Piece object
-
-```json
-{
-  "id": "starter_orders_shoulders",
-  "slot": "Shoulders",
-  "weight": "Medium",
-  "trait": "Divines",
-  "enchantment": "Max Stamina",
-  "quality": "Purple"
-}
-```
-
-Weapon example:
-
-```json
-{
-  "id": "starter_front_weapon_1",
-  "slot": "Front Weapon 1",
-  "weapon_type": "Dagger",
-  "trait": "Charged",
-  "enchantment": "Poison Damage",
-  "quality": "Gold"
-}
-```
-
-Common slot labels:
-
-```text
-Head
-Shoulders
-Chest
-Hands
-Waist
-Legs
-Feet
-Necklace
-Ring 1
-Ring 2
-Front Weapon
-Front Weapon 1
-Front Weapon 2
-Back Weapon
-Back Weapon 1
-Back Weapon 2
-```
-
-Use separate piece IDs for both dual-wield weapons and both rings. Progress is stored by piece ID, not
-array position.
-
----
-
-## 10. Champion Point plans
-
-`cp_plans` is an object keyed by constellation name, normally `warfare`, `fitness`, and `craft`.
-ATTB caps each constellation at 1,200 points.
-
-```json
-"cp_plans": {
-  "warfare": {
-    "label": "Warfare",
-    "color": "blue",
-    "core": [],
-    "flex": [],
-    "final_slots": []
+  "transformations": {
+    "curse": "vampire",
+    "vampire_stage": 3,
+    "notes": ["Maintain Stage 3 for the defensive passive."]
   }
 }
 ```
 
-### Core path
+`curse` is `none`, `vampire`, or `werewolf`. Werewolf builds can use `werewolf_morph` and notes.
 
-Core nodes are allocated first and in array order.
+# 6. Default character setup
 
 ```json
-"core": [
-  {
-    "id": "precision",
-    "name": "Precision",
-    "max_points": 20,
-    "slottable": false,
-    "jump_points": [10, 20],
-    "note": "Required path or passive node."
+{
+  "defaults": {
+    "class": "Templar",
+    "race": "High Elf",
+    "alliance": "Aldmeri Dominion",
+    "eso_plus": false,
+    "attributes": {
+      "magicka": 64,
+      "health": 0,
+      "stamina": 0
+    },
+    "mundus": "The Thief",
+    "front_weapon": "Dual Daggers",
+    "back_weapon": "Inferno Staff",
+    "leveling_armor": "5 Light / 1 Medium / 1 Heavy",
+    "endgame_armor": "Build-specific final weights",
+    "leveling_trait": "Training",
+    "gear_cap": "Level 50 / CP160",
+    "role": "Flexible PvE damage",
+    "resource": "Magicka",
+    "curse": "none"
   }
-]
+}
 ```
 
-### Flex groups
+The attribute total cannot exceed 64. These are build targets, not saved character progress.
 
-After the core path, points flow through non-optional flex groups in order. Optional groups are shown as
-alternatives but are not silently allocated.
+Use `setup_help` when a choice needs explanation:
 
 ```json
-"flex": [
-  {
-    "id": "damage",
-    "label": "Damage",
-    "purpose": "damage",
-    "nodes": [
-      {
-        "id": "master_at_arms",
-        "name": "Master-at-Arms",
-        "max_points": 50,
-        "slottable": true,
-        "jump_points": [25, 50]
-      }
-    ]
-  },
-  {
-    "id": "alternate_damage",
-    "label": "Alternate damage",
-    "purpose": "alternate damage",
-    "optional": true,
-    "nodes": [
-      {
-        "id": "thaumaturge",
-        "name": "Thaumaturge",
-        "max_points": 50,
-        "slottable": true,
-        "jump_points": [25, 50]
-      }
-    ]
+{
+  "setup_help": {
+    "race": {
+      "summary": "Dark Elf is a flexible damage option.",
+      "recommended": ["Dark Elf"],
+      "alternatives": ["High Elf", "Khajiit"],
+      "locations": [],
+      "notes": []
+    }
   }
-]
+}
 ```
 
-Every flex group must contain at least one node.
+# 7. Skill lines and the catalog
 
-### Node rules
-
-- Node IDs must be unique within the constellation.
-- `max_points` must be a positive whole number no greater than 1,200.
-- `jump_points` must be positive thresholds no greater than the node's own maximum.
-- `slottable`, when present, must be `true` or `false`.
-- The total core path cannot exceed 1,200 points.
-- Every `final_slots` ID must exist in the same plan and must not point to a node explicitly marked non-slottable.
-
----
-
-## 11. Consumables and tips
-
-`consumables` is an optional object. The current UI understands foods, potions, and PvP alternatives.
-Each entry is ordinary display data.
+## Relevant lines
 
 ```json
-"consumables": {
-  "foods": [
+{
+  "relevant_lines": [
+    { "id": "aedric_spear", "name": "Aedric Spear", "group": "Class", "max": 50 },
+    { "id": "dual_wield", "name": "Dual Wield", "group": "Weapon", "max": 50 },
+    { "id": "light_armor", "name": "Light Armor", "group": "Armor", "max": 50 }
+  ]
+}
+```
+
+Every `unlock_order.line` must appear here. The line ID must exist in the bundled catalog.
+
+## Unlock rows
+
+```json
+{
+  "unlock_order": [
     {
-      "name": "Dubious Camoran Throne",
-      "use": "Budget Stamina sustain",
-      "source": "Provisioning / guild traders"
+      "id": "puncturing_strikes",
+      "name": "Puncturing Strikes",
+      "catalog_skill_id": "aedric_spear__puncturing_strikes",
+      "section": "Active",
+      "line": "aedric_spear",
+      "required_rank": 1,
+      "kind": "Active",
+      "phase": "Leveling",
+      "status": "temporary",
+      "priority": 10,
+      "notes": "Use until the intended morph and final rotation are ready.",
+      "requires": [],
+      "skill_point_cost": 1
+    }
+  ]
+}
+```
+
+### Important unlock fields
+
+| Field | Meaning |
+|---|---|
+| `id` | Stable row ID. |
+| `catalog_skill_id` | Ordinary catalog skill, morph, passive, ultimate, or Grimoire. |
+| `scribed_skill_id` | Exact recipe defined under `scribed_skills`. |
+| `line` | Catalog line ID. |
+| `required_rank` | Skill-line rank gate. |
+| `kind` | Display category such as Active, Morph, Passive, Ultimate, Scribing, or Class Mastery. |
+| `status` | Author label such as temporary, leveling, final, optional, or tracking. |
+| `priority` | Lower numbers are recommended earlier. |
+| `requires` | Other unlock-row IDs that must come first. |
+| `skill_point_cost` | Ordinary Skill Points consumed; foreign class purchases use `2`. |
+| `loadout_ids` | Optional list limiting the row to named loadouts. |
+
+Set either `catalog_skill_id` or `scribed_skill_id`, not both.
+
+Morph rows should require their base ability. ATTB also prevents two alternate morphs from both being marked final.
+
+# 8. Scribed Skills
+
+Use an ordinary Grimoire catalog ID when the guide only recommends the Grimoire in general. Use `scribed_skills` when the exact scripts matter.
+
+```json
+{
+  "scribed_skills": [
+    {
+      "id": "magical_soul_breach",
+      "name": "Magical Soul",
+      "grimoire": "Wield Soul",
+      "grimoire_catalog_skill_id": "scribing__wield_soul",
+      "focus_script": "Magical Damage",
+      "signature_script": "Damage Over Time",
+      "affix_script": "Breach",
+      "resource": "Magicka",
+      "cost": "Defined by the Focus Script",
+      "notes": ["Use the exact names shown in the current ESO Scribing interface."]
     }
   ],
-  "potions": [
+  "unlock_order": [
     {
-      "name": "Tri-stat potion",
-      "use": "General solo emergency potion"
+      "id": "magical_soul_breach_unlock",
+      "name": "Magical Soul",
+      "scribed_skill_id": "magical_soul_breach",
+      "section": "Scribing",
+      "line": "scribing",
+      "required_rank": 0,
+      "kind": "Scribing",
+      "phase": "Final",
+      "status": "final",
+      "priority": 300,
+      "notes": "Craft at the Scribing Altar.",
+      "requires": []
     }
-  ],
-  "pvp_alternatives": []
+  ]
 }
 ```
 
-`tips` is an array of practical build-specific strings:
+A recipe requires `id`, `name`, `grimoire`, `focus_script`, `signature_script`, and `affix_script`.
 
-```json
-"tips": [
-  "Join Fighters Guild, Mages Guild, and Undaunted early.",
-  "Call out any taunt or group-dangerous skill explicitly.",
-  "Document mythics that block ally healing."
-]
-```
+# 9. Progression phases, bars, and rotations
 
-Prefer actionable warnings over generic advice.
-
----
-
-## 12. Build variants
-
-Variants apply object overrides to the base build. The first available variant becomes the default.
-
-```json
-"variants": [
-  {
-    "id": "solo-duo",
-    "name": "Solo / Duo PvE",
-    "summary": "The base build exactly as written.",
-    "available": true,
-    "overrides": null
-  }
-]
-```
-
-### Override behavior
-
-- `undefined`/omitted property: keep the base value.
-- `null`: explicitly clear an optional section.
-- Ordinary objects: merge recursively.
-- Ordinary arrays: replace the base array.
-- Arrays where every entry is an object with an `id`: merge by ID.
-- `{"id":"entry", "$remove":true}` removes that identified array entry.
-- A new identified object is appended.
-- Variants cannot override the build `id` or the `variants` array itself.
-
-Example small override:
+A phase is a complete recommendation for a level or CP band.
 
 ```json
 {
-  "id": "cyrodiil",
-  "name": "Cyrodiil Alternative",
-  "available": true,
-  "summary": "PvP consumables and reminders.",
+  "phases": [
+    {
+      "id": "levels-15-29",
+      "label": "Levels 15-29",
+      "min_level": 15,
+      "max_level": 29,
+      "overview": "Introduce the second bar and begin training both weapon lines.",
+      "conditions": [],
+      "front_bar": {
+        "id": "front",
+        "label": "Front bar",
+        "weapon": "Dual Daggers",
+        "slots": [
+          { "name": "Skill One", "catalog_skill_id": "line__skill_one", "temporary": true, "note": "Leveling slot." }
+        ],
+        "ultimate": {
+          "name": "Class Ultimate",
+          "catalog_skill_id": "class_line__class_ultimate",
+          "temporary": true,
+          "note": "Slot when the class line reaches rank 12."
+        }
+      },
+      "back_bar": {
+        "id": "back",
+        "label": "Back bar",
+        "weapon": "Inferno Staff",
+        "slots": [],
+        "ultimate": {
+          "name": "Second Ultimate",
+          "catalog_skill_id": "other_line__second_ultimate"
+        }
+      },
+      "rotation": {
+        "type": "priority",
+        "title": "Leveling priority",
+        "summary": "Maintain effects, then use the spammable.",
+        "opener": [],
+        "steps": [],
+        "execute": [],
+        "notes": []
+      }
+    }
+  ]
+}
+```
+
+Normal slots max at five. An ultimate is separate. Use `locked` on the entire back bar before Level 15.
+
+A phase can also use `min_cp`, `max_cp`, `conditions`, and `loadout_ids`. Schema 4 additionally supports optional phase-specific planning fields:
+
+- `attributes`: the Magicka, Health, and Stamina allocation target for that phase;
+- `recommended_gear_stage_ids`: references to one or more entries in `gear_stages`;
+- `milestones`: short goals such as unlocking weapon swap, joining a guild, completing a quest, or beginning a new skill line.
+
+These fields are optional and backward-compatible. The current tracker can safely preserve them while the visual Build Editor turns them into guided progression controls.
+
+### Skill references in bars
+
+A bar or rotation skill reference can contain:
+
+- `name`;
+- `catalog_skill_id` or `scribed_skill_id`;
+- `image`;
+- `note`;
+- `temporary`;
+- `placeholder`;
+- `locked`;
+- `loadout_ids`.
+
+# 10. Equipment stages
+
+Equipment is grouped as stages so the user can progress from current-level drops to starter CP160 gear and a final setup.
+
+```json
+{
+  "gear_stages": [
+    {
+      "id": "final",
+      "name": "Final Flexible PvE Gear",
+      "min_level": 50,
+      "max_level": 9999,
+      "summary": "Final general-purpose setup.",
+      "roles": ["damage", "solo"],
+      "content": ["dungeons", "arenas", "trials"],
+      "sets": [
+        {
+          "id": "main_set",
+          "name": "Example Set",
+          "role": "Five-piece set",
+          "bonus": "Why the set is used",
+          "source": {
+            "type": "Dungeon",
+            "location": "Example Dungeon",
+            "zone": "Example Zone",
+            "access": "Base game or specified DLC",
+            "requirement": "Any difficulty",
+            "tradeable": false,
+            "difficulty": "Normal",
+            "notes": [],
+            "alternative": "Example Alternative",
+            "dlc": "Example DLC",
+            "eso_plus": true
+          },
+          "pieces": [
+            {
+              "id": "main_set_head",
+              "slot": "Head",
+              "weight": "Medium",
+              "trait": "Divines",
+              "enchantment": "Max Stamina",
+              "quality": "Legendary",
+              "set_slots": 1,
+              "note": "",
+              "bar": "both",
+              "perfected": false,
+              "mythic": false,
+              "alternatives": []
+            }
+          ],
+          "alternatives": [],
+          "loadout_ids": ["flexible-pve"]
+        }
+      ]
+    }
+  ]
+}
+```
+
+Every set needs a source object and at least one piece. Every piece needs a unique ID and slot.
+
+Useful piece fields include `weight`, `weapon_type`, `trait`, `enchantment`, `quality`, `set_slots`, `poison`, `bar`, `perfected`, `mythic`, `active_set_count`, `note`, and `alternatives`.
+
+# 11. Consumables and quickslots
+
+```json
+{
+  "consumables": {
+    "foods": [
+      { "name": "Example Food", "use": "Default food", "source": "Crafted or guild traders" }
+    ],
+    "potions": [
+      { "name": "Essence of Spell Power", "use": "Use on cooldown when appropriate", "source": "Alchemy" }
+    ],
+    "poisons": [],
+    "pvp_alternatives": [],
+    "quickslots": []
+  },
+  "quickslots": [
+    {
+      "id": "combat_potion",
+      "name": "Combat Potion",
+      "type": "potion",
+      "item": "Essence of Spell Power",
+      "use": "Primary combat quickslot",
+      "notes": []
+    }
+  ]
+}
+```
+
+The root `quickslots` array describes the recommended wheel. `consumables.quickslots` remains available for build-specific display or compatibility.
+
+# 12. Champion Point plans
+
+Every build needs all three trees.
+
+```json
+{
+  "cp_plans": {
+    "warfare": {
+      "label": "Warfare",
+      "color": "blue",
+      "minimum_points": 0,
+      "core": [
+        {
+          "id": "precision",
+          "name": "Precision",
+          "max_points": 20,
+          "slottable": false,
+          "jump_points": [10, 20],
+          "note": "Required connection.",
+          "requires": [],
+          "cluster": "damage",
+          "position": { "x": 0, "y": 0 }
+        },
+        {
+          "id": "piercing",
+          "name": "Piercing",
+          "max_points": 20,
+          "slottable": false,
+          "jump_points": [10, 20],
+          "requires": ["precision"],
+          "cluster": "damage",
+          "position": { "x": 1, "y": 0 }
+        }
+      ],
+      "flex": [
+        {
+          "id": "direct_damage",
+          "label": "Direct damage",
+          "purpose": "General damage",
+          "optional": false,
+          "note": "Fill after the required path.",
+          "nodes": [
+            {
+              "id": "master_at_arms",
+              "name": "Master-at-Arms",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [10, 20, 30, 40, 50],
+              "requires": ["piercing"]
+            }
+          ]
+        }
+      ],
+      "final_slots": ["master_at_arms"],
+      "notes": []
+    }
+  }
+}
+```
+
+The full object must also contain valid `craft` and `fitness` plans.
+
+Validation rules:
+
+- node IDs are unique inside a tree;
+- `max_points` is a positive whole number;
+- jump points are positive and do not exceed the node max;
+- `requires` points to real nodes and cannot form cycles;
+- flex groups have unique IDs, readable labels, and at least one node;
+- final slots contain no more than four unique IDs;
+- final-slot IDs exist and identify slottable nodes.
+
+Allocation behavior:
+
+1. core nodes fill in array order;
+2. non-optional flex groups fill in array order;
+3. optional groups remain visible but receive no automatic recommendation;
+4. points beyond documented nodes are shown as unassigned/free;
+5. `requires` is used for path validation and visual connections.
+
+# 13. Companions and performance notes
+
+```json
+{
+  "companions": [
+    {
+      "id": "healing_companion",
+      "name": "Any healing companion",
+      "role": "healer",
+      "skills": ["Companion heal", "Companion shield"],
+      "ultimate": "Companion ultimate",
+      "equipment": "Quickened or Soothing traits",
+      "notes": ["Optional for solo content."]
+    }
+  ],
+  "performance": {
+    "stat_targets": {
+      "health": "Use enough for the content and comfort level"
+    },
+    "target_dps": "No fixed parse target; this is a progression build.",
+    "test_environment": "Solo and ordinary group PvE",
+    "rotation_complexity": "moderate",
+    "responsibilities": ["Maintain core buffs and damage-over-time effects."],
+    "buffs": ["List important self or group buffs"],
+    "debuffs": ["List important target debuffs"]
+  }
+}
+```
+
+These sections are optional and intentionally flexible.
+
+# 14. Complete loadouts
+
+A loadout is a named complete setup. It can override any build section except identity and the loadout list itself.
+
+```json
+{
+  "default_loadout_id": "flexible-pve",
+  "loadouts": [
+    {
+      "id": "flexible-pve",
+      "name": "Flexible PvE",
+      "summary": "General solo and group setup.",
+      "roles": ["damage", "solo"],
+      "content": ["overland", "dungeons", "arenas", "trials"],
+      "available": true,
+      "conditions": [],
+      "overrides": {}
+    },
+    {
+      "id": "one-bar",
+      "name": "One-Bar Alternative",
+      "summary": "Simplified setup using one final bar.",
+      "roles": ["damage", "solo"],
+      "content": ["overland", "dungeons"],
+      "available": true,
+      "conditions": ["Oakensoul or another one-bar plan"],
+      "overrides": {
+        "metadata": {
+          "bar_count": 1,
+          "playstyles": ["one-bar", "simplified"]
+        },
+        "phases": []
+      }
+    }
+  ]
+}
+```
+
+When `loadouts` is non-empty, `default_loadout_id` is required and must point to an available loadout.
+
+ATTB validates every available loadout as a complete effective build. An override that clears required phases, breaks a skill ID, or produces incomplete gear is rejected during import.
+
+# 15. Variants
+
+Variants are smaller changes applied after the loadout.
+
+```json
+{
+  "variants": [
+    {
+      "id": "flexible-pve",
+      "name": "Flexible PvE (base)",
+      "summary": "No changes.",
+      "available": true,
+      "loadout_ids": ["flexible-pve"],
+      "overrides": {}
+    },
+    {
+      "id": "defensive",
+      "name": "Defensive Alternative",
+      "summary": "Swaps one skill and food for harder solo content.",
+      "available": true,
+      "loadout_ids": ["flexible-pve"],
+      "overrides": {
+        "consumables": {
+          "foods": [
+            { "name": "Defensive Food", "use": "Hard solo content", "source": "Crafted" }
+          ]
+        }
+      }
+    }
+  ]
+}
+```
+
+An unavailable variant or loadout must include `unavailable_reason`.
+
+# 16. Override merge rules
+
+ATTB uses deterministic merges:
+
+- omitted key: inherit;
+- `null`: clear optional value;
+- scalar/object field: replace or deep-merge;
+- ordinary array: replace;
+- array where every entry has a string `id`: merge by ID;
+- `$remove: true`: remove a keyed row.
+
+Example keyed merge:
+
+```json
+{
   "overrides": {
-    "summary": "The same core build adapted for Cyrodiil.",
-    "tips": [
-      "Carry immovability and detection potions.",
-      "Replace a pure PvE damage-over-time slot with a defensive skill."
+    "gear_stages": [
+      {
+        "id": "final",
+        "sets": [
+          { "id": "old_set", "$remove": true },
+          { "id": "new_set", "name": "New Set", "source": {}, "pieces": [] }
+        ]
+      }
     ]
   }
 }
 ```
 
-Unavailable placeholder:
+The effective result must still validate. A partial new set with an empty source or no pieces will be rejected.
+
+# 17. Images and remote safety
+
+Local build images belong under the build resources folder and use image extensions such as PNG, JPG, WEBP, or GIF.
+
+Remote images:
+
+- must use HTTPS;
+- remain disabled until the user enables trusted remote images;
+- cannot target loopback, private, local, or reserved network addresses;
+- are size-limited;
+- must have a supported image MIME type matching the downloaded file bytes;
+- are stored in a local cache;
+- are treated as optional decoration, never required build data.
+
+Do not place SVG, HTML, scripts, authentication tokens, personal paths, or private URLs in build image fields.
+
+# 18. Sources and attribution
 
 ```json
 {
-  "id": "future-group-dps",
-  "name": "Future Group DPS",
-  "available": false,
-  "unavailable_reason": "The complete bars, gear, CP, and consumables are not authored yet.",
-  "overrides": null
+  "sources": [
+    {
+      "title": "Official patch notes",
+      "url": "https://forums.elderscrollsonline.com/",
+      "author": "ZeniMax Online Studios",
+      "accessed": "2026-08-06",
+      "notes": "Used to verify current system behavior."
+    }
+  ]
 }
 ```
 
-An unavailable variant must include `unavailable_reason`.
+Document where unusual mechanics, equipment, and access requirements came from. Do not copy copyrighted guides verbatim.
 
-ATTB validates the effective merged build for every available non-empty override, so a bad skill,
-invalid CP path, or malformed gear stage inside a variant is rejected before a character can select it.
+# 19. Extensions
 
----
-
-## 13. Images and skill icons
-
-### Catalog skill icons
-
-When a hotbar, rotation step, recommendation, or line entry has a known `catalog_skill_id`, ATTB can use
-the local skill-icon cache created by:
-
-```powershell
-npm run fetch:icons
-```
-
-This is the preferred approach. Omit `image` unless the build needs different artwork.
-
-### Bundled build images
-
-Bundled JSON may reference images under `resources/builds/`, normally with a path such as:
+Use `extensions` for data ATTB does not yet understand:
 
 ```json
-"image": "assets/arcanist-pragmatic-fatecarver-icon.webp"
+{
+  "extensions": {
+    "deadxxsmile.example": {
+      "future_feature": {
+        "enabled": true
+      }
+    }
+  }
+}
 ```
 
-Paths cannot escape the bundled builds directory, and only PNG, JPG/JPEG, WebP, and GIF files are accepted.
+Use a namespace you control. ATTB preserves extension data when importing and exporting.
 
-### Imported build images
+# 20. Validation and error recovery
 
-Imported builds can use:
+ATTB validates:
 
-- Known catalog skill IDs and the local icon cache
-- `data:image/...` URLs
-- Remote **HTTPS** image URLs when the user enables trusted remote images
+- schema version and root structure;
+- ID shape and duplicates;
+- class-line and Class Mastery rules;
+- foreign class Skill Point costs;
+- Scribing recipes;
+- catalog skill IDs and line IDs;
+- prerequisites and cycles;
+- morph conflicts and passive rank counts;
+- phase ranges, bars, ultimates, and rotations;
+- gear source and piece completeness;
+- CP limits, connections, cycles, and final slots;
+- loadout and variant references;
+- every available effective loadout and variant;
+- image safety.
 
-Remote downloads are disabled by default, limited to real image formats and 5 MB, blocked for local or
-private network addresses, and cached under the ATTB user-data directory.
+Validation is atomic. An invalid import does not partially replace a working build.
 
-A relative local path in a separately imported JSON is not automatically resolved beside that JSON file.
+# 21. Public compatibility guidance
 
-Only include artwork that you have permission to redistribute. Third-party game assets are not covered
-by ATTB's GPL license.
+After publishing a build:
 
----
+- keep its build ID;
+- keep existing row IDs whenever the same concept remains;
+- add optional fields rather than deleting saved concepts;
+- use loadouts or variants for alternatives;
+- update `game_version` and `verified_date` after testing;
+- keep sources and requirements honest;
+- test fresh character creation and an imported character backup;
+- test early, middle, and final phases;
+- test low and high Champion Point totals;
+- export the final build from ATTB and re-import it before release.
 
-## 14. Validate, import, reload, and export
-
-Inside ATTB:
-
-1. Open **Help & Tools**.
-2. Select **Import / Export**.
-3. Validate the JSON data before importing.
-4. Import the file as a new build.
-5. Create a test character and visit every page.
-6. Use **Reload Current Build from JSON** while iterating, keeping the same build `id`.
-7. Export the stored base or effective variant JSON to confirm the final result.
-
-Common validation failures include:
-
-- Wrong `schema_version`
-- Missing or unsafe IDs
-- Duplicate line, unlock, phase, stage, set, piece, variant, CP group, or CP node IDs
-- Skill line not present in the bundled catalog
-- Missing or wrong-line `catalog_skill_id`
-- Morph row that does not require its real base ability
-- Too many passive ranks
-- Missing dependency or circular `requires` chain
-- More than five hotbar slots
-- Unknown hotbar/rotation catalog skill
-- Missing gear `source.type`, `source.location`, piece ID, or slot
-- CP node with invalid points or `final_slots` pointing at a missing/non-slottable node
-- Available variant whose effective build is invalid
-
-The error list is designed to name the broken section and ID whenever possible.
-
----
-
-## 15. Bundling a build with ATTB
-
-To ship a build with the application:
-
-1. Place the JSON file in `resources/builds/`.
-2. Place permitted build-specific images in `resources/builds/assets/`.
-3. Add research and attribution notes to `BUNDLED_BUILD_SOURCES.md`.
-4. Run the skill-icon fetcher if the build introduces catalog skills not already cached.
-5. Run the complete test suite:
-
-```powershell
-npm test
-```
-
-6. Build the production renderer:
-
-```powershell
-npm run build:renderer
-```
-
-The packaging tests verify that every bundled JSON and referenced local image is present in the installer.
-
----
-
-## 16. Final author checklist
-
-Before sharing a build, confirm:
-
-- [ ] `schema_version` is 3.
-- [ ] Every stable ID is a slug and unique in its section.
-- [ ] The build has the correct class, game version, verification date, and author attribution.
-- [ ] Attributes total no more than 64.
-- [ ] Every relevant skill line exists in the bundled catalog.
-- [ ] Every unlock row has the correct `catalog_skill_id`, line, type, rank, status, and priority.
-- [ ] Morph rows require their real base ability.
-- [ ] Passive rank counts do not exceed the catalog maximum.
-- [ ] Progression phases cover the intended leveling/endgame range without misleading bar slots.
-- [ ] Every phase contains front bar, back bar, and rotation data.
-- [ ] Gear stages track armor, jewelry, and weapons as individual pieces.
-- [ ] Gear source/access information is specific enough to act on.
-- [ ] CP core paths and final slots are reachable and correctly marked slottable.
-- [ ] Variants contain complete, validated overrides rather than names alone.
-- [ ] Tips call out taunts, mythic restrictions, DLC access, and other common traps.
-- [ ] Images are permitted, safe, and optional rather than required for the build to function.
-- [ ] The file validates and has been opened on every ATTB page with a fresh test character.
-
-For complete working examples, compare the Mighty Seven files under `resources/builds/`.
+The visual Build Editor will generate Schema 4. Manual JSON and generated JSON will use the same validator and remain interchangeable.

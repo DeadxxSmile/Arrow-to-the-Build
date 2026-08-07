@@ -4,11 +4,17 @@
 const Module = require('module')
 const path = require('path')
 
-const state = { userDataDir: null, openPaths: [], savePath: null }
+const state = { userDataDir: null, appPath: null, documentsDir: null, homeDir: null, openPaths: [], savePath: null, openedDirectory: null, openedExternal: null }
 const stub = {
   app: {
     isPackaged: false,
-    getPath: name => path.join(state.userDataDir || '/tmp', name),
+    getPath: name => {
+      if (name === 'userData') return state.userDataDir || '/tmp'
+      if (name === 'documents') return state.documentsDir || path.join(state.userDataDir || '/tmp', 'Documents')
+      if (name === 'home') return state.homeDir || state.userDataDir || '/tmp'
+      return path.join(state.userDataDir || '/tmp', name)
+    },
+    getAppPath: () => state.appPath || path.resolve(__dirname, '..'),
     setPath: () => { },
     setName: () => { },
     setAppUserModelId: () => { }
@@ -19,8 +25,11 @@ const stub = {
     showErrorBox: () => { }
   },
   ipcMain: null,
-  shell: { openExternal: () => { } },
-  BrowserWindow: class { },
+  shell: { openExternal: async value => { state.openedExternal = value; return true }, openPath: async value => { state.openedDirectory = value; return '' } },
+  BrowserWindow: class BrowserWindow {
+    static getAllWindows() { return [] }
+    static fromWebContents() { return null }
+  },
   Menu: { setApplicationMenu: () => { } },
   nativeImage: { createFromPath: () => ({}) },
   contextBridge: { exposeInMainWorld: () => { } },

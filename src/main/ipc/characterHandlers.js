@@ -5,6 +5,7 @@ const fs = require('fs')
 const path = require('path')
 const dbModule = require('../database/db')
 const { upsertBuild, readJsonFile, normalizeBuild } = require('./buildHandlers')
+const { applyLoadout, applyVariant, availableLoadouts, availableVariants, defaultLoadoutId, defaultVariantId } = require('../../shared/variantLogic.cjs')
 const catalogModule = require('../catalog')
 
 const MAX_NAME = 60
@@ -17,6 +18,7 @@ const ESO_RACES = new Set(['High Elf','Argonian','Wood Elf','Breton','Dark Elf',
 const ESO_ALLIANCES = new Set(['Aldmeri Dominion','Daggerfall Covenant','Ebonheart Pact'])
 
 const getCatalog = catalogModule.getCatalog
+function addonIntegration() { return require('../addon/integration') }
 function catalogLineIds() { return new Set((getCatalog().lines || []).map(line => line.id)) }
 
 function parseJson(value, fallback) {
@@ -102,6 +104,7 @@ function migrateLegacyRow(row) {
     })()
     parsed.custom_skill_lines = []
   }
+  try { parsed.addon_sync = addonIntegration().linkedState(parsed.id) } catch { parsed.addon_sync = { linked: false, overrides: [] } }
   return parsed
 }
 
@@ -130,6 +133,7 @@ function requireCharacter(id) {
 function cleanCharacterForBackup(character) {
   return {
     name: character.name,
+    loadout_id: character.loadout_id || '',
     variant_id: character.variant_id,
     race: character.race || '',
     alliance: character.alliance || '',
@@ -143,6 +147,8 @@ function cleanCharacterForBackup(character) {
     gear: character.gear,
     tracked_skill_lines: character.tracked_skill_lines,
     skill_allocations: character.skill_allocations,
+    actual_unspent_skill_points: character.actual_unspent_skill_points || 0,
+    actual_unspent_attribute_points: character.actual_unspent_attribute_points || 0,
     notes: character.notes || ''
   }
 }
@@ -172,9 +178,18 @@ function sanitizeGear(input) {
 
 function insertCharacter(payload, build, forcedId = null) {
   const id = forcedId || randomUUID()
-  const defaults = build.defaults || {}
+  const loadouts = availableLoadouts(build)
+  const requestedLoadout = String(payload.loadout_id || '')
+  const loadoutId = loadouts.some(row => row.id === requestedLoadout) ? requestedLoadout : defaultLoadoutId(build)
+  const loadoutBuild = applyLoadout(build, loadoutId)
+  const variants = availableVariants(loadoutBuild, loadoutId)
+  const variantIds = new Set(variants.map(v => v.id))
+  const requestedVariant = payload.variant_id
+  const variantId = variantIds.has(requestedVariant) ? requestedVariant : (defaultVariantId(loadoutBuild, loadoutId) || '')
+  const selectedBuild = applyVariant(loadoutBuild, variantId, loadoutId)
+  const defaults = selectedBuild.defaults || {}
   const legacyCustom = Array.isArray(payload.custom_skill_lines) ? payload.custom_skill_lines : []
-  const ranks = sanitizeRanks(payload.skill_ranks, build)
+  const ranks = sanitizeRanks(payload.skill_ranks, selectedBuild)
   const legacyTracked = legacyCustom.map(line => catalogModule.lineIdForName(line?.name)).filter(Boolean)
   for (const legacy of legacyCustom) {
     const lineId = catalogModule.lineIdForName(legacy?.name)
@@ -195,27 +210,22 @@ function insertCharacter(payload, build, forcedId = null) {
   // Recorded attributes belong to the character. Build defaults are a recommendation only.
   const attributes = sanitizeAttributes(payload.attributes)
 
-  const variantIds = new Set((build.variants || []).filter(v => v?.available !== false).map(v => v.id))
-  const requested = payload.variant_id
-  const variant = variantIds.has(requested) ? requested : (build.variants?.[0]?.id || 'solo-duo')
-
   dbModule.getDb().prepare(`
     INSERT INTO characters(
-      id,name,build_id,variant_id,race,alliance,level,attribute_points,attributes_json,
+      id,name,build_id,loadout_id,variant_id,race,alliance,level,attribute_points,attributes_json,
       cp_craft,cp_warfare,cp_fitness,eso_plus,skill_ranks_json,completed_json,
-      gear_json,custom_skill_lines_json,tracked_skill_lines_json,skill_allocations_json,
-      skyshards_collected,other_skill_points,actual_unspent_skill_points,notes
+      gear_json,custom_skill_lines_json,tracked_skill_lines_json,skill_allocations_json,actual_unspent_skill_points,actual_unspent_attribute_points,notes
     ) VALUES(
-      @id,@name,@build_id,@variant_id,@race,@alliance,@level,@attribute_points,@attributes_json,
+      @id,@name,@build_id,@loadout_id,@variant_id,@race,@alliance,@level,@attribute_points,@attributes_json,
       @cp_craft,@cp_warfare,@cp_fitness,0,@skill_ranks_json,@completed_json,
-      @gear_json,'[]',@tracked_skill_lines_json,@skill_allocations_json,
-      0,0,0,@notes
+      @gear_json,'[]',@tracked_skill_lines_json,@skill_allocations_json,@actual_unspent_skill_points,@actual_unspent_attribute_points,@notes
     )
   `).run({
     id,
     name: cleanName(payload.name, defaults.class || 'New Character'),
     build_id: build.id,
-    variant_id: variant,
+    loadout_id: loadoutId,
+    variant_id: variantId,
     race: ESO_RACES.has(payload.race) ? payload.race : (ESO_RACES.has(defaults.race) ? defaults.race : 'Dark Elf'),
     alliance: ESO_ALLIANCES.has(payload.alliance) ? payload.alliance : (ESO_ALLIANCES.has(defaults.alliance) ? defaults.alliance : 'Ebonheart Pact'),
     level: clampInt(payload.level, 1, 50, 1),
@@ -229,6 +239,8 @@ function insertCharacter(payload, build, forcedId = null) {
     gear_json: JSON.stringify(sanitizeGear(payload.gear)),
     tracked_skill_lines_json: JSON.stringify(tracked),
     skill_allocations_json: JSON.stringify(allocations),
+    actual_unspent_skill_points: clampInt(payload.actual_unspent_skill_points, 0, 10000, 0),
+    actual_unspent_attribute_points: clampInt(payload.actual_unspent_attribute_points, 0, 64, 0),
     notes: String(payload.notes || '').slice(0, MAX_NOTES)
   })
   return id
@@ -263,9 +275,14 @@ function importBackupData(backup) {
 function register(ipcMain) {
   ipcMain.handle('characters:list', () => dbModule.getDb().prepare(`
     SELECT c.id,c.name,c.build_id,c.variant_id,c.race,c.alliance,c.level,c.cp_craft,c.cp_warfare,c.cp_fitness,c.eso_plus,
-           b.name AS build_name,b.short_name,b.class_name
-    FROM characters c JOIN builds b ON b.id=c.build_id ORDER BY c.created_at
-  `).all().map(r => ({ ...r, eso_plus: !!r.eso_plus })))
+           b.name AS build_name,b.short_name,b.class_name,
+           CASE WHEN l.character_id IS NULL THEN 0 ELSE 1 END AS addon_linked,
+           s.captured_at AS addon_captured_at,s.world_name AS addon_world_name,s.account_name AS addon_account_name
+    FROM characters c JOIN builds b ON b.id=c.build_id
+    LEFT JOIN character_addon_links l ON l.character_id=c.id
+    LEFT JOIN addon_character_snapshots s ON s.character_key=l.character_key
+    ORDER BY c.created_at
+  `).all().map(r => ({ ...r, eso_plus: !!r.eso_plus, addon_linked: !!r.addon_linked })))
 
   ipcMain.handle('characters:get', (_e, id) => migrateLegacyRow(dbModule.getDb().prepare('SELECT * FROM characters WHERE id=?').get(String(id || ''))))
 
@@ -275,64 +292,128 @@ function register(ipcMain) {
     const character = requireCharacter(id)
     const values = {}
     const source = patch && typeof patch === 'object' ? patch : {}
-    if (source.name !== undefined) values.name = cleanName(source.name, character.name)
+    const addon = addonIntegration()
+    const linked = addon.isLinked(id)
+    const allowOverrides = !linked || addon.overridesAllowed()
+    const requireOverride = field => {
+      if (!allowOverrides) throw new Error(`Enable synced-data overrides in App Settings before changing ${field}.`)
+    }
+    if (source.name !== undefined) {
+      if (linked) throw new Error('Synced character names come from ESO and cannot be overridden.')
+      values.name = cleanName(source.name, character.name)
+    }
     if (source.notes !== undefined) values.notes = String(source.notes).slice(0, MAX_NOTES)
-    if (source.race !== undefined && ESO_RACES.has(source.race)) values.race = source.race
-    if (source.alliance !== undefined && ESO_ALLIANCES.has(source.alliance)) values.alliance = source.alliance
-    if (source.level !== undefined) values.level = clampInt(source.level, 1, 50, character.level)
+    if (source.race !== undefined && ESO_RACES.has(source.race)) {
+      if (linked) throw new Error('Synced race is an ESO identity field and cannot be overridden.')
+      values.race = source.race
+    }
+    if (source.alliance !== undefined && ESO_ALLIANCES.has(source.alliance)) {
+      if (linked) throw new Error('Synced alliance is an ESO identity field and cannot be overridden.')
+      values.alliance = source.alliance
+    }
+    if (source.level !== undefined) {
+      const value = clampInt(source.level, 1, 50, character.level)
+      if (linked) { requireOverride('character level'); addon.setOverride(id, 'level', value) }
+      values.level = value
+    }
     if (source.attributes !== undefined) {
       const attributes = sanitizeAttributes(source.attributes, character.attributes)
+      if (linked) {
+        requireOverride('attribute points')
+        const live = addon.linkedState(id).live?.attributes || {}
+        addon.replaceOverridesByPrefix(id, 'attributes.', attributes, live)
+      }
       values.attributes_json = JSON.stringify(attributes)
       values.attribute_points = attributeTotal(attributes)
     }
     for (const key of ['cp_craft', 'cp_warfare', 'cp_fitness']) {
-      if (source[key] !== undefined) values[key] = clampInt(source[key], 0, CP_TREE_MAX, character[key])
+      if (source[key] !== undefined) {
+        const value = clampInt(source[key], 0, CP_TREE_MAX, character[key])
+        if (linked) { requireOverride(key.replace('cp_', '').replace(/^./, c => c.toUpperCase()) + ' Champion Points'); addon.setOverride(id, key, value) }
+        values[key] = value
+      }
+    }
+    for (const [key, max, label] of [
+      ['actual_unspent_skill_points', 10000, 'available skill points'],
+      ['actual_unspent_attribute_points', 64, 'available attribute points']
+    ]) {
+      if (source[key] !== undefined) {
+        const value = clampInt(source[key], 0, max, character[key] || 0)
+        if (linked) { requireOverride(label); addon.setOverride(id, key, value) }
+        values[key] = value
+      }
     }
     if (source.build_id !== undefined && String(source.build_id) !== character.build_id) {
       const nextBuild = getBuildData(source.build_id)
       const previousBuild = getBuildData(character.build_id)
+      if (linked) {
+        const syncedClass = addon.linkedState(id).class_name
+        const nextClass = cleanName(nextBuild.defaults?.class || nextBuild.class_name || '', '')
+        if (syncedClass && nextClass && syncedClass.toLocaleLowerCase() !== nextClass.toLocaleLowerCase()) {
+          throw new Error(`Synced ESO identity is ${syncedClass}. Choose a saved ${syncedClass} build.`)
+        }
+      }
       const sameClass = nextBuild.defaults?.class === previousBuild.defaults?.class
-      const allowedLines = new Set((nextBuild.relevant_lines || []).map(line => line.id))
+      const nextLoadouts = availableLoadouts(nextBuild)
+      const nextLoadoutId = nextLoadouts.some(loadout => loadout.id === source.loadout_id) ? source.loadout_id : defaultLoadoutId(nextBuild)
+      const nextLoadoutBuild = applyLoadout(nextBuild, nextLoadoutId)
+      const nextVariants = availableVariants(nextLoadoutBuild, nextLoadoutId)
+      const nextVariantIds = new Set(nextVariants.map(variant => variant.id))
+      const nextVariantId = nextVariantIds.has(source.variant_id) ? source.variant_id : (defaultVariantId(nextLoadoutBuild, nextLoadoutId) || '')
+      const nextSelectedBuild = applyVariant(nextLoadoutBuild, nextVariantId, nextLoadoutId)
+
+      const allowedLines = new Set((nextSelectedBuild.relevant_lines || []).map(line => line.id))
       const keptRanks = {}
       for (const [lineId, rank] of Object.entries(character.skill_ranks || {})) {
         const line = catalogModule.getLine(lineId)
         const isClassLine = line?.group === 'Class'
         if (!isClassLine || allowedLines.has(lineId)) keptRanks[lineId] = rank
       }
-      for (const line of nextBuild.relevant_lines || []) if (keptRanks[line.id] === undefined) keptRanks[line.id] = 0
+      for (const line of nextSelectedBuild.relevant_lines || []) if (keptRanks[line.id] === undefined) keptRanks[line.id] = 0
       const keptTrackedLines = (character.tracked_skill_lines || []).filter(lineId => {
         const line = catalogModule.getLine(lineId)
-        return line?.group !== 'Class' || line?.class === nextBuild.defaults?.class
+        return line?.group !== 'Class' || allowedLines.has(lineId)
       })
       const keptAllocations = {}
       for (const [skillId, points] of Object.entries(character.skill_allocations || {})) {
         const hit = catalogModule.getSkill(skillId)
         const isClassSkill = hit?.line?.group === 'Class'
-        if (!isClassSkill || hit?.line?.class === nextBuild.defaults?.class) keptAllocations[skillId] = points
+        if (!isClassSkill || allowedLines.has(hit?.line?.id)) keptAllocations[skillId] = points
       }
-      const newUnlockIds = new Set((nextBuild.unlock_order || []).map(item => item.id))
+      const newUnlockIds = new Set((nextSelectedBuild.unlock_order || []).map(item => item.id))
       const keptCompleted = (character.completed || []).filter(id => newUnlockIds.has(id))
       const validGear = {}
-      const stageMap = new Map((nextBuild.gear_stages || []).map(stage => [stage.id, new Set((stage.sets || []).flatMap(set => (set.pieces || []).map(piece => `id:${piece.id}`)))]))
+      const stageMap = new Map((nextSelectedBuild.gear_stages || []).map(stage => [stage.id, new Set((stage.sets || []).flatMap(set => (set.pieces || []).map(piece => `id:${piece.id}`))) ]))
       for (const [stageId, pieces] of Object.entries(character.gear || {})) {
         const allowed = stageMap.get(stageId)
         if (!allowed) continue
         const kept = Object.fromEntries(Object.entries(pieces).filter(([key, done]) => done && allowed.has(key)))
         if (Object.keys(kept).length) validGear[stageId] = kept
       }
-      const nextVariants = (nextBuild.variants || []).filter(v => v?.available !== false)
-      const nextVariantIds = new Set(nextVariants.map(variant => variant.id))
       values.build_id = nextBuild.id
-      values.variant_id = nextVariantIds.has(source.variant_id) ? source.variant_id : (nextVariants[0]?.id || 'solo-duo')
+      values.loadout_id = nextLoadoutId
+      values.variant_id = nextVariantId
       values.skill_ranks_json = JSON.stringify(keptRanks)
       values.tracked_skill_lines_json = JSON.stringify(keptTrackedLines)
       values.skill_allocations_json = JSON.stringify(keptAllocations)
       values.completed_json = JSON.stringify(keptCompleted)
       values.gear_json = JSON.stringify(sameClass ? validGear : {})
     }
-    if (source.variant_id !== undefined && values.build_id === undefined) {
+    if (source.loadout_id !== undefined && values.build_id === undefined) {
       const build = getBuildData(character.build_id)
-      const ids = new Set((build.variants || []).filter(v => v?.available !== false).map(v => v.id))
+      const ids = new Set(availableLoadouts(build).map(loadout => loadout.id))
+      const nextLoadoutId = ids.has(source.loadout_id) ? source.loadout_id : defaultLoadoutId(build)
+      const selectedBuild = applyLoadout(build, nextLoadoutId)
+      values.loadout_id = nextLoadoutId
+      const variants = availableVariants(selectedBuild, nextLoadoutId)
+      values.variant_id = variants.some(variant => variant.id === source.variant_id || variant.id === character.variant_id)
+        ? (source.variant_id || character.variant_id)
+        : (defaultVariantId(selectedBuild, nextLoadoutId) || '')
+    }
+    if (source.variant_id !== undefined && values.build_id === undefined && values.loadout_id === undefined) {
+      const build = getBuildData(character.build_id)
+      const selectedBuild = applyLoadout(build, character.loadout_id)
+      const ids = new Set(availableVariants(selectedBuild, character.loadout_id).map(v => v.id))
       if (ids.has(source.variant_id)) values.variant_id = source.variant_id
     }
     const keys = Object.keys(values)
@@ -345,7 +426,10 @@ function register(ipcMain) {
   ipcMain.handle('characters:setSkillRank', (_e, id, lineId, rank) => {
     const c = requireCharacter(id)
     if (typeof lineId !== 'string' || !lineId) throw new Error('Invalid skill line')
-    c.skill_ranks[lineId] = clampInt(rank, 0, 50, 0)
+    const value = clampInt(rank, 0, 50, 0)
+    const addon = addonIntegration()
+    if (addon.isLinked(id)) addon.setOverride(id, `skill_ranks.${lineId}`, value)
+    c.skill_ranks[lineId] = value
     updateJson(id, 'skill_ranks_json', c.skill_ranks)
     return c.skill_ranks
   })
@@ -358,6 +442,11 @@ function register(ipcMain) {
       if (typeof key === 'string' && points) safeAllocations[key] = points
     }
     const safeCompleted = [...new Set(Array.isArray(completed) ? completed.filter(x => typeof x === 'string') : c.completed)]
+    const addon = addonIntegration()
+    if (addon.isLinked(id)) {
+      const live = addon.linkedState(id).live?.skill_allocations || {}
+      addon.replaceOverridesByPrefix(id, 'skill_allocations.', safeAllocations, live)
+    }
     dbModule.getDb().transaction(() => {
       updateJson(id, 'skill_allocations_json', safeAllocations)
       updateJson(id, 'completed_json', safeCompleted)
@@ -368,6 +457,8 @@ function register(ipcMain) {
   ipcMain.handle('characters:addTrackedSkillLine', (_e, id, lineId) => {
     const c = requireCharacter(id)
     if (!(getCatalog().lines || []).some(x => x.id === lineId)) throw new Error('Skill line not found in the bundled catalog')
+    const addon = addonIntegration()
+    if (addon.isLinked(id)) addon.setOverride(id, `tracked_skill_lines.${lineId}`, true)
     const tracked = [...new Set([...(c.tracked_skill_lines || []), lineId])]
     const ranks = { ...c.skill_ranks }
     if (ranks[lineId] === undefined) ranks[lineId] = 0
@@ -380,6 +471,8 @@ function register(ipcMain) {
 
   ipcMain.handle('characters:deleteTrackedSkillLine', (_e, id, lineId) => {
     const c = requireCharacter(id)
+    const addon = addonIntegration()
+    if (addon.isLinked(id)) addon.setOverride(id, `tracked_skill_lines.${lineId}`, false)
     const tracked = (c.tracked_skill_lines || []).filter(x => x !== lineId)
     updateJson(id, 'tracked_skill_lines_json', tracked)
     return tracked
@@ -393,17 +486,6 @@ function register(ipcMain) {
     if (done) gear[stageId][pieceKey] = true; else delete gear[stageId][pieceKey]
     updateJson(id, 'gear_json', gear)
     return gear
-  })
-
-  ipcMain.handle('characters:incrementCp', (_e, id, tree, amount = 1) => {
-    const columns = { craft: 'cp_craft', warfare: 'cp_warfare', fitness: 'cp_fitness' }
-    const column = columns[tree]
-    if (!column) throw new Error('Invalid CP tree')
-    const c = requireCharacter(id)
-    const step = clampInt(amount, -CP_TREE_MAX, CP_TREE_MAX, 1)
-    const value = clampInt(c[column] + step, 0, CP_TREE_MAX, c[column])
-    dbModule.getDb().prepare(`UPDATE characters SET ${column}=?,updated_at=datetime('now') WHERE id=?`).run(value, id)
-    return requireCharacter(id)
   })
 
   ipcMain.handle('characters:export', async (_e, id) => {
@@ -443,7 +525,9 @@ function register(ipcMain) {
   })
 
   ipcMain.handle('characters:delete', (_e, id) => {
-    const info = dbModule.getDb().prepare('DELETE FROM characters WHERE id=?').run(String(id || ''))
+    const characterId = String(id || '')
+    try { addonIntegration().unlinkCharacter(characterId) } catch { }
+    const info = dbModule.getDb().prepare('DELETE FROM characters WHERE id=?').run(characterId)
     return info.changes > 0
   })
 }

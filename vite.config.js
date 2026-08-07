@@ -9,6 +9,20 @@ export default defineConfig({
   build: {
     outDir: 'build',
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        // Split rarely-changing vendor code and the large skill catalog into their own chunks so
+        // they cache independently and app-code edits do not force re-downloading them.
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('react-router')) return 'vendor-router'
+            if (id.includes('react')) return 'vendor-react'
+            return 'vendor'
+          }
+          if (id.includes('eso-skill-catalog.json')) return 'catalog'
+        },
+      },
+    },
   },
   resolve: {
     extensions: ['.mjs', '.jsx', '.js', '.mts', '.ts', '.tsx', '.json'],

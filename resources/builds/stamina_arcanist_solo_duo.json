@@ -1,11 +1,11 @@
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "id": "stamina_arcanist_solo_duo",
-  "name": "Stamina Arcanist Solo / Duo",
+  "name": "Stamina Arcanist Flexible PvE",
   "short_name": "Stam Arcanist",
   "author": "DeadxxSmile / ATTB",
   "game_version": "Update 50",
-  "verified_date": "2026-08-05",
+  "verified_date": "2026-08-07",
   "summary": "Medium-armored Crux builder with dual daggers, an Inferno Staff, strong self-healing, shielding, and a full-strength AoE beam.",
   "theme": {
     "accent": "#69e891",
@@ -117,6 +117,12 @@
       "name": "Assault",
       "max": 10,
       "group": "Alliance War"
+    },
+    {
+      "id": "alchemy",
+      "name": "Alchemy",
+      "max": 50,
+      "group": "Craft"
     },
     {
       "id": "scribing",
@@ -791,7 +797,8 @@
       "notes": "Starter Crux generator. Leave unmorphed unless you have spare points.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "runic_jolt",
@@ -807,7 +814,8 @@
       "notes": "Slot to level Soldier. It taunts; do not cast casually in group content.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "runemend",
@@ -823,7 +831,8 @@
       "notes": "Starter emergency heal and Curative leveling slot.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "twin_slashes",
@@ -835,7 +844,7 @@
       "kind": "Active",
       "phase": "Leveling",
       "status": "temporary",
-      "priority": 35,
+      "priority": 40,
       "notes": "Temporary Dual Wield leveling skill. Leave unmorphed and replace it when Quick Cloak arrives.",
       "morph_from": null,
       "image": null,
@@ -851,11 +860,12 @@
       "kind": "Active",
       "phase": "Leveling",
       "status": "final",
-      "priority": 40,
+      "priority": 50,
       "notes": "Core Crux spender.",
       "morph_from": null,
       "image": "assets/arcanist-pragmatic-fatecarver-icon.webp",
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "pragmatic_fatecarver",
@@ -867,13 +877,14 @@
       "kind": "Morph",
       "phase": "Early",
       "status": "final",
-      "priority": 41,
+      "priority": 60,
       "notes": "Take the shield/interrupt-protection morph as soon as Fatecarver IV is ready.",
       "morph_from": "Fatecarver",
       "image": "assets/arcanist-pragmatic-fatecarver-icon.webp",
       "requires": [
         "fatecarver"
-      ]
+      ],
+      "skill_point_cost": 1
     },
     {
       "id": "fated_fortune_1",
@@ -885,11 +896,12 @@
       "kind": "Passive",
       "phase": "Early",
       "status": "final",
-      "priority": 50,
+      "priority": 70,
       "notes": "Permanent class damage passive.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "aegis_unseen_1",
@@ -901,27 +913,12 @@
       "kind": "Passive",
       "phase": "Early",
       "status": "final",
-      "priority": 60,
+      "priority": 80,
       "notes": "Permanent resistance passive.",
       "morph_from": null,
       "image": null,
-      "requires": []
-    },
-    {
-      "id": "healing_tides_1",
-      "name": "Healing Tides I",
-      "catalog_skill_id": "curative__healing_tides",
-      "section": "Passive",
-      "line": "curative",
-      "required_rank": 8,
-      "kind": "Passive",
-      "phase": "Early",
-      "status": "final",
-      "priority": 70,
-      "notes": "Improves healing based on Crux.",
-      "morph_from": null,
-      "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "ambidextrous_1",
@@ -933,7 +930,7 @@
       "kind": "Passive",
       "phase": "Early",
       "status": "final",
-      "priority": 80,
+      "priority": 90,
       "notes": "Permanent Dual Wield damage passive.",
       "morph_from": null,
       "image": null,
@@ -949,11 +946,12 @@
       "kind": "Ultimate",
       "phase": "Early",
       "status": "final",
-      "priority": 90,
+      "priority": 100,
       "notes": "Main damage ultimate before its morph.",
       "morph_from": "assets/arcanist-the-languid-eye-icon.webp",
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "harnessed_quintessence_1",
@@ -965,11 +963,12 @@
       "kind": "Passive",
       "phase": "Early",
       "status": "final",
-      "priority": 100,
+      "priority": 110,
       "notes": "Restoring either resource grants damage.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "wellspring_abyss_1",
@@ -981,11 +980,12 @@
       "kind": "Passive",
       "phase": "Early",
       "status": "final",
-      "priority": 110,
+      "priority": 120,
       "notes": "Adds recovery for each Soldier ability slotted.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "hideous_clarity_1",
@@ -997,11 +997,12 @@
       "kind": "Passive",
       "phase": "Early",
       "status": "final",
-      "priority": 120,
+      "priority": 130,
       "notes": "Generating Crux restores resources.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "fated_fortune_2",
@@ -1013,11 +1014,12 @@
       "kind": "Passive",
       "phase": "Final",
       "status": "final",
-      "priority": 125,
+      "priority": 140,
       "notes": "Second rank of the permanent class damage passive.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "aegis_unseen_2",
@@ -1029,27 +1031,12 @@
       "kind": "Passive",
       "phase": "Final",
       "status": "final",
-      "priority": 126,
+      "priority": 150,
       "notes": "Second resistance rank; prioritize once Cruxweaver Armor is active.",
       "morph_from": null,
       "image": null,
-      "requires": []
-    },
-    {
-      "id": "healing_tides_2",
-      "name": "Healing Tides II",
-      "catalog_skill_id": "curative__healing_tides",
-      "section": "Passive",
-      "line": "curative",
-      "required_rank": 18,
-      "kind": "Passive",
-      "phase": "Final",
-      "status": "final",
-      "priority": 127,
-      "notes": "Second healing rank; useful but below core damage and sustain purchases.",
-      "morph_from": null,
-      "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "languid_eye",
@@ -1061,13 +1048,14 @@
       "kind": "Morph",
       "phase": "Early",
       "status": "final",
-      "priority": 130,
+      "priority": 160,
       "notes": "Permanent damage-ultimate morph.",
       "morph_from": "The Unblinking Eye",
       "image": "assets/arcanist-the-languid-eye-icon.webp",
       "requires": [
         "unblinking_eye"
-      ]
+      ],
+      "skill_point_cost": 1
     },
     {
       "id": "abyssal_impact",
@@ -1079,11 +1067,12 @@
       "kind": "Active",
       "phase": "Mid",
       "status": "final",
-      "priority": 140,
+      "priority": 170,
       "notes": "Buy immediately at rank 20; it becomes Flail.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "fatewoven_armor",
@@ -1095,11 +1084,12 @@
       "kind": "Active",
       "phase": "Mid",
       "status": "final",
-      "priority": 150,
+      "priority": 180,
       "notes": "Core armor skill.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "blade_cloak",
@@ -1111,7 +1101,7 @@
       "kind": "Active",
       "phase": "Mid",
       "status": "final",
-      "priority": 160,
+      "priority": 190,
       "notes": "Core Dual Wield buff and AoE.",
       "morph_from": null,
       "image": null,
@@ -1127,13 +1117,14 @@
       "kind": "Morph",
       "phase": "Mid",
       "status": "final",
-      "priority": 170,
+      "priority": 200,
       "notes": "Permanent Crux generator, heal, and Abyssal Ink.",
       "morph_from": "Abyssal Impact",
       "image": "assets/arcanist-cephaliarch-s-flail-icon.webp",
       "requires": [
         "abyssal_impact"
-      ]
+      ],
+      "skill_point_cost": 1
     },
     {
       "id": "cruxweaver_armor",
@@ -1145,13 +1136,14 @@
       "kind": "Morph",
       "phase": "Mid",
       "status": "final",
-      "priority": 180,
+      "priority": 210,
       "notes": "Permanent Major Resolve morph.",
       "morph_from": "Fatewoven Armor",
       "image": "assets/arcanist-cruxweaver-armor-icon.webp",
       "requires": [
         "fatewoven_armor"
-      ]
+      ],
+      "skill_point_cost": 1
     },
     {
       "id": "quick_cloak",
@@ -1163,7 +1155,7 @@
       "kind": "Morph",
       "phase": "Mid",
       "status": "final",
-      "priority": 190,
+      "priority": 220,
       "notes": "Permanent movement, Major Evasion, and AoE morph.",
       "morph_from": "Blade Cloak",
       "image": "assets/arcanist-quick-cloak-icon.webp",
@@ -1181,7 +1173,7 @@
       "kind": "Active",
       "phase": "Early",
       "status": "final",
-      "priority": 192,
+      "priority": 230,
       "notes": "Core back-bar ground damage after the second weapon bar unlocks.",
       "morph_from": null,
       "image": null,
@@ -1197,7 +1189,7 @@
       "kind": "Morph",
       "phase": "Early",
       "status": "final",
-      "priority": 193,
+      "priority": 240,
       "notes": "Chosen Wall of Elements morph for the permanent back bar.",
       "morph_from": "Wall of Elements",
       "image": null,
@@ -1215,11 +1207,12 @@
       "kind": "Passive",
       "phase": "Mid",
       "status": "final",
-      "priority": 200,
+      "priority": 250,
       "notes": "Improves status effects and class damage.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "circumvented_fate_1",
@@ -1231,11 +1224,12 @@
       "kind": "Passive",
       "phase": "Mid",
       "status": "final",
-      "priority": 210,
+      "priority": 260,
       "notes": "Improves group mitigation/damage while class abilities are active.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "erudition_1",
@@ -1247,11 +1241,12 @@
       "kind": "Passive",
       "phase": "Mid",
       "status": "final",
-      "priority": 220,
+      "priority": 270,
       "notes": "Adds recovery.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "weakness_elements",
@@ -1263,7 +1258,7 @@
       "kind": "Active",
       "phase": "Mid",
       "status": "final",
-      "priority": 230,
+      "priority": 280,
       "notes": "Free single-target debuff starter.",
       "morph_from": null,
       "image": null,
@@ -1279,7 +1274,7 @@
       "kind": "Morph",
       "phase": "Mid",
       "status": "final",
-      "priority": 240,
+      "priority": 290,
       "notes": "Permanent Major Breach/status morph.",
       "morph_from": "Weakness to Elements",
       "image": "assets/arcanist-elemental-susceptibility-icon.webp",
@@ -1297,11 +1292,12 @@
       "kind": "Passive",
       "phase": "Final",
       "status": "final",
-      "priority": 245,
+      "priority": 300,
       "notes": "Second rank of the resource-restoration damage passive.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "wellspring_abyss_2",
@@ -1313,11 +1309,12 @@
       "kind": "Passive",
       "phase": "Final",
       "status": "final",
-      "priority": 246,
+      "priority": 310,
       "notes": "Second recovery rank for Soldier abilities slotted.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "hideous_clarity_2",
@@ -1329,11 +1326,12 @@
       "kind": "Passive",
       "phase": "Final",
       "status": "final",
-      "priority": 247,
+      "priority": 320,
       "notes": "Second rank of Crux-based Magicka and Stamina sustain.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "tome_bearer",
@@ -1345,27 +1343,12 @@
       "kind": "Active",
       "phase": "Late",
       "status": "final",
-      "priority": 250,
+      "priority": 330,
       "notes": "Core sustain and damage buff.",
       "morph_from": null,
       "image": null,
-      "requires": []
-    },
-    {
-      "id": "runic_defense",
-      "name": "Runic Defense",
-      "catalog_skill_id": "soldier__runic_defense",
-      "section": "Class",
-      "line": "soldier",
-      "required_rank": 30,
-      "kind": "Active",
-      "phase": "Late",
-      "status": "optional",
-      "priority": 260,
-      "notes": "No-Scribing defensive option.",
-      "morph_from": null,
-      "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "recuperative_treatise",
@@ -1377,31 +1360,14 @@
       "kind": "Morph",
       "phase": "Late",
       "status": "final",
-      "priority": 270,
+      "priority": 340,
       "notes": "Permanent sustain morph.",
       "morph_from": "Tome-Bearer’s Inspiration",
       "image": "assets/arcanist-recuperative-treatise-icon.webp",
       "requires": [
         "tome_bearer"
-      ]
-    },
-    {
-      "id": "runeguard_still_waters",
-      "name": "Runeguard of Still Waters",
-      "catalog_skill_id": "soldier__runeguard_of_still_waters",
-      "section": "Morph",
-      "line": "soldier",
-      "required_rank": 30,
-      "kind": "Morph",
-      "phase": "Late",
-      "status": "optional",
-      "priority": 280,
-      "notes": "Use until Ulfsild’s Contingency is ready.",
-      "morph_from": "Runic Defense",
-      "image": null,
-      "requires": [
-        "runic_defense"
-      ]
+      ],
+      "skill_point_cost": 1
     },
     {
       "id": "expert_hunter",
@@ -1413,7 +1379,7 @@
       "kind": "Active",
       "phase": "Mid",
       "status": "final",
-      "priority": 288,
+      "priority": 350,
       "notes": "Purchase the base ability before selecting Camouflaged Hunter.",
       "morph_from": null,
       "image": null,
@@ -1429,7 +1395,7 @@
       "kind": "Morph",
       "phase": "Late",
       "status": "final",
-      "priority": 290,
+      "priority": 360,
       "notes": "Front-bar passive damage and detection.",
       "morph_from": "Expert Hunter",
       "image": "assets/arcanist-camouflaged-hunter-icon.webp",
@@ -1447,11 +1413,12 @@
       "kind": "Passive",
       "phase": "Final",
       "status": "final",
-      "priority": 295,
+      "priority": 370,
       "notes": "Second rank of the status-effect damage passive.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "circumvented_fate_2",
@@ -1463,11 +1430,12 @@
       "kind": "Passive",
       "phase": "Final",
       "status": "final",
-      "priority": 296,
+      "priority": 380,
       "notes": "Second rank of the group mitigation passive.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "erudition_2",
@@ -1479,45 +1447,12 @@
       "kind": "Passive",
       "phase": "Final",
       "status": "final",
-      "priority": 297,
+      "priority": 390,
       "notes": "Second resource-recovery rank.",
       "morph_from": null,
       "image": null,
-      "requires": []
-    },
-    {
-      "id": "imperfect_ring",
-      "name": "The Imperfect Ring",
-      "catalog_skill_id": "herald__the_imperfect_ring",
-      "section": "Class",
-      "line": "herald",
-      "required_rank": 42,
-      "kind": "Active",
-      "phase": "Late",
-      "status": "optional",
-      "priority": 300,
-      "notes": "Temporary back-bar AoE before Scribing.",
-      "morph_from": null,
-      "image": null,
-      "requires": []
-    },
-    {
-      "id": "fulminating_rune",
-      "name": "Fulminating Rune",
-      "catalog_skill_id": "herald__fulminating_rune",
-      "section": "Morph",
-      "line": "herald",
-      "required_rank": 42,
-      "kind": "Morph",
-      "phase": "Late",
-      "status": "optional",
-      "priority": 310,
-      "notes": "Temporary no-Scribing AoE.",
-      "morph_from": "The Imperfect Ring",
-      "image": null,
-      "requires": [
-        "imperfect_ring"
-      ]
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "dawnbreaker",
@@ -1529,7 +1464,7 @@
       "kind": "Ultimate",
       "phase": "Late",
       "status": "final",
-      "priority": 318,
+      "priority": 400,
       "notes": "Purchase the Fighters Guild ultimate before selecting Flawless Dawnbreaker.",
       "morph_from": null,
       "image": null,
@@ -1545,7 +1480,7 @@
       "kind": "Morph",
       "phase": "Final",
       "status": "final",
-      "priority": 320,
+      "priority": 410,
       "notes": "Front-bar passive ultimate morph.",
       "morph_from": "Dawnbreaker",
       "image": "assets/arcanist-flawless-dawnbreaker-icon.webp",
@@ -1563,7 +1498,7 @@
       "kind": "Scribing",
       "phase": "Final",
       "status": "final",
-      "priority": 330,
+      "priority": 420,
       "notes": "Final Scribing AoE/utility slot.",
       "morph_from": null,
       "image": "assets/arcanist-ulfsild-s-contingency-icon.webp",
@@ -1579,7 +1514,7 @@
       "kind": "Scribing",
       "phase": "Final",
       "status": "final",
-      "priority": 340,
+      "priority": 430,
       "notes": "Final Scribing AoE/utility slot.",
       "morph_from": null,
       "image": "assets/arcanist-soul-burst-icon.webp",
@@ -1595,7 +1530,7 @@
       "kind": "Passive",
       "phase": "Final",
       "status": "final",
-      "priority": 350,
+      "priority": 440,
       "notes": "Permanent dagger passive.",
       "morph_from": null,
       "image": null,
@@ -1611,7 +1546,7 @@
       "kind": "Passive",
       "phase": "Final",
       "status": "final",
-      "priority": 360,
+      "priority": 450,
       "notes": "Max the dagger passive.",
       "morph_from": null,
       "image": null,
@@ -1627,11 +1562,12 @@
       "kind": "Passive",
       "phase": "Final",
       "status": "final",
-      "priority": 370,
+      "priority": 460,
       "notes": "Permanent penetration passive.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "implacable_outcome_1",
@@ -1643,11 +1579,12 @@
       "kind": "Passive",
       "phase": "Final",
       "status": "final",
-      "priority": 380,
+      "priority": 470,
       "notes": "Permanent ultimate-related passive.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "intricate_runeforms_1",
@@ -1659,11 +1596,12 @@
       "kind": "Passive",
       "phase": "Final",
       "status": "final",
-      "priority": 390,
+      "priority": 480,
       "notes": "Permanent healing/critical passive.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "splintered_secrets_2",
@@ -1675,11 +1613,12 @@
       "kind": "Passive",
       "phase": "Final",
       "status": "final",
-      "priority": 395,
+      "priority": 490,
       "notes": "Final rank of the high-value penetration passive.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "implacable_outcome_2",
@@ -1691,11 +1630,12 @@
       "kind": "Passive",
       "phase": "Final",
       "status": "final",
-      "priority": 396,
+      "priority": 500,
       "notes": "Final rank of the ultimate-generation passive.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "intricate_runeforms_2",
@@ -1707,11 +1647,12 @@
       "kind": "Passive",
       "phase": "Final",
       "status": "final",
-      "priority": 397,
+      "priority": 510,
       "notes": "Final rank of the class ability cost-reduction passive.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "unbound_potential",
@@ -1723,11 +1664,13 @@
       "kind": "Passive",
       "phase": "Final",
       "status": "final",
-      "priority": 407,
+      "priority": 520,
       "notes": "One of the build's two recommended Class Mastery choices. Requires all three native class lines at rank 50; subclassing disables Class Mastery.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "source_kind": "class_mastery",
+      "skill_point_cost": 0
     },
     {
       "id": "ink_scribe_s_verve",
@@ -1739,8 +1682,925 @@
       "kind": "Passive",
       "phase": "Final",
       "status": "final",
-      "priority": 417,
+      "priority": 530,
       "notes": "One of the build's two recommended Class Mastery choices. Requires all three native class lines at rank 50; subclassing disables Class Mastery.",
+      "morph_from": null,
+      "image": null,
+      "requires": [],
+      "source_kind": "class_mastery",
+      "skill_point_cost": 0
+    },
+    {
+      "id": "focused_killer_1",
+      "name": "Focused Killer I",
+      "catalog_skill_id": "dual_wield__focused_killer",
+      "section": "Passive",
+      "line": "dual_wield",
+      "required_rank": 10,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 540,
+      "notes": "Permanent Dual Wield damage passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "focused_killer_2",
+      "name": "Focused Killer II",
+      "catalog_skill_id": "dual_wield__focused_killer",
+      "section": "Passive",
+      "line": "dual_wield",
+      "required_rank": 30,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 550,
+      "notes": "Permanent Dual Wield damage passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "ambidextrous_2",
+      "name": "Ambidextrous II",
+      "catalog_skill_id": "dual_wield__ambidextrous",
+      "section": "Passive",
+      "line": "dual_wield",
+      "required_rank": 30,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 560,
+      "notes": "Permanent Dual Wield damage passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "controlled_fury_1",
+      "name": "Controlled Fury I",
+      "catalog_skill_id": "dual_wield__controlled_fury",
+      "section": "Passive",
+      "line": "dual_wield",
+      "required_rank": 10,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 570,
+      "notes": "Permanent Dual Wield damage passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "controlled_fury_2",
+      "name": "Controlled Fury II",
+      "catalog_skill_id": "dual_wield__controlled_fury",
+      "section": "Passive",
+      "line": "dual_wield",
+      "required_rank": 30,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 580,
+      "notes": "Permanent Dual Wield damage passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "elemental_force_1",
+      "name": "Elemental Force I",
+      "catalog_skill_id": "destruction_staff__elemental_force",
+      "section": "Passive",
+      "line": "destruction_staff",
+      "required_rank": 10,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 590,
+      "notes": "Permanent Destruction Staff passive; skip Tri Focus for this setup.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "elemental_force_2",
+      "name": "Elemental Force II",
+      "catalog_skill_id": "destruction_staff__elemental_force",
+      "section": "Passive",
+      "line": "destruction_staff",
+      "required_rank": 30,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 600,
+      "notes": "Permanent Destruction Staff passive; skip Tri Focus for this setup.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "ancient_knowledge_1",
+      "name": "Ancient Knowledge I",
+      "catalog_skill_id": "destruction_staff__ancient_knowledge",
+      "section": "Passive",
+      "line": "destruction_staff",
+      "required_rank": 10,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 610,
+      "notes": "Permanent Destruction Staff passive; skip Tri Focus for this setup.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "ancient_knowledge_2",
+      "name": "Ancient Knowledge II",
+      "catalog_skill_id": "destruction_staff__ancient_knowledge",
+      "section": "Passive",
+      "line": "destruction_staff",
+      "required_rank": 30,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 620,
+      "notes": "Permanent Destruction Staff passive; skip Tri Focus for this setup.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "dexterity_1",
+      "name": "Dexterity I",
+      "catalog_skill_id": "medium_armor__dexterity",
+      "section": "Passive",
+      "line": "medium_armor",
+      "required_rank": 2,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 630,
+      "notes": "Core Medium Armor critical passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "dexterity_2",
+      "name": "Dexterity II",
+      "catalog_skill_id": "medium_armor__dexterity",
+      "section": "Passive",
+      "line": "medium_armor",
+      "required_rank": 20,
+      "kind": "Passive",
+      "phase": "Middle",
+      "status": "final",
+      "priority": 640,
+      "notes": "Core Medium Armor critical passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "dexterity_3",
+      "name": "Dexterity III",
+      "catalog_skill_id": "medium_armor__dexterity",
+      "section": "Passive",
+      "line": "medium_armor",
+      "required_rank": 40,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 650,
+      "notes": "Core Medium Armor critical passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "wind_walker_1",
+      "name": "Wind Walker I",
+      "catalog_skill_id": "medium_armor__wind_walker",
+      "section": "Passive",
+      "line": "medium_armor",
+      "required_rank": 14,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 660,
+      "notes": "Core Medium Armor passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "wind_walker_2",
+      "name": "Wind Walker II",
+      "catalog_skill_id": "medium_armor__wind_walker",
+      "section": "Passive",
+      "line": "medium_armor",
+      "required_rank": 34,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 670,
+      "notes": "Core Medium Armor passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "agility_1",
+      "name": "Agility I",
+      "catalog_skill_id": "medium_armor__agility",
+      "section": "Passive",
+      "line": "medium_armor",
+      "required_rank": 14,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 680,
+      "notes": "Core Medium Armor passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "agility_2",
+      "name": "Agility II",
+      "catalog_skill_id": "medium_armor__agility",
+      "section": "Passive",
+      "line": "medium_armor",
+      "required_rank": 34,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 690,
+      "notes": "Core Medium Armor passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "concentration_1",
+      "name": "Concentration I",
+      "catalog_skill_id": "light_armor__concentration",
+      "section": "Passive",
+      "line": "light_armor",
+      "required_rank": 18,
+      "kind": "Passive",
+      "phase": "Middle",
+      "status": "final",
+      "priority": 700,
+      "notes": "Useful penetration from the single Light piece.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "concentration_2",
+      "name": "Concentration II",
+      "catalog_skill_id": "light_armor__concentration",
+      "section": "Passive",
+      "line": "light_armor",
+      "required_rank": 36,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 710,
+      "notes": "Useful penetration from the single Light piece.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "ashlander_1",
+      "name": "Ashlander I",
+      "catalog_skill_id": "dark_elf__ashlander",
+      "section": "Passive",
+      "line": "dark_elf",
+      "required_rank": 1,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 720,
+      "notes": "Recommended racial passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "ashlander_2",
+      "name": "Ashlander II",
+      "catalog_skill_id": "dark_elf__ashlander",
+      "section": "Passive",
+      "line": "dark_elf",
+      "required_rank": 10,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 730,
+      "notes": "Recommended racial passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "dynamic_1",
+      "name": "Dynamic I",
+      "catalog_skill_id": "dark_elf__dynamic",
+      "section": "Passive",
+      "line": "dark_elf",
+      "required_rank": 5,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 740,
+      "notes": "Recommended racial passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "dynamic_2",
+      "name": "Dynamic II",
+      "catalog_skill_id": "dark_elf__dynamic",
+      "section": "Passive",
+      "line": "dark_elf",
+      "required_rank": 15,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 750,
+      "notes": "Recommended racial passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "dynamic_3",
+      "name": "Dynamic III",
+      "catalog_skill_id": "dark_elf__dynamic",
+      "section": "Passive",
+      "line": "dark_elf",
+      "required_rank": 30,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 760,
+      "notes": "Recommended racial passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "resist_flame_1",
+      "name": "Resist Flame I",
+      "catalog_skill_id": "dark_elf__resist_flame",
+      "section": "Passive",
+      "line": "dark_elf",
+      "required_rank": 10,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 770,
+      "notes": "Recommended racial passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "resist_flame_2",
+      "name": "Resist Flame II",
+      "catalog_skill_id": "dark_elf__resist_flame",
+      "section": "Passive",
+      "line": "dark_elf",
+      "required_rank": 20,
+      "kind": "Passive",
+      "phase": "Middle",
+      "status": "final",
+      "priority": 780,
+      "notes": "Recommended racial passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "resist_flame_3",
+      "name": "Resist Flame III",
+      "catalog_skill_id": "dark_elf__resist_flame",
+      "section": "Passive",
+      "line": "dark_elf",
+      "required_rank": 40,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 790,
+      "notes": "Recommended racial passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "ruination_1",
+      "name": "Ruination I",
+      "catalog_skill_id": "dark_elf__ruination",
+      "section": "Passive",
+      "line": "dark_elf",
+      "required_rank": 25,
+      "kind": "Passive",
+      "phase": "Middle",
+      "status": "final",
+      "priority": 800,
+      "notes": "Recommended racial passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "ruination_2",
+      "name": "Ruination II",
+      "catalog_skill_id": "dark_elf__ruination",
+      "section": "Passive",
+      "line": "dark_elf",
+      "required_rank": 35,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 810,
+      "notes": "Recommended racial passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "ruination_3",
+      "name": "Ruination III",
+      "catalog_skill_id": "dark_elf__ruination",
+      "section": "Passive",
+      "line": "dark_elf",
+      "required_rank": 50,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 820,
+      "notes": "Recommended racial passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "undaunted_mettle_1",
+      "name": "Undaunted Mettle I",
+      "catalog_skill_id": "undaunted__undaunted_mettle",
+      "section": "Passive",
+      "line": "undaunted",
+      "required_rank": 5,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 830,
+      "notes": "Rewards the mixed armor weights used by the build.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "undaunted_mettle_2",
+      "name": "Undaunted Mettle II",
+      "catalog_skill_id": "undaunted__undaunted_mettle",
+      "section": "Passive",
+      "line": "undaunted",
+      "required_rank": 9,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 840,
+      "notes": "Rewards the mixed armor weights used by the build.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "healing_tides_1",
+      "name": "Healing Tides I",
+      "catalog_skill_id": "curative__healing_tides",
+      "section": "Passive",
+      "line": "curative",
+      "required_rank": 8,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 850,
+      "notes": "Useful class passive, but lower priority than the core damage and sustain passives; buy later.",
+      "morph_from": null,
+      "image": null,
+      "requires": [],
+      "skill_point_cost": 1
+    },
+    {
+      "id": "healing_tides_2",
+      "name": "Healing Tides II",
+      "catalog_skill_id": "curative__healing_tides",
+      "section": "Passive",
+      "line": "curative",
+      "required_rank": 18,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 860,
+      "notes": "Useful class passive, but lower priority than the core damage and sustain passives; buy later.",
+      "morph_from": null,
+      "image": null,
+      "requires": [],
+      "skill_point_cost": 1
+    },
+    {
+      "id": "athletics_1",
+      "name": "Athletics I",
+      "catalog_skill_id": "medium_armor__athletics",
+      "section": "Passive",
+      "line": "medium_armor",
+      "required_rank": 14,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 870,
+      "notes": "Useful mobility/armor passive; buy after the primary damage and sustain passives.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "athletics_2",
+      "name": "Athletics II",
+      "catalog_skill_id": "medium_armor__athletics",
+      "section": "Passive",
+      "line": "medium_armor",
+      "required_rank": 34,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 880,
+      "notes": "Useful mobility/armor passive; buy after the primary damage and sustain passives.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "evocation_1",
+      "name": "Evocation I",
+      "catalog_skill_id": "light_armor__evocation",
+      "section": "Passive",
+      "line": "light_armor",
+      "required_rank": 12,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 890,
+      "notes": "Core Light Armor passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "evocation_2",
+      "name": "Evocation II",
+      "catalog_skill_id": "light_armor__evocation",
+      "section": "Passive",
+      "line": "light_armor",
+      "required_rank": 36,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 900,
+      "notes": "Core Light Armor passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "prodigy_1",
+      "name": "Prodigy I",
+      "catalog_skill_id": "light_armor__prodigy",
+      "section": "Passive",
+      "line": "light_armor",
+      "required_rank": 12,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 910,
+      "notes": "Core Light Armor passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "prodigy_2",
+      "name": "Prodigy II",
+      "catalog_skill_id": "light_armor__prodigy",
+      "section": "Passive",
+      "line": "light_armor",
+      "required_rank": 36,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 920,
+      "notes": "Core Light Armor passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "slayer_1",
+      "name": "Slayer I",
+      "catalog_skill_id": "fighters_guild__slayer",
+      "section": "Passive",
+      "line": "fighters_guild",
+      "required_rank": 3,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 930,
+      "notes": "Core Fighters Guild passive because Camouflaged Hunter and Flawless Dawnbreaker are permanently slotted.",
+      "morph_from": null,
+      "image": null,
+      "requires": [],
+      "skill_point_cost": 1
+    },
+    {
+      "id": "slayer_2",
+      "name": "Slayer II",
+      "catalog_skill_id": "fighters_guild__slayer",
+      "section": "Passive",
+      "line": "fighters_guild",
+      "required_rank": 6,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 940,
+      "notes": "Core Fighters Guild passive because Camouflaged Hunter and Flawless Dawnbreaker are permanently slotted.",
+      "morph_from": null,
+      "image": null,
+      "requires": [],
+      "skill_point_cost": 1
+    },
+    {
+      "id": "slayer_3",
+      "name": "Slayer III",
+      "catalog_skill_id": "fighters_guild__slayer",
+      "section": "Passive",
+      "line": "fighters_guild",
+      "required_rank": 7,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 950,
+      "notes": "Core Fighters Guild passive because Camouflaged Hunter and Flawless Dawnbreaker are permanently slotted.",
+      "morph_from": null,
+      "image": null,
+      "requires": [],
+      "skill_point_cost": 1
+    },
+    {
+      "id": "banish_the_wicked_1",
+      "name": "Banish the Wicked I",
+      "catalog_skill_id": "fighters_guild__banish_the_wicked",
+      "section": "Passive",
+      "line": "fighters_guild",
+      "required_rank": 5,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 960,
+      "notes": "Core solo/overland Fighters Guild passive while a Fighters Guild ability is slotted; turns kills into Ultimate generation.",
+      "morph_from": null,
+      "image": null,
+      "requires": [],
+      "skill_point_cost": 1
+    },
+    {
+      "id": "banish_the_wicked_2",
+      "name": "Banish the Wicked II",
+      "catalog_skill_id": "fighters_guild__banish_the_wicked",
+      "section": "Passive",
+      "line": "fighters_guild",
+      "required_rank": 9,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 970,
+      "notes": "Core solo/overland Fighters Guild passive while a Fighters Guild ability is slotted; turns kills into Ultimate generation.",
+      "morph_from": null,
+      "image": null,
+      "requires": [],
+      "skill_point_cost": 1
+    },
+    {
+      "id": "banish_the_wicked_3",
+      "name": "Banish the Wicked III",
+      "catalog_skill_id": "fighters_guild__banish_the_wicked",
+      "section": "Passive",
+      "line": "fighters_guild",
+      "required_rank": 10,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 980,
+      "notes": "Core solo/overland Fighters Guild passive while a Fighters Guild ability is slotted; turns kills into Ultimate generation.",
+      "morph_from": null,
+      "image": null,
+      "requires": [],
+      "skill_point_cost": 1
+    },
+    {
+      "id": "medicinal_use_1",
+      "name": "Medicinal Use I",
+      "catalog_skill_id": "alchemy__medicinal_use",
+      "section": "Passive",
+      "line": "alchemy",
+      "required_rank": 8,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 990,
+      "notes": "Combat-relevant Alchemy passive: extends potion effects without requiring a full crafting-point investment.",
+      "morph_from": null,
+      "image": null,
+      "requires": [],
+      "skill_point_cost": 1
+    },
+    {
+      "id": "medicinal_use_2",
+      "name": "Medicinal Use II",
+      "catalog_skill_id": "alchemy__medicinal_use",
+      "section": "Passive",
+      "line": "alchemy",
+      "required_rank": 35,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 1000,
+      "notes": "Combat-relevant Alchemy passive: extends potion effects without requiring a full crafting-point investment.",
+      "morph_from": null,
+      "image": null,
+      "requires": [],
+      "skill_point_cost": 1
+    },
+    {
+      "id": "medicinal_use_3",
+      "name": "Medicinal Use III",
+      "catalog_skill_id": "alchemy__medicinal_use",
+      "section": "Passive",
+      "line": "alchemy",
+      "required_rank": 50,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 1010,
+      "notes": "Combat-relevant Alchemy passive: extends potion effects without requiring a full crafting-point investment.",
+      "morph_from": null,
+      "image": null,
+      "requires": [],
+      "skill_point_cost": 1
+    },
+    {
+      "id": "runic_defense",
+      "name": "Runic Defense",
+      "catalog_skill_id": "soldier__runic_defense",
+      "section": "Class",
+      "line": "soldier",
+      "required_rank": 30,
+      "kind": "Active",
+      "phase": "Late",
+      "status": "optional",
+      "priority": 1020,
+      "notes": "No-Scribing defensive option.",
+      "morph_from": null,
+      "image": null,
+      "requires": [],
+      "skill_point_cost": 1
+    },
+    {
+      "id": "runeguard_still_waters",
+      "name": "Runeguard of Still Waters",
+      "catalog_skill_id": "soldier__runeguard_of_still_waters",
+      "section": "Morph",
+      "line": "soldier",
+      "required_rank": 30,
+      "kind": "Morph",
+      "phase": "Late",
+      "status": "optional",
+      "priority": 1030,
+      "notes": "Use until Ulfsild’s Contingency is ready.",
+      "morph_from": "Runic Defense",
+      "image": null,
+      "requires": [
+        "runic_defense"
+      ],
+      "skill_point_cost": 1
+    },
+    {
+      "id": "imperfect_ring",
+      "name": "The Imperfect Ring",
+      "catalog_skill_id": "herald__the_imperfect_ring",
+      "section": "Class",
+      "line": "herald",
+      "required_rank": 42,
+      "kind": "Active",
+      "phase": "Late",
+      "status": "optional",
+      "priority": 1040,
+      "notes": "Temporary back-bar AoE before Scribing.",
+      "morph_from": null,
+      "image": null,
+      "requires": [],
+      "skill_point_cost": 1
+    },
+    {
+      "id": "fulminating_rune",
+      "name": "Fulminating Rune",
+      "catalog_skill_id": "herald__fulminating_rune",
+      "section": "Morph",
+      "line": "herald",
+      "required_rank": 42,
+      "kind": "Morph",
+      "phase": "Late",
+      "status": "optional",
+      "priority": 1050,
+      "notes": "Temporary no-Scribing AoE.",
+      "morph_from": "The Imperfect Ring",
+      "image": null,
+      "requires": [
+        "imperfect_ring"
+      ],
+      "skill_point_cost": 1
+    },
+    {
+      "id": "penetrating_magic_1",
+      "name": "Penetrating Magic I",
+      "catalog_skill_id": "destruction_staff__penetrating_magic",
+      "section": "Passive",
+      "line": "destruction_staff",
+      "required_rank": 10,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "optional",
+      "priority": 1060,
+      "notes": "Low-priority Destruction Staff passive for spare combat points.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "penetrating_magic_2",
+      "name": "Penetrating Magic II",
+      "catalog_skill_id": "destruction_staff__penetrating_magic",
+      "section": "Passive",
+      "line": "destruction_staff",
+      "required_rank": 30,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "optional",
+      "priority": 1070,
+      "notes": "Low-priority Destruction Staff passive for spare combat points.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "destruction_expert_1",
+      "name": "Destruction Expert I",
+      "catalog_skill_id": "destruction_staff__destruction_expert",
+      "section": "Passive",
+      "line": "destruction_staff",
+      "required_rank": 10,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "optional",
+      "priority": 1080,
+      "notes": "Low-priority Destruction Staff passive for spare combat points.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "destruction_expert_2",
+      "name": "Destruction Expert II",
+      "catalog_skill_id": "destruction_staff__destruction_expert",
+      "section": "Passive",
+      "line": "destruction_staff",
+      "required_rank": 30,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "optional",
+      "priority": 1090,
+      "notes": "Low-priority Destruction Staff passive for spare combat points.",
       "morph_from": null,
       "image": null,
       "requires": []
@@ -1782,7 +2642,12 @@
             "temporary": true
           }
         ],
-        "ultimate": null
+        "ultimate": {
+          "name": "The Unblinking Eye",
+          "catalog_skill_id": "herald__the_unblinking_eye",
+          "note": "Slot this as soon as its class skill line reaches rank 12.",
+          "temporary": true
+        }
       },
       "back_bar": {
         "weapon": "Inferno Staff at Level 15",
@@ -1844,7 +2709,12 @@
             "temporary": true
           }
         ],
-        "ultimate": null
+        "ultimate": {
+          "name": "The Unblinking Eye",
+          "catalog_skill_id": "herald__the_unblinking_eye",
+          "note": "Slot this as soon as its class skill line reaches rank 12.",
+          "temporary": true
+        }
       },
       "back_bar": {
         "weapon": "Inferno Staff at Level 15",
@@ -1868,7 +2738,12 @@
             "placeholder": true
           }
         ],
-        "ultimate": null
+        "ultimate": {
+          "name": "The Unblinking Eye",
+          "catalog_skill_id": "herald__the_unblinking_eye",
+          "note": "Slot this as soon as its class skill line reaches rank 12.",
+          "temporary": true
+        }
       },
       "rotation": {
         "type": "sequence",
@@ -1928,7 +2803,11 @@
             "image": "assets/arcanist-recuperative-treatise-icon.webp"
           }
         ],
-        "ultimate": null
+        "ultimate": {
+          "name": "Flawless Dawnbreaker",
+          "catalog_skill_id": "fighters_guild__flawless_dawnbreaker",
+          "image": "assets/arcanist-flawless-dawnbreaker-icon.webp"
+        }
       },
       "back_bar": {
         "weapon": "Inferno Staff at Level 15",
@@ -1956,7 +2835,11 @@
             "catalog_skill_id": "herald__fulminating_rune"
           }
         ],
-        "ultimate": null
+        "ultimate": {
+          "name": "The Languid Eye",
+          "catalog_skill_id": "herald__the_languid_eye",
+          "image": "assets/arcanist-the-languid-eye-icon.webp"
+        }
       },
       "rotation": {
         "type": "sequence",
@@ -1988,7 +2871,7 @@
       "label": "Level 50 / CP160+",
       "min_level": 50,
       "max_level": 9999,
-      "overview": "Use the full pure-class solo/duo setup and replace temporary skills with Scribing when ready.",
+      "overview": "Use the full flexible pure-class PvE setup and replace temporary skills with Scribing when ready.",
       "front_bar": {
         "weapon": "Dual Daggers",
         "slots": [
@@ -2034,8 +2917,8 @@
           },
           {
             "name": "Ulfsild’s Contingency",
-            "catalog_skill_id": "scribing__ulfsild_s_contingency",
-            "image": "assets/arcanist-ulfsild-s-contingency-icon.webp"
+            "image": "assets/arcanist-ulfsild-s-contingency-icon.webp",
+            "scribed_skill_id": "arcanist_ulfsild_bleed_lingering_resolve"
           },
           {
             "name": "Elemental Susceptibility",
@@ -2048,8 +2931,8 @@
           },
           {
             "name": "Soul Burst",
-            "catalog_skill_id": "scribing__soul_burst",
-            "image": "assets/arcanist-soul-burst-icon.webp"
+            "image": "assets/arcanist-soul-burst-icon.webp",
+            "scribed_skill_id": "arcanist_soul_burst_bleed_lingering_courage"
           }
         ],
         "ultimate": {
@@ -2580,7 +3463,7 @@
     },
     {
       "id": "final",
-      "name": "Final solo / duo",
+      "name": "Final flexible PvE",
       "min_level": 50,
       "max_level": 9999,
       "summary": "Tzogvin body, Sul-Xan front-bar set, Slimecraw, Pale Order, and Crushing Wall. Use Whorl or Order’s Wrath when no souls can spawn.",
@@ -2813,15 +3696,22 @@
     "Do not buy the Destruction Staff passive Tri Focus for this setup.",
     "Ring of the Pale Order blocks other players from healing you. Coordinate with your duo partner.",
     "ESO Plus accelerates XP and grants DLC access, but Scribing is claimed separately through the current free base-game route.",
-    "Recommended Class Mastery: Unbound Potential + Ink-Scribe’s Verve after all three native class lines reach rank 50; subclassing disables them."
+    "Recommended Class Mastery: Unbound Potential + Ink-Scribe’s Verve after all three native class lines reach rank 50; subclassing disables them.",
+    "Scribe Ulfsild’s Contingency as Bleed Damage / Lingering Torment / Resolve and Soul Burst as Bleed Damage / Lingering Torment / Courage for the baseline bars.",
+    "Sul-Xan is an add-fed solo set: use it when enemies die often enough to collect souls; use a reliable no-add alternative on isolated bosses.",
+    "Ring of the Pale Order is the solo configuration. Replace it when a duo partner or group healer needs to heal you.",
+    "ATTB only treats Medicinal Use as a combat-required crafting passive. Spend the rest of your crafting skill points according to the professions you actually want to develop."
   ],
   "variants": [
     {
       "id": "solo-duo",
-      "name": "Solo / Duo PvE",
-      "summary": "The build exactly as written. Nothing is overridden.",
+      "name": "Flexible PvE (base)",
+      "summary": "Uses the general-purpose base build for solo and group PvE.",
       "available": true,
-      "overrides": null
+      "overrides": null,
+      "loadout_ids": [
+        "flexible-pve"
+      ]
     },
     {
       "id": "cyrodiil",
@@ -2869,10 +3759,18 @@
           "Do not buy the Destruction Staff passive Tri Focus for this setup.",
           "Ring of the Pale Order blocks other players from healing you. Coordinate with your duo partner.",
           "ESO Plus accelerates XP and grants DLC access, but Scribing is claimed separately through the current free base-game route.",
+          "Recommended Class Mastery: Unbound Potential + Ink-Scribe’s Verve after all three native class lines reach rank 50; subclassing disables them.",
+          "Scribe Ulfsild’s Contingency as Bleed Damage / Lingering Torment / Resolve and Soul Burst as Bleed Damage / Lingering Torment / Courage for the baseline bars.",
+          "Sul-Xan is an add-fed solo set: use it when enemies die often enough to collect souls; use a reliable no-add alternative on isolated bosses.",
+          "Ring of the Pale Order is the solo configuration. Replace it when a duo partner or group healer needs to heal you.",
+          "ATTB only treats Medicinal Use as a combat-required crafting passive. Spend the rest of your crafting skill points according to the professions you actually want to develop.",
           "Cyrodiil: this build file suggests slotting Resolving Vigor, Runeguard, and a crowd-control tool, replacing a pure PvE slot.",
           "Cyrodiil: carry immovability and detection potions."
         ]
-      }
+      },
+      "loadout_ids": [
+        "flexible-pve"
+      ]
     }
   ],
   "setup_help": {
@@ -2930,6 +3828,193 @@
     }
   },
   "format_notes": [
-    "Schema 3: explicit hotbars, structured rotations, individual equipment slots, and acquisition-aware set groups."
+    "Schema 4: flexible PvE progression, explicit hotbars and ultimates, complete loadouts, structured rotations, individual equipment slots, and acquisition-aware set groups.",
+    "Schema 4 supports metadata, class-line configurations, Scribing recipes, multiple loadouts, variants, quickslots, transformations, companions, performance notes, and namespaced extensions."
+  ],
+  "metadata": {
+    "roles": [
+      "damage",
+      "solo"
+    ],
+    "content": [
+      "overland",
+      "dungeons",
+      "arenas",
+      "trials"
+    ],
+    "group_sizes": [
+      "solo",
+      "duo",
+      "4-player",
+      "12-player"
+    ],
+    "resource": "stamina",
+    "bar_count": 2,
+    "class_style": "pure_class",
+    "playstyles": [
+      "flexible-pve",
+      "progression"
+    ],
+    "difficulty": [
+      "normal",
+      "veteran"
+    ],
+    "platforms": [
+      "PC",
+      "Xbox",
+      "PlayStation"
+    ],
+    "language": "en",
+    "tags": [
+      "arcanist",
+      "stamina",
+      "starter",
+      "solo",
+      "group-pve"
+    ]
+  },
+  "class_configuration": {
+    "base_class": "Arcanist",
+    "active_class_lines": [
+      {
+        "line_id": "curative",
+        "source_class": "Arcanist",
+        "mode": "native",
+        "notes": []
+      },
+      {
+        "line_id": "herald",
+        "source_class": "Arcanist",
+        "mode": "native",
+        "notes": []
+      },
+      {
+        "line_id": "soldier",
+        "source_class": "Arcanist",
+        "mode": "native",
+        "notes": []
+      }
+    ],
+    "class_mastery": {
+      "enabled": true,
+      "points_available": 2,
+      "choices": [
+        "arcanist_mastery__unbound_potential",
+        "arcanist_mastery__ink_scribe_s_verve"
+      ],
+      "notes": [
+        "Class Mastery requires all three native class skill lines at rank 50 and is unavailable while foreign class lines are active."
+      ]
+    },
+    "notes": [
+      "Pure-class starting configuration. Schema 4 can replace up to two lines with mastered or actively subclassed foreign class lines."
+    ]
+  },
+  "requirements": [],
+  "transformations": {
+    "curse": "none",
+    "notes": []
+  },
+  "scribed_skills": [
+    {
+      "id": "arcanist_ulfsild_bleed_lingering_resolve",
+      "name": "Ulfsild’s Contingency - Bleed / Lingering Torment / Resolve",
+      "grimoire": "Ulfsild's Contingency",
+      "grimoire_catalog_skill_id": "scribing__ulfsild_s_contingency",
+      "focus_script": "Bleed Damage",
+      "signature_script": "Lingering Torment",
+      "affix_script": "Resolve",
+      "resource": "Defined by Focus Script",
+      "cost": "Defined by the Focus Script",
+      "notes": [
+        "Solo/duo baseline: Bleed damage, lingering damage pressure, and Minor Resolve."
+      ]
+    },
+    {
+      "id": "arcanist_soul_burst_bleed_lingering_courage",
+      "name": "Soul Burst - Bleed / Lingering Torment / Courage",
+      "grimoire": "Soul Burst",
+      "grimoire_catalog_skill_id": "scribing__soul_burst",
+      "focus_script": "Bleed Damage",
+      "signature_script": "Lingering Torment",
+      "affix_script": "Courage",
+      "resource": "Defined by Focus Script",
+      "cost": "Defined by the Focus Script",
+      "notes": [
+        "Solo/duo baseline: Bleed AoE with lingering damage and Minor Courage."
+      ]
+    }
+  ],
+  "quickslots": [
+    {
+      "id": "combat-potion",
+      "name": "Tri-stat potion",
+      "type": "potion",
+      "item": "Tri-stat potion",
+      "use": "Best general solo emergency potion",
+      "notes": []
+    }
+  ],
+  "companions": [],
+  "performance": {
+    "stat_targets": {},
+    "rotation_complexity": "moderate",
+    "responsibilities": [
+      "Maintain buffs and damage-over-time effects, then use the listed spammable or priority skill."
+    ],
+    "buffs": [],
+    "debuffs": []
+  },
+  "sources": [
+    {
+      "title": "Hyperioxes: Stamina Arcanist Solo Build (Update 50)",
+      "url": "https://hyperioxes.com/eso/solo/stamina-arcanist-build",
+      "author": "Hyperioxes",
+      "accessed": "2026-08-07",
+      "notes": "Current pure-class solo reference used to cross-check Update 50 skill direction, survivability, gear direction, Champion Points, and practical gameplay. ATTB authors its own progression and flexible PvE presentation."
+    },
+    {
+      "title": "ESO Update 50 Live Patch Notes: All Platforms",
+      "url": "https://forums.elderscrollsonline.com/en/discussion/693682/update-50-live-patch-notes-all-platforms",
+      "author": "ZeniMax Online Studios",
+      "accessed": "2026-08-07",
+      "notes": "Official game-version and system reference for Update 50."
+    },
+    {
+      "title": "Class Mastery - The Elder Scrolls Online",
+      "url": "https://help.elderscrollsonline.com/app/answers/detail/a_id/74901/",
+      "author": "ZeniMax Online Studios",
+      "accessed": "2026-08-07",
+      "notes": "Official Class Mastery unlock, availability, point, and respec rules."
+    },
+    {
+      "title": "SkinnyCheeks: Arcanist Tests U50",
+      "url": "https://www.skinnycheeks.gg/arcanist-tests-u50",
+      "author": "SkinnyCheeks",
+      "accessed": "2026-08-07",
+      "notes": "Update 50 Arcanist testing cross-check for current pure-class damage, mastery, and group alternatives."
+    }
+  ],
+  "extensions": {},
+  "default_loadout_id": "flexible-pve",
+  "loadouts": [
+    {
+      "id": "flexible-pve",
+      "name": "Flexible PvE",
+      "summary": "General-purpose progression setup intended to work as a strong starting point in solo and group PvE.",
+      "roles": [
+        "damage",
+        "solo"
+      ],
+      "content": [
+        "overland",
+        "dungeons",
+        "arenas",
+        "trials"
+      ],
+      "available": true,
+      "conditions": [],
+      "overrides": {}
+    }
   ]
 }

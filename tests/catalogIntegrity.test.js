@@ -96,3 +96,58 @@ test('every bundled build resolves entirely against this catalog', () => {
     }
   }
 })
+
+const bundledBuilds = (() => {
+  const buildsDir = path.join(__dirname, '../resources/builds')
+  return fs.readdirSync(buildsDir).filter(f => f.endsWith('.json')).map(file => ({
+    file, build: JSON.parse(fs.readFileSync(path.join(buildsDir, file), 'utf8'))
+  }))
+})()
+
+test('pure-class bundled builds curate passives in all three native lines without exceeding catalog ranks', () => {
+  const linesById = new Map(catalog.lines.map(line => [line.id, line]))
+  for (const { file, build } of bundledBuilds) {
+    if (build.metadata?.class_style !== 'pure_class') continue
+    for (const configured of build.class_configuration?.active_class_lines || []) {
+      if (configured.mode !== 'native') continue
+      const line = linesById.get(configured.line_id)
+      assert.ok(line, `${file}: native class line "${configured.line_id}" is missing from the catalog`)
+      const rows = (build.unlock_order || []).filter(row => row.kind === 'Passive' && row.line === configured.line_id)
+      assert.ok(rows.length > 0, `${file}: ${configured.line_id} needs curated passive progression`)
+      const counts = new Map()
+      for (const row of rows) counts.set(row.catalog_skill_id, (counts.get(row.catalog_skill_id) || 0) + 1)
+      for (const [skillId, actual] of counts) {
+        const skill = (line.skills || []).find(item => item.id === skillId)
+        assert.ok(skill?.type === 'Passive', `${file}: ${skillId} is not a passive in ${configured.line_id}`)
+        assert.ok(actual <= skill.max_points, `${file}: ${skillId} recommends ${actual}/${skill.max_points} ranks`)
+      }
+    }
+  }
+})
+
+test('bundled builds do not omit their racial and core weapon/armor passive progression', () => {
+  const linesById = new Map(catalog.lines.map(line => [line.id, line]))
+  for (const { file, build } of bundledBuilds) {
+    const rows = build.unlock_order || []
+    const passivesByLine = new Map()
+    for (const row of rows.filter(row => row.kind === 'Passive')) {
+      passivesByLine.set(row.line, (passivesByLine.get(row.line) || 0) + 1)
+    }
+
+    for (const relevant of build.relevant_lines || []) {
+      const line = linesById.get(relevant.id)
+      if (!line) continue
+      if (line.group === 'Racial') {
+        const expected = (line.skills || []).filter(skill => skill.type === 'Passive')
+          .reduce((sum, skill) => sum + (Number(skill.max_points) || 0), 0)
+        assert.equal(passivesByLine.get(line.id) || 0, expected, `${file}: racial line ${line.id} is incomplete`)
+      }
+      if (line.group === 'Armor') {
+        assert.ok((passivesByLine.get(line.id) || 0) > 0, `${file}: relevant armor line ${line.id} has no recommended passives`)
+      }
+      if (line.group === 'Weapon' && rows.some(row => row.line === line.id && row.kind !== 'Passive')) {
+        assert.ok((passivesByLine.get(line.id) || 0) > 0, `${file}: used weapon line ${line.id} has no recommended passives`)
+      }
+    }
+  }
+})

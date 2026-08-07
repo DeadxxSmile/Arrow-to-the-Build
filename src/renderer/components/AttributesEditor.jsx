@@ -1,18 +1,23 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import NumberStepper from './NumberStepper'
+import { useAppDialog } from './AppDialogProvider'
 import { ATTRIBUTE_KEYS, attributeSummary } from '../utils/buildLogic'
+import OverrideResetButton, { overrideEntry } from './OverrideResetButton'
 
 const LABEL = { magicka: 'Magicka', health: 'Health', stamina: 'Stamina' }
 
-export default function AttributesEditor({ character, build, onChange }) {
+export default function AttributesEditor({ character, build, onChange, allowOverrides = true }) {
   const summary = attributeSummary(character, build)
   const [busy, setBusy] = useState(false)
+  const dialog = useAppDialog()
 
-  const set = (key, value) => onChange({ ...summary.actual, [key]: value })
+  const syncedLocked = character?.addon_sync?.linked && !allowOverrides
+  const set = (key, value) => { if (!syncedLocked) onChange({ ...summary.actual, [key]: value }) }
   const targetAvailable = summary.targetTotal <= summary.available
   const useTarget = async () => {
     if (summary.matchesTarget) return
-    if (!window.confirm(`Replace the recorded split (${describe(summary.actual)}) with this build's recommendation (${describe(summary.target)})? This only changes ATTB, not your character in ESO.`)) return
+    const approved = await dialog.confirm({ title: 'Use the build attribute target?', message: `Replace the recorded split (${describe(summary.actual)}) with this build's recommendation (${describe(summary.target)})? This only changes ATTB, not your character in ESO.`, confirmLabel: 'Use Build Target' })
+    if (!approved) return
     setBusy(true)
     try { await onChange(summary.target) } finally { setBusy(false) }
   }
@@ -30,9 +35,11 @@ export default function AttributesEditor({ character, build, onChange }) {
       // push the total above the points currently available.
       const otherSpent = summary.spent - value
       const max = Math.max(value, Math.min(64, summary.available - otherSpent))
-      return <div className={`attribute-row ${key}`} key={key}>
-        <div><b>{LABEL[key]}</b><small>Build target {summary.target[key]}{diff ? ` · ${diff > 0 ? '+' : ''}${diff}` : ' · matches'}</small></div>
-        <NumberStepper value={value} min={0} max={max} onChange={v => set(key, v)} label={`${LABEL[key]} attribute points`} />
+      const live = character?.addon_sync?.live?.attributes?.[key]
+      const overridden = overrideEntry(character, `attributes.${key}`)
+      return <div className={`attribute-row ${key} ${overridden ? 'overridden' : ''}`} key={key}>
+        <div><b>{LABEL[key]}</b><small>Build target {summary.target[key]}{diff ? ` · ${diff > 0 ? '+' : ''}${diff}` : ' · matches'}{character?.addon_sync?.linked ? ` · Live ESO ${live ?? value}` : ''}</small></div>
+        <div className="synced-control"><NumberStepper value={value} min={0} max={max} onChange={v => set(key, v)} label={`${LABEL[key]} attribute points`} disabled={syncedLocked} /><OverrideResetButton fieldPath={`attributes.${key}`} compact /></div>
       </div>
     })}</div>
 
@@ -43,17 +50,16 @@ export default function AttributesEditor({ character, build, onChange }) {
       <div><small>Build target total</small><b>{summary.targetTotal}</b></div>
     </div>
 
+    {syncedLocked && <div className="quiet-box sync-lock-note">These values are synced from ESO. Enable synced-data overrides in App Settings to test a different split.</div>}
+
     {summary.overAvailable > 0 && <div className="notice-banner warn-banner" role="status">
       {summary.spent} points are recorded but level {character.level} normally provides {summary.available}.
       ATTB has left your numbers alone; adjust the level or the split when you get a chance.
     </div>}
 
 
-    <div className="button-row">
-      <button className="btn secondary" onClick={useTarget} disabled={busy || summary.matchesTarget || !targetAvailable} title={!targetAvailable ? `The full build target needs ${summary.targetTotal} points; Level ${character.level} provides ${summary.available}.` : ''}>
-        {summary.matchesTarget ? 'Already matches the build target' : targetAvailable ? 'Use build target' : 'Build target unlocks later'}
-      </button>
-    </div>
+    {!syncedLocked && !summary.matchesTarget && targetAvailable && <div className="button-row"><button className="btn secondary" onClick={useTarget} disabled={busy}>Use build target</button></div>}
+    {!syncedLocked && !summary.matchesTarget && !targetAvailable && <div className="attribute-target-later"><b>Full target is a later milestone.</b><span>This build needs {summary.targetTotal} attribute points. Level {character.level} normally provides {summary.available}; keep following the target as new points unlock.</span></div>}
   </section>
 }
 

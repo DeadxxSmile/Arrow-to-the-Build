@@ -1,8 +1,7 @@
 const isPlainObject = value => !!value && typeof value === 'object' && !Array.isArray(value)
 const keyedList = list => Array.isArray(list) && list.length > 0 && list.every(item => isPlainObject(item) && typeof item.id === 'string')
 
-// Browser-safe ES module counterpart to variantLogic.cjs. The Electron main process
-// remains CommonJS, while Vite bundles this module for the renderer.
+// Browser-safe counterpart to variantLogic.cjs.
 function mergeOverrides(base, override) {
   if (override === undefined) return structuredClone(base)
   if (override === null) return null
@@ -19,15 +18,8 @@ function mergeArray(base, override) {
   const indexById = new Map(out.map((entry, index) => [entry.id, index]))
   for (const patch of override) {
     const at = indexById.get(patch.id)
-    if (patch.$remove) {
-      if (at !== undefined) out[at] = null
-      continue
-    }
-    if (at === undefined) {
-      indexById.set(patch.id, out.length)
-      out.push(structuredClone(patch))
-      continue
-    }
+    if (patch.$remove) { if (at !== undefined) out[at] = null; continue }
+    if (at === undefined) { indexById.set(patch.id, out.length); out.push(structuredClone(patch)); continue }
     out[at] = mergeOverrides(out[at], patch)
   }
   return out.filter(Boolean)
@@ -37,52 +29,65 @@ function changedSections(overrides) {
   if (!isPlainObject(overrides)) return []
   return Object.keys(overrides).filter(key => overrides[key] !== undefined).sort()
 }
-
-function listVariants(build) {
-  return (build?.variants || []).filter(variant => variant && typeof variant.id === 'string').map(variant => ({
-    ...variant,
-    available: variant.available !== false,
-    changes: changedSections(variant.overrides)
-  }))
+function mapSelections(rows) {
+  return (rows || []).filter(row => row && typeof row.id === 'string').map(row => ({ ...row, available: row.available !== false, changes: changedSections(row.overrides) }))
 }
 
-function availableVariants(build) { return listVariants(build).filter(variant => variant.available) }
-function findVariant(build, variantId) { return listVariants(build).find(variant => variant.id === variantId) || null }
-
-function defaultVariantId(build) {
-  const usable = availableVariants(build)
-  return usable[0]?.id || listVariants(build)[0]?.id || null
+function listLoadouts(build) { return mapSelections(build?.loadouts) }
+function availableLoadouts(build) { return listLoadouts(build).filter(loadout => loadout.available) }
+function findLoadout(build, loadoutId) { return listLoadouts(build).find(loadout => loadout.id === loadoutId) || null }
+function defaultLoadoutId(build) {
+  const requested = build?.default_loadout_id
+  if (requested && availableLoadouts(build).some(loadout => loadout.id === requested)) return requested
+  return availableLoadouts(build)[0]?.id || listLoadouts(build)[0]?.id || ''
 }
-
-function describeVariant(variant) {
-  if (!variant) return ''
-  if (!variant.available) return variant.unavailable_reason || 'Not available in this build file.'
-  if (variant.summary) return variant.summary
-  if (!variant.changes.length) return 'Base build, nothing overridden.'
-  return `Overrides: ${variant.changes.join(', ')}.`
-}
-
-function applyVariant(base, variantId) {
+function applyLoadout(base, loadoutId) {
   if (!base) return null
-  const variant = findVariant(base, variantId)
-  const usable = variant && variant.available ? variant : null
-  const overrides = isPlainObject(usable?.overrides) ? usable.overrides : {}
-  const merged = mergeOverrides(base, overrides)
-  merged.variants = structuredClone(base.variants || [])
+  const loadout = findLoadout(base, loadoutId || defaultLoadoutId(base))
+  const usable = loadout && loadout.available ? loadout : null
+  const merged = mergeOverrides(base, isPlainObject(usable?.overrides) ? usable.overrides : {})
+  merged.loadouts = structuredClone(base.loadouts || [])
+  merged.default_loadout_id = base.default_loadout_id || ''
   merged.id = base.id
-  merged.active_variant = usable || null
-  merged.variant_unavailable = variant && !variant.available ? variant : null
+  merged.active_loadout = usable || null
+  merged.loadout_unavailable = loadout && !loadout.available ? loadout : null
   return merged
 }
 
+function listVariants(build) { return mapSelections(build?.variants) }
+function availableVariants(build, loadoutId = '') {
+  return listVariants(build).filter(variant => variant.available && (!Array.isArray(variant.loadout_ids) || !variant.loadout_ids.length || variant.loadout_ids.includes(loadoutId)))
+}
+function findVariant(build, variantId) { return listVariants(build).find(variant => variant.id === variantId) || null }
+function defaultVariantId(build, loadoutId = '') { return availableVariants(build, loadoutId)[0]?.id || listVariants(build)[0]?.id || null }
+function describeSelection(selection, baseLabel) {
+  if (!selection) return ''
+  if (!selection.available) return selection.unavailable_reason || 'Not available in this build file.'
+  if (selection.summary) return selection.summary
+  if (!selection.changes.length) return baseLabel
+  return `Overrides: ${selection.changes.join(', ')}.`
+}
+function describeVariant(variant) { return describeSelection(variant, 'Base build, nothing overridden.') }
+function describeLoadout(loadout) { return describeSelection(loadout, 'Uses the base build sections.') }
+function applyVariant(base, variantId, loadoutId = '') {
+  if (!base) return null
+  const variant = findVariant(base, variantId)
+  const allowed = variant && availableVariants(base, loadoutId).some(item => item.id === variant.id)
+  const usable = allowed ? variant : null
+  const merged = mergeOverrides(base, isPlainObject(usable?.overrides) ? usable.overrides : {})
+  merged.variants = structuredClone(base.variants || [])
+  merged.id = base.id
+  merged.active_variant = usable || null
+  merged.variant_unavailable = variant && !allowed ? variant : null
+  return merged
+}
+function applyBuildSelection(base, loadoutId, variantId) {
+  const loadoutBuild = applyLoadout(base, loadoutId)
+  return applyVariant(loadoutBuild, variantId, loadoutBuild?.active_loadout?.id || '')
+}
+
 export {
-  applyVariant,
-  availableVariants,
-  changedSections,
-  defaultVariantId,
-  describeVariant,
-  findVariant,
-  isPlainObject,
-  listVariants,
-  mergeOverrides
+  applyBuildSelection, applyLoadout, applyVariant, availableLoadouts, availableVariants, changedSections,
+  defaultLoadoutId, defaultVariantId, describeLoadout, describeVariant, findLoadout, findVariant,
+  isPlainObject, listLoadouts, listVariants, mergeOverrides
 }

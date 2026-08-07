@@ -1,11 +1,15 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Arrow to the Build JSON (schema 3)",
+  "$id": "https://deadxxsmile.github.io/Arrow-to-the-Build/reference/BUILD_SCHEMA.json",
+  "title": "Arrow to the Build JSON (schema 4)",
+  "description": "Stable public ATTB build schema. Schema 4 adds build metadata, native/subclassed class-line configuration, Class Mastery, Scribing recipes, reusable loadouts, requirements, transformations, companions, quickslots, performance targets, research sources, and namespaced extension data while preserving the schema-3 progression, gear, Champion Point, and variant model.",
   "type": "object",
   "required": [
     "schema_version",
     "id",
     "name",
+    "metadata",
+    "class_configuration",
     "defaults",
     "relevant_lines",
     "cp_plans",
@@ -15,82 +19,221 @@
   ],
   "properties": {
     "schema_version": {
-      "const": 3
+      "const": 4,
+      "description": "Stable public ATTB build schema version. ATTB automatically migrates schema-3 files when imported."
     },
     "id": {
       "type": "string",
-      "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+      "pattern": "^[a-z0-9][a-z0-9_.-]*$",
+      "description": "Stable build slug. Do not change after sharing the build."
     },
     "name": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "description": "Full display name."
     },
-    "defaults": {
-      "type": "object",
-      "required": [
-        "class",
-        "attributes"
-      ],
-      "properties": {
-        "class": {
-          "type": "string"
-        },
-        "race": {
-          "type": "string"
-        },
-        "alliance": {
-          "type": "string"
-        },
-        "attributes": {
-          "$ref": "#/$defs/attributes"
-        }
+    "short_name": {
+      "type": "string",
+      "description": "Compact display name."
+    },
+    "summary": {
+      "type": "string",
+      "description": "Short identity and intended use of the build."
+    },
+    "notes": {
+      "type": "string",
+      "maxLength": 20000,
+      "description": "Optional long-form author notes shown on the Character Tracker Basic Setup page and edited in Build Editor."
+    },
+    "author": {
+      "type": "string",
+      "description": "Build author, source community, or handle."
+    },
+    "game_version": {
+      "type": "string",
+      "description": "ESO update for which the build was reviewed."
+    },
+    "verified_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Last review date in YYYY-MM-DD form."
+    },
+    "format_notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
       }
     },
+    "metadata": {
+      "$ref": "#/$defs/metadata"
+    },
+    "class_configuration": {
+      "$ref": "#/$defs/class_configuration"
+    },
+    "requirements": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/requirement"
+      }
+    },
+    "transformations": {
+      "$ref": "#/$defs/transformations"
+    },
+    "scribed_skills": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/scribed_skill"
+      }
+    },
+    "quickslots": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/quickslot"
+      }
+    },
+    "companions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/companion"
+      }
+    },
+    "performance": {
+      "$ref": "#/$defs/performance"
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/research_source"
+      }
+    },
+    "theme": {
+      "$ref": "#/$defs/theme"
+    },
+    "images": {
+      "$ref": "#/$defs/images"
+    },
+    "defaults": {
+      "$ref": "#/$defs/defaults"
+    },
     "setup_help": {
-      "type": "object"
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/setup_help_entry"
+      }
+    },
+    "concepts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/concept"
+      }
     },
     "relevant_lines": {
       "type": "array",
       "items": {
         "$ref": "#/$defs/line"
-      }
+      },
+      "minItems": 3
+    },
+    "cp_plans": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/cp_plan"
+      },
+      "required": [
+        "craft",
+        "warfare",
+        "fitness"
+      ]
     },
     "unlock_order": {
       "type": "array",
       "items": {
         "$ref": "#/$defs/unlock"
-      }
-    },
-    "cp_plans": {
-      "type": "object"
+      },
+      "minItems": 1
     },
     "phases": {
       "type": "array",
+      "minItems": 1,
       "items": {
         "$ref": "#/$defs/phase"
       },
-      "description": "Progression bands, each with front and back hotbars and a rotation. Required: a build with no phases has nothing to show on the Skill Bars and Rotations page."
+      "description": "At least one complete progression phase is required."
     },
     "gear_stages": {
       "type": "array",
       "items": {
         "$ref": "#/$defs/gear_stage"
-      }
+      },
+      "minItems": 1
     },
     "consumables": {
-      "type": "object"
+      "$ref": "#/$defs/consumables"
     },
     "tips": {
-      "type": "array"
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     },
-    "concepts": {
-      "type": "array"
+    "default_loadout_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+    },
+    "loadouts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/loadout"
+      }
     },
     "variants": {
-      "type": "array"
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/variant"
+      }
+    },
+    "extensions": {
+      "type": "object",
+      "description": "Namespaced custom data for other tools or future systems. Use a unique key such as your GitHub name or project ID so additions never collide.",
+      "additionalProperties": true
     }
   },
+  "additionalProperties": true,
   "$defs": {
+    "theme": {
+      "type": "object",
+      "properties": {
+        "accent": {
+          "type": "string"
+        },
+        "accent2": {
+          "type": "string"
+        },
+        "background": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "images": {
+      "type": "object",
+      "properties": {
+        "hero": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Bundled image path, trusted remote HTTPS image, data image, or null."
+        },
+        "screenshots": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
     "attributes": {
       "type": "object",
       "properties": {
@@ -107,7 +250,121 @@
           "minimum": 0
         }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "description": "Recommended build target. Runtime validation also limits the combined total to 64."
+    },
+    "defaults": {
+      "type": "object",
+      "required": [
+        "class"
+      ],
+      "properties": {
+        "class": {
+          "type": "string",
+          "minLength": 1
+        },
+        "race": {
+          "type": "string"
+        },
+        "alliance": {
+          "type": "string"
+        },
+        "eso_plus": {
+          "type": "boolean"
+        },
+        "attributes": {
+          "$ref": "#/$defs/attributes"
+        },
+        "mundus": {
+          "type": "string"
+        },
+        "front_weapon": {
+          "type": "string"
+        },
+        "back_weapon": {
+          "type": "string"
+        },
+        "leveling_armor": {
+          "type": "string"
+        },
+        "endgame_armor": {
+          "type": "string"
+        },
+        "leveling_trait": {
+          "type": "string"
+        },
+        "gear_cap": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "resource": {
+          "type": "string"
+        },
+        "curse": {
+          "enum": [
+            "none",
+            "vampire",
+            "werewolf"
+          ]
+        },
+        "vampire_stage": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4
+        }
+      },
+      "additionalProperties": true,
+      "description": "Build recommendations, not the character's recorded profile or spent points."
+    },
+    "setup_help_entry": {
+      "type": "object",
+      "properties": {
+        "summary": {
+          "type": "string"
+        },
+        "recommended": {
+          "type": "string"
+        },
+        "alternatives": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "locations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "concept": {
+      "type": "object",
+      "required": [
+        "title",
+        "text"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
     },
     "line": {
       "type": "object",
@@ -121,15 +378,125 @@
           "pattern": "^[a-z0-9][a-z0-9_.-]*$"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "minLength": 1
         },
         "group": {
           "type": "string"
         },
         "max": {
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0
         }
-      }
+      },
+      "additionalProperties": true,
+      "description": "The id must resolve to the bundled ESO skill catalog."
+    },
+    "unlock": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "line"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "catalog_skill_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "section": {
+          "type": "string"
+        },
+        "line": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+        },
+        "required_rank": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "kind": {
+          "enum": [
+            "Active",
+            "Ultimate",
+            "Morph",
+            "Passive",
+            "Scribing",
+            "Class Mastery"
+          ]
+        },
+        "phase": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "final",
+            "temporary",
+            "optional"
+          ]
+        },
+        "priority": {
+          "type": "number"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "morph_from": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "image": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Bundled image path, trusted remote HTTPS image, data image, or null."
+        },
+        "requires": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+          }
+        },
+        "scribed_skill_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+        },
+        "source_kind": {
+          "enum": [
+            "native",
+            "mastered",
+            "subclassing",
+            "scribing",
+            "class_mastery",
+            "general"
+          ]
+        },
+        "skill_point_cost": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 20
+        },
+        "loadout_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+          }
+        }
+      },
+      "additionalProperties": true
     },
     "skill_ref": {
       "type": "object",
@@ -138,7 +505,8 @@
       ],
       "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "minLength": 1
         },
         "catalog_skill_id": {
           "type": "string"
@@ -147,7 +515,8 @@
           "type": [
             "string",
             "null"
-          ]
+          ],
+          "description": "Bundled image path, trusted remote HTTPS image, data image, or null."
         },
         "note": {
           "type": "string"
@@ -155,10 +524,24 @@
         "temporary": {
           "type": "boolean"
         },
+        "placeholder": {
+          "type": "boolean"
+        },
         "locked": {
           "type": "string"
+        },
+        "scribed_skill_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+        },
+        "loadout_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
-      }
+      },
+      "additionalProperties": true
     },
     "bar": {
       "type": "object",
@@ -188,8 +571,48 @@
               "type": "null"
             }
           ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
         }
-      }
+      },
+      "additionalProperties": true
+    },
+    "rotation_step": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "catalog_skill_id": {
+          "type": "string"
+        },
+        "image": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Bundled image path, trusted remote HTTPS image, data image, or null."
+        },
+        "temporary": {
+          "type": "boolean"
+        },
+        "note": {
+          "type": "string"
+        },
+        "scribed_skill_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+        }
+      },
+      "additionalProperties": true
     },
     "rotation": {
       "type": "object",
@@ -211,13 +634,22 @@
           "type": "string"
         },
         "opener": {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/rotation_step"
+          }
         },
         "steps": {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/rotation_step"
+          }
         },
         "execute": {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/rotation_step"
+          }
         },
         "notes": {
           "type": "array",
@@ -225,12 +657,15 @@
             "type": "string"
           }
         }
-      }
+      },
+      "additionalProperties": true
     },
     "phase": {
       "type": "object",
       "required": [
         "id",
+        "min_level",
+        "max_level",
         "front_bar",
         "back_bar",
         "rotation"
@@ -244,10 +679,14 @@
           "type": "string"
         },
         "min_level": {
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50
         },
         "max_level": {
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9999
         },
         "overview": {
           "type": "string"
@@ -260,8 +699,127 @@
         },
         "rotation": {
           "$ref": "#/$defs/rotation"
+        },
+        "min_cp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600
+        },
+        "max_cp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "loadout_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "attributes": {
+          "type": "object",
+          "description": "Optional attribute allocation target for this progression phase.",
+          "properties": {
+            "magicka": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 64
+            },
+            "health": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 64
+            },
+            "stamina": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 64
+            }
+          },
+          "additionalProperties": false
+        },
+        "recommended_gear_stage_ids": {
+          "type": "array",
+          "description": "Optional references to gear_stages recommended during this phase.",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+          },
+          "uniqueItems": true
+        },
+        "milestones": {
+          "type": "array",
+          "description": "Optional level-specific goals, quests, unlocks, or system reminders.",
+          "items": {
+            "type": "string"
+          }
         }
-      }
+      },
+      "additionalProperties": true
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "type",
+        "location"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "location": {
+          "type": "string",
+          "minLength": 1
+        },
+        "zone": {
+          "type": "string"
+        },
+        "access": {
+          "type": "string"
+        },
+        "requirement": {
+          "type": "string"
+        },
+        "tradeable": {
+          "type": [
+            "string",
+            "boolean"
+          ]
+        },
+        "difficulty": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "alternative": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "dlc": {
+          "type": "string"
+        },
+        "chapter": {
+          "type": "string"
+        },
+        "eso_plus": {
+          "type": "boolean"
+        },
+        "collection": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
     },
     "piece": {
       "type": "object",
@@ -275,7 +833,8 @@
           "pattern": "^[a-z0-9][a-z0-9_.-]*$"
         },
         "slot": {
-          "type": "string"
+          "type": "string",
+          "minLength": 1
         },
         "weight": {
           "type": "string"
@@ -292,10 +851,37 @@
         "quality": {
           "type": "string"
         },
+        "set_slots": {
+          "type": "integer",
+          "minimum": 1
+        },
         "note": {
           "type": "string"
+        },
+        "poison": {
+          "type": "string"
+        },
+        "bar": {
+          "type": "string"
+        },
+        "perfected": {
+          "type": "boolean"
+        },
+        "mythic": {
+          "type": "boolean"
+        },
+        "active_set_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "alternatives": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
-      }
+      },
+      "additionalProperties": true
     },
     "set": {
       "type": "object",
@@ -311,7 +897,8 @@
           "pattern": "^[a-z0-9][a-z0-9_.-]*$"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "minLength": 1
         },
         "role": {
           "type": "string"
@@ -320,7 +907,7 @@
           "type": "string"
         },
         "source": {
-          "type": "object"
+          "$ref": "#/$defs/source"
         },
         "pieces": {
           "type": "array",
@@ -328,8 +915,21 @@
           "items": {
             "$ref": "#/$defs/piece"
           }
+        },
+        "alternatives": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "loadout_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
-      }
+      },
+      "additionalProperties": true
     },
     "gear_stage": {
       "type": "object",
@@ -344,13 +944,17 @@
           "pattern": "^[a-z0-9][a-z0-9_.-]*$"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "minLength": 1
         },
         "min_level": {
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1
         },
         "max_level": {
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9999
         },
         "summary": {
           "type": "string"
@@ -361,16 +965,34 @@
           "items": {
             "$ref": "#/$defs/set"
           }
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "content": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "loadout_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
-      }
+      },
+      "additionalProperties": true
     },
-    "unlock": {
+    "cp_node": {
       "type": "object",
       "required": [
         "id",
         "name",
-        "catalog_skill_id",
-        "line"
+        "max_points"
       ],
       "properties": {
         "id": {
@@ -378,53 +1000,757 @@
           "pattern": "^[a-z0-9][a-z0-9_.-]*$"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "minLength": 1
         },
-        "catalog_skill_id": {
-          "type": "string"
-        },
-        "line": {
-          "type": "string"
-        },
-        "kind": {
-          "enum": [
-            "Active",
-            "Ultimate",
-            "Morph",
-            "Passive",
-            "Scribing"
-          ]
-        },
-        "status": {
-          "enum": [
-            "final",
-            "temporary",
-            "optional"
-          ]
-        },
-        "required_rank": {
+        "max_points": {
           "type": "integer",
-          "minimum": 0
+          "minimum": 1,
+          "maximum": 1200
         },
-        "priority": {
-          "type": "number"
+        "slottable": {
+          "type": "boolean"
+        },
+        "jump_points": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "note": {
+          "type": "string"
         },
         "requires": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+          }
+        },
+        "cluster": {
+          "type": "string"
+        },
+        "position": {
+          "type": "object",
+          "properties": {
+            "x": {
+              "type": "number"
+            },
+            "y": {
+              "type": "number"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": true
+    },
+    "cp_group": {
+      "type": "object",
+      "required": [
+        "id",
+        "label",
+        "nodes"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+        },
+        "label": {
+          "type": "string"
+        },
+        "purpose": {
+          "type": "string"
+        },
+        "optional": {
+          "type": "boolean"
+        },
+        "note": {
+          "type": "string"
+        },
+        "nodes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/cp_node"
+          }
+        },
+        "loadout_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "cp_plan": {
+      "type": "object",
+      "required": [
+        "core"
+      ],
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "color": {
+          "type": "string"
+        },
+        "core": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/cp_node"
+          }
+        },
+        "flex": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/cp_group"
+          }
+        },
+        "final_slots": {
+          "type": "array",
+          "maxItems": 4,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+          }
+        },
+        "minimum_points": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1200
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "consumable": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "use": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "consumables": {
+      "type": "object",
+      "properties": {
+        "foods": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/consumable"
+          }
+        },
+        "potions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/consumable"
+          }
+        },
+        "pvp_alternatives": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/consumable"
+          }
+        },
+        "poisons": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/consumable"
+          }
+        },
+        "quickslots": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/consumable"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "variant": {
+      "type": "object",
+      "required": [
+        "id",
+        "name"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "summary": {
+          "type": "string"
+        },
+        "available": {
+          "type": "boolean"
+        },
+        "unavailable_reason": {
+          "type": "string"
+        },
+        "overrides": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Merged into the base build. The build id and variants array may not be overridden."
+        },
+        "loadout_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "metadata": {
+      "type": "object",
+      "required": [
+        "roles",
+        "content",
+        "resource",
+        "bar_count",
+        "class_style"
+      ],
+      "properties": {
+        "roles": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "content": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "group_sizes": {
           "type": "array",
           "items": {
             "type": "string"
           }
         },
-        "image": {
-          "type": [
-            "string",
-            "null"
+        "resource": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Typical values are magicka, stamina, hybrid, or health."
+        },
+        "bar_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2
+        },
+        "class_style": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Typical values are pure_class, subclass, or flexible."
+        },
+        "playstyles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "difficulty": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "platforms": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "language": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "class_line_selection": {
+      "type": "object",
+      "required": [
+        "line_id",
+        "source_class",
+        "mode"
+      ],
+      "properties": {
+        "line_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+        },
+        "source_class": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mode": {
+          "enum": [
+            "native",
+            "mastered",
+            "subclassing"
           ]
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "class_mastery": {
+      "type": "object",
+      "required": [
+        "enabled",
+        "points_available",
+        "choices"
+      ],
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "choices": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "points_available": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Class Mastery points available for the game version this build targets. Update 50 currently grants two; keeping this explicit lets later updates change the count without changing the schema."
+        }
+      },
+      "additionalProperties": true
+    },
+    "class_configuration": {
+      "type": "object",
+      "required": [
+        "base_class",
+        "active_class_lines",
+        "class_mastery"
+      ],
+      "properties": {
+        "base_class": {
+          "type": "string",
+          "minLength": 1
+        },
+        "active_class_lines": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "$ref": "#/$defs/class_line_selection"
+          },
+          "description": "The three active class skill-line slots. At least one remains native; no foreign class may contribute more than one line."
+        },
+        "class_mastery": {
+          "$ref": "#/$defs/class_mastery"
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "requirement": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "type"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "access": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "transformations": {
+      "type": "object",
+      "required": [
+        "curse"
+      ],
+      "properties": {
+        "curse": {
+          "enum": [
+            "none",
+            "vampire",
+            "werewolf"
+          ]
+        },
+        "vampire_stage": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4
+        },
+        "werewolf_morph": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "scribed_skill": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "grimoire",
+        "focus_script",
+        "signature_script",
+        "affix_script"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "grimoire": {
+          "type": "string",
+          "minLength": 1
+        },
+        "grimoire_catalog_skill_id": {
+          "type": "string"
+        },
+        "focus_script": {
+          "type": "string",
+          "minLength": 1
+        },
+        "signature_script": {
+          "type": "string",
+          "minLength": 1
+        },
+        "affix_script": {
+          "type": "string",
+          "minLength": 1
+        },
+        "resource": {
+          "type": "string"
+        },
+        "cost": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "quickslot": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "type"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "item": {
+          "type": "string"
+        },
+        "use": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "companion": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "role"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "role": {
+          "type": "string",
+          "minLength": 1
+        },
+        "skills": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ultimate": {
+          "type": "string"
+        },
+        "equipment": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "performance": {
+      "type": "object",
+      "properties": {
+        "stat_targets": {
+          "type": "object",
+          "additionalProperties": {
+            "type": [
+              "string",
+              "number",
+              "integer"
+            ]
+          }
+        },
+        "target_dps": {
+          "type": [
+            "number",
+            "integer",
+            "string"
+          ]
+        },
+        "test_environment": {
+          "type": "string"
+        },
+        "rotation_complexity": {
+          "type": "string"
+        },
+        "responsibilities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "buffs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "debuffs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "research_source": {
+      "type": "object",
+      "required": [
+        "title",
+        "url"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "author": {
+          "type": "string"
+        },
+        "accessed": {
+          "type": "string",
+          "format": "date"
         },
         "notes": {
           "type": "string"
         }
+      },
+      "additionalProperties": true
+    },
+    "loadout": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "overrides"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "summary": {
+          "type": "string"
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "content": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "available": {
+          "type": "boolean"
+        },
+        "unavailable_reason": {
+          "type": "string"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "overrides": {
+          "type": "object",
+          "description": "Complete or partial build-section override. Keyed arrays merge by id; ordinary arrays replace."
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "loadouts": {
+            "type": "array",
+            "minItems": 1
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "default_loadout_id"
+        ],
+        "properties": {
+          "default_loadout_id": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
       }
     }
-  }
+  ]
 }

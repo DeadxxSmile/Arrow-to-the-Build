@@ -1,4 +1,3 @@
-import React from 'react'
 import { Navigate, Link, useParams } from 'react-router-dom'
 import { useApp } from '../App'
 import EmptyState from './EmptyState'
@@ -6,6 +5,7 @@ import SkillIcon from '../components/SkillIcon'
 import NumberStepper from '../components/NumberStepper'
 import { applyAllocationChange } from '../utils/buildLogic'
 import { buildItemsForCatalogSkill, effectiveAllocation, itemBuildMeta } from '../utils/catalogLogic'
+import OverrideResetButton from '../components/OverrideResetButton'
 
 function stateFor(skill, rank, allocation, meta) {
   if (allocation > 0) return 'selected'
@@ -17,8 +17,9 @@ function stateFor(skill, rank, allocation, meta) {
 
 export default function SkillLinePage() {
   const { lineId } = useParams()
-  const { character, build, skillLines, setSkillRank, setSkillTracking } = useApp()
+  const { character, build, skillLines, setSkillRank, setSkillTracking, appSettings } = useApp()
   if (!character || !build) return <EmptyState />
+  const syncedLocked = character.addon_sync?.linked && appSettings.addon_allow_overrides !== 'true'
   const line = skillLines.find(item => item.id === lineId)
   if (!line) return <Navigate to="/skills" replace />
 
@@ -31,6 +32,7 @@ export default function SkillLinePage() {
     .reduce((sum, skill) => sum + effectiveAllocation(character, build, line.id, skill), 0)
 
   const updateAllocation = (skill, nextPoints) => {
+    if (syncedLocked) return
     const { allocations, completed } = applyAllocationChange(build, character, line.id, skill, nextPoints, skills)
     return setSkillTracking(allocations, completed)
   }
@@ -63,10 +65,10 @@ export default function SkillLinePage() {
     const order = buildOrderLabel(skill)
     return <article className={`eso-ability-card ${allocation ? 'selected' : ''}`}>
       <div className="eso-ability-main">
-        <button type="button" role="checkbox" aria-checked={!!allocation} className={`eso-skill-toggle ${allocation ? 'selected' : ''}`} onClick={() => updateAllocation(skill, allocation ? 0 : 1)} aria-label={`${allocation ? 'Unselect' : 'Select'} ${skill.name}`}><span aria-hidden="true">{allocation ? '✓' : ''}</span></button>
+        <button type="button" role="checkbox" aria-checked={!!allocation} className={`eso-skill-toggle ${allocation ? 'selected' : ''}`} onClick={() => updateAllocation(skill, allocation ? 0 : 1)} disabled={syncedLocked} aria-label={`${allocation ? 'Unselect' : 'Select'} ${skill.name}`}><span aria-hidden="true">{allocation ? '✓' : ''}</span></button>
         <div className="eso-skill-icon"><SkillIcon skillId={skill.id} name={skill.name} image={skillImage(skill)} size="line" /></div>
         <div className="eso-skill-copy">
-          <div className="eso-skill-heading"><h3>{skill.name}</h3>{order && <span className="unlock-order">Build #{order}</span>}<SkillBadges skill={skill} /></div>
+          <div className="eso-skill-heading"><h3>{skill.name}</h3>{order && <span className="unlock-order">Build #{order}</span>}<SkillBadges skill={skill} /><OverrideResetButton fieldPath={`skill_allocations.${skill.id}`} compact /></div>
           <p>{skill.type}{required ? ` · Unlocks at line rank ${required}` : ' · Unlock timing varies by line progression'}</p>
           <small>{meta.notes}</small>
         </div>
@@ -75,10 +77,13 @@ export default function SkillLinePage() {
         const morphPoints = effectiveAllocation(character, build, line.id, morph)
         const morphMeta = itemBuildMeta(build, line.id, morph)
         const morphOrder = buildOrderLabel(morph)
-        return <button type="button" key={morph.id} className={`morph-choice ${morphPoints ? 'selected' : ''}`} onClick={() => updateAllocation(morph, morphPoints ? 0 : 1)} disabled={!allocation && morphPoints === 0} aria-pressed={!!morphPoints} title={!allocation && morphPoints === 0 ? `Select ${skill.name} first` : undefined}>
-          <span className="morph-icon-wrap"><SkillIcon skillId={morph.id} name={morph.name} image={skillImage(morph)} size="morph" />{morphPoints > 0 && <i aria-hidden="true">✓</i>}</span>
-          <div><div><b>{morph.name}</b>{morphOrder && <em>Build #{morphOrder}</em>}</div><SkillBadges skill={morph} /><small>{morphMeta.notes}</small></div>
-        </button>
+        return <div className={`morph-choice-wrap ${morphPoints ? 'selected' : ''}`} key={morph.id}>
+          <button type="button" className={`morph-choice ${morphPoints ? 'selected' : ''}`} onClick={() => updateAllocation(morph, morphPoints ? 0 : 1)} disabled={syncedLocked || (!allocation && morphPoints === 0)} aria-pressed={!!morphPoints} title={!allocation && morphPoints === 0 ? `Select ${skill.name} first` : undefined}>
+            <span className="morph-icon-wrap"><SkillIcon skillId={morph.id} name={morph.name} image={skillImage(morph)} size="morph" />{morphPoints > 0 && <i aria-hidden="true">✓</i>}</span>
+            <div><div><b>{morph.name}</b>{morphOrder && <em>Build #{morphOrder}</em>}</div><SkillBadges skill={morph} /><small>{morphMeta.notes}</small></div>
+          </button>
+          <OverrideResetButton fieldPath={`skill_allocations.${morph.id}`} compact />
+        </div>
       })}</div>}
     </article>
   }
@@ -95,7 +100,7 @@ export default function SkillLinePage() {
         <p>{skill.currency === 'class_mastery_point' ? 'Class Mastery choice' : 'Passive'} · {skill.max_points || 1} rank{(skill.max_points || 1) === 1 ? '' : 's'}{requiredRanks.length ? ` · Build ranks ${requiredRanks.join(' / ')}` : ''}</p>
         <small>{meta.notes}</small>
       </div>
-      <NumberStepper value={allocation} min={0} max={skill.max_points || 1} onChange={value => updateAllocation(skill, value)} label={`${skill.name} points`} />
+      <div className="synced-control"><NumberStepper value={allocation} min={0} max={skill.max_points || 1} onChange={value => updateAllocation(skill, value)} label={`${skill.name} points`} disabled={syncedLocked} /><OverrideResetButton fieldPath={`skill_allocations.${skill.id}`} compact /></div>
     </article>
   }
 
@@ -109,7 +114,7 @@ export default function SkillLinePage() {
         <div className="eso-skill-heading"><h3>{skill.name}</h3>{order && <span className="unlock-order">Build #{order}</span>}<SkillBadges skill={skill} /></div>
         <p>{skill.type} · tracking only</p><small>{meta.notes}</small>
       </div>
-      <NumberStepper value={allocation} min={0} max={1} onChange={value => updateAllocation(skill, value)} label={`${skill.name} tracked`} />
+      <div className="synced-control"><NumberStepper value={allocation} min={0} max={1} onChange={value => updateAllocation(skill, value)} label={`${skill.name} tracked`} disabled={syncedLocked} /><OverrideResetButton fieldPath={`skill_allocations.${skill.id}`} compact /></div>
     </article>
   }
 
@@ -123,9 +128,10 @@ export default function SkillLinePage() {
       <div><span className="eyebrow">{line.group} · {line.build_relevant ? 'build and full-line tracking' : 'personal full-line tracking'}</span><h1>{line.name}</h1><p>Modeled after ESO&rsquo;s skill window: base abilities branch into two morphs, passives track individual ranks, and build badges stay visible without hiding optional purchases.</p></div>
       <Link to="/skills" className="btn secondary">← Skills overview</Link>
     </div>
+    {character.addon_sync?.linked && <div className="sync-status-banner"><span className="sync-dot" /><div><b>Live skill data from ESO</b><small>{syncedLocked ? 'Enable override mode in App Settings to test another setup.' : 'Changes create local overrides; use ↶ to restore the ESO value.'}</small></div></div>}
     <section className="panel line-rank-panel">
       <div><span className="eyebrow">Current line rank</span><h2>{rank}/{line.max || 50}</h2></div>
-      <NumberStepper value={rank} min={0} max={line.max || 50} onChange={value => setSkillRank(line.id, value)} label={`${line.name} rank`} />
+      <div className="synced-control"><NumberStepper value={rank} min={0} max={line.max || 50} onChange={value => setSkillRank(line.id, value)} label={`${line.name} rank`} disabled={syncedLocked} /><OverrideResetButton fieldPath={`skill_ranks.${line.id}`} compact /></div>
       <div className="line-meter"><i style={{ width: `${Math.min(100, (rank / (line.max || 50)) * 100)}%` }} /></div>
       <span>{spent} ordinary Skill Point{spent === 1 ? '' : 's'} recorded</span>
     </section>

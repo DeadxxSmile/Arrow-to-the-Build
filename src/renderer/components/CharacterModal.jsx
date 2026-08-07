@@ -1,26 +1,31 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import NumberStepper from './NumberStepper'
-import { applyVariant, availableVariants } from '../utils/variantLogic'
+import {
+  applyLoadout, applyVariant, availableLoadouts, availableVariants, defaultLoadoutId, displayVariantName
+} from '../utils/variantLogic'
 import { ATTRIBUTE_KEYS, attributePointsForLevel, attributeTotal, readAttributes } from '../utils/buildLogic'
 
 export const ESO_RACES = ['High Elf', 'Argonian', 'Wood Elf', 'Breton', 'Dark Elf', 'Imperial', 'Khajiit', 'Nord', 'Orc', 'Redguard']
 export const ESO_ALLIANCES = ['Aldmeri Dominion', 'Daggerfall Covenant', 'Ebonheart Pact']
 const ZERO_ATTRIBUTES = { magicka: 0, health: 0, stamina: 0 }
-const EMPTY = { name: '', build_id: '', variant_id: '', race: '', alliance: '', level: 1, attributes: ZERO_ATTRIBUTES, cp_craft: 0, cp_warfare: 0, cp_fitness: 0 }
+const EMPTY = { name: '', build_id: '', loadout_id: '', variant_id: '', race: '', alliance: '', level: 1, attributes: ZERO_ATTRIBUTES, cp_craft: 0, cp_warfare: 0, cp_fitness: 0 }
 const ATTRIBUTE_LABEL = { magicka: 'Magicka', health: 'Health', stamina: 'Stamina' }
 const emptyForm = buildId => ({ ...EMPTY, build_id: buildId, attributes: { ...ZERO_ATTRIBUTES } })
 
-export default function CharacterModal({ open, builds, onClose, onCreated, onImported, firstCharacter = false }) {
+export default function CharacterModal({ open, builds, onClose, onCreated, onImportAddon, firstCharacter = false }) {
   const [form, setForm] = useState(() => emptyForm(''))
   const [selectedBuild, setSelectedBuild] = useState(null)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
   const nameRef = useRef(null)
-  const variants = useMemo(() => availableVariants(selectedBuild), [selectedBuild])
+  const loadouts = useMemo(() => availableLoadouts(selectedBuild), [selectedBuild])
+  const selectedLoadoutBuild = useMemo(() => applyLoadout(selectedBuild, form.loadout_id), [selectedBuild, form.loadout_id])
+  const activeLoadoutId = selectedLoadoutBuild?.active_loadout?.id || ''
+  const variants = useMemo(() => availableVariants(selectedLoadoutBuild, activeLoadoutId), [selectedLoadoutBuild, activeLoadoutId])
   const attributes = readAttributes(form.attributes)
   const availableAttributes = attributePointsForLevel(form.level)
   const spentAttributes = attributeTotal(attributes)
-  const selectedBuildView = useMemo(() => applyVariant(selectedBuild, form.variant_id), [selectedBuild, form.variant_id])
+  const selectedBuildView = useMemo(() => applyVariant(selectedLoadoutBuild, form.variant_id, activeLoadoutId), [selectedLoadoutBuild, form.variant_id, activeLoadoutId])
   const buildTarget = readAttributes(selectedBuildView?.defaults?.attributes)
 
   const loadBuild = async buildId => {
@@ -28,13 +33,18 @@ export default function CharacterModal({ open, builds, onClose, onCreated, onImp
     const record = await window.api.builds.get(buildId)
     const data = record?.data || null
     setSelectedBuild(data)
-    if (data) setForm(current => ({
-      ...current,
-      build_id: buildId,
-      variant_id: availableVariants(data)[0]?.id || '',
-      race: data.defaults?.race || current.race || ESO_RACES[0],
-      alliance: data.defaults?.alliance || current.alliance || ESO_ALLIANCES[0]
-    }))
+    if (data) setForm(current => {
+      const loadoutId = defaultLoadoutId(data)
+      const selected = applyLoadout(data, loadoutId)
+      return {
+        ...current,
+        build_id: buildId,
+        loadout_id: loadoutId,
+        variant_id: availableVariants(selected, loadoutId)[0]?.id || '',
+        race: selected?.defaults?.race || current.race || ESO_RACES[0],
+        alliance: selected?.defaults?.alliance || current.alliance || ESO_ALLIANCES[0]
+      }
+    })
   }
 
   useEffect(() => {
@@ -60,19 +70,11 @@ export default function CharacterModal({ open, builds, onClose, onCreated, onImp
 
   const submit = async event => {
     event.preventDefault(); setError('')
-    if (!form.build_id) { setError('Pick or import a build JSON first.'); return }
+    if (!form.build_id) { setError('Pick a saved build first.'); return }
     if (spentAttributes > availableAttributes) { setError(`Level ${form.level} provides ${availableAttributes} attribute points, but ${spentAttributes} are entered.`); return }
     setBusy(true)
     try { const id = await window.api.characters.create(form); setForm(emptyForm('')); onCreated(id) }
     catch (err) { setError(err.message) } finally { setBusy(false) }
-  }
-
-  const importBuild = async () => {
-    setError('')
-    try {
-      const result = await window.api.builds.importFile()
-      if (result) { await onImported(); await loadBuild(result.id) }
-    } catch (err) { setError(err.message) }
   }
 
   const importBackup = async () => {
@@ -91,8 +93,13 @@ export default function CharacterModal({ open, builds, onClose, onCreated, onImp
       <p className="modal-intro">Record the character you actually made. The selected build supplies recommendations, while race, alliance, attributes, and Champion Points remain this profile's real values.</p>
       <div className="form-grid two">
         <label><span>Character name</span><input ref={nameRef} required maxLength={60} value={form.name} onChange={event => set('name', event.target.value)} placeholder="Enter character name" /></label>
-        <label><span>Build</span><select value={form.build_id} onChange={event => { if (event.target.value === '__import__') { importBuild(); return } loadBuild(event.target.value) }}>{!builds.length && <option value="">No builds available</option>}{builds.map(build => <option key={build.id} value={build.id}>{build.name} · {build.game_version}</option>)}<option value="__import__">+ Add new build (import JSON)...</option></select></label>
-        <label><span>Build variant</span><select value={form.variant_id} onChange={event => set('variant_id', event.target.value)} disabled={!variants.length}>{variants.map(variant => <option key={variant.id} value={variant.id}>{variant.name}{variant.changes.length ? '' : ' (base)'}</option>)}</select></label>
+        <label><span>Build</span><select value={form.build_id} onChange={event => loadBuild(event.target.value)}>{!builds.length && <option value="">No builds available</option>}{builds.map(build => <option key={build.id} value={build.id}>{build.name} · {build.game_version}</option>)}</select></label>
+        {loadouts.length > 1 && <label><span>Build loadout</span><select value={form.loadout_id || activeLoadoutId} onChange={event => {
+          const loadoutId = event.target.value
+          const selected = applyLoadout(selectedBuild, loadoutId)
+          setForm(current => ({ ...current, loadout_id: loadoutId, variant_id: availableVariants(selected, loadoutId)[0]?.id || '' }))
+        }}>{loadouts.map(loadout => <option key={loadout.id} value={loadout.id}>{loadout.name}</option>)}</select></label>}
+        <label><span>Build variant</span><select value={form.variant_id} onChange={event => set('variant_id', event.target.value)} disabled={!variants.length}>{variants.map(variant => <option key={variant.id} value={variant.id}>{displayVariantName(variant)}</option>)}</select></label>
         <label><span>Current level</span><NumberStepper value={form.level} min={1} max={50} onChange={value => set('level', value)} label="Current character level" /></label>
         <label><span>Race</span><select value={form.race} onChange={event => set('race', event.target.value)}>{ESO_RACES.map(race => <option key={race}>{race}</option>)}</select><small>Build recommendation: {selectedBuildView?.defaults?.race || 'None listed'}</small></label>
         <label><span>Alliance</span><select value={form.alliance} onChange={event => set('alliance', event.target.value)}>{ESO_ALLIANCES.map(alliance => <option key={alliance}>{alliance}</option>)}</select><small>Build recommendation: {selectedBuildView?.defaults?.alliance || 'None listed'}</small></label>
@@ -118,9 +125,11 @@ export default function CharacterModal({ open, builds, onClose, onCreated, onImp
         </div>
       </section>
 
-      <div className="import-row"><button type="button" className="btn secondary" onClick={importBuild}>Import another build JSON</button><button type="button" className="btn secondary" onClick={importBackup} disabled={busy}>Import character backup</button><span>ESO Plus is account-wide under Settings. Character backups live under Help &amp; Tools.</span></div>
       {error && <div className="error-box" role="alert">{error}</div>}
-      <div className="modal-actions"><button type="button" className="btn ghost" onClick={onClose}>Cancel</button><button className="btn primary" disabled={busy}>{busy ? 'Working...' : firstCharacter ? 'Create first character' : 'Create character'}</button></div>
+      <div className="modal-footer">
+        <div className="import-row"><button type="button" className="btn secondary" onClick={() => { onClose(); onImportAddon?.() }}>Import Data From Addon</button><button type="button" className="btn secondary" onClick={importBackup} disabled={busy}>Import character backup</button></div>
+        <div className="modal-actions"><button type="button" className="btn ghost" onClick={onClose}>Cancel</button><button className="btn primary" disabled={busy}>{busy ? 'Working...' : firstCharacter ? 'Create first character' : 'Create character'}</button></div>
+      </div>
     </form>
   </div>
 }

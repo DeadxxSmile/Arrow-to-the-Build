@@ -1,16 +1,18 @@
 {
-  "schema_version": 3,
-  "id": "example-arcanist-progression",
-  "name": "Example Arcanist Progression",
-  "short_name": "Example Arcanist",
-  "summary": "A compact, importable schema-3 example. Duplicate this file, replace the metadata and recommendations, and keep every id stable after sharing it.",
-  "author": "Your name or community handle",
+  "schema_version": 4,
+  "id": "my_schema4_build",
+  "name": "My Schema 4 Flexible PvE Build",
+  "short_name": "My Build",
+  "summary": "A valid, editable Schema 4 starting point. Replace the example values with your own build while keeping stable IDs and required sections.",
+  "notes": "",
+  "author": "Your name",
   "game_version": "Update 50",
-  "verified_date": "2026-08-05",
+  "verified_date": "2026-08-06",
   "format_notes": [
     "This template intentionally uses real Arcanist catalog ids so it can be imported into ATTB as-is.",
     "For another class, replace relevant_lines, unlock_order catalog_skill_id values, and phase skill references with entries from resources/data/eso-skill-catalog.json.",
-    "Delete fields you do not need only when the guide marks them optional. Required arrays may be empty, but a useful build should populate them."
+    "Keep relevant_lines, unlock_order, phases, and gear_stages populated. They are required to be non-empty, and this template includes working examples for each.",
+    "Schema 4 supports metadata, class-line configurations, Scribing recipes, multiple loadouts, variants, quickslots, transformations, companions, performance notes, and namespaced extensions."
   ],
   "theme": {
     "accent": "#69e891",
@@ -271,7 +273,8 @@
       "notes": "Starter Crux generator.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "runic_jolt",
@@ -287,7 +290,8 @@
       "notes": "Temporary Soldier of Apocrypha leveling slot. It taunts.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "runemend",
@@ -303,7 +307,8 @@
       "notes": "Starter heal and Curative Runeforms leveling slot.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "fatecarver",
@@ -319,7 +324,8 @@
       "notes": "Base skill required before its morph can be selected.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "pragmatic_fatecarver",
@@ -337,7 +343,8 @@
       "image": null,
       "requires": [
         "fatecarver"
-      ]
+      ],
+      "skill_point_cost": 1
     },
     {
       "id": "fated_fortune_1",
@@ -353,7 +360,8 @@
       "notes": "First rank of an example two-rank passive.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "fated_fortune_2",
@@ -369,7 +377,8 @@
       "notes": "Second rank of the same passive. ATTB derives the rank-one prerequisite.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     }
   ],
   "phases": [
@@ -402,7 +411,12 @@
             "temporary": true
           }
         ],
-        "ultimate": null
+        "ultimate": {
+          "name": "The Unblinking Eye",
+          "catalog_skill_id": "herald__the_unblinking_eye",
+          "note": "Slot this as soon as its class skill line reaches rank 12.",
+          "temporary": true
+        }
       },
       "back_bar": {
         "weapon": "Inferno Staff at Level 15",
@@ -460,12 +474,22 @@
             "temporary": true
           }
         ],
-        "ultimate": null
+        "ultimate": {
+          "name": "The Unblinking Eye",
+          "catalog_skill_id": "herald__the_unblinking_eye",
+          "note": "Slot this as soon as its class skill line reaches rank 12.",
+          "temporary": true
+        }
       },
       "back_bar": {
         "weapon": "Inferno Staff",
         "slots": [],
-        "ultimate": null
+        "ultimate": {
+          "name": "The Unblinking Eye",
+          "catalog_skill_id": "herald__the_unblinking_eye",
+          "note": "Slot this as soon as its class skill line reaches rank 12.",
+          "temporary": true
+        }
       },
       "rotation": {
         "type": "priority",
@@ -862,11 +886,14 @@
   ],
   "variants": [
     {
-      "id": "solo-duo",
-      "name": "Solo / Duo PvE",
-      "summary": "The base build exactly as written.",
+      "id": "base",
+      "name": "Flexible PvE (base)",
+      "summary": "Uses the general-purpose base build for solo and group PvE.",
       "available": true,
-      "overrides": null
+      "overrides": null,
+      "loadout_ids": [
+        "flexible-pve"
+      ]
     },
     {
       "id": "example-alternate",
@@ -879,15 +906,135 @@
           "Variants may replace ordinary arrays such as tips.",
           "Arrays of objects with stable id fields can merge by id."
         ]
+      },
+      "loadout_ids": [
+        "flexible-pve"
+      ]
+    }
+  ],
+  "metadata": {
+    "roles": [
+      "damage",
+      "solo"
+    ],
+    "content": [
+      "overland",
+      "dungeons",
+      "arenas",
+      "trials"
+    ],
+    "group_sizes": [
+      "solo",
+      "duo",
+      "4-player",
+      "12-player"
+    ],
+    "resource": "stamina",
+    "bar_count": 2,
+    "class_style": "pure_class",
+    "playstyles": [
+      "flexible-pve",
+      "progression"
+    ],
+    "difficulty": [
+      "normal",
+      "veteran"
+    ],
+    "platforms": [
+      "PC",
+      "Xbox",
+      "PlayStation"
+    ],
+    "language": "en",
+    "tags": [
+      "template",
+      "example",
+      "flexible-pve"
+    ]
+  },
+  "class_configuration": {
+    "base_class": "Arcanist",
+    "active_class_lines": [
+      {
+        "line_id": "curative",
+        "source_class": "Arcanist",
+        "mode": "native",
+        "notes": []
+      },
+      {
+        "line_id": "herald",
+        "source_class": "Arcanist",
+        "mode": "native",
+        "notes": []
+      },
+      {
+        "line_id": "soldier",
+        "source_class": "Arcanist",
+        "mode": "native",
+        "notes": []
       }
+    ],
+    "class_mastery": {
+      "enabled": false,
+      "points_available": 2,
+      "choices": [],
+      "notes": [
+        "Class Mastery requires all three native class skill lines at rank 50 and is unavailable while foreign class lines are active."
+      ]
     },
+    "notes": [
+      "Pure-class starting configuration. Schema 4 can replace up to two lines with mastered or actively subclassed foreign class lines."
+    ]
+  },
+  "requirements": [],
+  "transformations": {
+    "curse": "none",
+    "notes": []
+  },
+  "scribed_skills": [],
+  "quickslots": [
     {
-      "id": "future-group-dps",
-      "name": "Future Group DPS",
-      "summary": "Visible placeholder for an unfinished variant.",
-      "available": false,
-      "unavailable_reason": "The complete bars, gear, CP, and consumables have not been authored yet.",
-      "overrides": null
+      "id": "combat-potion",
+      "name": "Example potion",
+      "type": "potion",
+      "item": "Example potion",
+      "use": "Explain the buffs or emergency use",
+      "notes": []
+    }
+  ],
+  "companions": [],
+  "performance": {
+    "stat_targets": {},
+    "rotation_complexity": "moderate",
+    "responsibilities": [
+      "Maintain buffs and damage-over-time effects, then use the listed spammable or priority skill."
+    ],
+    "buffs": [],
+    "debuffs": []
+  },
+  "sources": [],
+  "extensions": {
+    "your_namespace": {}
+  },
+  "default_loadout_id": "flexible-pve",
+  "loadouts": [
+    {
+      "id": "flexible-pve",
+      "name": "Flexible PvE",
+      "summary": "General-purpose progression setup intended to work as a strong starting point in solo and group PvE.",
+      "roles": [
+        "damage",
+        "solo"
+      ],
+      "content": [
+        "overland",
+        "dungeons",
+        "arenas",
+        "trials"
+      ],
+      "available": true,
+      "conditions": [],
+      "overrides": {}
     }
   ]
 }

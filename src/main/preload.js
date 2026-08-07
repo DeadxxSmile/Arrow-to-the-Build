@@ -2,6 +2,7 @@
 const { contextBridge, ipcRenderer } = require('electron')
 
 contextBridge.exposeInMainWorld('api', {
+  app: { getInfo: () => ipcRenderer.invoke('app:getInfo') },
   window: {
     minimize: () => ipcRenderer.invoke('window:minimize'),
     maximize: () => ipcRenderer.invoke('window:maximize'),
@@ -13,10 +14,33 @@ contextBridge.exposeInMainWorld('api', {
   builds: {
     list: () => ipcRenderer.invoke('builds:list'),
     get: id => ipcRenderer.invoke('builds:get', id),
+    openDraft: id => ipcRenderer.invoke('builds:openDraft', id),
+    getDraft: id => ipcRenderer.invoke('builds:getDraft', id),
+    getRecentDraft: () => ipcRenderer.invoke('builds:getRecentDraft'),
+    createBlankDraft: author => ipcRenderer.invoke('builds:createBlankDraft', author),
+    createGuidedDraft: (options, author) => ipcRenderer.invoke('builds:createGuidedDraft', options, author),
+    fork: (id, name, author) => ipcRenderer.invoke('builds:fork', id, name, author),
+    createFromCharacter: (characterId, author, options) => ipcRenderer.invoke('builds:createFromCharacter', characterId, author, options),
+    adaptFromCharacter: (characterId, sourceId, name, author) => ipcRenderer.invoke('builds:adaptFromCharacter', characterId, sourceId, name, author),
+    saveDraft: (draftId, data) => ipcRenderer.invoke('builds:saveDraft', draftId, data),
+    saveBuild: (draftId, note) => ipcRenderer.invoke('builds:saveBuild', draftId, note),
+    resetDraft: draftId => ipcRenderer.invoke('builds:resetDraft', draftId),
+    listRevisions: buildId => ipcRenderer.invoke('builds:listRevisions', buildId),
+    getRevision: (buildId, revisionNumber) => ipcRenderer.invoke('builds:getRevision', buildId, revisionNumber),
+    restoreRevision: (draftId, revisionNumber) => ipcRenderer.invoke('builds:restoreRevision', draftId, revisionNumber),
+    delete: id => ipcRenderer.invoke('builds:delete', id),
     importFile: () => ipcRenderer.invoke('builds:import'),
     reloadForCharacter: id => ipcRenderer.invoke('builds:reloadForCharacter', id),
     validateData: data => ipcRenderer.invoke('builds:validateData', data),
-    exportData: (data, defaultName) => ipcRenderer.invoke('builds:exportData', data, defaultName)
+    exportData: (data, defaultName) => ipcRenderer.invoke('builds:exportData', data, defaultName),
+    exportById: id => ipcRenderer.invoke('builds:exportById', id),
+    exportTemplate: () => ipcRenderer.invoke('builds:exportTemplate'),
+    getAuthoringGuide: () => ipcRenderer.invoke('builds:getAuthoringGuide'),
+    getStorageInfo: () => ipcRenderer.invoke('builds:getStorageInfo'),
+    chooseStorageDirectory: () => ipcRenderer.invoke('builds:chooseStorageDirectory'),
+    restoreDefaultStorageDirectory: () => ipcRenderer.invoke('builds:restoreDefaultStorageDirectory'),
+    openStorageDirectory: () => ipcRenderer.invoke('builds:openStorageDirectory'),
+    syncStorageDirectory: () => ipcRenderer.invoke('builds:syncStorageDirectory')
   },
   characters: {
     list: () => ipcRenderer.invoke('characters:list'),
@@ -26,12 +50,33 @@ contextBridge.exposeInMainWorld('api', {
     setSkillRank: (id, lineId, rank) => ipcRenderer.invoke('characters:setSkillRank', id, lineId, rank),
     setSkillTracking: (id, allocations, completed) => ipcRenderer.invoke('characters:setSkillTracking', id, allocations, completed),
     setGearPiece: (id, stageId, pieceKey, done) => ipcRenderer.invoke('characters:setGearPiece', id, stageId, pieceKey, done),
-    incrementCp: (id, tree, amount = 1) => ipcRenderer.invoke('characters:incrementCp', id, tree, amount),
     addTrackedSkillLine: (id, lineId) => ipcRenderer.invoke('characters:addTrackedSkillLine', id, lineId),
     deleteTrackedSkillLine: (id, lineId) => ipcRenderer.invoke('characters:deleteTrackedSkillLine', id, lineId),
     export: id => ipcRenderer.invoke('characters:export', id),
     importBackup: () => ipcRenderer.invoke('characters:importBackup'),
     delete: id => ipcRenderer.invoke('characters:delete', id)
+  },
+  addon: {
+    getStatus: () => ipcRenderer.invoke('addon:getStatus'),
+    detectProfiles: () => ipcRenderer.invoke('addon:detectProfiles'),
+    chooseProfile: () => ipcRenderer.invoke('addon:chooseProfile'),
+    configure: options => ipcRenderer.invoke('addon:configure', options),
+    setEnabled: enabled => ipcRenderer.invoke('addon:setEnabled', enabled),
+    disableOnboarding: () => ipcRenderer.invoke('addon:disableOnboarding'),
+    install: () => ipcRenderer.invoke('addon:install'),
+    syncNow: () => ipcRenderer.invoke('addon:syncNow'),
+    listDiscovered: () => ipcRenderer.invoke('addon:listDiscovered'),
+    importCharacter: (key, options) => ipcRenderer.invoke('addon:importCharacter', key, options),
+    dismissCharacter: key => ipcRenderer.invoke('addon:dismissCharacter', key),
+    rediscoverDismissed: () => ipcRenderer.invoke('addon:rediscoverDismissed'),
+    getLinkedState: characterId => ipcRenderer.invoke('addon:getLinkedState', characterId),
+    clearOverride: (characterId, fieldPath) => ipcRenderer.invoke('addon:clearOverride', characterId, fieldPath),
+    setOverrideMode: enabled => ipcRenderer.invoke('addon:setOverrideMode', enabled),
+    unlinkCharacter: characterId => ipcRenderer.invoke('addon:unlinkCharacter', characterId),
+    openFolder: kind => ipcRenderer.invoke('addon:openFolder', kind),
+    openRepository: () => ipcRenderer.invoke('addon:openRepository'),
+    onSyncUpdated: cb => ipcRenderer.on('addon:sync-updated', (_e, payload) => cb(payload)),
+    offSyncUpdated: () => ipcRenderer.removeAllListeners('addon:sync-updated')
   },
   images: {
     resolve: ref => ipcRenderer.invoke('images:resolve', ref),

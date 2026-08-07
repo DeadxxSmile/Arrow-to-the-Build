@@ -1,0 +1,1 @@
+ALTER TABLE characters ADD COLUMN loadout_id TEXT NOT NULL DEFAULT '';

@@ -6,10 +6,16 @@ const { spawnSync } = require('node:child_process')
 
 const appRoot = path.resolve(__dirname, '..')
 const testsDir = path.join(appRoot, 'tests')
-const electronPath = require('electron')
+let electronPath
+try {
+  electronPath = require('electron')
+} catch (error) {
+  console.error('Electron test runtime is not installed. Run npm ci --include=dev first, then retry npm test.')
+  process.exit(1)
+}
 
 const testFiles = fs.readdirSync(testsDir, { withFileTypes: true })
-  .filter(entry => entry.isFile() && entry.name.endsWith('.test.js'))
+  .filter(entry => entry.isFile() && /\.test\.(?:js|mjs)$/.test(entry.name))
   .map(entry => path.join(testsDir, entry.name))
   .sort((a, b) => a.localeCompare(b))
 

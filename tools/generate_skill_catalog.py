@@ -122,7 +122,7 @@ add_line('scrying','Scrying','World',passives([('Antiquarian Insight',5),('Scrie
 add_line('excavation','Excavation','World',passives([('Hand Brush',2),('Augur',2),('Trowel',2),('Keen Eye: Dig Sites',2),('Excavator’s Reserves',2),('Heavy Shovel',2)]),max_rank=10,source='https://eso-hub.com/en/skills/world/excavation')
 
 # ---- Guild ----
-add_line('fighters_guild','Fighters Guild','Guild',family('Dawnbreaker','Flawless Dawnbreaker','Dawnbreaker of Smiting','Ultimate',10)+family('Silver Bolts','Silver Shards','Silver Leash','Active',2)+family('Circle of Protection','Turn Evil','Ring of Preservation','Active',4)+family('Expert Hunter','Camouflaged Hunter','Evil Hunter','Active',6)+family('Trap Beast','Barbed Trap','Lightweight Beast Trap','Active',8)+passives(['Intimidating Presence','Slayer','Banish the Wicked','Skilled Tracker','Bounty Hunter']),max_rank=10,source='https://eso-hub.com/en/skills/guild/fighters-guild')
+add_line('fighters_guild','Fighters Guild','Guild',family('Dawnbreaker','Flawless Dawnbreaker','Dawnbreaker of Smiting','Ultimate',10)+family('Silver Bolts','Silver Shards','Silver Leash','Active',2)+family('Circle of Protection','Turn Evil','Ring of Preservation','Active',4)+family('Expert Hunter','Camouflaged Hunter','Evil Hunter','Active',6)+family('Trap Beast','Barbed Trap','Lightweight Beast Trap','Active',8)+passives(['Intimidating Presence',('Slayer',3),('Banish the Wicked',3),'Skilled Tracker','Bounty Hunter']),max_rank=10,source='https://eso-hub.com/en/skills/guild/fighters-guild')
 add_line('mages_guild','Mages Guild','Guild',family('Meteor','Ice Comet','Shooting Star','Ultimate',10)+family('Magelight','Inner Light','Radiant Magelight','Active',2)+family('Entropy','Degeneration','Structured Entropy','Active',4)+family('Fire Rune','Scalding Rune','Volcanic Rune','Active',6)+family('Equilibrium','Balance','Spell Symmetry','Active',8)+passives(['Persuasive Will','Mage Adept','Everlasting Magic','Magicka Controller','Might of the Guild']),max_rank=10,source='https://eso-hub.com/en/skills/guild/mages-guild')
 add_line('undaunted','Undaunted','Guild',family('Blood Altar','Overflowing Altar','Sanguine Altar','Active',1)+family('Trapping Webs','Shadow Silk','Tangling Webs','Active',2)+family('Inner Fire','Inner Beast','Inner Rage','Active',3)+family('Bone Shield','Spiked Bone Shield','Bone Surge','Active',4)+family('Necrotic Orb','Mystic Orb','Energy Orb','Active',5)+passives(['Undaunted Command','Undaunted Mettle']),max_rank=9,source='https://eso-hub.com/en/skills/guild/undaunted')
 add_line('psijic_order','Psijic Order','Guild',family('Undo','Precognition','Temporal Guard','Ultimate',10)+family('Time Stop','Time Freeze','Borrowed Time','Active',1)+family('Imbue Weapon','Crushing Weapon','Elemental Weapon','Active',3)+family('Accelerate','Race Against Time','Channeled Acceleration','Active',5)+family('Mend Wounds','Symbiosis','Mend Spirit','Active',7)+family('Meditate','Introspection','Deep Thoughts','Active',9)+passives(['See the Unseen','Clairvoyance','Spell Orb','Deliberation','Concentrated Barrier']),max_rank=10,source='https://eso-hub.com/en/skills/guild/psijic-order')
@@ -221,9 +221,9 @@ for line in lines:
 # Keep deterministic order and metadata.
 catalog={
  'schema_version':1,
- 'catalog_version':'0.4.0-u50',
+ 'catalog_version':'0.4.1-u50',
  'game_version':'Update 50',
- 'verified_date':'2026-08-05',
+ 'verified_date':'2026-08-07',
  'notes':['Bundled offline tracking catalog. Build JSON supplies recommendation order and build-specific status badges.','Class Mastery entries use Class Mastery choices rather than normal skill points.','Scribing rows are tracking-only and do not count against the ordinary skill-point ledger.'],
  'categories':['Class','Weapon','Armor','World','Guild','Alliance War','Racial','Craft','System'],
  'lines':lines

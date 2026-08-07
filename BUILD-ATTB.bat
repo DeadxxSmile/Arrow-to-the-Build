@@ -3,10 +3,10 @@ setlocal EnableExtensions
 cd /d "%~dp0"
 title Arrow to the Build - Build Windows Installer
 
- echo ============================================================
- echo   Arrow to the Build - Build Windows Installer
- echo ============================================================
- echo.
+echo ============================================================
+echo   Arrow to the Build - Build Windows Installer
+echo ============================================================
+echo.
 
 where node >nul 2>&1
 if errorlevel 1 (

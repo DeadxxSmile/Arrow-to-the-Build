@@ -1,8 +1,8 @@
-import React from 'react'
 import { useApp } from '../App'
 import EmptyState from './EmptyState'
 import SkillIcon from '../components/SkillIcon'
 import { currentPhase } from '../utils/buildLogic'
+import { catalogSkillIdForName } from '../utils/catalogLogic'
 
 function HotbarSlot({ slot, index, character }) {
   const owned = slot.catalog_skill_id ? Number(character.skill_allocations?.[slot.catalog_skill_id] || 0) > 0 : false
@@ -27,6 +27,54 @@ function Hotbar({ title, bar, character }) {
   </section>
 }
 
+function ObservedHotbarSlot({ slot, index }) {
+  const empty = !slot || slot.name === 'Empty' || !Number(slot.abilityId || 0)
+  const name = empty ? 'Empty' : slot.name
+  const skillId = !empty ? catalogSkillIdForName(name) : null
+  return <div className={`hotbar-slot observed-current ${empty ? 'empty' : ''}`} title={name}>
+    <span className="hotbar-key">{index + 1}</span>
+    <SkillIcon skillId={skillId} name={name} />
+    <b>{name}</b>
+  </div>
+}
+
+function ObservedUltimateSlot({ slot }) {
+  const empty = !slot || slot.name === 'Empty' || !Number(slot.abilityId || 0)
+  const name = empty ? 'Ultimate not set' : slot.name
+  const skillId = !empty ? catalogSkillIdForName(name) : null
+  return <div className={`hotbar-slot ultimate observed-current ${empty ? 'empty' : ''}`} title={name}>
+    <span className="hotbar-key">R</span>
+    <SkillIcon skillId={skillId} name={name} />
+    <b>{name}</b>
+  </div>
+}
+
+function ObservedHotbar({ bar, barIndex }) {
+  const rows = bar?.slots || []
+  const regular = Array.from({ length: 5 }, (_, index) => rows.find(slot => Number(slot.position) === index + 1 && !slot.isUltimate))
+  const ultimate = rows.find(slot => slot.isUltimate || Number(slot.position) === 6)
+  const label = bar?.label || (barIndex ? 'Backup' : 'Primary')
+  return <section className="eso-hotbar observed-hotbar">
+    <header><div><span>{label}</span><b>{barIndex ? 'Back bar' : 'Front bar'}</b></div><em>ESO snapshot</em></header>
+    <div className="hotbar-track">
+      {regular.map((slot, index) => <ObservedHotbarSlot key={index} slot={slot} index={index} />)}
+      <ObservedUltimateSlot slot={ultimate} />
+    </div>
+  </section>
+}
+
+
+function LiveActionBars({ character }) {
+  const bars = character?.addon_sync?.observed?.skills?.actionBars || []
+  if (!character?.addon_sync?.linked) return null
+  return <details className="rotation-stage rotation-stage-card live-action-bars-stage" open>
+    <summary className="rotation-head live-action-bars-summary"><div><span className="eyebrow">Observed in ESO</span><h2>Current action bars</h2><p>The addon records the abilities actually slotted in game. Compare them with the build phase below without changing the authored build.</p></div><div className="schema-badges"><span>{bars.length} bar{bars.length === 1 ? '' : 's'}</span><span>Latest snapshot</span></div></summary>
+    <div className="rotation-stage-content">
+      {bars.length ? <div className="hotbar-stack">{bars.map((bar, barIndex) => <ObservedHotbar key={`${bar.category ?? barIndex}:${bar.label || ''}`} bar={bar} barIndex={barIndex} />)}</div> : <div className="quiet-box">The latest addon snapshot did not contain action-bar data.</div>}
+    </div>
+  </details>
+}
+
 function RotationStep({ step, index }) {
   const data = typeof step === 'string' ? { name: step } : step
   return <div className="rotation-step"><span className="rotation-number">{index + 1}</span><SkillIcon skillId={data.catalog_skill_id} name={data.name} image={data.image} size="small" /><div><b>{data.name}</b>{data.note && <small>{data.note}</small>}</div></div>
@@ -47,12 +95,13 @@ function RotationBlock({ rotation = {} }) {
 export default function RotationsPage() {
   const { character, build } = useApp()
   if (!character || !build) return <EmptyState />
-  const current = currentPhase(build, character.level)
+  const current = currentPhase(build, character.level, character.cp_craft + character.cp_warfare + character.cp_fitness, build.active_loadout?.id || character.loadout_id)
   const phases = build.phases || []
   return <div className="page">
     <div className="page-title"><span className="eyebrow">Bars by progression band</span><h1>Skill bars &amp; rotations</h1><p>The current phase opens automatically. Hotbars mirror the five ability slots plus ultimate, followed by the sequence or priority system used in combat.</p></div>
+    <LiveActionBars character={character} />
     {!phases.length && <div className="quiet-box">This build file does not define progression phases.</div>}
-    <div className="rotation-stages">{phases.map(phase => <details className={`rotation-stage rotation-stage-v3 ${phase.id === current?.id ? 'current' : ''}`} key={phase.id} open={phase.id === current?.id}>
+    <div className="rotation-stages">{phases.map(phase => <details className={`rotation-stage rotation-stage-card ${phase.id === current?.id ? 'current' : ''}`} key={phase.id} open={phase.id === current?.id}>
       <summary className="rotation-head"><div><span className="eyebrow">{phase.label}</span><h2>{phase.overview}</h2></div>{phase.id === current?.id && <span className="current-pill">current</span>}</summary>
       <div className="rotation-stage-content"><div className="hotbar-stack"><Hotbar title="Front bar" bar={phase.front_bar} character={character} /><Hotbar title="Back bar" bar={phase.back_bar} character={character} /></div><RotationBlock rotation={phase.rotation} /></div>
     </details>)}</div>

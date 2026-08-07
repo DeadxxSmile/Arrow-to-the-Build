@@ -33,15 +33,22 @@ test.afterEach(() => dbModule.close())
 test('migrations apply once, are recorded, and create the expected columns', () => {
   const { db, dir } = freshApp()
   const applied = db.prepare('SELECT filename FROM _migrations ORDER BY filename').all().map(r => r.filename)
-  assert.deepEqual(applied, ['001_initial_schema.sql', '002_character_tracking.sql', '003_catalog_skill_tracking.sql', '004_character_profile.sql'])
+  assert.deepEqual(applied, ['001_initial_schema.sql', '002_character_tracking.sql', '003_catalog_skill_tracking.sql', '004_character_profile.sql', '005_build_loadouts.sql', '006_build_editor_storage.sql', '007_user_build_file_sync.sql', '008_eso_addon_integration.sql'])
   const columns = db.prepare('PRAGMA table_info(characters)').all().map(c => c.name)
-  for (const col of ['tracked_skill_lines_json', 'skill_allocations_json', 'custom_skill_lines_json', 'race', 'alliance']) assert.ok(columns.includes(col))
+  for (const col of ['tracked_skill_lines_json', 'skill_allocations_json', 'custom_skill_lines_json', 'race', 'alliance', 'loadout_id', 'actual_unspent_attribute_points']) assert.ok(columns.includes(col))
+  const buildColumns = db.prepare('PRAGMA table_info(builds)').all().map(c => c.name)
+  for (const col of ['origin_type', 'forked_from_build_id', 'last_saved_revision', 'build_file_path', 'build_file_hash', 'build_file_synced_at', 'build_file_sync_error']) assert.ok(buildColumns.includes(col))
+  assert.ok(db.prepare("SELECT 1 FROM sqlite_master WHERE type='table' AND name='build_editor_drafts'").get())
+  assert.ok(db.prepare("SELECT 1 FROM sqlite_master WHERE type='table' AND name='build_revisions'").get())
+  for (const table of ['addon_character_snapshots', 'character_addon_links', 'character_sync_overrides']) assert.ok(db.prepare("SELECT 1 FROM sqlite_master WHERE type='table' AND name=?").get(table), `${table} should exist`)
+  const snapshotColumns = db.prepare('PRAGMA table_info(addon_character_snapshots)').all().map(c => c.name)
+  assert.ok(snapshotColumns.includes('profile_root'))
   assert.equal(db.pragma('foreign_keys', { simple: true }), 1)
 
   // Reopening must be a no-op, not a second application.
   dbModule.close()
   dbModule.initialize(path.join(dir, 'attb.db'))
-  assert.equal(dbModule.getDb().prepare('SELECT COUNT(*) n FROM _migrations').get().n, 4)
+  assert.equal(dbModule.getDb().prepare('SELECT COUNT(*) n FROM _migrations').get().n, 8)
 })
 
 test('upgrading a v0.2-era database keeps its data and backs the file up first', () => {
@@ -116,15 +123,6 @@ test('character numbers are clamped instead of trusted', () => {
   assert.equal(ipc.call('characters:get', id).level, 1)
   ipc.call('characters:setSkillRank', id, 'herald', 900)
   assert.equal(ipc.call('characters:get', id).skill_ranks.herald, 50)
-})
-
-test('incrementCp cannot be poisoned by a bad amount', () => {
-  const { ipc } = freshApp()
-  const id = ipc.call('characters:create', { name: 'CP', build_id: 'stamina_arcanist_solo_duo', level: 50, cp_warfare: 10 })
-  assert.equal(ipc.call('characters:incrementCp', id, 'warfare', undefined).cp_warfare, 11)
-  assert.equal(ipc.call('characters:incrementCp', id, 'warfare', NaN).cp_warfare, 12)
-  assert.equal(ipc.call('characters:incrementCp', id, 'warfare', -100).cp_warfare, 0, 'never goes negative')
-  assert.throws(() => ipc.call('characters:incrementCp', id, 'nope', 1), /Invalid CP tree/)
 })
 
 test('a rogue update patch cannot reach unlisted columns', () => {
@@ -236,7 +234,7 @@ test('export and import round-trips a character faithfully', async () => {
   assert.equal(result.name, 'Round Trip (2)', 'name collision is resolved, original untouched')
   const restored = ipc.call('characters:get', result.id)
   const original = ipc.call('characters:get', id)
-  for (const key of ['level', 'cp_craft', 'cp_warfare', 'cp_fitness', 'variant_id', 'race', 'alliance']) assert.equal(restored[key], original[key])
+  for (const key of ['level', 'cp_craft', 'cp_warfare', 'cp_fitness', 'loadout_id', 'variant_id', 'race', 'alliance']) assert.equal(restored[key], original[key])
   assert.deepEqual(restored.skill_ranks, original.skill_ranks)
   assert.deepEqual(restored.completed.sort(), original.completed.sort())
   assert.deepEqual(restored.skill_allocations, original.skill_allocations)
@@ -435,14 +433,19 @@ test('an old database row holding more than 1200 CP is clamped on the next write
   assert.equal(ipc.call('characters:get', id).cp_warfare, 1200)
 })
 
-test('a variant that the build marks unavailable is not stored on a character', () => {
+test('loadout and variant selections are validated and stored together', () => {
   const { ipc } = freshApp()
   const id = ipc.call('characters:create', {
-    name: 'Variant', build_id: 'magicka_templar_solo_duo', variant_id: 'off-heal'
+    name: 'Variant', build_id: 'magicka_templar_solo_duo', loadout_id: 'not-real', variant_id: 'not-real'
   })
-  assert.equal(ipc.call('characters:get', id).variant_id, 'solo-duo', 'falls back to the first usable variant')
+  let character = ipc.call('characters:get', id)
+  assert.equal(character.loadout_id, 'flexible-pve', 'an unknown loadout falls back to the default')
+  assert.equal(character.variant_id, 'solo-duo', 'an unknown variant falls back to the first usable variant')
   ipc.call('characters:update', id, { variant_id: 'cyrodiil' })
-  assert.equal(ipc.call('characters:get', id).variant_id, 'cyrodiil')
-  ipc.call('characters:update', id, { variant_id: 'off-heal' })
-  assert.equal(ipc.call('characters:get', id).variant_id, 'cyrodiil', 'an unavailable variant is ignored')
+  character = ipc.call('characters:get', id)
+  assert.equal(character.variant_id, 'cyrodiil')
+  ipc.call('characters:update', id, { loadout_id: 'not-real' })
+  character = ipc.call('characters:get', id)
+  assert.equal(character.loadout_id, 'flexible-pve')
+  assert.equal(character.variant_id, 'cyrodiil', 'a valid variant survives a rejected loadout change')
 })

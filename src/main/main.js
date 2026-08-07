@@ -3,6 +3,7 @@ const { app, BrowserWindow, ipcMain, Menu, nativeImage, dialog, shell } = requir
 const fs = require('fs')
 const path = require('path')
 const os = require('os')
+const { fileURLToPath } = require('url')
 
 const isDev = !app.isPackaged
 const devServerUrl = process.env.ELECTRON_RENDERER_URL || 'http://127.0.0.1:5173'
@@ -31,7 +32,33 @@ function icon() {
 
 function senderWindow(event) { return BrowserWindow.fromWebContents(event.sender) }
 
+function httpsUrl(value) {
+  let url
+  try { url = new URL(String(value || '')) } catch { throw new Error('Invalid external URL') }
+  if (url.protocol !== 'https:') throw new Error('Only HTTPS links can be opened.')
+  if (url.username || url.password) throw new Error('External links must not contain credentials.')
+  return url
+}
+
+function allowedNavigation(value) {
+  try {
+    const target = new URL(value)
+    if (isDev) return target.origin === new URL(devServerUrl).origin
+    if (target.protocol !== 'file:') return false
+    const indexFile = path.resolve(__dirname, '../../build/index.html')
+    return path.resolve(fileURLToPath(target)) === indexFile
+  } catch { return false }
+}
+
 function registerWindowHandlers() {
+  ipcMain.handle('app:getInfo', () => {
+    const pkg = require('../../package.json')
+    return {
+      version: app.getVersion(),
+      repository: typeof pkg.repository === 'string' ? pkg.repository : pkg.repository?.url,
+      issues: typeof pkg.bugs === 'string' ? pkg.bugs : pkg.bugs?.url
+    }
+  })
   ipcMain.handle('window:minimize', e => senderWindow(e)?.minimize())
   ipcMain.handle('window:maximize', e => {
     const win = senderWindow(e)
@@ -40,12 +67,7 @@ function registerWindowHandlers() {
   })
   ipcMain.handle('window:close', e => senderWindow(e)?.close())
   ipcMain.handle('window:isMaximized', e => !!senderWindow(e)?.isMaximized())
-  ipcMain.handle('external:open', (_e, value) => {
-    let url
-    try { url = new URL(String(value || '')) } catch { throw new Error('Invalid external URL') }
-    if (url.protocol !== 'https:') throw new Error('Only HTTPS links can be opened.')
-    return shell.openExternal(url.toString())
-  })
+  ipcMain.handle('external:open', (_e, value) => shell.openExternal(httpsUrl(value).toString()))
 }
 
 function createWindow() {
@@ -71,15 +93,11 @@ function createWindow() {
 // Nothing in ATTB should ever navigate away or spawn a window. Send real links to the OS browser.
 app.on('web-contents-created', (_e, contents) => {
   contents.setWindowOpenHandler(({ url }) => {
-    try {
-      const target = new URL(url)
-      if (target.protocol === 'https:') shell.openExternal(target.toString())
-    } catch { }
+    try { shell.openExternal(httpsUrl(url).toString()) } catch { }
     return { action: 'deny' }
   })
   contents.on('will-navigate', (event, url) => {
-    const allowed = isDev ? url.startsWith(devServerUrl) : url.startsWith('file://')
-    if (!allowed) event.preventDefault()
+    if (!allowedNavigation(url)) event.preventDefault()
   })
   contents.on('will-attach-webview', event => event.preventDefault())
 })
@@ -102,7 +120,11 @@ if (gotLock) {
       require('./ipc/characterHandlers').register(ipcMain)
       require('./ipc/imageHandlers').register(ipcMain)
       require('./ipc/settingsHandlers').register(ipcMain)
-      createWindow()
+      const addonIntegration = require('./addon/integration')
+      addonIntegration.register(ipcMain)
+      const win = createWindow()
+      win.on('focus', () => addonIntegration.syncNow('focus').catch(() => {}))
+      addonIntegration.startWatching()
     } catch (err) {
       dialog.showErrorBox('ATTB startup failed', err.stack || err.message)
       app.quit()
@@ -111,4 +133,7 @@ if (gotLock) {
 }
 
 app.on('window-all-closed', () => app.quit())
-app.on('before-quit', () => { try { require('./database/db').close() } catch { } })
+app.on('before-quit', () => {
+  try { require('./addon/integration').stopWatching() } catch { }
+  try { require('./database/db').close() } catch { }
+})

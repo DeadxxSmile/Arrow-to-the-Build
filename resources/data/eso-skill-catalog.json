@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "catalog_version": "0.4.0-u50",
+  "catalog_version": "0.4.1-u50",
   "game_version": "Update 50",
-  "verified_date": "2026-08-05",
+  "verified_date": "2026-08-07",
   "notes": [
     "Bundled offline tracking catalog. Build JSON supplies recommendation order and build-specific status badges.",
     "Class Mastery entries use Class Mastery choices rather than normal skill points.",
@@ -8652,7 +8652,7 @@
           "id": "fighters_guild__slayer",
           "name": "Slayer",
           "type": "Passive",
-          "max_points": 2,
+          "max_points": 3,
           "base_id": null,
           "morph_ids": [],
           "required_rank": null,
@@ -8662,7 +8662,7 @@
           "id": "fighters_guild__banish_the_wicked",
           "name": "Banish the Wicked",
           "type": "Passive",
-          "max_points": 2,
+          "max_points": 3,
           "base_id": null,
           "morph_ids": [],
           "required_rank": null,

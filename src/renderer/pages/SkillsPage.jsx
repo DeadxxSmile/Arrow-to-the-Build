@@ -1,12 +1,11 @@
-import React from 'react'
 import { Link } from 'react-router-dom'
 import { useApp } from '../App'
 import EmptyState from './EmptyState'
 import SkillIcon from '../components/SkillIcon'
-import { recommendedUnlocks, unlockState } from '../utils/buildLogic'
+import { effectiveCompletedSet, recommendedUnlocks, unlockState } from '../utils/buildLogic'
 import { effectiveAllocation } from '../utils/catalogLogic'
 
-function SkillItem({ item, build, character, lineName, toggleUnlock, compact = false }) {
+function SkillItem({ item, build, character, lineName, toggleUnlock, compact = false, disabled = false }) {
   const state = unlockState(item, character, build)
   const blocked = state === 'blocked' || state === 'locked'
   const complete = state === 'complete'
@@ -17,6 +16,8 @@ function SkillItem({ item, build, character, lineName, toggleUnlock, compact = f
       role="checkbox"
       aria-checked={complete}
       aria-label={`${complete ? 'Mark incomplete' : 'Mark complete'}: ${item.name}`}
+      disabled={disabled}
+      title={disabled ? 'This value is controlled by the live ESO snapshot. Enable override mode to change it locally.' : undefined}
       onClick={() => toggleUnlock(item.id, !complete)}
     ><span aria-hidden="true">{complete ? '✓' : ''}</span></button>
     <SkillIcon skillId={item.catalog_skill_id} name={item.name} image={item.image} size={compact ? 'compact' : 'list'} />
@@ -35,22 +36,24 @@ function SkillItem({ item, build, character, lineName, toggleUnlock, compact = f
 }
 
 export default function SkillsPage() {
-  const { character, build, toggleUnlock, skillGroups, skillLines } = useApp()
+  const { character, build, toggleUnlock, skillGroups, skillLines, appSettings } = useApp()
   if (!character || !build) return <EmptyState />
 
   const lineName = id => skillLines.find(l => l.id === id)?.name || id
   const ordered = [...(build.unlock_order || [])].sort((a, b) => (Number(a.priority) || 0) - (Number(b.priority) || 0))
   const recommended = recommendedUnlocks(build, character).filter(x => x.state !== 'complete').slice(0, 5)
   const finalItems = ordered.filter(x => x.status === 'final')
-  const completed = new Set(character.completed || [])
+  const completed = effectiveCompletedSet(build, character)
+  const syncedLocked = character.addon_sync?.linked && appSettings.addon_allow_overrides !== 'true'
   const completedFinal = finalItems.filter(x => completed.has(x.id)).length
 
   return <div className="page">
     <div className="page-title"><span className="eyebrow">Build-directed progression</span><h1>Skills &amp; passives</h1><p>The recommendation queue is build-specific. Every line page also contains the complete in-game line so you can record optional skills, alternate morphs, crafting passives, and anything else you actually purchased.</p></div>
+    {character.addon_sync?.linked && <div className="sync-status-banner"><span className="sync-dot" /><div><b>Build progress reconciled with live ESO skills</b><small>{syncedLocked ? 'Owned skills and passive ranks are read-only here until override mode is enabled.' : 'Changes here create local overrides while the live ESO values remain available to restore.'}</small></div></div>}
 
     <section className="panel next-five-panel">
       <div className="section-head"><div><span className="eyebrow">Do these next</span><h2>Next five suggestions</h2></div><small>Available skills and morph-ready choices appear first</small></div>
-      <div className="next-five-list">{recommended.length ? recommended.map((item, index) => <div className="numbered-skill" key={item.id}><span>{index + 1}</span><SkillItem item={item} build={build} character={character} lineName={lineName} toggleUnlock={toggleUnlock} /></div>) : <div className="quiet-box">Everything currently available is checked. Raise your skill-line ranks to reveal the next unlocks.</div>}</div>
+      <div className="next-five-list">{recommended.length ? recommended.map((item, index) => <div className="numbered-skill" key={item.id}><span>{index + 1}</span><SkillItem item={item} build={build} character={character} lineName={lineName} toggleUnlock={toggleUnlock} disabled={syncedLocked} /></div>) : <div className="quiet-box">Everything currently available is checked. Raise your skill-line ranks to reveal the next unlocks.</div>}</div>
     </section>
 
     <section className="section-block">
@@ -61,7 +64,7 @@ export default function SkillsPage() {
         if (!items.length) return null
         return <article className="panel final-group" key={group}>
           <div className="final-group-head"><h3>{group}</h3><span>{items.filter(x => completed.has(x.id)).length}/{items.length}</span></div>
-          <div>{items.map(item => <SkillItem key={item.id} item={item} build={build} character={character} lineName={lineName} toggleUnlock={toggleUnlock} compact />)}</div>
+          <div>{items.map(item => <SkillItem key={item.id} item={item} build={build} character={character} lineName={lineName} toggleUnlock={toggleUnlock} compact disabled={syncedLocked} />)}</div>
         </article>
       })}</div>
     </section>

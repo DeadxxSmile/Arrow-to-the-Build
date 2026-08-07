@@ -1,11 +1,11 @@
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "id": "magicka_warden_solo_duo",
-  "name": "Magicka Warden Solo / Duo",
+  "name": "Magicka Warden Flexible PvE",
   "short_name": "Magicka Warden",
   "author": "DeadxxSmile / ATTB Community Launch Bundle",
   "game_version": "Update 50",
-  "verified_date": "2026-08-05",
+  "verified_date": "2026-08-07",
   "summary": "Pure-class frost-and-animal caster with Subterranean Assault timing, Blue Betty sustain, Arctic Blast safety, and the Wild Guardian bear.",
   "theme": {
     "accent": "#72c9aa"
@@ -13,7 +13,7 @@
   "images": {},
   "defaults": {
     "class": "Warden",
-    "race": "Nord",
+    "race": "Dark Elf",
     "alliance": "Ebonheart Pact",
     "eso_plus": false,
     "attributes": {
@@ -23,7 +23,7 @@
     },
     "mundus": "The Thief",
     "front_weapon": "Dual Daggers",
-    "back_weapon": "Inferno Staff at Level 15",
+    "back_weapon": "Ice Staff at Level 15",
     "leveling_armor": "5 Light / 1 Medium / 1 Heavy",
     "endgame_armor": "5 Light / 2 Medium",
     "leveling_trait": "Training",
@@ -97,16 +97,28 @@
       "group": "Armor"
     },
     {
+      "id": "mages_guild",
+      "name": "Mages Guild",
+      "max": 10,
+      "group": "Guild"
+    },
+    {
       "id": "undaunted",
       "name": "Undaunted",
       "max": 9,
       "group": "Guild"
     },
     {
-      "id": "nord",
-      "name": "Nord Skills",
+      "id": "dark_elf",
+      "name": "Dark Elf Skills",
       "max": 50,
       "group": "Racial"
+    },
+    {
+      "id": "alchemy",
+      "name": "Alchemy",
+      "max": 50,
+      "group": "Craft"
     },
     {
       "id": "scribing",
@@ -167,7 +179,7 @@
                 25,
                 50
               ],
-              "note": "Boosts area damage, including the beam."
+              "note": "Boosts area damage."
             },
             {
               "id": "fighting_finesse",
@@ -248,6 +260,17 @@
                 50
               ],
               "note": "Solo sustain through healing from direct damage."
+            },
+            {
+              "id": "deadly_aim",
+              "name": "Deadly Aim",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                25,
+                50
+              ],
+              "note": "Default single-target damage slottable for the U50 baseline."
             }
           ]
         },
@@ -307,8 +330,8 @@
       ],
       "final_slots": [
         "master_at_arms",
-        "biting_aura",
-        "thaumaturge",
+        "deadly_aim",
+        "fighting_finesse",
         "wrathful_strikes"
       ]
     },
@@ -380,6 +403,20 @@
                 50
               ],
               "note": "Adds resource recovery."
+            },
+            {
+              "id": "siphoning_spells",
+              "name": "Siphoning Spells",
+              "max_points": 50,
+              "slottable": true,
+              "jump_points": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "note": "Restores Magicka after kills; default kill-sustain choice for Magicka Warden."
             }
           ]
         },
@@ -534,7 +571,7 @@
       ],
       "final_slots": [
         "boundless_vitality",
-        "bloody_renewal",
+        "siphoning_spells",
         "rejuvenation",
         "fortified"
       ]
@@ -775,7 +812,8 @@
       "notes": "Starter Animal Companions attack and line-leveling slot.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "fungal_growth",
@@ -791,7 +829,8 @@
       "notes": "Starter heal and Green Balance line-leveling slot.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "frost_cloak",
@@ -807,7 +846,8 @@
       "notes": "Starter Winter’s Embrace buff and line-leveling slot.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "scorch",
@@ -823,7 +863,8 @@
       "notes": "Train Scorch to rank IV, then take Subterranean Assault.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "subterranean_assault",
@@ -841,7 +882,8 @@
       "image": null,
       "requires": [
         "scorch"
-      ]
+      ],
+      "skill_point_cost": 1
     },
     {
       "id": "betty_netch",
@@ -857,7 +899,8 @@
       "notes": "Train Betty Netch to rank IV, then take Blue Betty.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "blue_betty",
@@ -875,7 +918,8 @@
       "image": null,
       "requires": [
         "betty_netch"
-      ]
+      ],
+      "skill_point_cost": 1
     },
     {
       "id": "feral_guardian",
@@ -891,7 +935,8 @@
       "notes": "Train Feral Guardian to rank IV, then take Wild Guardian.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "wild_guardian",
@@ -909,7 +954,8 @@
       "image": null,
       "requires": [
         "feral_guardian"
-      ]
+      ],
+      "skill_point_cost": 1
     },
     {
       "id": "lotus_flower",
@@ -925,7 +971,8 @@
       "notes": "Train Lotus Flower to rank IV, then take Lotus Blossom.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "lotus_blossom",
@@ -943,7 +990,8 @@
       "image": null,
       "requires": [
         "lotus_flower"
-      ]
+      ],
+      "skill_point_cost": 1
     },
     {
       "id": "impaling_shards",
@@ -959,7 +1007,8 @@
       "notes": "Train Impaling Shards to rank IV, then take Winter’s Revenge.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "winter_s_revenge",
@@ -977,7 +1026,8 @@
       "image": null,
       "requires": [
         "impaling_shards"
-      ]
+      ],
+      "skill_point_cost": 1
     },
     {
       "id": "arctic_wind",
@@ -993,7 +1043,8 @@
       "notes": "Train Arctic Wind to rank IV, then take Arctic Blast.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "arctic_blast",
@@ -1011,7 +1062,8 @@
       "image": null,
       "requires": [
         "arctic_wind"
-      ]
+      ],
+      "skill_point_cost": 1
     },
     {
       "id": "sleet_storm",
@@ -1027,7 +1079,8 @@
       "notes": "Train Sleet Storm to rank IV, then take Northern Storm.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "northern_storm",
@@ -1045,7 +1098,8 @@
       "image": null,
       "requires": [
         "sleet_storm"
-      ]
+      ],
+      "skill_point_cost": 1
     },
     {
       "id": "wall_of_elements",
@@ -1177,7 +1231,8 @@
       "notes": "Permanent Animal Companions passive.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "bond_with_nature_2",
@@ -1193,7 +1248,8 @@
       "notes": "Permanent Animal Companions passive.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "savage_beast_1",
@@ -1209,7 +1265,8 @@
       "notes": "Permanent Animal Companions passive.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "savage_beast_2",
@@ -1225,7 +1282,8 @@
       "notes": "Permanent Animal Companions passive.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "flourish_1",
@@ -1241,7 +1299,8 @@
       "notes": "Permanent Animal Companions passive.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "flourish_2",
@@ -1257,7 +1316,8 @@
       "notes": "Permanent Animal Companions passive.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "advanced_species_1",
@@ -1273,7 +1333,8 @@
       "notes": "Permanent Animal Companions passive.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "advanced_species_2",
@@ -1289,39 +1350,8 @@
       "notes": "Permanent Animal Companions passive.",
       "morph_from": null,
       "image": null,
-      "requires": []
-    },
-    {
-      "id": "accelerated_growth_1",
-      "name": "Accelerated Growth I",
-      "catalog_skill_id": "green_balance__accelerated_growth",
-      "section": "Passive",
-      "line": "green_balance",
-      "required_rank": 8,
-      "kind": "Passive",
-      "phase": "Early",
-      "status": "final",
-      "priority": 330,
-      "notes": "Permanent Green Balance passive.",
-      "morph_from": null,
-      "image": null,
-      "requires": []
-    },
-    {
-      "id": "accelerated_growth_2",
-      "name": "Accelerated Growth II",
-      "catalog_skill_id": "green_balance__accelerated_growth",
-      "section": "Passive",
-      "line": "green_balance",
-      "required_rank": 18,
-      "kind": "Passive",
-      "phase": "Middle",
-      "status": "final",
-      "priority": 340,
-      "notes": "Permanent Green Balance passive.",
-      "morph_from": null,
-      "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "nature_s_gift_1",
@@ -1333,11 +1363,12 @@
       "kind": "Passive",
       "phase": "Early",
       "status": "final",
-      "priority": 350,
+      "priority": 330,
       "notes": "Permanent Green Balance passive.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "nature_s_gift_2",
@@ -1349,43 +1380,12 @@
       "kind": "Passive",
       "phase": "Middle",
       "status": "final",
-      "priority": 360,
+      "priority": 340,
       "notes": "Permanent Green Balance passive.",
       "morph_from": null,
       "image": null,
-      "requires": []
-    },
-    {
-      "id": "emerald_moss_1",
-      "name": "Emerald Moss I",
-      "catalog_skill_id": "green_balance__emerald_moss",
-      "section": "Passive",
-      "line": "green_balance",
-      "required_rank": 22,
-      "kind": "Passive",
-      "phase": "Middle",
-      "status": "final",
-      "priority": 370,
-      "notes": "Permanent Green Balance passive.",
-      "morph_from": null,
-      "image": null,
-      "requires": []
-    },
-    {
-      "id": "emerald_moss_2",
-      "name": "Emerald Moss II",
-      "catalog_skill_id": "green_balance__emerald_moss",
-      "section": "Passive",
-      "line": "green_balance",
-      "required_rank": 36,
-      "kind": "Passive",
-      "phase": "Final",
-      "status": "final",
-      "priority": 380,
-      "notes": "Permanent Green Balance passive.",
-      "morph_from": null,
-      "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "maturation_1",
@@ -1397,11 +1397,12 @@
       "kind": "Passive",
       "phase": "Final",
       "status": "final",
-      "priority": 390,
+      "priority": 350,
       "notes": "Permanent Green Balance passive.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "maturation_2",
@@ -1413,11 +1414,12 @@
       "kind": "Passive",
       "phase": "Final",
       "status": "final",
-      "priority": 400,
+      "priority": 360,
       "notes": "Permanent Green Balance passive.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "glacial_presence_1",
@@ -1429,11 +1431,12 @@
       "kind": "Passive",
       "phase": "Early",
       "status": "final",
-      "priority": 410,
+      "priority": 370,
       "notes": "Permanent Winter’s Embrace passive.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "glacial_presence_2",
@@ -1445,11 +1448,12 @@
       "kind": "Passive",
       "phase": "Middle",
       "status": "final",
-      "priority": 420,
+      "priority": 380,
       "notes": "Permanent Winter’s Embrace passive.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "frozen_armor_1",
@@ -1461,11 +1465,12 @@
       "kind": "Passive",
       "phase": "Early",
       "status": "final",
-      "priority": 430,
+      "priority": 390,
       "notes": "Permanent Winter’s Embrace passive.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "frozen_armor_2",
@@ -1477,11 +1482,12 @@
       "kind": "Passive",
       "phase": "Middle",
       "status": "final",
-      "priority": 440,
+      "priority": 400,
       "notes": "Permanent Winter’s Embrace passive.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "icy_aura_1",
@@ -1493,11 +1499,12 @@
       "kind": "Passive",
       "phase": "Middle",
       "status": "final",
-      "priority": 450,
+      "priority": 410,
       "notes": "Permanent Winter’s Embrace passive.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "icy_aura_2",
@@ -1509,11 +1516,12 @@
       "kind": "Passive",
       "phase": "Final",
       "status": "final",
-      "priority": 460,
+      "priority": 420,
       "notes": "Permanent Winter’s Embrace passive.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "piercing_cold_1",
@@ -1525,11 +1533,12 @@
       "kind": "Passive",
       "phase": "Final",
       "status": "final",
-      "priority": 470,
+      "priority": 430,
       "notes": "Permanent Winter’s Embrace passive.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "piercing_cold_2",
@@ -1541,43 +1550,12 @@
       "kind": "Passive",
       "phase": "Final",
       "status": "final",
-      "priority": 480,
+      "priority": 440,
       "notes": "Permanent Winter’s Embrace passive.",
       "morph_from": null,
       "image": null,
-      "requires": []
-    },
-    {
-      "id": "focused_killer_1",
-      "name": "Focused Killer I",
-      "catalog_skill_id": "dual_wield__focused_killer",
-      "section": "Passive",
-      "line": "dual_wield",
-      "required_rank": 10,
-      "kind": "Passive",
-      "phase": "Early",
-      "status": "final",
-      "priority": 490,
-      "notes": "Permanent Dual Wield damage passive.",
-      "morph_from": null,
-      "image": null,
-      "requires": []
-    },
-    {
-      "id": "focused_killer_2",
-      "name": "Focused Killer II",
-      "catalog_skill_id": "dual_wield__focused_killer",
-      "section": "Passive",
-      "line": "dual_wield",
-      "required_rank": 30,
-      "kind": "Passive",
-      "phase": "Final",
-      "status": "final",
-      "priority": 500,
-      "notes": "Permanent Dual Wield damage passive.",
-      "morph_from": null,
-      "image": null,
-      "requires": []
+      "requires": [],
+      "skill_point_cost": 1
     },
     {
       "id": "ambidextrous_1",
@@ -1589,7 +1567,7 @@
       "kind": "Passive",
       "phase": "Early",
       "status": "final",
-      "priority": 510,
+      "priority": 450,
       "notes": "Permanent Dual Wield damage passive.",
       "morph_from": null,
       "image": null,
@@ -1605,39 +1583,7 @@
       "kind": "Passive",
       "phase": "Final",
       "status": "final",
-      "priority": 520,
-      "notes": "Permanent Dual Wield damage passive.",
-      "morph_from": null,
-      "image": null,
-      "requires": []
-    },
-    {
-      "id": "controlled_fury_1",
-      "name": "Controlled Fury I",
-      "catalog_skill_id": "dual_wield__controlled_fury",
-      "section": "Passive",
-      "line": "dual_wield",
-      "required_rank": 10,
-      "kind": "Passive",
-      "phase": "Early",
-      "status": "final",
-      "priority": 530,
-      "notes": "Permanent Dual Wield damage passive.",
-      "morph_from": null,
-      "image": null,
-      "requires": []
-    },
-    {
-      "id": "controlled_fury_2",
-      "name": "Controlled Fury II",
-      "catalog_skill_id": "dual_wield__controlled_fury",
-      "section": "Passive",
-      "line": "dual_wield",
-      "required_rank": 30,
-      "kind": "Passive",
-      "phase": "Final",
-      "status": "final",
-      "priority": 540,
+      "priority": 460,
       "notes": "Permanent Dual Wield damage passive.",
       "morph_from": null,
       "image": null,
@@ -1653,7 +1599,7 @@
       "kind": "Passive",
       "phase": "Early",
       "status": "final",
-      "priority": 550,
+      "priority": 470,
       "notes": "Permanent Dual Wield damage passive.",
       "morph_from": null,
       "image": null,
@@ -1669,40 +1615,8 @@
       "kind": "Passive",
       "phase": "Final",
       "status": "final",
-      "priority": 560,
+      "priority": 480,
       "notes": "Permanent Dual Wield damage passive.",
-      "morph_from": null,
-      "image": null,
-      "requires": []
-    },
-    {
-      "id": "penetrating_magic_1",
-      "name": "Penetrating Magic I",
-      "catalog_skill_id": "destruction_staff__penetrating_magic",
-      "section": "Passive",
-      "line": "destruction_staff",
-      "required_rank": 10,
-      "kind": "Passive",
-      "phase": "Early",
-      "status": "final",
-      "priority": 570,
-      "notes": "Permanent Destruction Staff passive; skip Tri Focus for this setup.",
-      "morph_from": null,
-      "image": null,
-      "requires": []
-    },
-    {
-      "id": "penetrating_magic_2",
-      "name": "Penetrating Magic II",
-      "catalog_skill_id": "destruction_staff__penetrating_magic",
-      "section": "Passive",
-      "line": "destruction_staff",
-      "required_rank": 30,
-      "kind": "Passive",
-      "phase": "Final",
-      "status": "final",
-      "priority": 580,
-      "notes": "Permanent Destruction Staff passive; skip Tri Focus for this setup.",
       "morph_from": null,
       "image": null,
       "requires": []
@@ -1717,7 +1631,7 @@
       "kind": "Passive",
       "phase": "Early",
       "status": "final",
-      "priority": 590,
+      "priority": 490,
       "notes": "Permanent Destruction Staff passive; skip Tri Focus for this setup.",
       "morph_from": null,
       "image": null,
@@ -1733,7 +1647,7 @@
       "kind": "Passive",
       "phase": "Final",
       "status": "final",
-      "priority": 600,
+      "priority": 500,
       "notes": "Permanent Destruction Staff passive; skip Tri Focus for this setup.",
       "morph_from": null,
       "image": null,
@@ -1749,7 +1663,7 @@
       "kind": "Passive",
       "phase": "Early",
       "status": "final",
-      "priority": 610,
+      "priority": 510,
       "notes": "Permanent Destruction Staff passive; skip Tri Focus for this setup.",
       "morph_from": null,
       "image": null,
@@ -1765,39 +1679,7 @@
       "kind": "Passive",
       "phase": "Final",
       "status": "final",
-      "priority": 620,
-      "notes": "Permanent Destruction Staff passive; skip Tri Focus for this setup.",
-      "morph_from": null,
-      "image": null,
-      "requires": []
-    },
-    {
-      "id": "destruction_expert_1",
-      "name": "Destruction Expert I",
-      "catalog_skill_id": "destruction_staff__destruction_expert",
-      "section": "Passive",
-      "line": "destruction_staff",
-      "required_rank": 10,
-      "kind": "Passive",
-      "phase": "Early",
-      "status": "final",
-      "priority": 630,
-      "notes": "Permanent Destruction Staff passive; skip Tri Focus for this setup.",
-      "morph_from": null,
-      "image": null,
-      "requires": []
-    },
-    {
-      "id": "destruction_expert_2",
-      "name": "Destruction Expert II",
-      "catalog_skill_id": "destruction_staff__destruction_expert",
-      "section": "Passive",
-      "line": "destruction_staff",
-      "required_rank": 30,
-      "kind": "Passive",
-      "phase": "Final",
-      "status": "final",
-      "priority": 640,
+      "priority": 520,
       "notes": "Permanent Destruction Staff passive; skip Tri Focus for this setup.",
       "morph_from": null,
       "image": null,
@@ -1813,7 +1695,7 @@
       "kind": "Passive",
       "phase": "Early",
       "status": "final",
-      "priority": 650,
+      "priority": 530,
       "notes": "Core Light Armor passive.",
       "morph_from": null,
       "image": null,
@@ -1829,7 +1711,7 @@
       "kind": "Passive",
       "phase": "Final",
       "status": "final",
-      "priority": 660,
+      "priority": 540,
       "notes": "Core Light Armor passive.",
       "morph_from": null,
       "image": null,
@@ -1845,7 +1727,7 @@
       "kind": "Passive",
       "phase": "Early",
       "status": "final",
-      "priority": 670,
+      "priority": 550,
       "notes": "Core Light Armor passive.",
       "morph_from": null,
       "image": null,
@@ -1861,7 +1743,7 @@
       "kind": "Passive",
       "phase": "Final",
       "status": "final",
-      "priority": 680,
+      "priority": 560,
       "notes": "Core Light Armor passive.",
       "morph_from": null,
       "image": null,
@@ -1877,7 +1759,7 @@
       "kind": "Passive",
       "phase": "Early",
       "status": "final",
-      "priority": 690,
+      "priority": 570,
       "notes": "Core Light Armor passive.",
       "morph_from": null,
       "image": null,
@@ -1893,7 +1775,7 @@
       "kind": "Passive",
       "phase": "Final",
       "status": "final",
-      "priority": 700,
+      "priority": 580,
       "notes": "Core Light Armor passive.",
       "morph_from": null,
       "image": null,
@@ -1909,7 +1791,7 @@
       "kind": "Passive",
       "phase": "Early",
       "status": "final",
-      "priority": 710,
+      "priority": 590,
       "notes": "Core Light Armor passive.",
       "morph_from": null,
       "image": null,
@@ -1925,7 +1807,7 @@
       "kind": "Passive",
       "phase": "Final",
       "status": "final",
-      "priority": 720,
+      "priority": 600,
       "notes": "Core Light Armor passive.",
       "morph_from": null,
       "image": null,
@@ -1941,7 +1823,7 @@
       "kind": "Passive",
       "phase": "Early",
       "status": "final",
-      "priority": 730,
+      "priority": 610,
       "notes": "Improves the value of the Medium pieces in the final mix.",
       "morph_from": null,
       "image": null,
@@ -1957,7 +1839,7 @@
       "kind": "Passive",
       "phase": "Middle",
       "status": "final",
-      "priority": 740,
+      "priority": 620,
       "notes": "Improves the value of the Medium pieces in the final mix.",
       "morph_from": null,
       "image": null,
@@ -1973,7 +1855,7 @@
       "kind": "Passive",
       "phase": "Final",
       "status": "final",
-      "priority": 750,
+      "priority": 630,
       "notes": "Improves the value of the Medium pieces in the final mix.",
       "morph_from": null,
       "image": null,
@@ -1989,7 +1871,7 @@
       "kind": "Passive",
       "phase": "Middle",
       "status": "final",
-      "priority": 760,
+      "priority": 640,
       "notes": "Improves damage from the Medium pieces in the final mix.",
       "morph_from": null,
       "image": null,
@@ -2005,7 +1887,7 @@
       "kind": "Passive",
       "phase": "Final",
       "status": "final",
-      "priority": 770,
+      "priority": 650,
       "notes": "Improves damage from the Medium pieces in the final mix.",
       "morph_from": null,
       "image": null,
@@ -2021,7 +1903,7 @@
       "kind": "Passive",
       "phase": "Early",
       "status": "final",
-      "priority": 780,
+      "priority": 660,
       "notes": "Rewards the mixed armor weights used by the build.",
       "morph_from": null,
       "image": null,
@@ -2037,184 +1919,8 @@
       "kind": "Passive",
       "phase": "Early",
       "status": "final",
-      "priority": 790,
+      "priority": 670,
       "notes": "Rewards the mixed armor weights used by the build.",
-      "morph_from": null,
-      "image": null,
-      "requires": []
-    },
-    {
-      "id": "reveler_1",
-      "name": "Reveler I",
-      "catalog_skill_id": "nord__reveler",
-      "section": "Passive",
-      "line": "nord",
-      "required_rank": 1,
-      "kind": "Passive",
-      "phase": "Early",
-      "status": "final",
-      "priority": 800,
-      "notes": "Recommended racial passive.",
-      "morph_from": null,
-      "image": null,
-      "requires": []
-    },
-    {
-      "id": "reveler_2",
-      "name": "Reveler II",
-      "catalog_skill_id": "nord__reveler",
-      "section": "Passive",
-      "line": "nord",
-      "required_rank": 10,
-      "kind": "Passive",
-      "phase": "Early",
-      "status": "final",
-      "priority": 810,
-      "notes": "Recommended racial passive.",
-      "morph_from": null,
-      "image": null,
-      "requires": []
-    },
-    {
-      "id": "stalwart_1",
-      "name": "Stalwart I",
-      "catalog_skill_id": "nord__stalwart",
-      "section": "Passive",
-      "line": "nord",
-      "required_rank": 5,
-      "kind": "Passive",
-      "phase": "Early",
-      "status": "final",
-      "priority": 820,
-      "notes": "Recommended racial passive.",
-      "morph_from": null,
-      "image": null,
-      "requires": []
-    },
-    {
-      "id": "stalwart_2",
-      "name": "Stalwart II",
-      "catalog_skill_id": "nord__stalwart",
-      "section": "Passive",
-      "line": "nord",
-      "required_rank": 15,
-      "kind": "Passive",
-      "phase": "Early",
-      "status": "final",
-      "priority": 830,
-      "notes": "Recommended racial passive.",
-      "morph_from": null,
-      "image": null,
-      "requires": []
-    },
-    {
-      "id": "stalwart_3",
-      "name": "Stalwart III",
-      "catalog_skill_id": "nord__stalwart",
-      "section": "Passive",
-      "line": "nord",
-      "required_rank": 30,
-      "kind": "Passive",
-      "phase": "Final",
-      "status": "final",
-      "priority": 840,
-      "notes": "Recommended racial passive.",
-      "morph_from": null,
-      "image": null,
-      "requires": []
-    },
-    {
-      "id": "resist_frost_1",
-      "name": "Resist Frost I",
-      "catalog_skill_id": "nord__resist_frost",
-      "section": "Passive",
-      "line": "nord",
-      "required_rank": 10,
-      "kind": "Passive",
-      "phase": "Early",
-      "status": "final",
-      "priority": 850,
-      "notes": "Recommended racial passive.",
-      "morph_from": null,
-      "image": null,
-      "requires": []
-    },
-    {
-      "id": "resist_frost_2",
-      "name": "Resist Frost II",
-      "catalog_skill_id": "nord__resist_frost",
-      "section": "Passive",
-      "line": "nord",
-      "required_rank": 20,
-      "kind": "Passive",
-      "phase": "Middle",
-      "status": "final",
-      "priority": 860,
-      "notes": "Recommended racial passive.",
-      "morph_from": null,
-      "image": null,
-      "requires": []
-    },
-    {
-      "id": "resist_frost_3",
-      "name": "Resist Frost III",
-      "catalog_skill_id": "nord__resist_frost",
-      "section": "Passive",
-      "line": "nord",
-      "required_rank": 40,
-      "kind": "Passive",
-      "phase": "Final",
-      "status": "final",
-      "priority": 870,
-      "notes": "Recommended racial passive.",
-      "morph_from": null,
-      "image": null,
-      "requires": []
-    },
-    {
-      "id": "rugged_1",
-      "name": "Rugged I",
-      "catalog_skill_id": "nord__rugged",
-      "section": "Passive",
-      "line": "nord",
-      "required_rank": 25,
-      "kind": "Passive",
-      "phase": "Middle",
-      "status": "final",
-      "priority": 880,
-      "notes": "Recommended racial passive.",
-      "morph_from": null,
-      "image": null,
-      "requires": []
-    },
-    {
-      "id": "rugged_2",
-      "name": "Rugged II",
-      "catalog_skill_id": "nord__rugged",
-      "section": "Passive",
-      "line": "nord",
-      "required_rank": 35,
-      "kind": "Passive",
-      "phase": "Final",
-      "status": "final",
-      "priority": 890,
-      "notes": "Recommended racial passive.",
-      "morph_from": null,
-      "image": null,
-      "requires": []
-    },
-    {
-      "id": "rugged_3",
-      "name": "Rugged III",
-      "catalog_skill_id": "nord__rugged",
-      "section": "Passive",
-      "line": "nord",
-      "required_rank": 50,
-      "kind": "Passive",
-      "phase": "Final",
-      "status": "final",
-      "priority": 900,
-      "notes": "Recommended racial passive.",
       "morph_from": null,
       "image": null,
       "requires": []
@@ -2229,11 +1935,13 @@
       "kind": "Passive",
       "phase": "Final",
       "status": "final",
-      "priority": 910,
+      "priority": 680,
       "notes": "One of the build's two recommended Class Mastery choices. Requires all three native class lines at rank 50; subclassing disables Class Mastery.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "source_kind": "class_mastery",
+      "skill_point_cost": 0
     },
     {
       "id": "glacial_obstinance",
@@ -2245,8 +1953,599 @@
       "kind": "Passive",
       "phase": "Final",
       "status": "final",
-      "priority": 920,
+      "priority": 690,
       "notes": "One of the build's two recommended Class Mastery choices. Requires all three native class lines at rank 50; subclassing disables Class Mastery.",
+      "morph_from": null,
+      "image": null,
+      "requires": [],
+      "source_kind": "class_mastery",
+      "skill_point_cost": 0
+    },
+    {
+      "id": "ashlander_1",
+      "name": "Ashlander I",
+      "catalog_skill_id": "dark_elf__ashlander",
+      "section": "Passive",
+      "line": "dark_elf",
+      "required_rank": 1,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 700,
+      "notes": "Recommended racial passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "ashlander_2",
+      "name": "Ashlander II",
+      "catalog_skill_id": "dark_elf__ashlander",
+      "section": "Passive",
+      "line": "dark_elf",
+      "required_rank": 10,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 710,
+      "notes": "Recommended racial passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "dynamic_1",
+      "name": "Dynamic I",
+      "catalog_skill_id": "dark_elf__dynamic",
+      "section": "Passive",
+      "line": "dark_elf",
+      "required_rank": 5,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 720,
+      "notes": "Recommended racial passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "dynamic_2",
+      "name": "Dynamic II",
+      "catalog_skill_id": "dark_elf__dynamic",
+      "section": "Passive",
+      "line": "dark_elf",
+      "required_rank": 15,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 730,
+      "notes": "Recommended racial passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "dynamic_3",
+      "name": "Dynamic III",
+      "catalog_skill_id": "dark_elf__dynamic",
+      "section": "Passive",
+      "line": "dark_elf",
+      "required_rank": 30,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 740,
+      "notes": "Recommended racial passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "resist_flame_1",
+      "name": "Resist Flame I",
+      "catalog_skill_id": "dark_elf__resist_flame",
+      "section": "Passive",
+      "line": "dark_elf",
+      "required_rank": 10,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 750,
+      "notes": "Recommended racial passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "resist_flame_2",
+      "name": "Resist Flame II",
+      "catalog_skill_id": "dark_elf__resist_flame",
+      "section": "Passive",
+      "line": "dark_elf",
+      "required_rank": 20,
+      "kind": "Passive",
+      "phase": "Middle",
+      "status": "final",
+      "priority": 760,
+      "notes": "Recommended racial passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "resist_flame_3",
+      "name": "Resist Flame III",
+      "catalog_skill_id": "dark_elf__resist_flame",
+      "section": "Passive",
+      "line": "dark_elf",
+      "required_rank": 40,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 770,
+      "notes": "Recommended racial passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "ruination_1",
+      "name": "Ruination I",
+      "catalog_skill_id": "dark_elf__ruination",
+      "section": "Passive",
+      "line": "dark_elf",
+      "required_rank": 25,
+      "kind": "Passive",
+      "phase": "Middle",
+      "status": "final",
+      "priority": 780,
+      "notes": "Recommended racial passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "ruination_2",
+      "name": "Ruination II",
+      "catalog_skill_id": "dark_elf__ruination",
+      "section": "Passive",
+      "line": "dark_elf",
+      "required_rank": 35,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 790,
+      "notes": "Recommended racial passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "ruination_3",
+      "name": "Ruination III",
+      "catalog_skill_id": "dark_elf__ruination",
+      "section": "Passive",
+      "line": "dark_elf",
+      "required_rank": 50,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 800,
+      "notes": "Recommended racial passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "accelerated_growth_1",
+      "name": "Accelerated Growth I",
+      "catalog_skill_id": "green_balance__accelerated_growth",
+      "section": "Passive",
+      "line": "green_balance",
+      "required_rank": 8,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 810,
+      "notes": "Useful later Green Balance passive; buy after Nature’s Gift and Maturation.",
+      "morph_from": null,
+      "image": null,
+      "requires": [],
+      "skill_point_cost": 1
+    },
+    {
+      "id": "accelerated_growth_2",
+      "name": "Accelerated Growth II",
+      "catalog_skill_id": "green_balance__accelerated_growth",
+      "section": "Passive",
+      "line": "green_balance",
+      "required_rank": 18,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 820,
+      "notes": "Useful later Green Balance passive; buy after Nature’s Gift and Maturation.",
+      "morph_from": null,
+      "image": null,
+      "requires": [],
+      "skill_point_cost": 1
+    },
+    {
+      "id": "focused_killer_1",
+      "name": "Focused Killer I",
+      "catalog_skill_id": "dual_wield__focused_killer",
+      "section": "Passive",
+      "line": "dual_wield",
+      "required_rank": 10,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 830,
+      "notes": "Useful later Dual Wield passive; Ambidextrous and Twin Blade and Blunt take priority.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "focused_killer_2",
+      "name": "Focused Killer II",
+      "catalog_skill_id": "dual_wield__focused_killer",
+      "section": "Passive",
+      "line": "dual_wield",
+      "required_rank": 30,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 840,
+      "notes": "Useful later Dual Wield passive; Ambidextrous and Twin Blade and Blunt take priority.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "controlled_fury_1",
+      "name": "Controlled Fury I",
+      "catalog_skill_id": "dual_wield__controlled_fury",
+      "section": "Passive",
+      "line": "dual_wield",
+      "required_rank": 10,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 850,
+      "notes": "Useful later Dual Wield passive; Ambidextrous and Twin Blade and Blunt take priority.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "controlled_fury_2",
+      "name": "Controlled Fury II",
+      "catalog_skill_id": "dual_wield__controlled_fury",
+      "section": "Passive",
+      "line": "dual_wield",
+      "required_rank": 30,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 860,
+      "notes": "Useful later Dual Wield passive; Ambidextrous and Twin Blade and Blunt take priority.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "wind_walker_1",
+      "name": "Wind Walker I",
+      "catalog_skill_id": "medium_armor__wind_walker",
+      "section": "Passive",
+      "line": "medium_armor",
+      "required_rank": 14,
+      "kind": "Passive",
+      "phase": "Early",
+      "status": "final",
+      "priority": 870,
+      "notes": "Core Medium Armor passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "wind_walker_2",
+      "name": "Wind Walker II",
+      "catalog_skill_id": "medium_armor__wind_walker",
+      "section": "Passive",
+      "line": "medium_armor",
+      "required_rank": 34,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 880,
+      "notes": "Core Medium Armor passive.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "athletics_1",
+      "name": "Athletics I",
+      "catalog_skill_id": "medium_armor__athletics",
+      "section": "Passive",
+      "line": "medium_armor",
+      "required_rank": 14,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 890,
+      "notes": "Useful mobility/armor passive; buy after the primary damage and sustain passives.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "athletics_2",
+      "name": "Athletics II",
+      "catalog_skill_id": "medium_armor__athletics",
+      "section": "Passive",
+      "line": "medium_armor",
+      "required_rank": 34,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 900,
+      "notes": "Useful mobility/armor passive; buy after the primary damage and sustain passives.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "mage_adept_1",
+      "name": "Mage Adept I",
+      "catalog_skill_id": "mages_guild__mage_adept",
+      "section": "Passive",
+      "line": "mages_guild",
+      "required_rank": 3,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 910,
+      "notes": "Core Mages Guild passive because Ulfsild’s Contingency is part of the final bar.",
+      "morph_from": null,
+      "image": null,
+      "requires": [],
+      "skill_point_cost": 1
+    },
+    {
+      "id": "mage_adept_2",
+      "name": "Mage Adept II",
+      "catalog_skill_id": "mages_guild__mage_adept",
+      "section": "Passive",
+      "line": "mages_guild",
+      "required_rank": 5,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 920,
+      "notes": "Core Mages Guild passive because Ulfsild’s Contingency is part of the final bar.",
+      "morph_from": null,
+      "image": null,
+      "requires": [],
+      "skill_point_cost": 1
+    },
+    {
+      "id": "everlasting_magic_1",
+      "name": "Everlasting Magic I",
+      "catalog_skill_id": "mages_guild__everlasting_magic",
+      "section": "Passive",
+      "line": "mages_guild",
+      "required_rank": 5,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 930,
+      "notes": "Core Mages Guild passive because Ulfsild’s Contingency is part of the final bar.",
+      "morph_from": null,
+      "image": null,
+      "requires": [],
+      "skill_point_cost": 1
+    },
+    {
+      "id": "everlasting_magic_2",
+      "name": "Everlasting Magic II",
+      "catalog_skill_id": "mages_guild__everlasting_magic",
+      "section": "Passive",
+      "line": "mages_guild",
+      "required_rank": 7,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 940,
+      "notes": "Core Mages Guild passive because Ulfsild’s Contingency is part of the final bar.",
+      "morph_from": null,
+      "image": null,
+      "requires": [],
+      "skill_point_cost": 1
+    },
+    {
+      "id": "magicka_controller_1",
+      "name": "Magicka Controller I",
+      "catalog_skill_id": "mages_guild__magicka_controller",
+      "section": "Passive",
+      "line": "mages_guild",
+      "required_rank": 7,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 950,
+      "notes": "Core Mages Guild passive because Ulfsild’s Contingency is part of the final bar.",
+      "morph_from": null,
+      "image": null,
+      "requires": [],
+      "skill_point_cost": 1
+    },
+    {
+      "id": "magicka_controller_2",
+      "name": "Magicka Controller II",
+      "catalog_skill_id": "mages_guild__magicka_controller",
+      "section": "Passive",
+      "line": "mages_guild",
+      "required_rank": 9,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 960,
+      "notes": "Core Mages Guild passive because Ulfsild’s Contingency is part of the final bar.",
+      "morph_from": null,
+      "image": null,
+      "requires": [],
+      "skill_point_cost": 1
+    },
+    {
+      "id": "medicinal_use_1",
+      "name": "Medicinal Use I",
+      "catalog_skill_id": "alchemy__medicinal_use",
+      "section": "Passive",
+      "line": "alchemy",
+      "required_rank": 8,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 970,
+      "notes": "Combat-relevant Alchemy passive: extends potion effects without requiring a full crafting-point investment.",
+      "morph_from": null,
+      "image": null,
+      "requires": [],
+      "skill_point_cost": 1
+    },
+    {
+      "id": "medicinal_use_2",
+      "name": "Medicinal Use II",
+      "catalog_skill_id": "alchemy__medicinal_use",
+      "section": "Passive",
+      "line": "alchemy",
+      "required_rank": 35,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 980,
+      "notes": "Combat-relevant Alchemy passive: extends potion effects without requiring a full crafting-point investment.",
+      "morph_from": null,
+      "image": null,
+      "requires": [],
+      "skill_point_cost": 1
+    },
+    {
+      "id": "medicinal_use_3",
+      "name": "Medicinal Use III",
+      "catalog_skill_id": "alchemy__medicinal_use",
+      "section": "Passive",
+      "line": "alchemy",
+      "required_rank": 50,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "final",
+      "priority": 990,
+      "notes": "Combat-relevant Alchemy passive: extends potion effects without requiring a full crafting-point investment.",
+      "morph_from": null,
+      "image": null,
+      "requires": [],
+      "skill_point_cost": 1
+    },
+    {
+      "id": "emerald_moss_1",
+      "name": "Emerald Moss I",
+      "catalog_skill_id": "green_balance__emerald_moss",
+      "section": "Passive",
+      "line": "green_balance",
+      "required_rank": 22,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "optional",
+      "priority": 1000,
+      "notes": "Low-priority Green Balance passive for this damage baseline; save the points unless you want the extra healing emphasis.",
+      "morph_from": null,
+      "image": null,
+      "requires": [],
+      "skill_point_cost": 1
+    },
+    {
+      "id": "emerald_moss_2",
+      "name": "Emerald Moss II",
+      "catalog_skill_id": "green_balance__emerald_moss",
+      "section": "Passive",
+      "line": "green_balance",
+      "required_rank": 36,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "optional",
+      "priority": 1010,
+      "notes": "Low-priority Green Balance passive for this damage baseline; save the points unless you want the extra healing emphasis.",
+      "morph_from": null,
+      "image": null,
+      "requires": [],
+      "skill_point_cost": 1
+    },
+    {
+      "id": "penetrating_magic_1",
+      "name": "Penetrating Magic I",
+      "catalog_skill_id": "destruction_staff__penetrating_magic",
+      "section": "Passive",
+      "line": "destruction_staff",
+      "required_rank": 10,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "optional",
+      "priority": 1020,
+      "notes": "Low-priority Destruction Staff passive for spare combat points.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "penetrating_magic_2",
+      "name": "Penetrating Magic II",
+      "catalog_skill_id": "destruction_staff__penetrating_magic",
+      "section": "Passive",
+      "line": "destruction_staff",
+      "required_rank": 30,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "optional",
+      "priority": 1030,
+      "notes": "Low-priority Destruction Staff passive for spare combat points.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "destruction_expert_1",
+      "name": "Destruction Expert I",
+      "catalog_skill_id": "destruction_staff__destruction_expert",
+      "section": "Passive",
+      "line": "destruction_staff",
+      "required_rank": 10,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "optional",
+      "priority": 1040,
+      "notes": "Low-priority Destruction Staff passive for spare combat points.",
+      "morph_from": null,
+      "image": null,
+      "requires": []
+    },
+    {
+      "id": "destruction_expert_2",
+      "name": "Destruction Expert II",
+      "catalog_skill_id": "destruction_staff__destruction_expert",
+      "section": "Passive",
+      "line": "destruction_staff",
+      "required_rank": 30,
+      "kind": "Passive",
+      "phase": "Final",
+      "status": "optional",
+      "priority": 1050,
+      "notes": "Low-priority Destruction Staff passive for spare combat points.",
       "morph_from": null,
       "image": null,
       "requires": []
@@ -2286,10 +2585,15 @@
             "catalog_skill_id": "winters_embrace__impaling_shards"
           }
         ],
-        "ultimate": null
+        "ultimate": {
+          "name": "Feral Guardian",
+          "catalog_skill_id": "animal_companions__feral_guardian",
+          "note": "Slot this as soon as its class skill line reaches rank 12.",
+          "temporary": true
+        }
       },
       "back_bar": {
-        "weapon": "Inferno Staff at Level 15",
+        "weapon": "Ice Staff at Level 15",
         "slots": [],
         "ultimate": null,
         "locked": "Unlocks at character level 15"
@@ -2346,14 +2650,20 @@
             "placeholder": true
           },
           {
-            "name": "Wild Guardian",
-            "catalog_skill_id": "animal_companions__wild_guardian"
+            "name": "class-line leveling slot",
+            "placeholder": true,
+            "note": "Wild Guardian is an Ultimate morph and belongs in the Ultimate slot, not a normal ability slot."
           }
         ],
-        "ultimate": null
+        "ultimate": {
+          "name": "Feral Guardian",
+          "catalog_skill_id": "animal_companions__feral_guardian",
+          "note": "Slot this as soon as its class skill line reaches rank 12.",
+          "temporary": true
+        }
       },
       "back_bar": {
-        "weapon": "Inferno Staff at Level 15",
+        "weapon": "Ice Staff at Level 15",
         "slots": [
           {
             "name": "Winter’s Revenge",
@@ -2372,11 +2682,17 @@
             "placeholder": true
           },
           {
-            "name": "Wild Guardian",
-            "catalog_skill_id": "animal_companions__wild_guardian"
+            "name": "class-line leveling slot",
+            "placeholder": true,
+            "note": "Wild Guardian is an Ultimate morph and belongs in the Ultimate slot, not a normal ability slot."
           }
         ],
-        "ultimate": null
+        "ultimate": {
+          "name": "Feral Guardian",
+          "catalog_skill_id": "animal_companions__feral_guardian",
+          "note": "Slot this as soon as its class skill line reaches rank 12.",
+          "temporary": true
+        }
       },
       "rotation": {
         "type": "priority",
@@ -2414,7 +2730,7 @@
         "slots": [
           {
             "name": "Wield Soul",
-            "catalog_skill_id": "scribing__wield_soul"
+            "scribed_skill_id": "warden_wield_soul_frost_druid_resolve"
           },
           {
             "name": "Subterranean Assault",
@@ -2426,7 +2742,7 @@
           },
           {
             "name": "Traveling Knife",
-            "catalog_skill_id": "scribing__traveling_knife"
+            "scribed_skill_id": "warden_traveling_knife_poison_misery_force"
           },
           {
             "name": "Arctic Blast",
@@ -2439,7 +2755,7 @@
         }
       },
       "back_bar": {
-        "weapon": "Inferno Staff at Level 15",
+        "weapon": "Ice Staff at Level 15",
         "slots": [
           {
             "name": "Winter’s Revenge",
@@ -2459,12 +2775,13 @@
           },
           {
             "name": "Ulfsild's Contingency",
-            "catalog_skill_id": "scribing__ulfsild_s_contingency"
+            "scribed_skill_id": "warden_ulfsild_frost_lingering_resolve"
           }
         ],
         "ultimate": {
-          "name": "Wild Guardian",
-          "catalog_skill_id": "animal_companions__wild_guardian"
+          "name": "Northern Storm",
+          "catalog_skill_id": "winters_embrace__northern_storm",
+          "note": "Solo/duo combat ultimate; double-bar Wild Guardian only for the dedicated group-DPS bear configuration."
         }
       },
       "rotation": {
@@ -2506,7 +2823,7 @@
         "slots": [
           {
             "name": "Wield Soul",
-            "catalog_skill_id": "scribing__wield_soul"
+            "scribed_skill_id": "warden_wield_soul_frost_druid_resolve"
           },
           {
             "name": "Subterranean Assault",
@@ -2518,7 +2835,7 @@
           },
           {
             "name": "Traveling Knife",
-            "catalog_skill_id": "scribing__traveling_knife"
+            "scribed_skill_id": "warden_traveling_knife_poison_misery_force"
           },
           {
             "name": "Arctic Blast",
@@ -2531,7 +2848,7 @@
         }
       },
       "back_bar": {
-        "weapon": "Inferno Staff at Level 15",
+        "weapon": "Ice Staff at Level 15",
         "slots": [
           {
             "name": "Winter’s Revenge",
@@ -2551,12 +2868,13 @@
           },
           {
             "name": "Ulfsild's Contingency",
-            "catalog_skill_id": "scribing__ulfsild_s_contingency"
+            "scribed_skill_id": "warden_ulfsild_frost_lingering_resolve"
           }
         ],
         "ultimate": {
-          "name": "Wild Guardian",
-          "catalog_skill_id": "animal_companions__wild_guardian"
+          "name": "Northern Storm",
+          "catalog_skill_id": "winters_embrace__northern_storm",
+          "note": "Solo/duo combat ultimate; double-bar Wild Guardian only for the dedicated group-DPS bear configuration."
         }
       },
       "rotation": {
@@ -2577,7 +2895,7 @@
           },
           {
             "name": "Wield Soul",
-            "catalog_skill_id": "scribing__wield_soul"
+            "scribed_skill_id": "warden_wield_soul_frost_druid_resolve"
           },
           {
             "name": "bear command when ready"
@@ -2694,8 +3012,8 @@
           ]
         },
         {
-          "id": "leveling_current_level_inferno_staff",
-          "name": "Current-level Inferno Staff",
+          "id": "leveling_current_level_ice_staff",
+          "name": "Current-level Ice Staff",
           "role": "Back bar after Level 15",
           "source": {
             "location": "Replace every 5-10 levels",
@@ -2704,30 +3022,30 @@
           },
           "pieces": [
             {
-              "id": "current_level_inferno_staff_back_weapon_leveling",
+              "id": "current_level_ice_staff_back_weapon_leveling",
               "slot": "Back Weapon",
-              "weapon_type": "Inferno Staff at Level 15",
+              "weapon_type": "Ice Staff at Level 15",
               "trait": "Training",
               "enchantment": "Weapon and Spell Damage",
               "set_slots": 2,
               "quality": "Current level"
             },
             {
-              "id": "current_level_inferno_staff_necklace_leveling",
+              "id": "current_level_ice_staff_necklace_leveling",
               "slot": "Necklace",
               "trait": "Healthy / Arcane / Robust",
               "enchantment": "Magical Harm",
               "quality": "Current level"
             },
             {
-              "id": "current_level_inferno_staff_ring_1_leveling",
+              "id": "current_level_ice_staff_ring_1_leveling",
               "slot": "Ring 1",
               "trait": "Healthy / Arcane / Robust",
               "enchantment": "Magical Harm",
               "quality": "Current level"
             },
             {
-              "id": "current_level_inferno_staff_ring_2_leveling",
+              "id": "current_level_ice_staff_ring_2_leveling",
               "slot": "Ring 2",
               "trait": "Healthy / Arcane / Robust",
               "enchantment": "Magical Harm",
@@ -2845,6 +3163,15 @@
               "trait": "Charged",
               "enchantment": "Shock Damage",
               "quality": "Gold weapons first"
+            },
+            {
+              "id": "tide_born_wildstalker_back_weapon_starter",
+              "slot": "Back Weapon",
+              "weapon_type": "Ice Staff at Level 15",
+              "trait": "Infused",
+              "enchantment": "Weapon and Spell Damage",
+              "set_slots": 2,
+              "quality": "Gold weapons first"
             }
           ]
         },
@@ -2873,15 +3200,6 @@
               "trait": "Bloodthirsty",
               "enchantment": "Magical Harm",
               "quality": "Purple or better"
-            },
-            {
-              "id": "highland_sentinel_back_weapon_starter",
-              "slot": "Back Weapon",
-              "weapon_type": "Inferno Staff at Level 15",
-              "trait": "Infused",
-              "enchantment": "Weapon and Spell Damage",
-              "set_slots": 2,
-              "quality": "Gold weapons first"
             }
           ]
         }
@@ -3019,8 +3337,33 @@
           ]
         },
         {
-          "id": "mid_crushing_wall_inferno_staff",
-          "name": "Crushing Wall Inferno Staff",
+          "id": "mid_slimecraw_1_piece",
+          "name": "Slimecraw (1 piece)",
+          "role": "One-piece monster bonus",
+          "source": {
+            "location": "Wayrest Sewers I",
+            "type": "Dungeon",
+            "tradeable": "Group-bound briefly, then account-bound",
+            "zone": "Stormhaven",
+            "access": "Base game"
+          },
+          "pieces": [
+            {
+              "id": "slimecraw_1_piece_head_mid",
+              "slot": "Head",
+              "weight": "Light",
+              "trait": "Divines",
+              "enchantment": "Max Magicka",
+              "quality": "Purple or better"
+            }
+          ],
+          "notes": [
+            "Use one Slimecraw piece for the one-piece Critical Chance bonus; Crushing Wall is an arena weapon and has no armor pieces."
+          ]
+        },
+        {
+          "id": "mid_crushing_wall_ice_staff",
+          "name": "Crushing Wall Ice Staff",
           "role": "Back bar",
           "source": {
             "location": "Maelstrom Arena",
@@ -3031,21 +3374,13 @@
           },
           "pieces": [
             {
-              "id": "crushing_wall_inferno_staff_back_weapon_mid",
+              "id": "crushing_wall_ice_staff_back_weapon_mid",
               "slot": "Back Weapon",
-              "weapon_type": "Inferno Staff at Level 15",
+              "weapon_type": "Ice Staff at Level 15",
               "trait": "Infused",
               "enchantment": "Weapon and Spell Damage",
               "set_slots": 2,
               "quality": "Gold weapons first"
-            },
-            {
-              "id": "crushing_wall_inferno_staff_head_mid",
-              "slot": "Head",
-              "weight": "Light",
-              "trait": "Divines",
-              "enchantment": "Max Magicka",
-              "quality": "Purple or better"
             }
           ]
         }
@@ -3053,7 +3388,7 @@
     },
     {
       "id": "final",
-      "name": "Optimized solo / duo endpoint",
+      "name": "Optimized flexible PvE endpoint",
       "min_level": 50,
       "max_level": 9999,
       "summary": "Use Aerie’s Cry with Sul-Xan’s Torment or Whorl of the Depths. Treat this as an endpoint menu rather than a rule: penetration, encounter movement, DLC access, and the presence of an outside healer can change the best combination.",
@@ -3116,10 +3451,10 @@
           "name": "Sul-Xan’s Torment or Whorl of the Depths",
           "role": "Second five-piece",
           "source": {
-            "location": "Trial or dungeon alternative; use a crafted set until acquired",
-            "type": "Crafted",
-            "tradeable": "Yes, another player can craft or trade it",
-            "notes": "Trial or dungeon alternative; use a crafted set until acquired"
+            "location": "Sul-Xan’s Torment: Rockgrove; Whorl of the Depths: Dreadsail Reef",
+            "type": "Trial alternatives",
+            "tradeable": "Group-trade window only; otherwise account-bound",
+            "notes": "Use Sul-Xan when adds can reliably feed the soul proc; use Whorl as the reliable no-add/boss alternative."
           },
           "pieces": [
             {
@@ -3160,6 +3495,9 @@
               "enchantment": "Shock Damage",
               "quality": "Gold weapons first"
             }
+          ],
+          "notes": [
+            "Sul-Xan is strongest when adds die and you can collect a soul; use Whorl when the encounter cannot reliably activate Sul-Xan."
           ]
         },
         {
@@ -3205,8 +3543,8 @@
           ]
         },
         {
-          "id": "final_crushing_wall_inferno_staff",
-          "name": "Crushing Wall Inferno Staff",
+          "id": "final_crushing_wall_ice_staff",
+          "name": "Crushing Wall Ice Staff",
           "role": "Back bar",
           "source": {
             "location": "Maelstrom Arena",
@@ -3217,9 +3555,9 @@
           },
           "pieces": [
             {
-              "id": "crushing_wall_inferno_staff_back_weapon_final",
+              "id": "crushing_wall_ice_staff_back_weapon_final",
               "slot": "Back Weapon",
-              "weapon_type": "Inferno Staff at Level 15",
+              "weapon_type": "Ice Staff at Level 15",
               "trait": "Infused",
               "enchantment": "Weapon and Spell Damage",
               "set_slots": 2,
@@ -3233,30 +3571,30 @@
   "consumables": {
     "foods": [
       {
-        "name": "Clockwork Citrus Filet",
-        "use": "Premium solo Health, Magicka, and recovery"
-      },
-      {
-        "name": "Witchmother’s Potent Brew",
-        "use": "Budget Health and Magicka sustain"
+        "name": "Orzorga’s Smoked Bear Haunch",
+        "use": "Solo sustain baseline"
       },
       {
         "name": "Artaeum Pickled Fish Bowl",
-        "use": "Larger Health and Magicka pools when sustain is already comfortable"
+        "use": "Damage/group option when sustain is comfortable"
+      },
+      {
+        "name": "Witchmother’s Potent Brew",
+        "use": "Budget Magicka sustain option"
       }
     ],
     "potions": [
       {
-        "name": "Tri-stat potion",
-        "use": "Default solo emergency recovery"
-      },
-      {
-        "name": "Spell Power potion",
-        "use": "Damage option when the build is not already supplying the major offensive buffs"
-      },
-      {
         "name": "Armor potion",
-        "use": "Situational defensive option for difficult solo encounters"
+        "use": "Solo baseline mitigation"
+      },
+      {
+        "name": "Tri-stat potion",
+        "use": "Group/damage recovery option"
+      },
+      {
+        "name": "Heroism potion",
+        "use": "Premium damage/Ultimate option when appropriate"
       }
     ],
     "pvp_alternatives": [
@@ -3279,31 +3617,22 @@
     "The two listed Class Mastery choices require all three native class lines at rank 50. Subclassing disables Class Mastery.",
     "Scribing abilities are optional progression gates. Use the named temporary class or weapon skill until the Grimoire and scripts are unlocked.",
     "Wild Guardian disappears if it is not slotted on both bars.",
-    "Blue Betty can remove negative effects, so refresh it deliberately in encounters with purgeable damage-over-time effects."
+    "Blue Betty can remove negative effects, so refresh it deliberately in encounters with purgeable damage-over-time effects.",
+    "Dark Elf is the flexible damage baseline; Nord remains the defensive hard-solo alternative.",
+    "Use Wild Guardian on the front bar and Northern Storm on the back for the solo/duo baseline. Double-bar the bear only for a dedicated group-DPS configuration.",
+    "Scribe Wield Soul as Frost / Druid’s Resurgence / Resolve; Traveling Knife as Poison / Assassin’s Misery / Force; and Ulfsild’s Contingency as Frost / Lingering Torment / Resolve.",
+    "ATTB only treats Medicinal Use as a combat-required crafting passive. Spend the rest of your crafting skill points according to the professions you actually want to develop."
   ],
   "variants": [
     {
       "id": "solo-duo",
-      "name": "Solo / Duo PvE",
-      "summary": "The progression-oriented launch build exactly as written.",
+      "name": "Flexible PvE (base)",
+      "summary": "Uses the general-purpose base build for solo and group PvE.",
       "available": true,
-      "overrides": null
-    },
-    {
-      "id": "group-dps",
-      "name": "Organized Group DPS",
-      "summary": "Planned encounter-focused variant.",
-      "available": false,
-      "unavailable_reason": "This launch file intentionally does not pretend the solo/duo bars and gear are an optimized organized-group loadout.",
-      "overrides": null
-    },
-    {
-      "id": "pvp",
-      "name": "PvP",
-      "summary": "Planned PvP variant.",
-      "available": false,
-      "unavailable_reason": "PvP needs its own attributes, defenses, bars, gear, and consumables. Those overrides are not authored yet.",
-      "overrides": null
+      "overrides": null,
+      "loadout_ids": [
+        "flexible-pve"
+      ]
     }
   ],
   "setup_help": {
@@ -3312,13 +3641,15 @@
     },
     "race": {
       "summary": "Race changes damage, sustain, and utility slightly, but ordinary PvE content does not require the recommended option.",
-      "recommended": "Nord",
+      "recommended": "Dark Elf",
       "alternatives": [
         "High Elf",
-        "Dark Elf",
-        "Khajiit"
+        "Khajiit",
+        "Breton",
+        "Nord"
       ],
       "notes": [
+        "Dark Elf is the flexible damage baseline. High Elf and Khajiit are strong damage alternatives, Breton favors sustain, and Nord is a tougher hard-solo option.",
         "Record the race you actually chose; ATTB keeps it separate from the build recommendation."
       ]
     },
@@ -3361,6 +3692,207 @@
     }
   },
   "format_notes": [
-    "Schema 3: explicit hotbars, structured rotations, individual equipment slots, and acquisition-aware set groups."
+    "Schema 4: flexible PvE progression, explicit hotbars and ultimates, complete loadouts, structured rotations, individual equipment slots, and acquisition-aware set groups.",
+    "Schema 4 supports metadata, class-line configurations, Scribing recipes, multiple loadouts, variants, quickslots, transformations, companions, performance notes, and namespaced extensions."
+  ],
+  "metadata": {
+    "roles": [
+      "damage",
+      "solo"
+    ],
+    "content": [
+      "overland",
+      "dungeons",
+      "arenas",
+      "trials"
+    ],
+    "group_sizes": [
+      "solo",
+      "duo",
+      "4-player",
+      "12-player"
+    ],
+    "resource": "magicka",
+    "bar_count": 2,
+    "class_style": "pure_class",
+    "playstyles": [
+      "flexible-pve",
+      "progression"
+    ],
+    "difficulty": [
+      "normal",
+      "veteran"
+    ],
+    "platforms": [
+      "PC",
+      "Xbox",
+      "PlayStation"
+    ],
+    "language": "en",
+    "tags": [
+      "warden",
+      "magicka",
+      "starter",
+      "solo",
+      "group-pve"
+    ]
+  },
+  "class_configuration": {
+    "base_class": "Warden",
+    "active_class_lines": [
+      {
+        "line_id": "animal_companions",
+        "source_class": "Warden",
+        "mode": "native",
+        "notes": []
+      },
+      {
+        "line_id": "green_balance",
+        "source_class": "Warden",
+        "mode": "native",
+        "notes": []
+      },
+      {
+        "line_id": "winters_embrace",
+        "source_class": "Warden",
+        "mode": "native",
+        "notes": []
+      }
+    ],
+    "class_mastery": {
+      "enabled": true,
+      "points_available": 2,
+      "choices": [
+        "warden_mastery__seasonal_strength",
+        "warden_mastery__winter_s_dominion"
+      ],
+      "notes": [
+        "Class Mastery requires all three native class skill lines at rank 50 and is unavailable while foreign class lines are active."
+      ]
+    },
+    "notes": [
+      "Pure-class starting configuration. Schema 4 can replace up to two lines with mastered or actively subclassed foreign class lines."
+    ]
+  },
+  "requirements": [],
+  "transformations": {
+    "curse": "none",
+    "notes": []
+  },
+  "scribed_skills": [
+    {
+      "id": "warden_wield_soul_frost_druid_resolve",
+      "name": "Wield Soul - Frost / Druid’s Resurgence / Resolve",
+      "grimoire": "Wield Soul",
+      "grimoire_catalog_skill_id": "scribing__wield_soul",
+      "focus_script": "Frost Damage",
+      "signature_script": "Druid's Resurgence",
+      "affix_script": "Resolve",
+      "resource": "Defined by Focus Script",
+      "cost": "Defined by the Focus Script",
+      "notes": [
+        "Sustain-oriented Frost spammable for the solo/duo baseline."
+      ]
+    },
+    {
+      "id": "warden_traveling_knife_poison_misery_force",
+      "name": "Traveling Knife - Poison / Assassin’s Misery / Force",
+      "grimoire": "Traveling Knife",
+      "grimoire_catalog_skill_id": "scribing__traveling_knife",
+      "focus_script": "Poison Damage",
+      "signature_script": "Assassin's Misery",
+      "affix_script": "Force",
+      "resource": "Defined by Focus Script",
+      "cost": "Defined by the Focus Script",
+      "notes": [
+        "Status-effect pressure plus Minor Force for the baseline."
+      ]
+    },
+    {
+      "id": "warden_ulfsild_frost_lingering_resolve",
+      "name": "Ulfsild’s Contingency - Frost / Lingering Torment / Resolve",
+      "grimoire": "Ulfsild's Contingency",
+      "grimoire_catalog_skill_id": "scribing__ulfsild_s_contingency",
+      "focus_script": "Frost Damage",
+      "signature_script": "Lingering Torment",
+      "affix_script": "Resolve",
+      "resource": "Defined by Focus Script",
+      "cost": "Defined by the Focus Script",
+      "notes": [
+        "Frost AoE/DoT and Minor Resolve for the baseline."
+      ]
+    }
+  ],
+  "quickslots": [
+    {
+      "id": "combat-potion",
+      "name": "Armor potion",
+      "type": "potion",
+      "item": "Armor potion",
+      "use": "Default hard-solo mitigation while Orzorga’s covers sustain",
+      "notes": []
+    }
+  ],
+  "companions": [],
+  "performance": {
+    "stat_targets": {},
+    "rotation_complexity": "moderate",
+    "responsibilities": [
+      "Maintain buffs and damage-over-time effects, then use the listed spammable or priority skill."
+    ],
+    "buffs": [],
+    "debuffs": []
+  },
+  "sources": [
+    {
+      "title": "Hyperioxes: Magicka Warden Solo Build (Update 50)",
+      "url": "https://hyperioxes.com/eso/solo/magicka-warden-build",
+      "author": "Hyperioxes",
+      "accessed": "2026-08-07",
+      "notes": "Current pure-class solo reference used to cross-check Update 50 skill direction, survivability, gear direction, Champion Points, and practical gameplay. ATTB authors its own progression and flexible PvE presentation."
+    },
+    {
+      "title": "ESO Update 50 Live Patch Notes: All Platforms",
+      "url": "https://forums.elderscrollsonline.com/en/discussion/693682/update-50-live-patch-notes-all-platforms",
+      "author": "ZeniMax Online Studios",
+      "accessed": "2026-08-07",
+      "notes": "Official game-version and system reference for Update 50."
+    },
+    {
+      "title": "Class Mastery - The Elder Scrolls Online",
+      "url": "https://help.elderscrollsonline.com/app/answers/detail/a_id/74901/",
+      "author": "ZeniMax Online Studios",
+      "accessed": "2026-08-07",
+      "notes": "Official Class Mastery unlock, availability, point, and respec rules."
+    },
+    {
+      "title": "Hyperioxes: Magicka Warden DPS Build (Update 50)",
+      "url": "https://hyperioxes.com/eso/dps/magicka-warden-build",
+      "author": "Hyperioxes",
+      "accessed": "2026-08-07",
+      "notes": "Current group-DPS cross-check used alongside the solo reference to distinguish personal-damage choices from group-support alternatives."
+    }
+  ],
+  "extensions": {},
+  "default_loadout_id": "flexible-pve",
+  "loadouts": [
+    {
+      "id": "flexible-pve",
+      "name": "Flexible PvE",
+      "summary": "General-purpose progression setup intended to work as a strong starting point in solo and group PvE.",
+      "roles": [
+        "damage",
+        "solo"
+      ],
+      "content": [
+        "overland",
+        "dungeons",
+        "arenas",
+        "trials"
+      ],
+      "available": true,
+      "conditions": [],
+      "overrides": {}
+    }
   ]
 }

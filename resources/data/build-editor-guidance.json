@@ -1,0 +1,479 @@
+{
+  "schema_version": 1,
+  "game_version": "Update 50",
+  "verified_date": "2026-08-06",
+  "notice": "Guidance describes common starting patterns, not mandatory rules. Race and attribute choices matter less than a coherent build, player execution, and encounter needs for most content.",
+  "sources": [
+    {
+      "title": "ESO New Player Guide: Character Creation",
+      "url": "https://www.elderscrollsonline.com/en-us/newplayerguide/character",
+      "type": "official"
+    },
+    {
+      "title": "ESO Guide to Subclassing",
+      "url": "https://www.elderscrollsonline.com/en-us/guides/subclassing",
+      "type": "official"
+    },
+    {
+      "title": "Update 50 Live Patch Notes",
+      "url": "https://forums.elderscrollsonline.com/en/discussion/693682/update-50-live-patch-notes-all-platforms",
+      "type": "official"
+    },
+    {
+      "title": "Update 50 Dragonknight Tank Attributes Example",
+      "url": "https://hyperioxes.com/eso/tank/dragonknight-build",
+      "type": "current-build-reference"
+    },
+    {
+      "title": "Mundus Stone Role Overview",
+      "url": "https://hacktheminotaur.com/eso-guides/best-mundus-stone/",
+      "type": "community-guide"
+    }
+  ],
+  "classes": {
+    "Arcanist": {
+      "summary": "Crux-driven class with strong beam damage, shields, support, and flexible ranged or melee setups.",
+      "themes": [
+        "Crux generation and spending",
+        "channeled damage",
+        "runes and shields"
+      ]
+    },
+    "Dragonknight": {
+      "summary": "Close-range pressure, damage-over-time effects, durable defenses, and strong group utility.",
+      "themes": [
+        "flame and poison pressure",
+        "durability",
+        "resource return"
+      ]
+    },
+    "Necromancer": {
+      "summary": "Corpse-based damage, healing, and defense with deliberate setup and strong area control.",
+      "themes": [
+        "corpse management",
+        "area effects",
+        "group utility"
+      ]
+    },
+    "Nightblade": {
+      "summary": "Burst damage, executes, stealth-themed utility, and strong self-healing through offense.",
+      "themes": [
+        "burst and execute",
+        "critical pressure",
+        "siphoning"
+      ]
+    },
+    "Sorcerer": {
+      "summary": "Lightning, summoned allies, mobility, shields, and straightforward ranged damage options.",
+      "themes": [
+        "lightning",
+        "pets and summons",
+        "mobility and shields"
+      ]
+    },
+    "Templar": {
+      "summary": "Direct holy damage, strong healing, cleansing, and approachable melee or ranged rotations.",
+      "themes": [
+        "direct damage",
+        "healing and cleansing",
+        "resource sustain"
+      ]
+    },
+    "Warden": {
+      "summary": "Nature, frost defense, animal companions, healing-over-time effects, and broad group support.",
+      "themes": [
+        "frost defense",
+        "nature healing",
+        "animal companions"
+      ]
+    }
+  },
+  "races": {
+    "Dark Elf": {
+      "alliance": "Ebonheart Pact",
+      "common_for": [
+        "magicka damage",
+        "stamina damage",
+        "hybrid damage"
+      ],
+      "summary": "A flexible damage-oriented choice with bonuses that work for both Magicka and Stamina setups."
+    },
+    "High Elf": {
+      "alliance": "Aldmeri Dominion",
+      "common_for": [
+        "magicka damage",
+        "healing"
+      ],
+      "summary": "A common Magicka-focused choice with offensive resource and recovery benefits."
+    },
+    "Wood Elf": {
+      "alliance": "Aldmeri Dominion",
+      "common_for": [
+        "stamina sustain",
+        "PvP mobility"
+      ],
+      "summary": "A mobile Stamina-oriented option often chosen for sustain and movement-focused play."
+    },
+    "Breton": {
+      "alliance": "Daggerfall Covenant",
+      "common_for": [
+        "magicka sustain",
+        "healing",
+        "beginner Magicka builds"
+      ],
+      "summary": "A forgiving Magicka sustain choice that can reduce pressure on resource management."
+    },
+    "Orc": {
+      "alliance": "Daggerfall Covenant",
+      "common_for": [
+        "stamina damage",
+        "melee builds",
+        "PvP"
+      ],
+      "summary": "A common Stamina and melee choice with offensive, Health, and mobility benefits."
+    },
+    "Redguard": {
+      "alliance": "Daggerfall Covenant",
+      "common_for": [
+        "stamina sustain",
+        "weapon-heavy builds"
+      ],
+      "summary": "A Stamina sustain option that fits builds using frequent weapon abilities."
+    },
+    "Nord": {
+      "alliance": "Ebonheart Pact",
+      "common_for": [
+        "tanking",
+        "ultimate generation",
+        "durability"
+      ],
+      "summary": "A common tank choice because its defensive passives support resistance and survivability."
+    },
+    "Argonian": {
+      "alliance": "Ebonheart Pact",
+      "common_for": [
+        "healing",
+        "tanking",
+        "potion sustain"
+      ],
+      "summary": "A flexible support choice associated with healing, Health, and strong potion-based sustain."
+    },
+    "Khajiit": {
+      "alliance": "Aldmeri Dominion",
+      "common_for": [
+        "critical damage",
+        "critical healing",
+        "flexible damage"
+      ],
+      "summary": "A flexible critical-focused option that can support damage or healing setups."
+    },
+    "Imperial": {
+      "alliance": "Any Alliance with access",
+      "common_for": [
+        "tanking",
+        "hybrid builds",
+        "cost reduction"
+      ],
+      "summary": "A durable flexible option commonly used for tanks and builds that value broad cost reduction."
+    }
+  },
+  "roles": {
+    "damage": {
+      "label": "Damage",
+      "summary": "Focuses on defeating enemies efficiently. Resource, weapons, armor, and Mundus choices usually follow the selected Magicka or Stamina focus."
+    },
+    "healer": {
+      "label": "Healer",
+      "summary": "Prioritizes healing, buffs, debuffs, and group resource support. Most traditional healer setups are Magicka-focused."
+    },
+    "tank": {
+      "label": "Tank",
+      "summary": "Controls enemies, survives heavy damage, and supports the group. Attribute splits depend on final Health and resource targets rather than one universal formula."
+    },
+    "support": {
+      "label": "Support",
+      "summary": "A utility-focused setup that may mix damage, healing, buffs, debuffs, or encounter-specific responsibilities."
+    },
+    "solo": {
+      "label": "Solo",
+      "summary": "Balances damage with self-healing, sustain, and survival so the build can operate without a full group."
+    }
+  },
+  "resources": {
+    "magicka": {
+      "attributes": {
+        "magicka": 64,
+        "health": 0,
+        "stamina": 0
+      },
+      "races": [
+        "High Elf",
+        "Dark Elf",
+        "Khajiit",
+        "Breton"
+      ],
+      "mundus": [
+        "The Thief",
+        "The Lover",
+        "The Apprentice"
+      ],
+      "front_weapons": [
+        "Inferno Staff",
+        "Dual Daggers",
+        "Lightning Staff"
+      ],
+      "back_weapons": [
+        "Inferno Staff",
+        "Lightning Staff",
+        "Ice Staff"
+      ],
+      "armor": "5-7 Light with optional Medium/Heavy training pieces",
+      "summary": "Common for spell-heavy damage and traditional healer setups."
+    },
+    "stamina": {
+      "attributes": {
+        "magicka": 0,
+        "health": 0,
+        "stamina": 64
+      },
+      "races": [
+        "Dark Elf",
+        "Khajiit",
+        "Orc",
+        "Redguard",
+        "Wood Elf"
+      ],
+      "mundus": [
+        "The Thief",
+        "The Lover",
+        "The Warrior"
+      ],
+      "front_weapons": [
+        "Dual Daggers",
+        "Two-Handed",
+        "Bow"
+      ],
+      "back_weapons": [
+        "Bow",
+        "Two-Handed",
+        "Inferno Staff"
+      ],
+      "armor": "5-7 Medium with optional Light/Heavy training pieces",
+      "summary": "Common for weapon-heavy damage and many melee or bow setups."
+    },
+    "health": {
+      "attributes": {
+        "magicka": 0,
+        "health": 64,
+        "stamina": 0
+      },
+      "races": [
+        "Nord",
+        "Imperial",
+        "Argonian"
+      ],
+      "mundus": [
+        "The Atronach",
+        "The Lord",
+        "The Lady"
+      ],
+      "front_weapons": [
+        "One Hand and Shield"
+      ],
+      "back_weapons": [
+        "Ice Staff"
+      ],
+      "armor": "5-7 Heavy with optional Light/Medium support pieces",
+      "summary": "Common starting point for tanks. Final builds may move points into Stamina to keep it above Magicka or meet sustain targets."
+    },
+    "hybrid": {
+      "attributes": {
+        "magicka": 32,
+        "health": 0,
+        "stamina": 32
+      },
+      "races": [
+        "Dark Elf",
+        "Khajiit",
+        "Imperial"
+      ],
+      "mundus": [
+        "The Thief",
+        "The Lover",
+        "The Atronach"
+      ],
+      "front_weapons": [
+        "Dual Daggers",
+        "Two-Handed",
+        "Inferno Staff"
+      ],
+      "back_weapons": [
+        "Inferno Staff",
+        "Bow",
+        "Ice Staff"
+      ],
+      "armor": "Mixed armor based on the build’s dominant role and passives",
+      "summary": "For builds intentionally using both offensive resources. Many optimized builds still concentrate attributes in one primary pool."
+    }
+  },
+  "role_defaults": {
+    "damage": {
+      "resource": "stamina",
+      "content": [
+        "overland",
+        "dungeons",
+        "arenas",
+        "trials"
+      ],
+      "group_sizes": [
+        "solo",
+        "duo",
+        "4-player",
+        "12-player"
+      ],
+      "mundus": "The Thief",
+      "bar_count": 2
+    },
+    "healer": {
+      "resource": "magicka",
+      "content": [
+        "dungeons",
+        "arenas",
+        "trials"
+      ],
+      "group_sizes": [
+        "4-player",
+        "12-player"
+      ],
+      "mundus": "The Ritual",
+      "bar_count": 2
+    },
+    "tank": {
+      "resource": "health",
+      "content": [
+        "dungeons",
+        "arenas",
+        "trials"
+      ],
+      "group_sizes": [
+        "4-player",
+        "12-player"
+      ],
+      "mundus": "The Atronach",
+      "bar_count": 2
+    },
+    "support": {
+      "resource": "hybrid",
+      "content": [
+        "dungeons",
+        "arenas",
+        "trials",
+        "pvp"
+      ],
+      "group_sizes": [
+        "4-player",
+        "12-player"
+      ],
+      "mundus": "The Atronach",
+      "bar_count": 2
+    },
+    "solo": {
+      "resource": "stamina",
+      "content": [
+        "overland",
+        "arenas",
+        "dungeons"
+      ],
+      "group_sizes": [
+        "solo",
+        "duo"
+      ],
+      "mundus": "The Lover",
+      "bar_count": 2
+    }
+  },
+  "alliances": [
+    "Aldmeri Dominion",
+    "Daggerfall Covenant",
+    "Ebonheart Pact",
+    "Any Alliance"
+  ],
+  "content_options": [
+    "overland",
+    "dungeons",
+    "arenas",
+    "trials",
+    "pvp",
+    "battlegrounds",
+    "infinite-archive",
+    "specialized-encounter"
+  ],
+  "group_size_options": [
+    "solo",
+    "duo",
+    "4-player",
+    "12-player",
+    "small-scale-pvp",
+    "large-scale-pvp"
+  ],
+  "difficulty_options": [
+    "normal",
+    "veteran",
+    "hard-mode",
+    "score-pushing",
+    "beginner-friendly"
+  ],
+  "platform_options": [
+    "PC",
+    "Xbox",
+    "PlayStation"
+  ],
+  "mundus_options": [
+    "The Apprentice",
+    "The Atronach",
+    "The Lady",
+    "The Lord",
+    "The Lover",
+    "The Mage",
+    "The Ritual",
+    "The Serpent",
+    "The Shadow",
+    "The Steed",
+    "The Thief",
+    "The Tower",
+    "The Warrior"
+  ],
+  "weapon_options": [
+    "Dual Daggers",
+    "Two-Handed",
+    "Bow",
+    "Inferno Staff",
+    "Lightning Staff",
+    "Ice Staff",
+    "Restoration Staff",
+    "One Hand and Shield"
+  ],
+  "armor_options": [
+    "5 Light / 1 Medium / 1 Heavy",
+    "5 Medium / 1 Light / 1 Heavy",
+    "5 Heavy / 1 Light / 1 Medium",
+    "7 Light",
+    "7 Medium",
+    "7 Heavy",
+    "Custom mix"
+  ],
+  "class_styles": {
+    "pure_class": {
+      "label": "Pure class",
+      "summary": "Uses all three native class skill lines. This is the simplest starting point and can use Class Mastery after the native lines meet its requirements."
+    },
+    "subclass": {
+      "label": "Subclassing",
+      "summary": "Keeps at least one native class line and replaces one or two slots with foreign class lines. Only one line may come from each foreign class."
+    },
+    "flexible": {
+      "label": "Flexible / undecided",
+      "summary": "Starts pure class but records that the author expects to add alternatives later. The saved active configuration still contains exactly three concrete lines."
+    }
+  }
+}

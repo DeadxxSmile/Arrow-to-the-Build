@@ -1,57 +1,51 @@
 const screenshots = [
   {
-    src: 'assets/screenshots/welcome.webp',
-    kicker: 'First launch',
-    title: 'Welcome to ATTB',
-    description: 'A clean empty state explains the app before any character, sidebar, or build pages appear.'
+    src: 'assets/screenshots/create-build-from-character.webp',
+    kicker: 'Live character to editable build',
+    title: 'Create Build from Character',
+    description: 'Use the latest synchronized ESO snapshot as the truthful CURRENT starting point for a new editable Schema 4 build.'
   },
   {
-    src: 'assets/screenshots/character-setup.webp',
-    kicker: 'Character setup',
-    title: 'Create the first character',
-    description: 'Choose a bundled build while recording the name, level, race, and alliance the player actually selected.'
+    src: 'assets/screenshots/new-eso-character.webp',
+    kicker: 'Explicit synchronization',
+    title: 'New ESO Character Found',
+    description: 'ATTB discovers characters locally but never silently adds or links them. You choose how the new character should enter the app.'
   },
   {
-    src: 'assets/screenshots/current-levels.webp',
-    kicker: 'Live profile',
-    title: 'Current Levels',
-    description: 'See the selected character, current progression band, Skill Point accounting, and the build\'s next priorities.'
-  },
-  {
-    src: 'assets/screenshots/basic-setup.webp',
-    kicker: 'Foundation',
-    title: 'Basic Setup',
-    description: 'Compare the character profile with the build recommendation, review setup explanations, and track the recorded attribute split.'
+    src: 'assets/screenshots/synced-basic-setup.webp',
+    kicker: 'Current reality + target guidance',
+    title: 'Synchronized Basic Setup',
+    description: 'See the observed character profile alongside the build defaults and concepts without allowing sync to overwrite authored planning.'
   },
   {
     src: 'assets/screenshots/skills-passives.webp',
-    kicker: 'Full-line tracking',
+    kicker: 'Build-directed progression',
     title: 'Skills & Passives',
-    description: 'Browse real skill lines with icons, base abilities, morph branches, passive ranks, unlock requirements, and build badges.'
+    description: 'Track whole skill lines, current purchases and morphs, curated passive priorities, and the next useful build-directed steps.'
   },
   {
-    src: 'assets/screenshots/equipment.webp',
-    kicker: 'Piece-by-piece tracking',
-    title: 'Equipment Roadmap',
-    description: 'Track armor, jewelry, and weapons individually across leveling, starter, intermediate, and final gear stages.'
+    src: 'assets/screenshots/current-action-bars.webp',
+    kicker: 'What ESO sees right now',
+    title: 'Observed Action Bars',
+    description: 'Compare the live front and back bars imported from ESO with the authored progression bars and rotations below them.'
   },
   {
-    src: 'assets/screenshots/rotations.webp',
-    kicker: 'Bars by progression band',
-    title: 'Skill Bars & Rotations',
-    description: 'See the five front-bar skills, five back-bar skills, ultimates, temporary slots, and the practical rotation beneath them.'
+    src: 'assets/screenshots/champion-points.webp',
+    kicker: 'Detailed Champion planning',
+    title: 'Champion Points',
+    description: 'Track earned, spent, unspent, connected paths, recommended branches, alternatives, and the final Craft, Warfare, and Fitness bars.'
   },
   {
-    src: 'assets/screenshots/tips-tools.webp',
-    kicker: 'Gameplay help',
-    title: 'Tips & Tricks',
-    description: 'Keep build-specific warnings, progression reminders, ESO resources, backups, and JSON tools close to the character.'
+    src: 'assets/screenshots/build-library.webp',
+    kicker: 'Two-workspace authoring',
+    title: 'Build Library',
+    description: 'Browse bundled and user builds, create guided drafts, fork immutable bundled builds, and return to saved revisions.'
   },
   {
-    src: 'assets/screenshots/character-settings.webp',
-    kicker: 'Editable profile',
-    title: 'Character Settings',
-    description: 'Correct profile details, adjust attributes, add personal skill lines, change builds, and remove the local ATTB profile when needed.'
+    src: 'assets/screenshots/review-save.webp',
+    kicker: 'Schema 4 authoring',
+    title: 'Review & Save',
+    description: 'Validate the complete build, review warnings and suggestions, then save an immutable revision and readable JSON mirror.'
   }
 ]
 
@@ -81,9 +75,10 @@ const carouselKicker = document.querySelector('#carousel-kicker')
 const carouselDescription = document.querySelector('#carousel-description')
 const carouselThumbs = document.querySelector('#carousel-thumbs')
 const carouselMain = document.querySelector('.carousel-main')
-let currentSlide = 2
+let currentSlide = 0
 
 function renderSlide(index) {
+  if (!carouselImage || !carouselTitle || !carouselKicker || !carouselDescription || !carouselThumbs) return
   currentSlide = (index + screenshots.length) % screenshots.length
   const shot = screenshots[currentSlide]
   carouselImage.src = shot.src
@@ -97,18 +92,21 @@ function renderSlide(index) {
   })
 }
 
-screenshots.forEach((shot, index) => {
-  const button = document.createElement('button')
-  button.type = 'button'
-  button.title = shot.title
-  button.setAttribute('aria-label', `Show ${shot.title}`)
-  const image = document.createElement('img')
-  image.src = shot.src
-  image.alt = ''
-  button.append(image)
-  button.addEventListener('click', () => renderSlide(index))
-  carouselThumbs.append(button)
-})
+if (carouselThumbs) {
+  screenshots.forEach((shot, index) => {
+    const button = document.createElement('button')
+    button.type = 'button'
+    button.title = shot.title
+    button.setAttribute('aria-label', `Show ${shot.title}`)
+    const image = document.createElement('img')
+    image.src = shot.src
+    image.alt = ''
+    image.loading = 'lazy'
+    button.append(image)
+    button.addEventListener('click', () => renderSlide(index))
+    carouselThumbs.append(button)
+  })
+}
 
 document.querySelector('.carousel-arrow.previous')?.addEventListener('click', () => renderSlide(currentSlide - 1))
 document.querySelector('.carousel-arrow.next')?.addEventListener('click', () => renderSlide(currentSlide + 1))

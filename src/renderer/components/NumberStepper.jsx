@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
-export default function NumberStepper({ value = 0, min = 0, max = 999, step = 1, onChange, label, className = '' }) {
+export default function NumberStepper({ value = 0, min = 0, max = 999, step = 1, onChange, label, className = '', disabled = false }) {
   const [draft, setDraft] = useState(String(value))
   const focused = useRef(false)
 
@@ -16,13 +16,14 @@ export default function NumberStepper({ value = 0, min = 0, max = 999, step = 1,
     if (next !== Number(value)) onChange?.(next)
     return next
   }
-  const nudge = delta => { focused.current = false; commit(Number(value) + delta) }
+  const nudge = delta => { if (disabled) return; focused.current = false; commit(Number(value) + delta) }
 
   return (
     <div className={`number-stepper ${className}`} role="group" aria-label={label}>
-      <button type="button" onClick={() => nudge(-step)} disabled={Number(value) <= min} aria-label={`Decrease ${label || 'value'}`}>−</button>
+      <button type="button" onClick={() => nudge(-step)} disabled={disabled || Number(value) <= min} aria-label={`Decrease ${label || 'value'}`}>−</button>
       <input
         type="number"
+        disabled={disabled}
         inputMode="numeric"
         min={min}
         max={max}
@@ -37,7 +38,7 @@ export default function NumberStepper({ value = 0, min = 0, max = 999, step = 1,
           if (e.key === 'Escape') { setDraft(String(value)); e.currentTarget.blur() }
         }}
       />
-      <button type="button" onClick={() => nudge(step)} disabled={Number(value) >= max} aria-label={`Increase ${label || 'value'}`}>+</button>
+      <button type="button" onClick={() => nudge(step)} disabled={disabled || Number(value) >= max} aria-label={`Increase ${label || 'value'}`}>+</button>
     </div>
   )
 }

@@ -1,4 +1,3 @@
-import React from 'react'
 import { Link } from 'react-router-dom'
 import NumberStepper from './NumberStepper'
 import { allocateCp, planSections } from '../utils/buildLogic'
@@ -43,7 +42,7 @@ function RecommendedBar({ plan, allNodes }) {
   </section>
 }
 
-export default function CPCard({ tree, plan, total, onChange, detailed = false }) {
+export default function CPCard({ tree, plan, total, onChange, detailed = false, disabled = false }) {
   const { core, flex } = planSections(plan)
   const label = plan?.label || TREE_LABELS[tree] || tree
   const allNodes = [...core, ...flex.flatMap(group => group.nodes || [])]
@@ -60,7 +59,7 @@ export default function CPCard({ tree, plan, total, onChange, detailed = false }
   if (!detailed) return <article className={`cp-overview-card ${plan.color || tree}`}>
     <header>
       <div><span className="eyebrow">{label}</span><h2>{allocation.total} points</h2></div>
-      {onChange && <NumberStepper value={allocation.total} min={0} max={1200} onChange={onChange} label={`${label} Champion Points`} />}
+      {onChange && <NumberStepper value={allocation.total} min={0} max={1200} onChange={onChange} label={`${label} Champion Points`} disabled={disabled} />}
     </header>
     <div className="cp-overview-meter"><i style={{ width: `${allocation.coreCapacity ? Math.min(100, allocation.corePoints / allocation.coreCapacity * 100) : 100}%` }} /></div>
     <div className="cp-overview-stats">
@@ -75,8 +74,8 @@ export default function CPCard({ tree, plan, total, onChange, detailed = false }
 
   return <article className={`cp-plan-page ${plan.color || tree}`}>
     <header className="cp-plan-header">
-      <div><span className="eyebrow">{label} constellation</span><h1>{allocation.total} available points</h1><p>ATTB spends through the required connecting path first, then follows the build's ordered recommended branches. Optional branches remain visible as alternatives.</p></div>
-      {onChange && <div className="cp-plan-editor"><small>Available in this tree</small><NumberStepper value={allocation.total} min={0} max={1200} onChange={onChange} label={`${label} Champion Points`} /></div>}
+      <div><span className="eyebrow">{label} constellation</span><h1>{allocation.total} earned points</h1><p>ATTB spends through the required connecting path first, then follows the build's ordered recommended branches. Optional branches remain visible as alternatives.</p></div>
+      {onChange && <div className="cp-plan-editor"><small>Total earned in this tree</small><NumberStepper value={allocation.total} min={0} max={1200} onChange={onChange} label={`${label} Champion Points`} disabled={disabled} /></div>}
     </header>
 
     {allocation.overCap > 0 && <div className="notice-banner warn-banner">A constellation holds at most 1,200 points. {allocation.overCap} entered point{allocation.overCap === 1 ? '' : 's'} cannot be shown.</div>}

@@ -21,6 +21,8 @@ test('character creation never copies the build attribute target into recorded p
   const values = captureInsert({ name: 'Fresh', build_id: build.id, level: 16 })
   assert.deepEqual(JSON.parse(values.attributes_json), { magicka: 0, health: 0, stamina: 0 })
   assert.equal(values.attribute_points, 0)
+  assert.equal(values.loadout_id, 'flexible-pve')
+  assert.equal(values.variant_id, 'solo-duo')
 })
 
 test('character creation records explicit attributes and all three CP budgets for a low-level alt', () => {
