@@ -4,6 +4,7 @@ const assert = require('node:assert/strict')
 require('./electron-stub')
 const { parseSavedVariables, normalizeLuaTables } = require('../src/main/addon/luaSavedVariables')
 const { normalizeSnapshot, liveCharacterState, decodeBridgeSnapshot, bridgeRootAsArchive } = require('../src/main/addon/integration')
+const { createCharacterBuildImport } = require('../src/main/ipc/buildCharacterImport')
 
 const fixture = `
 -- ESO SavedVariables fixture
@@ -147,6 +148,66 @@ test('schema 2 bridge IDs are enriched from an older durable archive without rep
   assert.equal(merged.skills.lines[0].name, 'Herald of the Tome')
   assert.equal(merged.skills.lines[0].abilities[0].name, 'Runeblades')
   assert.equal(merged.skills.actionBars[0].slots[0].name, 'Runeblades')
+})
+
+test('bridge equipment enrichment prefers equipSlot when identical item IDs occupy different slots', () => {
+  const key = '@Player|NA Megaserver|123'
+  const previous = normalizeSnapshot(key, {
+    addonVersion: '1.0.0', snapshotSchemaVersion: 2, capturedAt: 100,
+    identity: { characterKey: key, accountName: '@Player', worldName: 'NA Megaserver', characterId: '123', name: 'Talia', level: 24, class: { id: 117, name: 'Arcanist' }, race: { id: 4, name: 'Dark Elf' }, alliance: { id: 2, name: 'Ebonheart Pact' }, progression: {}, attributes: {} },
+    skills: { lines: [], actionBars: [], activeWeaponPair: {} },
+    equipment: { items: [
+      { equipSlot: 4, slotName: 'Front Main Hand', itemId: 102035, name: 'Matched Dagger', weaponTypeName: 'Dagger', trait: {}, set: {}, enchantment: {} },
+      { equipSlot: 5, slotName: 'Front Off Hand', itemId: 102035, name: 'Matched Dagger', weaponTypeName: 'Dagger', trait: {}, set: {}, enchantment: {} }
+    ] },
+    champion: { totalEarned: 0, disciplines: [], slotted: { supported: true, slots: [] } }, metadata: {}, completeness: { isComplete: true }
+  }, { addonVersion: '1.0.0', apiVersion: 101050 })
+  const root = {
+    schemaVersion: 2, addonVersion: '1.0.0', apiVersion: 101050, revision: 2, capturedAt: 101, captureReason: 'equipment-changed', characterKey: key,
+    capturedSections: ['identity', 'equipment'], reducedFields: [], droppedSections: [], truncated: false,
+    character: {
+      identity: '@Player\tNA Megaserver\t123\tTalia\t117\t\t4\t\t2\t\t24\t0\t0\t0\t0\t0\t0\t0',
+      skills: { activeWeaponPair: '1\t0', lines: '', abilities: '', actionBars: '' },
+      equipment: '4\t102035\tMatched Dagger\t3\t24\t0\t1\t2\t0\t11\t15\t0\t\tFlame\n5\t102035\tMatched Dagger\t3\t24\t0\t1\t2\t0\t11\t15\t0\t\tFlame',
+      champion: { totalEarned: 0, disciplines: '', stars: '', slots: '' }
+    }
+  }
+  const merged = bridgeRootAsArchive(root, previous).characters[key]
+  assert.deepEqual(merged.equipment.items.map(item => item.slotName), ['Front Main Hand', 'Front Off Hand'])
+})
+
+test('imported equipment IDs remain unique even if display metadata repeats a slot label', () => {
+  const slugify = value => String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'item'
+  const importer = createCharacterBuildImport({
+    catalog: {
+      normalizeSkillName: value => String(value || '').toLowerCase(),
+      normalizeLineName: value => String(value || '').toLowerCase(),
+      getSkill: () => null,
+      getLine: () => null,
+      getCatalog: () => ({ lines: [] })
+    },
+    isObj: value => !!value && typeof value === 'object' && !Array.isArray(value),
+    slugify,
+    normalClassLines: () => [],
+    lineRecord: value => value,
+    createGuidedBuildData: () => ({}),
+    requestedBuildId: () => 'unused',
+    uniqueBuildId: () => 'adapted-test'
+  })
+  const state = {
+    character_name: 'Talia', class_name: 'Arcanist', race: 'Dark Elf', alliance: 'Ebonheart Pact', world_name: 'NA Megaserver', captured_at: 1,
+    live: { name: 'Talia', level: 24, attributes: { magicka: 0, health: 0, stamina: 29 }, skill_allocations: {}, skill_ranks: {}, tracked_skill_lines: [] },
+    observed: { skills: { actionBars: [] }, champion: { disciplines: [], slotted: { slots: [] } }, equipment: { items: [
+      { equipSlot: 4, slotName: 'Front Main Hand', itemId: 102035, name: 'Matched Dagger', weaponTypeName: 'Dagger' },
+      { equipSlot: 5, slotName: 'Front Main Hand', itemId: 102035, name: 'Matched Dagger', weaponTypeName: 'Dagger' }
+    ] } }
+  }
+  const source = { id: 'source', name: 'Source', class_name: 'Arcanist' }
+  const sourceData = { id: 'source', name: 'Source', defaults: { class: 'Arcanist' }, relevant_lines: [], unlock_order: [], gear_stages: [], phases: [], extensions: {} }
+  const { data } = importer.adaptBuildToImportedState(state, source, sourceData, '', 'Test')
+  const pieces = data.gear_stages[0].sets[0].pieces
+  assert.deepEqual(pieces.map(piece => piece.id), ['slot-4-102035', 'slot-5-102035'])
+  assert.equal(new Set(pieces.map(piece => piece.id)).size, 2)
 })
 
 test('a truncated flat bridge can preserve omitted sections from the previous complete snapshot', () => {

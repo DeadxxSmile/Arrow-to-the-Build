@@ -16,7 +16,7 @@ const characterHandlers = require('../src/main/ipc/characterHandlers')
 const settingsHandlers = require('../src/main/ipc/settingsHandlers')
 const addonIntegration = require('../src/main/addon/integration')
 
-function luaCharacter({ key, id, name, level = 22, capturedAt = 1786066768 }) {
+function luaCharacter({ key, id, name, level = 22, capturedAt = 1786066768, dualDaggers = false }) {
   return `
     ["${key}"] = {
       ["addonVersion"] = "0.1.0-alpha.4.2",
@@ -59,10 +59,12 @@ function luaCharacter({ key, id, name, level = 22, capturedAt = 1786066768 }) {
         ["activeWeaponPair"] = { ["pair"] = 1, ["locked"] = false }
       },
       ["equipment"] = { ["items"] = {
-        [1] = { ["slotName"] = "Head", ["name"] = "Helm of the Trainee", ["itemId"] = 95986,
+        [1] = { ["equipSlot"] = 0, ["slotName"] = "Head", ["name"] = "Helm of the Trainee", ["itemId"] = 95986,
           ["quality"] = 2, ["armorTypeName"] = "Heavy", ["trait"] = { ["name"] = "Training", ["id"] = 15 },
           ["set"] = { ["hasSet"] = true, ["name"] = "Armor of the Trainee", ["id"] = 281 },
           ["enchantment"] = { ["name"] = "Maximum Magicka Enchantment" } }
+        ${dualDaggers ? `,[2] = { ["equipSlot"] = 4, ["slotName"] = "Front Main Hand", ["name"] = "Matched Dagger", ["itemId"] = 102035, ["quality"] = 3, ["weaponTypeName"] = "Dagger", ["trait"] = { ["name"] = "Training", ["id"] = 15 }, ["set"] = { ["hasSet"] = false }, ["enchantment"] = { ["name"] = "Flame" } },
+        [3] = { ["equipSlot"] = 5, ["slotName"] = "Front Off Hand", ["name"] = "Matched Dagger", ["itemId"] = 102035, ["quality"] = 3, ["weaponTypeName"] = "Dagger", ["trait"] = { ["name"] = "Training", ["id"] = 15 }, ["set"] = { ["hasSet"] = false }, ["enchantment"] = { ["name"] = "Flame" } }` : ''}
       } },
       ["champion"] = {
         ["totalEarned"] = 209,
@@ -80,21 +82,21 @@ function luaCharacter({ key, id, name, level = 22, capturedAt = 1786066768 }) {
     }`
 }
 
-function fixture() {
+function fixture({ dualDaggers = false } = {}) {
   const aKey = '@Tester|NA Megaserver|1111111111111111'
   const bKey = '@Tester|NA Megaserver|2222222222222222'
   return {
     aKey, bKey,
     text: `ArrowToTheBuildSavedVariables = {
       ["schemaVersion"] = 1, ["revision"] = 12, ["addonVersion"] = "0.1.0-alpha.4.2", ["apiVersion"] = 101050,
-      ["characters"] = { ${luaCharacter({ key: aKey, id: '1111111111111111', name: 'Talia Test' })},
+      ["characters"] = { ${luaCharacter({ key: aKey, id: '1111111111111111', name: 'Talia Test', dualDaggers })},
         ${luaCharacter({ key: bKey, id: '2222222222222222', name: 'Manual Hero', level: 30, capturedAt: 1786066770 })} }
     }`
   }
 }
 
 
-function bridgeFixture({ key, id, name = 'Talia Test', level = 23, capturedAt = 1786067000, truncated = false } = {}) {
+function bridgeFixture({ key, id, name = 'Talia Test', level = 23, capturedAt = 1786067000, truncated = false, dualDaggers = false } = {}) {
   return `ArrowToTheBuildBridgeSavedVariables = {
     ["schemaVersion"] = 2, ["revision"] = 3, ["addonVersion"] = "0.1.0-alpha.6", ["apiVersion"] = 101050,
     ["capturedAt"] = ${capturedAt}, ["captureReason"] = "level-changed", ["characterKey"] = "${key}",
@@ -110,7 +112,7 @@ function bridgeFixture({ key, id, name = 'Talia Test', level = 23, capturedAt = 
         ["abilities"] = "218\\t185794\\t534\\t4\\t0\\t\\t0\\n218\\t184847\\t0\\t2\\t0\\t2\\t1",
         ["actionBars"] = "0\\t1\\t185794\\t1\\t0\\t185794\\t534\\t218\\t0\\t4\\n0\\t2\\t0\\t0\\t0\\t\\t\\t\\t\\t"
       },
-      ["equipment"] = ${truncated ? '""' : '"0\\t99999\\tBridge Test Helm\\t3\\t22\\t0\\t1\\t2\\t3\\t0\\t15\\t281\\tArmor of the Trainee\\tMaximum Stamina Enchantment"'},
+      ["equipment"] = ${truncated ? '""' : dualDaggers ? '"4\t102035\tMatched Dagger\t3\t22\t0\t1\t2\t0\t11\t15\t0\t\tFlame\n5\t102035\tMatched Dagger\t3\t22\t0\t1\t2\t0\t11\t15\t0\t\tFlame"' : '"0\t99999\tBridge Test Helm\t3\t22\t0\t1\t2\t3\t0\t15\t281\tArmor of the Trainee\tMaximum Stamina Enchantment"'},
       ["champion"] = {
         ["totalEarned"] = 209,
         ["disciplines"] = "3\\t70\\t0\\n1\\t70\\t0\\n2\\t69\\t0",
@@ -226,6 +228,29 @@ test('the small bridge updates a linked character before the full archive change
   assert.equal(character.skill_ranks.herald, 30)
   assert.equal(character.addon_sync.observed.equipment.items[0].name, 'Bridge Test Helm')
   assert.equal(character.addon_sync.observed.skills.actionBars[0].slots[0].matchMethod, 'progression-id')
+})
+
+test('identical dual-wield item IDs keep their own slots and can be adapted without duplicate piece IDs', async () => {
+  const { ipc, profile } = freshApp()
+  const sample = fixture({ dualDaggers: true })
+  fs.writeFileSync(path.join(profile, 'SavedVariables', 'ArrowToTheBuild.lua'), sample.text)
+  await ipc.call('addon:configure', { mode: 'install', profileRoot: profile, autoDetect: false })
+  const created = ipc.call('addon:importCharacter', sample.aKey, { build_id: 'stamina_arcanist_solo_duo' })
+
+  const bridgePath = path.join(profile, 'SavedVariables', 'ArrowToTheBuildBridge.lua')
+  fs.writeFileSync(bridgePath, bridgeFixture({ key: sample.aKey, id: '1111111111111111', dualDaggers: true }))
+  await ipc.call('addon:syncNow')
+
+  const character = ipc.call('characters:get', created.id)
+  const weapons = character.addon_sync.observed.equipment.items.filter(item => item.itemId === 102035)
+  assert.deepEqual(weapons.map(item => item.slotName), ['Front Main Hand', 'Front Off Hand'], 'same-item dual wield must enrich metadata by equip slot, not by item ID')
+
+  const draft = ipc.call('builds:adaptFromCharacter', created.id, 'stamina_arcanist_solo_duo', '', 'Test Author')
+  const pieces = draft.data.gear_stages[0].sets[0].pieces.filter(piece => piece.item_id === 102035)
+  assert.equal(pieces.length, 2)
+  assert.equal(new Set(pieces.map(piece => piece.id)).size, 2, 'imported current equipment piece IDs must remain unique')
+  assert.deepEqual(pieces.map(piece => piece.slot), ['Front Main Hand', 'Front Off Hand'])
+  assert.deepEqual(buildHandlers.validateBuild(draft.data), [])
 })
 
 test('class mismatches are rejected even when the renderer is bypassed', async () => {

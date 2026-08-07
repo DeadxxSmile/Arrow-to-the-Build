@@ -92,20 +92,25 @@ function createCharacterBuildImport(deps) {
 
   function importedGearStage(observed = {}, requestedId = 'imported-current') {
     const items = Array.isArray(observed?.equipment?.items) ? observed.equipment.items : []
-    const pieces = items.map((item, index) => ({
-      id: slugify(`${item?.slotName || `slot-${index + 1}`}-${item?.itemId || index + 1}`),
-      slot: String(item?.slotName || `Equipped slot ${index + 1}`),
-      item_name: String(item?.name || 'Equipped item'),
-      item_id: Number(item?.itemId || 0) || 0,
-      set_name: String(item?.set?.name || ''),
-      set_id: Number(item?.set?.id || 0) || 0,
-      quality: Number(item?.quality || 0) || 0,
-      armor_type: String(item?.armorTypeName || ''),
-      weapon_type: String(item?.weaponTypeName || ''),
-      trait: String(item?.trait?.name || ''),
-      enchantment: String(item?.enchantment?.name || ''),
-      imported_current: true
-    }))
+    const usedPieceIds = new Set()
+    const pieces = items.map((item, index) => {
+      const hasEquipSlot = item?.equipSlot !== null && item?.equipSlot !== undefined && item?.equipSlot !== ''
+      const slotIdentity = hasEquipSlot ? `slot-${item.equipSlot}` : (item?.slotName || `slot-${index + 1}`)
+      return {
+        id: uniqueLocalId(`${slotIdentity}-${item?.itemId || index + 1}`, usedPieceIds),
+        slot: String(item?.slotName || `Equipped slot ${index + 1}`),
+        item_name: String(item?.name || 'Equipped item'),
+        item_id: Number(item?.itemId || 0) || 0,
+        set_name: String(item?.set?.name || ''),
+        set_id: Number(item?.set?.id || 0) || 0,
+        quality: Number(item?.quality || 0) || 0,
+        armor_type: String(item?.armorTypeName || ''),
+        weapon_type: String(item?.weaponTypeName || ''),
+        trait: String(item?.trait?.name || ''),
+        enchantment: String(item?.enchantment?.name || ''),
+        imported_current: true
+      }
+    })
     if (!pieces.length) pieces.push({
       id: 'equipment-snapshot-unavailable', slot: 'Current equipment', item_name: 'Equipment detail was not present in the latest reconciled ESO snapshot.',
       imported_current: true, unavailable: true

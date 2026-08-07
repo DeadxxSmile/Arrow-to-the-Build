@@ -80,7 +80,14 @@ function enrichBridgeFromPrevious(raw, previousSnapshot, root) {
     const priorItems = previous.equipment?.items || []
     raw.equipment = raw.equipment || { items: [] }
     raw.equipment.items = (raw.equipment.items || []).map(item => {
-      const prior = priorItems.find(candidate => (item.itemId && candidate.itemId === item.itemId) || candidate.equipSlot === item.equipSlot)
+      // Equipment metadata belongs to a worn slot first, not to an item ID. Two
+      // equipped copies of the same base item (for example matching dual-wield
+      // daggers) legitimately share itemId, so matching by itemId first can
+      // assign the front-hand label to both weapons. Prefer the exact equipSlot
+      // and use itemId only as a compatibility fallback for snapshots that lack it.
+      const hasEquipSlot = item.equipSlot !== null && item.equipSlot !== undefined && item.equipSlot !== ''
+      const prior = (hasEquipSlot ? priorItems.find(candidate => candidate.equipSlot === item.equipSlot) : null)
+        || priorItems.find(candidate => item.itemId && candidate.itemId === item.itemId)
       if (!prior) return item
       return {
         ...item,
