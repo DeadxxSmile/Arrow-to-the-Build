@@ -8,7 +8,8 @@ const { parseSavedVariables, normalizeLuaTables } = require('./luaSavedVariables
 
 const {
   BUNDLED_ADDON_VERSION, ADDON_FOLDER, BRIDGE_ADDON_FOLDER,
-  BRIDGE_SAVED_VARIABLE_NAME, BRIDGE_SCHEMA_VERSION, ESO_NORMAL_SAVE_LIMIT_BYTES, REPOSITORY_URL
+  SAVED_VARIABLES_FILE, BRIDGE_SAVED_VARIABLES_FILE, BRIDGE_SAVED_VARIABLE_NAME,
+  BRIDGE_SCHEMA_VERSION, ESO_NORMAL_SAVE_LIMIT_BYTES, REPOSITORY_URL
 } = require('./addonConstants')
 const {
   normalizeProfileSelection, isProfileRoot, candidateRoots, chooseProfileRoot,

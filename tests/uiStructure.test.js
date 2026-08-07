@@ -891,3 +891,26 @@ test('branding uses the wordmark on large surfaces and the simple mark for compa
     assert.equal(fs.existsSync(path.join(root, file)), true, `${file} is missing from the source tree`)
   }
 })
+
+test('the addon file watcher references only constants it imports', () => {
+  // Regression: the module refactor dropped SAVED_VARIABLES_FILE from integration.js's import of
+  // ./addonConstants. The module still loaded, so resolution passed, but the fs.watch callback threw
+  // "SAVED_VARIABLES_FILE is not defined" the instant ESO wrote its file, crashing the main process.
+  // This asserts every UPPER_CASE constant the watcher callback uses is actually imported or defined.
+  const integration = read('src/main/addon/integration.js')
+  const imported = new Set()
+  for (const block of integration.matchAll(/(?:const|let)\s*\{([^{}]+?)\}\s*=\s*require\([^)]+\)/g)) {
+    for (const part of block[1].split(',')) {
+      const name = part.trim().split(':').pop().trim()
+      if (name) imported.add(name)
+    }
+  }
+  const locallyDefined = new Set([...integration.matchAll(/(?:const|let|function)\s+([A-Z][A-Z0-9_]+)\b/g)].map(m => m[1]))
+  // Pull the fs.watch callback body and check the UPPER_SNAKE names it uses.
+  const watchMatch = integration.match(/fs\.watch\([^,]+,[^,]+,\s*\(([^)]*)\)\s*=>\s*\{([\s\S]*?)\}\s*\)/)
+  assert.ok(watchMatch, 'expected to find the fs.watch callback')
+  const body = watchMatch[2]
+  const usedConstants = new Set([...body.matchAll(/[^.\w]([A-Z][A-Z0-9_]{3,})\b/g)].map(m => m[1]))
+  const missing = [...usedConstants].filter(name => !imported.has(name) && !locallyDefined.has(name))
+  assert.deepEqual(missing, [], `the fs.watch callback uses constants that are not imported: ${missing.join(', ')}`)
+})

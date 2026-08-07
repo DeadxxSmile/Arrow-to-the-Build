@@ -233,7 +233,6 @@ footer { display: grid; grid-template-columns: 1fr auto; gap: 18px 28px; align-i
 }
 
 /* v2.0 release/addon presentation */
-.hero-brandmark { width: min(460px, 88%); max-height: 180px; object-fit: contain; object-position: left center; margin: 0 0 20px; filter: drop-shadow(0 16px 28px rgba(0,0,0,.32)); }
 .addon-section { border-block: 1px solid var(--line-soft); }
 .addon-component-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 15px; }
 .addon-component { min-height: 220px; }
@@ -266,6 +265,5 @@ footer { display: grid; grid-template-columns: 1fr auto; gap: 18px 28px; align-i
   .addon-gallery .addon-shot:last-child { grid-column: auto; }
   .sync-note { grid-template-columns: 1fr; }
   .sync-note-icon { min-width: 0; justify-self: start; min-height: 52px; }
-  .hero-brandmark { width: min(380px, 92%); }
 }
 .addon-capture-note { max-width: 86ch; margin: 14px auto 0; color: var(--muted-2); font-size: .82rem; text-align: center; }
