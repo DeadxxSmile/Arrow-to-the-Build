@@ -92,6 +92,22 @@ Each phase includes:
 - optional `recommended_gear_stage_ids` references;
 - optional milestone reminders.
 
+## Companion setups
+
+`companions` remains an optional Schema 4 root array. ATTB 2.1 documents these additive companion fields:
+
+- `id` - stable setup ID;
+- `companion_id` - stable ID from `resources/data/eso-companions.json`;
+- `companion_name` - readable companion name;
+- `name`, `role`, and optional `summary`;
+- `weapon`, `armor_weight`, and companion trait recommendations;
+- up to five priority-ordered normal `skills`;
+- a separate `ultimate`;
+- `equipment` and `notes` string arrays;
+- optional `preset_id` and `source_url`.
+
+Companion ability names are not player catalog skill IDs. Do not place them in `relevant_lines`, `unlock_order`, player phase bars, or player rotations.
+
 ## Equipment
 
 A stage contains sets. A set contains individual pieces. A piece can record slot, weight, weapon type, trait, enchantment, quality, active set count, bar, poison, perfected/mythic status, notes, and alternatives.

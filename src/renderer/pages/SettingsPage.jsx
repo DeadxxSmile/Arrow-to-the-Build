@@ -8,20 +8,23 @@ import { APP_TAGLINE } from '../utils/branding'
 
 export default function SettingsPage() {
   const {
-    builds, character, build, activeId, setActiveId, theme, esoPlus, appSettings, setAppSetting,
-    updateCharacter, reloadCharacters, addTrackedSkillLine, deleteTrackedSkillLine,
+    builds, characters, character, build, activeId, setActiveId, theme, esoPlus, appSettings, setAppSetting,
+    updateCharacter, reloadCharacters, refreshActive, addTrackedSkillLine, deleteTrackedSkillLine,
     catalog, skillLines, selectableLoadouts, selectableVariants, workspace, openCharacterModal, characterBuilds, reloadSettings,
     addonStatus, reloadAddonStatus, reloadAddonDiscoveries, openAddonSetup, openAddonImport, clearAddonOverride
   } = useApp()
   const dialog = useAppDialog()
   const [searchParams, setSearchParams] = useSearchParams()
   const requestedTab = searchParams.get('tab')
-  const [tab, setTab] = useState(['general', 'character', 'editor'].includes(requestedTab) ? requestedTab : (workspace === 'build-editor' ? 'editor' : 'general'))
+  const [tab, setTab] = useState(['general', 'character', 'addon', 'editor'].includes(requestedTab) ? requestedTab : (workspace === 'build-editor' ? 'editor' : 'general'))
   const [dbPath, setDbPath] = useState('')
   const [appInfo, setAppInfo] = useState({ version: '' })
   const [storageInfo, setStorageInfo] = useState(null)
   const [storageBusy, setStorageBusy] = useState('')
   const [addonBusy, setAddonBusy] = useState('')
+  const [syncSnapshots, setSyncSnapshots] = useState([])
+  const [linkSnapshotKey, setLinkSnapshotKey] = useState('')
+  const [linkCharacterId, setLinkCharacterId] = useState('')
   const [notice, setNotice] = useState('')
   const [category, setCategory] = useState('Craft')
   const [lineId, setLineId] = useState('')
@@ -52,12 +55,12 @@ export default function SettingsPage() {
   }
 
   useEffect(() => {
-    const next = ['general', 'character', 'editor'].includes(requestedTab) ? requestedTab : (workspace === 'build-editor' ? 'editor' : 'general')
+    const next = ['general', 'character', 'addon', 'editor'].includes(requestedTab) ? requestedTab : (workspace === 'build-editor' ? 'editor' : 'general')
     setTab(next)
   }, [workspace, requestedTab])
   const chooseTab = next => {
     setTab(next)
-    setSearchParams(next === 'general' ? {} : { tab: next }, { replace: true })
+    setSearchParams({ tab: next }, { replace: true })
   }
   useEffect(() => {
     window.api.db.getPath().then(setDbPath)
@@ -70,6 +73,13 @@ export default function SettingsPage() {
     return info
   }, [])
   useEffect(() => { refreshStorageInfo().catch(() => {}) }, [refreshStorageInfo])
+  const refreshSyncSnapshots = useCallback(async () => {
+    if (!addonStatus?.profile_root) { setSyncSnapshots([]); return [] }
+    const list = await window.api.addon.listSnapshots()
+    setSyncSnapshots(list)
+    return list
+  }, [addonStatus?.profile_root])
+  useEffect(() => { if (tab === 'addon') refreshSyncSnapshots().catch(() => {}) }, [tab, refreshSyncSnapshots, addonStatus?.snapshot_count, addonStatus?.linked_count, addonStatus?.pending_count])
   useEffect(() => { setAuthorDraft(appSettings.build_editor_default_author || 'NPC') }, [appSettings.build_editor_default_author])
   useEffect(() => () => clearTimeout(flashTimer.current), [])
   const flash = useCallback(message => { setNotice(message); clearTimeout(flashTimer.current); flashTimer.current = setTimeout(() => setNotice(''), 3500) }, [])
@@ -120,8 +130,14 @@ export default function SettingsPage() {
     } catch (error) { flash(error.message) }
     finally { setAddonBusy('') }
   }
-  const installAddon = () => runAddonAction('install', () => window.api.addon.install(), result => result?.skipped ? `Newer ATTB addon components kept in place.` : `ATTB addon and sync bridge ${result?.version || 'files'} installed or repaired.`)
-  const syncAddon = () => runAddonAction('sync', () => window.api.addon.syncNow(), result => result?.last_error ? `Sync completed with an error: ${result.last_error}` : `Addon data synced. ${result?.snapshot_count || 0} character snapshot${result?.snapshot_count === 1 ? '' : 's'} found.`)
+  const installAddon = () => runAddonAction('install', () => window.api.addon.install(), result => result?.skipped ? `Newer ATTB addon kept in place.` : `ATTB addon ${result?.version || 'files'} installed or repaired.${result?.retired_bridge_removed ? ' Retired v1 sync bridge removed.' : ''}`)
+  const syncAddon = async () => {
+    const result = await runAddonAction('sync', () => window.api.addon.syncNow(), value => value?.last_error ? `Sync completed with an error: ${value.last_error}` : `Addon data synced. ${value?.snapshot_count || 0} character snapshot${value?.snapshot_count === 1 ? '' : 's'} found.`)
+    await reloadCharacters(activeId)
+    await refreshActive()
+    await refreshSyncSnapshots()
+    return result
+  }
   const toggleOverrides = async enabled => {
     if (!enabled) {
       const approved = await dialog.confirm({ title: 'Disable synced-data overrides?', message: 'All overrides across every synced character will be deleted. ATTB will immediately restore the latest values reported by ESO.', confirmLabel: 'Disable and Restore Live Data', danger: true })
@@ -130,13 +146,20 @@ export default function SettingsPage() {
     await runAddonAction('overrides', () => window.api.addon.setOverrideMode(enabled), enabled ? 'Synced-data overrides enabled.' : 'All overrides removed and live ESO data restored.')
     await reloadCharacters(activeId)
   }
+  const unlinkCharacter = async (characterId, characterName) => {
+    if (!characterId) return
+    const approved = await dialog.confirm({ title: `Stop syncing ${characterName || 'this character'}?`, message: 'The ATTB character and its selected build will remain. Its current effective values will become manual and the ESO snapshot will be kept in the sync manager so it can be linked again later.', confirmLabel: 'Stop Syncing', danger: true })
+    if (!approved) return
+    await window.api.addon.unlinkCharacter(characterId)
+    await reloadCharacters(activeId)
+    await refreshActive()
+    await reloadAddonStatus()
+    await refreshSyncSnapshots()
+    flash(`${characterName || 'Character'} is now a manual ATTB character.`)
+  }
   const unlinkCurrent = async () => {
     if (!character?.addon_sync?.linked) return
-    const approved = await dialog.confirm({ title: `Stop syncing ${character.name}?`, message: 'The ATTB character and its selected build will remain. Its current effective values will become manual and the ESO snapshot will be dismissed until rediscovered.', confirmLabel: 'Stop Syncing', danger: true })
-    if (!approved) return
-    await window.api.addon.unlinkCharacter(character.id)
-    await reloadCharacters(character.id)
-    flash(`${character.name} is now a manual ATTB character.`)
+    await unlinkCharacter(character.id, character.name)
   }
   const resetApp = async () => {
     const first = await dialog.confirm({ title: 'Reset all ATTB data?', message: 'This removes every saved character, imported build, setting, checklist, draft, and revision. Bundled builds will be restored.', confirmLabel: 'Continue', danger: true })
@@ -178,6 +201,47 @@ export default function SettingsPage() {
     flash(`Changed build to ${next?.name || 'the selected build'}.`)
   }
 
+  const unlinkedSnapshots = useMemo(() => syncSnapshots.filter(item => !item.linked), [syncSnapshots])
+  const manualCharacters = useMemo(() => (characters || []).filter(item => !item.addon_linked), [characters])
+  const selectedSnapshot = useMemo(() => unlinkedSnapshots.find(item => item.character_key === linkSnapshotKey) || unlinkedSnapshots[0] || null, [unlinkedSnapshots, linkSnapshotKey])
+  const compatibleManualCharacters = useMemo(() => manualCharacters.filter(item => !selectedSnapshot?.class_name || !item.class_name || String(item.class_name).toLowerCase() === String(selectedSnapshot.class_name).toLowerCase()), [manualCharacters, selectedSnapshot?.class_name])
+  useEffect(() => {
+    if (!unlinkedSnapshots.some(item => item.character_key === linkSnapshotKey)) setLinkSnapshotKey(unlinkedSnapshots[0]?.character_key || '')
+  }, [unlinkedSnapshots, linkSnapshotKey])
+  useEffect(() => {
+    if (!compatibleManualCharacters.some(item => item.id === linkCharacterId)) setLinkCharacterId(compatibleManualCharacters[0]?.id || '')
+  }, [compatibleManualCharacters, linkCharacterId])
+  const linkExistingCharacter = async () => {
+    if (!selectedSnapshot || !linkCharacterId) return
+    const target = compatibleManualCharacters.find(item => item.id === linkCharacterId)
+    const approved = await dialog.confirm({
+      title: `Link ${selectedSnapshot.name} to ${target?.name || 'the selected ATTB character'}?`,
+      message: `The existing ATTB profile and its selected build will be kept. ESO will become the source for identity and live progression values. ${selectedSnapshot.discovery_status === 'dismissed' ? 'This snapshot was previously dismissed, but linking it here restores it directly.' : ''}`,
+      confirmLabel: 'Link and Sync'
+    })
+    if (!approved) return
+    setAddonBusy('link')
+    try {
+      const result = await window.api.addon.importCharacter(selectedSnapshot.character_key, { link_character_id: linkCharacterId })
+      await reloadCharacters(result.id)
+      await refreshActive()
+      await reloadAddonStatus()
+      await refreshSyncSnapshots()
+      flash(`${selectedSnapshot.name} is now linked to ${target?.name || 'the selected ATTB profile'}.`)
+    } catch (error) { flash(error.message || 'The character link could not be created.') }
+    finally { setAddonBusy('') }
+  }
+  const restoreDismissed = async () => {
+    setAddonBusy('rediscover')
+    try {
+      const list = await window.api.addon.rediscoverDismissed()
+      await reloadAddonStatus()
+      await refreshSyncSnapshots()
+      flash(`${list.length} addon character${list.length === 1 ? '' : 's'} available for import or linking.`)
+    } catch (error) { flash(error.message || 'Dismissed characters could not be restored.') }
+    finally { setAddonBusy('') }
+  }
+
   const selectedIds = useMemo(() => new Set(skillLines.map(line => line.id)), [skillLines])
   const categories = catalog?.categories || []
   const options = useMemo(() => (catalog?.lines || []).filter(line => line.group === category && !selectedIds.has(line.id)).sort((a, b) => a.name.localeCompare(b.name)), [catalog, category, selectedIds])
@@ -199,34 +263,14 @@ export default function SettingsPage() {
     <div className="settings-tabs" role="tablist">
       <button role="tab" aria-selected={tab === 'general'} className={tab === 'general' ? 'active' : ''} onClick={() => chooseTab('general')}>General Settings</button>
       <button role="tab" aria-selected={tab === 'character'} className={tab === 'character' ? 'active' : ''} onClick={() => chooseTab('character')}>Character Settings</button>
+      <button role="tab" aria-selected={tab === 'addon'} className={tab === 'addon' ? 'active' : ''} onClick={() => chooseTab('addon')}>ESO Addon &amp; Sync</button>
       <button role="tab" aria-selected={tab === 'editor'} className={tab === 'editor' ? 'active' : ''} onClick={() => chooseTab('editor')}>Build Editor Settings</button>
     </div>
     {notice && <div className="notice-banner" role="status">{notice}</div>}
 
     {tab === 'general' && <div className="settings-stack">
-      <section className="panel"><div className="section-head"><div><span className="eyebrow">Appearance</span><h2>Theme</h2></div></div><div className="setting-row"><div><b>Color mode</b><p>Switch both workspaces between the dark and light palettes.</p></div><select value={theme} aria-label="Color mode" onChange={event => setAppSetting('theme', event.target.value)}><option value="dark">Dark</option><option value="light">Light</option></select></div></section>
+      <section className="panel"><div className="section-head"><div><span className="eyebrow">Appearance</span><h2>Theme</h2></div></div><div className="setting-row"><div><b>Color theme</b><p>Choose the balanced ATTB icon palette, a deeper dark mode, a clean light theme, or the black-and-gold ESO-site-inspired Old Scrolls look.</p></div><select value={theme} aria-label="Color theme" onChange={event => setAppSetting('theme', event.target.value)}><option value="default">ATTB Default</option><option value="dark">Deep Dark</option><option value="light">Light</option><option value="old-scrolls">Old Scrolls</option></select></div></section>
       <section className="panel"><div className="section-head"><div><span className="eyebrow">Startup</span><h2>Opening workspace</h2></div></div><div className="setting-row"><div><b>When ATTB launches</b><p>Choose a fixed workspace or return to whichever side of the app you used last.</p></div><select value={appSettings.startup_workspace || 'last'} onChange={event => setAppSetting('startup_workspace', event.target.value)}><option value="last">Last used workspace</option><option value="character">Character Tracker</option><option value="build-editor">Build Editor</option></select></div></section>
-      <section className="panel addon-settings-panel"><div className="section-head"><div><span className="eyebrow">ESO companion addon</span><h2>Automatic character synchronization</h2><p>Install or connect the silent ATTB addon, then add discovered ESO characters to Character Tracker with a new or existing build plan.</p></div><div className="schema-badges"><span>{addonStatus?.enabled ? 'Sync enabled' : 'Sync disabled'}</span><span>{addonStatus?.snapshot_count || 0} snapshot{addonStatus?.snapshot_count === 1 ? '' : 's'}</span>{addonStatus?.pending_count > 0 && <span>{addonStatus.pending_count} new</span>}</div></div>
-        <div className="eso-save-limitation"><div><span className="eyebrow">ESO limitation</span><h3>Need the latest character data now? Run <code>/reloadui</code> in ESO.</h3><p>ESO addons cannot push data directly to desktop apps. ATTB can only read a new snapshot after ESO writes SavedVariables to disk. Automatic saves may arrive on their own, but <code>/reloadui</code> is the most reliable refresh.</p></div><div className="button-row compact-buttons addon-doc-buttons"><button type="button" className="btn secondary" onClick={() => openProjectLink('https://www.esoui.com/forums/showthread.php?t=8957')}>ZOS SavedVariables timing</button><button type="button" className="btn secondary" onClick={() => openProjectLink('https://wiki.esoui.com/Storing_data_and_accessing_files')}>ESOUI SavedVariables explanation</button></div></div>
-        <label className="setting-row clickable"><div><b>Enable addon synchronization</b><p>Watch the configured ESO SavedVariables file and update linked characters whenever ESO writes new data.</p></div><span className="switch"><input type="checkbox" checked={!!addonStatus?.enabled} disabled={!!addonBusy} onChange={event => toggleAddon(event.target.checked)} /><i /></span></label>
-        <label className="setting-row clickable"><div><b>Allow synced-data overrides</b><p>Temporarily test different levels, attributes, CP, skill ranks, and purchases. Disabling this deletes all overrides and restores live ESO data.</p></div><span className="switch"><input type="checkbox" checked={overridesEnabled} disabled={!!addonBusy || (!addonStatus?.enabled && !overridesEnabled)} onChange={event => toggleOverrides(event.target.checked)} /><i /></span></label>
-        <div className="data-path"><small>ESO profile root</small><code>{addonStatus?.profile_root || 'Not configured'}</code></div>
-        <div className="data-path"><small>Main addon installation</small><code>{addonStatus?.addon_installed ? `${addonStatus.addon_path} · v${addonStatus.installed_version}` : addonStatus?.addon_path || 'Not installed'}</code></div>
-        <div className="data-path"><small>Small sync bridge</small><code>{addonStatus?.bridge_installed ? `${addonStatus.bridge_addon_path} · v${addonStatus.bridge_installed_version}` : addonStatus?.bridge_addon_path || 'Not installed'}</code></div>
-        <div className="data-path"><small>Full character archive</small><code>{addonStatus?.saved_variables_found ? addonStatus.saved_variables_path : addonStatus?.saved_variables_path ? `${addonStatus.saved_variables_path} · waiting for ESO` : 'No profile selected'}</code></div>
-        <div className="data-path"><small>Sync bridge SavedVariables</small><code>{addonStatus?.bridge_saved_variables_found ? `${addonStatus.bridge_saved_variables_path} · ${(addonStatus.bridge_file_size / 1024).toFixed(1)} KB` : addonStatus?.bridge_saved_variables_path ? `${addonStatus.bridge_saved_variables_path} · waiting for ESO` : 'No profile selected'}</code></div>
-        {addonStatus?.last_error && <div className="error-box">{addonStatus.last_error}</div>}
-        {(!addonStatus?.addon_installed || !addonStatus?.bridge_installed) && addonStatus?.profile_root && <div className="quiet-box">The ESO profile is configured, but one or more ATTB addon components are missing. Use Install / Repair Addon below.</div>}
-        {(addonStatus?.addon_update_available || addonStatus?.bridge_update_available) && <div className="notice-banner warn-banner">One or more installed ATTB addon components are older than the bundled {addonStatus.bundled_version}. Install / Repair updates both components.</div>}
-        {(addonStatus?.addon_newer_than_bundled || addonStatus?.bridge_newer_than_bundled) && <div className="quiet-box">A locally installed ATTB addon component is newer than the {addonStatus.bundled_version} copy bundled with this app. ATTB preserves newer components by default.</div>}
-        {addonStatus?.bridge_installed && !addonStatus?.bridge_saved_variables_found && <div className="quiet-box"><b>Sync bridge installed.</b> Log into ESO once so the game can create its SavedVariables file. Until then ATTB can only read the full archive when ESO writes it.</div>}
-        {addonStatus?.bridge_saved_variables_found && addonStatus?.bridge_within_normal_save_limit && !addonStatus?.bridge_truncated && <div className="notice-banner"><b>ESO-controlled sync bridge ready.</b> Disk file {(addonStatus.bridge_file_size / 1024).toFixed(1)} KB{addonStatus.bridge_estimated_bytes ? ` · internal budget ${(addonStatus.bridge_estimated_bytes / 1024).toFixed(1)} / ${(addonStatus.bridge_budget_bytes / 1024).toFixed(0)} KB (${addonStatus.bridge_budget_status || 'ok'})` : ''}. ESO still controls the exact write time. Run /reloadui in ESO whenever you need a fresh snapshot immediately.</div>}
-        {addonStatus?.bridge_truncated && <div className="notice-banner warn-banner"><b>Partial ESO sync.</b> The bridge protected its ${(addonStatus.bridge_budget_bytes / 1024).toFixed(0)} KB internal budget and omitted {addonStatus.bridge_dropped_sections?.length ? addonStatus.bridge_dropped_sections.join(', ') : 'lower-priority detail'}. ATTB preserves the last complete values for omitted sections until the full archive reaches disk on a loading screen, /reloadui, logout, or exit.</div>}
-        {addonStatus?.bridge_saved_variables_found && !addonStatus?.bridge_within_normal_save_limit && <div className="notice-banner warn-banner"><b>Sync bridge is too large for normal-play saving.</b> It is {(addonStatus.bridge_file_size / 1024).toFixed(1)} KB. ESO may defer it until a loading screen, /reloadui, logout, or exit.</div>}
-        <div className="button-row"><button type="button" className="btn primary" disabled={!!addonBusy || !addonStatus?.profile_root} onClick={installAddon}>{addonBusy === 'install' ? 'Installing…' : 'Install / Repair Addon'}</button><button type="button" className="btn secondary" disabled={!!addonBusy} onClick={chooseAddonFolder}>{addonBusy === 'choose' ? 'Choosing…' : 'Choose ESO Folder'}</button><button type="button" className="btn secondary" disabled={!!addonBusy || !addonStatus?.enabled} onClick={syncAddon}>{addonBusy === 'sync' ? 'Syncing…' : 'Sync Now'}</button><button type="button" className="btn secondary" disabled={!!addonBusy || !addonStatus?.enabled} onClick={openAddonImport}>Import Data From Addon</button></div>
-        <div className="button-row compact-buttons"><button type="button" className="btn ghost" disabled={!addonStatus?.profile_root} onClick={() => window.api.addon.openFolder('addons')}>Open AddOns Folder</button><button type="button" className="btn ghost" disabled={!addonStatus?.profile_root} onClick={() => window.api.addon.openFolder('saved')}>Open SavedVariables Folder</button><button type="button" className="btn ghost" onClick={() => window.api.addon.openRepository()}>Addon GitHub</button></div>
-        <small className="setting-footnote">One ESO profile is active at a time. ATTB supports live, liveeu, and PTS profile roots and never executes Lua from either SavedVariables file. ESO controls disk writes. The bridge requests better save opportunities when possible, but /reloadui remains the reliable way to force a fresh SavedVariables write.</small>
-      </section>
       <section className="panel"><div className="section-head"><div><span className="eyebrow">Network</span><h2>Remote build images</h2></div></div><label className="setting-row clickable"><div><b>Allow images referenced by trusted imported builds</b><p>ATTB remains offline by default. Remote downloads are restricted to HTTPS, five megabytes, real image formats, and a local cache.</p></div><span className="switch"><input type="checkbox" checked={remoteImages} onChange={event => setAppSetting('remote_images', event.target.checked)} /><i /></span></label></section>
       <section className="panel"><div className="section-head"><div><span className="eyebrow">Storage</span><h2>Local data</h2></div></div><div className="data-path"><small>SQLite database</small><code>{dbPath}</code></div><div className="data-path"><small>Bundled ESO catalog</small><code>{catalog?.catalog_version} · {catalog?.game_version} · {(catalog?.lines || []).length} skill lines</code></div><div className="button-row"><button className="btn secondary" onClick={clearCache}>Clear downloaded image cache</button><button className="btn danger" onClick={resetApp}>Reset entire app</button></div></section>
       <section className="panel about-panel"><div className="section-head"><div><span className="eyebrow">About</span><h2>Arrow to the Build</h2><p className="app-tagline about-tagline">{APP_TAGLINE}</p></div></div><div className="about-details"><div><small>App version</small><b>{appInfo.version ? `v${appInfo.version}` : 'Loading…'}</b></div><div><small>Built for</small><b>ESO {catalog?.game_version || 'catalog not loaded'}</b></div><div><small>Build format</small><b>Schema {builds.find(item => item.is_bundled)?.schema_version || 4}</b></div></div><div className="button-row"><button type="button" className="btn secondary" onClick={() => openProjectLink(appInfo.repository || 'https://github.com/DeadxxSmile/Arrow-to-the-Build')}>Open GitHub project</button><button type="button" className="btn ghost" onClick={() => openProjectLink(appInfo.issues || 'https://github.com/DeadxxSmile/Arrow-to-the-Build/issues')}>Report an issue</button></div></section>
@@ -234,13 +278,6 @@ export default function SettingsPage() {
 
     {tab === 'character' && <div className="settings-stack">
       <section className="panel"><div className="section-head"><div><span className="eyebrow">Account-wide access</span><h2>ESO Plus</h2></div></div><label className="setting-row clickable"><div><b>ESO Plus active</b><p>Used for DLC-access notes and subscription-specific recommendations across every tracked character.</p></div><span className="switch"><input type="checkbox" checked={esoPlus} onChange={event => setAppSetting('eso_plus', event.target.checked)} /><i /></span></label></section>
-      {character?.addon_sync?.linked && <section className="panel character-sync-panel"><div className="section-head"><div><span className="eyebrow">ESO live data</span><h2>{character.name} is linked</h2><p>{character.addon_sync.account_name} · {character.addon_sync.world_name} · ID {character.addon_sync.eso_character_id}</p></div><div className="schema-badges"><span>Addon {character.addon_sync.addon_version}</span><span>{character.addon_sync.overrides?.length || 0} override{character.addon_sync.overrides?.length === 1 ? '' : 's'}</span></div></div>
-        <div className="sync-character-summary"><div><small>Last ESO snapshot</small><b>{character.addon_sync.captured_at ? new Date(character.addon_sync.captured_at * 1000).toLocaleString() : 'Waiting for data'}</b></div><div><small>Override mode</small><b>{overridesEnabled ? 'Enabled' : 'Disabled'}</b></div><div><small>Identity source</small><b>ESO addon</b></div></div>
-        <div className="sync-refresh-reminder"><b>Snapshot look stale?</b><span>Run <code>/reloadui</code> in ESO, then use Sync Now here. ESO decides when SavedVariables reach disk.</span></div>
-        {!character.addon_sync.profile_active && <div className="notice-banner warn-banner">This character belongs to a different ESO profile than the one currently selected in App Settings. Its last imported values are preserved, but it will not receive updates until that profile is active again.</div>}
-        {character.addon_sync.overrides?.length > 0 && <div className="override-summary"><div><b>Active overrides</b><small>Restore any field independently, or disable override mode to clear every override at once.</small></div><div className="override-summary-list">{character.addon_sync.overrides.map(item => <div key={item.path}><span>{overrideLabel(item.path)}</span><code>{typeof item.value === 'object' ? JSON.stringify(item.value) : String(item.value)}</code><button type="button" className="override-reset compact" onClick={() => clearAddonOverride(item.path)} title="Restore live ESO value" aria-label={`Restore ${overrideLabel(item.path)} to live ESO value`}>↶</button></div>)}</div></div>}
-        <div className="button-row"><button type="button" className="btn secondary" onClick={syncAddon}>Sync Now</button><button type="button" className="btn danger" onClick={unlinkCurrent}>Stop Syncing Character</button></div>
-      </section>}
       {!character ? <section className="panel no-character-settings"><div><span className="eyebrow">Character profile</span><h2>No character selected</h2><p>Add a character to configure identity, build selection, addon linking, and personally tracked skill lines. Numeric progression lives under Current Levels.</p></div><button type="button" className="btn primary" onClick={openCharacterModal}>＋ Add Character</button></section> : <>
         <section className="panel"><div className="section-head"><div><span className="eyebrow">Current profile</span><h2>{character.name}</h2></div><small>{build?.name}</small></div>
           <div className="form-grid three">
@@ -260,6 +297,51 @@ export default function SettingsPage() {
         </section>
         <section className="panel danger-zone"><div><span className="eyebrow">Danger zone</span><h2>Remove character</h2><p>This removes only the ATTB profile. It cannot affect the character in ESO.</p></div><button className="btn danger" onClick={removeCharacter}>Remove {character.name}</button></section>
       </>}
+    </div>}
+
+    {tab === 'addon' && <div className="settings-stack">
+      <section className="panel addon-settings-panel"><div className="section-head"><div><span className="eyebrow">ESO companion addon</span><h2>Automatic character synchronization</h2><p>Install or connect the silent ATTB addon, then add discovered ESO characters to Character Tracker with a new or existing build plan.</p></div><div className="schema-badges"><span>{addonStatus?.enabled ? 'Sync enabled' : 'Sync disabled'}</span><span>{addonStatus?.snapshot_count || 0} snapshot{addonStatus?.snapshot_count === 1 ? '' : 's'}</span>{addonStatus?.pending_count > 0 && <span>{addonStatus.pending_count} new</span>}</div></div>
+        <div className="eso-save-limitation"><div><span className="eyebrow">ESO limitation</span><h3>Need the latest character data now? Run <code>/reloadui</code> in ESO.</h3><p>ESO addons cannot push data directly to desktop apps. ATTB can only read a new snapshot after ESO writes SavedVariables to disk. Automatic saves may arrive on their own, but <code>/reloadui</code> is the most reliable refresh.</p></div><div className="button-row compact-buttons addon-doc-buttons"><button type="button" className="btn secondary" onClick={() => openProjectLink('https://www.esoui.com/forums/showthread.php?t=8957')}>ZOS SavedVariables timing</button><button type="button" className="btn secondary" onClick={() => openProjectLink('https://wiki.esoui.com/Storing_data_and_accessing_files')}>ESOUI SavedVariables explanation</button></div></div>
+        <label className="setting-row clickable"><div><b>Enable addon synchronization</b><p>Watch the configured ESO SavedVariables file and update linked characters whenever ESO writes new data.</p></div><span className="switch"><input type="checkbox" checked={!!addonStatus?.enabled} disabled={!!addonBusy} onChange={event => toggleAddon(event.target.checked)} /><i /></span></label>
+        <label className="setting-row clickable"><div><b>Allow synced-data overrides</b><p>Temporarily test different levels, attributes, CP, skill ranks, and purchases. Disabling this deletes all overrides and restores live ESO data.</p></div><span className="switch"><input type="checkbox" checked={overridesEnabled} disabled={!!addonBusy || (!addonStatus?.enabled && !overridesEnabled)} onChange={event => toggleOverrides(event.target.checked)} /><i /></span></label>
+        <div className="data-path"><small>ESO profile root</small><code>{addonStatus?.profile_root || 'Not configured'}</code></div>
+        <div className="data-path"><small>Addon installation</small><code>{addonStatus?.addon_installed ? `${addonStatus.addon_path} · v${addonStatus.installed_version}` : addonStatus?.addon_path || 'Not installed'}</code></div>
+        <div className="data-path"><small>ATTB SavedVariables</small><code>{addonStatus?.saved_variables_found ? `${addonStatus.saved_variables_path} · ${(addonStatus.saved_variables_size / 1024).toFixed(1)} KB` : addonStatus?.saved_variables_path ? `${addonStatus.saved_variables_path} · waiting for ESO` : 'No profile selected'}</code></div>
+        {addonStatus?.last_error && <div className="error-box">{addonStatus.last_error}</div>}
+        {!addonStatus?.addon_installed && addonStatus?.profile_root && <div className="quiet-box">The ESO profile is configured, but the ATTB addon is missing. Use Install / Repair Addon below.</div>}
+        {addonStatus?.addon_update_available && <div className="notice-banner warn-banner">The installed ATTB addon is older than the bundled {addonStatus.bundled_version}. Install / Repair updates it.</div>}
+        {addonStatus?.addon_newer_than_bundled && <div className="quiet-box">The installed ATTB addon is newer than the {addonStatus.bundled_version} copy bundled with this app. ATTB preserves the newer copy by default.</div>}
+        {addonStatus?.retired_bridge_installed && <div className="notice-banner warn-banner"><b>Retired v1 sync bridge found.</b> The legacy migration resets the verified old bridge and both old addon save files, then installs the single exporter fresh.</div>}
+        {addonStatus?.addon_installed && !addonStatus?.saved_variables_found && <div className="quiet-box"><b>Addon installed.</b> Log into ESO once and run <code>/reloadui</code> so ESO creates the SavedVariables file ATTB reads.</div>}
+        {addonStatus?.addon_installed && addonStatus?.saved_variables_found && <div className="notice-banner"><b>ESO addon ready.</b> ATTB is watching the single SavedVariables archive. ESO controls when changes reach disk; use <code>/reloadui</code> whenever you need an immediate desktop refresh.</div>}
+        <div className="button-row"><button type="button" className="btn primary" disabled={!!addonBusy || !addonStatus?.profile_root} onClick={installAddon}>{addonBusy === 'install' ? 'Installing…' : 'Install / Repair Addon'}</button><button type="button" className="btn secondary" disabled={!!addonBusy} onClick={chooseAddonFolder}>{addonBusy === 'choose' ? 'Choosing…' : 'Choose ESO Folder'}</button><button type="button" className="btn secondary" disabled={!!addonBusy || !addonStatus?.enabled} onClick={syncAddon}>{addonBusy === 'sync' ? 'Syncing…' : 'Sync Now'}</button><button type="button" className="btn secondary" disabled={!!addonBusy || !addonStatus?.enabled} onClick={openAddonImport}>Import Data From Addon</button></div>
+        <div className="button-row compact-buttons"><button type="button" className="btn ghost" disabled={!addonStatus?.profile_root} onClick={() => window.api.addon.openFolder('addons')}>Open AddOns Folder</button><button type="button" className="btn ghost" disabled={!addonStatus?.profile_root} onClick={() => window.api.addon.openFolder('saved')}>Open SavedVariables Folder</button><button type="button" className="btn ghost" onClick={() => window.api.addon.openRepository()}>Addon GitHub</button></div>
+        <small className="setting-footnote">One ESO profile is active at a time. ATTB supports live, liveeu, and PTS profile roots and never executes Lua from SavedVariables. ESO controls disk writes; /reloadui remains the reliable way to force a fresh SavedVariables write.</small>
+      </section>
+      <section className="panel sync-link-manager">
+        <div className="section-head"><div><span className="eyebrow">Character link manager</span><h2>Connect ESO snapshots to existing ATTB characters</h2><p>Link a manually created character after the fact, including snapshots you previously dismissed. The ATTB character keeps its selected build while ESO becomes the source for live identity and progression.</p></div><div className="schema-badges"><span>{addonStatus?.linked_count || 0} linked</span><span>{syncSnapshots.length} known</span></div></div>
+        {addonStatus?.profile_root ? <>
+          <div className="sync-link-form">
+            <label><span>ESO character snapshot</span><select value={selectedSnapshot?.character_key || ''} onChange={event => setLinkSnapshotKey(event.target.value)} disabled={!unlinkedSnapshots.length || !!addonBusy}>{unlinkedSnapshots.length ? unlinkedSnapshots.map(item => <option key={item.character_key} value={item.character_key}>{item.name} · {item.class_name || 'Unknown class'} · {item.world_name}{item.discovery_status === 'dismissed' ? ' · dismissed' : ''}</option>) : <option value="">No unlinked snapshots</option>}</select></label>
+            <label><span>Existing ATTB character</span><select value={linkCharacterId} onChange={event => setLinkCharacterId(event.target.value)} disabled={!compatibleManualCharacters.length || !!addonBusy}>{compatibleManualCharacters.length ? compatibleManualCharacters.map(item => <option key={item.id} value={item.id}>{item.name} · {item.class_name || 'Unknown class'} · {item.build_name}</option>) : <option value="">No compatible manual characters</option>}</select></label>
+            <button type="button" className="btn primary" disabled={!selectedSnapshot || !linkCharacterId || !!addonBusy} onClick={linkExistingCharacter}>{addonBusy === 'link' ? 'Linking…' : 'Link Existing Character'}</button>
+          </div>
+          {selectedSnapshot?.discovery_status === 'dismissed' && <div className="quiet-box"><b>Previously dismissed.</b> You can still link this snapshot directly here; no new <code>/reloadui</code> is required unless you want fresher ESO data first.</div>}
+          <div className="sync-manager-actions button-row compact-buttons"><button type="button" className="btn secondary" disabled={!!addonBusy || !syncSnapshots.some(item => item.discovery_status === 'dismissed')} onClick={restoreDismissed}>{addonBusy === 'rediscover' ? 'Restoring…' : 'Restore Dismissed to Import Queue'}</button><button type="button" className="btn ghost" disabled={!!addonBusy} onClick={refreshSyncSnapshots}>Refresh Link List</button></div>
+          <div className="sync-snapshot-list">{syncSnapshots.length ? syncSnapshots.map(item => <article key={item.character_key} className={`sync-snapshot-card ${item.linked ? 'linked' : item.discovery_status}`}>
+            <div className="sync-snapshot-main"><div><b>{item.name}</b><small>{item.class_name || 'Unknown class'} · Level {item.level}{item.champion_points ? ` · CP ${item.champion_points}` : ''}</small><em>{item.account_name} · {item.world_name}</em></div><div className="schema-badges"><span>{item.linked ? 'Linked' : item.discovery_status === 'dismissed' ? 'Dismissed' : 'Available'}</span></div></div>
+            <div className="sync-snapshot-meta"><span><small>Last snapshot</small><b>{item.captured_at ? new Date(item.captured_at * 1000).toLocaleString() : 'Unknown'}</b></span><span><small>ATTB profile</small><b>{item.linked ? item.linked_character_name : 'Not linked'}</b></span><span><small>Selected build</small><b>{item.linked ? item.linked_build_name : 'None'}</b></span></div>
+            {item.linked && <div className="button-row compact-buttons"><button type="button" className="btn secondary" onClick={() => setActiveId(item.linked_character_id)}>Select Character</button><button type="button" className="btn danger" onClick={() => unlinkCharacter(item.linked_character_id, item.linked_character_name)}>Stop Syncing</button></div>}
+          </article>) : <div className="quiet-box">No addon snapshots are stored for the active ESO profile yet. Log into a character, run <code>/reloadui</code>, then use Sync Now.</div>}</div>
+        </> : <div className="quiet-box">Choose an ESO profile folder above before managing character links.</div>}
+      </section>
+      {character?.addon_sync?.linked && <section className="panel character-sync-panel"><div className="section-head"><div><span className="eyebrow">ESO live data</span><h2>{character.name} is linked</h2><p>{character.addon_sync.account_name} · {character.addon_sync.world_name} · ID {character.addon_sync.eso_character_id}</p></div><div className="schema-badges"><span>Addon {character.addon_sync.addon_version}</span><span>{character.addon_sync.overrides?.length || 0} override{character.addon_sync.overrides?.length === 1 ? '' : 's'}</span></div></div>
+        <div className="sync-character-summary"><div><small>Last ESO snapshot</small><b>{character.addon_sync.captured_at ? new Date(character.addon_sync.captured_at * 1000).toLocaleString() : 'Waiting for data'}</b></div><div><small>Override mode</small><b>{overridesEnabled ? 'Enabled' : 'Disabled'}</b></div><div><small>Identity source</small><b>ESO addon</b></div></div>
+        <div className="sync-refresh-reminder"><b>Snapshot look stale?</b><span>Run <code>/reloadui</code> in ESO, then use Sync Now here. ESO decides when SavedVariables reach disk.</span></div>
+        {!character.addon_sync.profile_active && <div className="notice-banner warn-banner">This character belongs to a different ESO profile than the one currently selected in Settings &gt; ESO Addon &amp; Sync. Its last imported values are preserved, but it will not receive updates until that profile is active again.</div>}
+        {character.addon_sync.overrides?.length > 0 && <div className="override-summary"><div><b>Active overrides</b><small>Restore any field independently, or disable override mode to clear every override at once.</small></div><div className="override-summary-list">{character.addon_sync.overrides.map(item => <div key={item.path}><span>{overrideLabel(item.path)}</span><code>{typeof item.value === 'object' ? JSON.stringify(item.value) : String(item.value)}</code><button type="button" className="override-reset compact" onClick={() => clearAddonOverride(item.path)} title="Restore live ESO value" aria-label={`Restore ${overrideLabel(item.path)} to live ESO value`}>↶</button></div>)}</div></div>}
+        <div className="button-row"><button type="button" className="btn secondary" onClick={syncAddon}>Sync Now</button><button type="button" className="btn danger" onClick={unlinkCurrent}>Stop Syncing Character</button></div>
+      </section>}
     </div>}
 
     {tab === 'editor' && <div className="settings-stack">

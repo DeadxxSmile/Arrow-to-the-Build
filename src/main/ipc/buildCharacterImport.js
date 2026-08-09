@@ -219,7 +219,9 @@ function createCharacterBuildImport(deps) {
     let priority = 10
     const roman = n => ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'][n - 1] || String(n)
     for (const { line, skill, points } of hits) {
-      const count = skill.type === 'Passive' ? Math.min(Math.max(1, Number(skill.max_points) || 1), Math.max(1, Math.trunc(points))) : 1
+      const liveMax = Number(live.skill_max_points?.[skill.id])
+      const effectiveMax = Number.isInteger(liveMax) && liveMax > 0 ? liveMax : Math.max(1, Number(skill.max_points) || 1)
+      const count = skill.type === 'Passive' ? Math.min(effectiveMax, Math.max(1, Math.trunc(points))) : 1
       for (let rank = 1; rank <= count; rank++) {
         const id = uniqueLocalId(`${line.id}-${skill.name}${skill.type === 'Passive' && count > 1 ? `-${rank}` : ''}`, used)
         const requires = []
@@ -234,7 +236,9 @@ function createCharacterBuildImport(deps) {
           line: line.id, required_rank: Number(skill.required_rank) || 0, kind: skill.type, phase: 'Imported', status: 'final', priority,
           notes: 'Owned when this character was imported. ATTB does not fabricate the historical level at which it was acquired.',
           morph_from: skill.type === 'Morph' && skill.base_id ? (catalog.getSkill(skill.base_id)?.skill?.name || null) : null,
-          image: null, requires, skill_point_cost: line.group === 'Class' && line.class && line.class !== className ? 2 : 1, imported_state: 'owned', imported_rank: skill.type === 'Passive' ? rank : undefined
+          image: null, requires,
+          skill_point_cost: ['none', 'class_mastery_point'].includes(skill.currency) ? 0 : (line.group === 'Class' && line.class && line.class !== className ? 2 : 1),
+          imported_state: 'owned', imported_rank: skill.type === 'Passive' ? rank : undefined
         }
         rows.push(row)
         priority += 10

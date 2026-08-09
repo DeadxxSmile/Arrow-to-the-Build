@@ -1,207 +1,172 @@
 # ESO Addon Integration
 
-Arrow to the Build can install and read its ESO companion integration. It is split into two silent local addon components: **ArrowToTheBuild**, which keeps the durable multi-character archive, and **ArrowToTheBuildBridge**, which keeps a tiny current-character payload for faster desktop synchronization. Neither component shows combat advice, makes gameplay decisions, spends points, or communicates over the network.
-
-> **I Used To Be Meta Like You, Then I Took An Arrow To The Build**
-
-## What is synchronized
-
-After the addon has seen a character, it records a compact snapshot containing:
-
-- ESO account, megaserver, stable character ID, character name, class, race, and alliance
-- level, Champion level, spent attributes, available attribute points, and available Skill Points
-- discovered skill lines and ranks
-- purchased active skills, morphs, passives, and ultimates
-- front and back action bars
-- equipped armor, jewelry, weapons, traits, enchantments, and item sets
-- invested and slotted Champion Points
-- addon, API, snapshot-schema, capture-reason, and timestamp metadata
-
-The main addon writes the complete multi-character archive to:
+Arrow to the Build can read character state from its optional ESO addon. The integration is deliberately one-way and local:
 
 ```text
-<Elder Scrolls Online profile>\SavedVariables\ArrowToTheBuild.lua
+ESO character
+    -> ArrowToTheBuild addon
+    -> ArrowToTheBuild.lua SavedVariables
+    -> ATTB desktop Character Tracker
 ```
 
-The separate sync bridge writes only the currently active character to:
+The addon does not receive commands from the desktop app, automate gameplay, spend points, equip items, or contact a remote service.
+
+## Current components
+
+ATTB 2.1.6 bundles one ESO addon:
 
 ```text
-<Elder Scrolls Online profile>\SavedVariables\ArrowToTheBuildBridge.lua
+ArrowToTheBuild 1.1.0
+ESO API: 101050
+SavedVariables: ArrowToTheBuildSavedVariables
+SavedVariables file: ArrowToTheBuild.lua
+SavedVariables schema: 1
+Character snapshot schema: 2
 ```
 
-ATTB never executes either file. The main process uses a restricted parser that accepts only the expected SavedVariables assignment containing Lua table data, strings, numbers, booleans, and `nil`.
+The former `ArrowToTheBuildBridge` component was retired in 1.1.0. It added a second schema, packed payload, size budgeting, priority-save state, a second file watcher, and reconciliation logic without providing a dependable refresh path beyond ESO's own SavedVariables timing.
 
-### Why there are two SavedVariables files
+## Installation
 
-ESO controls when addon SavedVariables are flushed to disk. ATTB can capture a gameplay change immediately in addon memory, but the desktop cannot see it until ESO writes the SavedVariables file. Large or slow-to-serialize addon files can be deferred until a loading screen, `/reloadui`, logout, or exit. The bridge therefore packs only the active character into a bounded payload so it can use normal gameplay save opportunities without waiting for the complete multi-character archive. **`/reloadui` is the reliable user-controlled way to force a fresh snapshot when immediate desktop refresh matters.**
-
-The durable archive does not request normal-play save priority; only the small bridge competes for the priority save opportunity. The bridge skips a priority request during player deactivation because logout/reload is already a natural SavedVariables flush point; this avoids carrying a freshly consumed priority throttle into the next login. The first-enable screen presents this limitation before synchronization is enabled and links to the ZOS save-timing discussion at `https://www.esoui.com/forums/showthread.php?t=8957` plus the ESOUI SavedVariables explanation at `https://wiki.esoui.com/Storing_data_and_accessing_files`.
-
-Bridge schema 2 uses a **32 KiB internal soft budget**, leaving substantial headroom below ESO's roughly 50 KiB normal-play size ceiling. Repeating skill, action-bar, equipment, and Champion Point records are flattened into tab-separated rows and newline-separated row blobs instead of hundreds of nested Lua tables. Skill and Champion data is ID-first; identity display names remain for discovery, while arbitrary equipment/set names remain because they cannot always be resolved from the desktop catalog. Every publish replaces the previous bridge root rather than appending a history, so the file has a natural size ceiling.
-
-If the conservative serialization estimate approaches the internal budget, the bridge follows a deterministic reduction order: enchantment text, equipment/set display names, then detailed Champion Point rows, equipment, and skills only as progressively more severe last resorts. Identity and core numeric progression are never discarded. The payload records `estimatedBytes`, `budgetBytes`, `budgetStatus`, `reducedFields`, `droppedSections`, and `truncated`. When a section is omitted, the desktop preserves that section from the latest complete snapshot and labels the sync as partial until the durable archive reaches disk.
-
-## First-launch setup
-
-On the first launch that includes addon integration, ATTB asks whether to enable automatic character synchronization.
-
-- **Install Addon and Enable Sync** searches the Windows Documents known folder for `live`, `liveeu`, or `pts`, copies both bundled tested addon components into `AddOns\ArrowToTheBuild` and `AddOns\ArrowToTheBuildBridge`, and starts watching the corresponding SavedVariables location.
-- **I Already Installed It** connects to an existing installation or an existing SavedVariables file.
-- **Choose Folder Manually** accepts the ESO profile root, its `AddOns` folder, its `SavedVariables` folder, or either ATTB addon folder.
-- **Not Now** disables the feature without asking again at every launch. It can be enabled later under **Settings → General Settings**.
-
-One ESO profile root is active at a time. The database records which profile supplied each snapshot so switching between NA, EU, and PTS does not mix discovery lists.
-
-## Installation and repair
-
-The desktop installer carries tested copies of both components under:
+The desktop app carries the addon under:
 
 ```text
 resources\addon\ArrowToTheBuild
-resources\addon\ArrowToTheBuildBridge
 ```
 
-The app copies them to:
+Install / Repair copies it to the selected ESO profile:
 
 ```text
 <profile>\AddOns\ArrowToTheBuild
-<profile>\AddOns\ArrowToTheBuildBridge
 ```
 
-The operation does not touch either SavedVariables file. **Install / Repair Addon** stages and replaces each component independently. A separately installed newer component is reported and preserved, so the bundled copy never intentionally downgrades a newer manual or Minion installation.
+ATTB recognizes the normal `live`, `liveeu`, and `pts` profile folders. A manually installed or Minion-installed copy is also supported.
 
-Minion and manual installation remain valid. Both components should be enabled for the smallest practical ESO-controlled sync payload; the main addon can still maintain the durable archive without the bridge.
+v2.1.3 performs a one-time clean migration from the retired dual-addon layout. On first launch, ATTB scans the configured profile and normally detected ESO profiles. If it finds either the verified old bridge manifest or a recognizable old bridge SavedVariables file, it removes the verified bridge addon, removes the managed `ArrowToTheBuild` addon, deletes both old addon SavedVariables files, and installs the bundled single exporter fresh.
+
+The cleanup only claims files it can identify as ATTB data. An unrelated folder named `ArrowToTheBuildBridge` is not deleted. A migration marker prevents the cleanup from repeating on later launches, and a newly generated `ArrowToTheBuild.lua` is therefore preserved. If a custom ESO profile is configured later, the same legacy-artifact check runs for that profile before synchronization starts.
+
+## What the addon captures
+
+The current snapshot contains the observed ESO state that Character Tracker needs:
+
+- account, megaserver, stable character ID, name, class, race, and alliance;
+- character level, Champion Point totals, attributes, available attribute points, and available Skill Points;
+- skill-line ranks and purchased actives, morphs, passives, and ultimates;
+- current action bars and active weapon pair;
+- equipped gear, item IDs, traits, sets, and enchantments;
+- Champion Point disciplines, purchased stars, and slotted Champion Bar nodes.
+
+This is **CURRENT** state. Builds remain **TARGET** plans owned by the desktop app. Syncing cannot rewrite a build definition.
+
+## SavedVariables timing
+
+The addon updates its in-memory SavedVariables table when relevant ESO events occur. ESO decides when that table is serialized to disk. The desktop cannot force ESO to write the file and the addon cannot directly communicate with the desktop application.
+
+When the desktop needs a fresh snapshot immediately, use:
+
+```text
+/reloadui
+```
+
+Loading screens, logout, exit, and other ESO-controlled save opportunities may also result in a newer disk file, but ATTB does not promise their timing.
+
+The first-run dialog and Settings page both state this limitation. The desktop watches:
+
+```text
+<profile>\SavedVariables\ArrowToTheBuild.lua
+```
+
+and also polls at a low frequency to cover ordinary Windows file-watcher edge cases. It waits for the file to stabilize before parsing and skips unchanged revisions.
+
+## ESO API policy
+
+Addon 1.1.0 targets Update 50 / API 101050 and uses known ESO APIs and event constants directly.
+
+The addon intentionally does **not** wrap documented APIs in generic `pcall` helpers, probe `_G` for guessed function names, or register events from strings. If a supported ESO API changes, that should become a visible development error instead of silently turning real character data into a fallback value.
+
+Guards remain only where the game data itself can legitimately be absent or optional.
+
+## Refresh strategy
+
+The addon does not rescan the complete character on every gameplay event.
+
+- level and attribute events refresh identity/progression;
+- Skill Point, skill-rank, skill-line, ability-rank, and ability-result events refresh skills;
+- action-bar and weapon-pair events refresh action bars;
+- worn-inventory changes refresh equipment;
+- Champion Point purchase and bar changes refresh Champion data;
+- player activation/deactivation schedules a full snapshot around transitions.
+
+Automatic event captures are debounced and rate-limited. Raw skill-XP ticks are deliberately not used as full-rescan triggers because ATTB cares about purchased/rank state rather than every XP increment.
+
+A forced full capture still occurs before a player deactivation and after activation, so `/reloadui` receives an up-to-date complete snapshot even when a recent event capture was cooling down.
+
+## Desktop parsing and safety
+
+ATTB parses SavedVariables with its restricted Lua-table parser. It does not execute the Lua file with `eval`, `load`, a shell, or a Lua interpreter.
+
+The parser accepts the table syntax ESO writes and rejects executable Lua, unsupported roots, malformed data, prototype-polluting keys, and oversized files.
+
+A supported archive currently requires:
+
+```text
+schemaVersion = 1
+```
+
+Each character snapshot is normalized into the desktop's internal snapshot contract before it can update a linked Character Tracker profile.
 
 ## Character discovery and linking
 
-A character becomes discoverable after the addon has captured it and ESO has written SavedVariables. ATTB identifies the character with:
+Characters are keyed by:
 
 ```text
 ESO account + megaserver + stable ESO character ID
 ```
 
-Names are display data, not identity keys. Character renames therefore update the linked profile rather than creating a duplicate.
+Names are display data rather than identity keys, so a rename does not create a second character.
 
-When a new snapshot appears, ATTB asks whether to add and sync the character. The user can either **create a new editable build from the current ESO state** or attach a saved compatible-class build as the target. New-build creation collects the build name, short name, permanent build ID, role, resource, progression scope, bar count, and class direction before the draft is created, so the immutable build ID is never chosen behind the user's back. Bundled builds and user builds with a permanent saved revision remain eligible as existing targets; unrelated draft-only builds are not offered as targets.
+New snapshots are never silently added to Character Tracker. The user can:
 
-When an unlinked manual ATTB character has the same name and class, ATTB offers two explicit choices:
+- create a new synced ATTB character and choose/create its target build;
+- link the snapshot to a compatible existing manual ATTB character;
+- dismiss the snapshot and link it later from Settings.
 
-- link the ESO character to the existing ATTB profile; or
-- create a separate synced character.
+Class mismatches are rejected at both UI and IPC boundaries.
 
-No probable match is merged automatically.
+## Overrides
 
-## Ownership boundaries
+Synced identity fields stay read-only. Optional override mode can temporarily replace selected progression fields in the desktop without changing the underlying ESO snapshot.
 
-The addon controls observed game state:
+Disabling override mode deletes those overrides and immediately restores the last observed ESO values.
 
-- identity
-- level and attributes
-- available points
-- skill-line ranks and purchased skills
-- Champion Point totals and observed stars
-- current action bars
-- currently equipped gear
+## Addon commands
 
-The desktop app continues to own:
+The addon provides:
 
-- selected build, loadout, and variant
-- authored build content
-- build recommendations and unlock order
-- gear-acquisition checklists
-- notes
-- drafts, revisions, and user build JSON files
+```text
+/attbexport
+/attbstatus
+/attbcharacters
+```
 
-Syncing never edits ESO and never rewrites a build definition.
+`/attbexport` refreshes the current in-memory snapshot. Use `/reloadui` afterward when the desktop needs it written to disk immediately.
 
-## Override mode
+`/attbstatus` reports the addon/API/world, the archive state loaded from disk, the current in-memory revision, latest capture reason/age, pending refresh sections, and the `/reloadui` reminder.
 
-ATTB stores three layers for synced values:
-
-1. the latest read-only ESO snapshot;
-2. optional per-field user overrides; and
-3. the effective value displayed by the Character Tracker.
-
-When an override exists, the ESO value remains preserved. The small **↶** button beside a field deletes only that override and immediately restores the latest live value.
-
-Overrideable progression currently includes:
-
-- overall level
-- Magicka, Health, and Stamina allocations
-- available attribute and Skill Points
-- Craft, Warfare, and Fitness CP totals
-- skill-line ranks
-- purchased active skills, morphs, passives, and their ranks
-- additional tracked skill lines
-
-Identity fields are never overrideable: account, server, stable character ID, name, class, race, and alliance remain sourced from ESO.
-
-Disabling **Allow synced-data overrides** requires confirmation. Confirmation deletes every override across every linked character and reapplies the latest addon snapshot immediately.
-
-Observed action bars, equipped gear, detailed Champion stars, and Champion Bar slots are displayed as live reference panels. Build hotbars, recommended equipment, and CP plans remain separate authored guidance.
-
-## File watching
-
-The Electron main process watches the SavedVariables directory, not the complete AddOns tree. It watches both `ArrowToTheBuild.lua` and `ArrowToTheBuildBridge.lua`, polls at a low frequency, and reads again when the app regains focus, covering common Windows watcher edge cases.
-
-Before parsing, ATTB waits until file size and modification time stabilize. Repeated watcher and polling events for unchanged revisions are ignored. The archive and bridge keep independent revision markers. If ESO creates the SavedVariables directory after ATTB starts, the polling fallback attaches the native watcher when the directory appears.
-
-When both sources contain the same character, the desktop database accepts only snapshots at least as new as the one already stored. An older full-archive write therefore cannot overwrite a newer bridge snapshot. Archive and bridge revisions are tracked independently. Bridge schema 2 is normalized into the same character contract as the archive. The durable archive can enrich a fresher ID-first bridge snapshot with skill-line, ability, Champion Point, equipment-type, trait, and other display metadata without replacing the bridge's newer numeric state. Intentionally omitted bridge sections are reconciled against the latest complete stored/archive snapshot before applying live state.
-
-## Settings and status
-
-**Settings → General Settings → Automatic character synchronization** includes:
-
-- enable or disable synchronization
-- enable or disable override mode
-- selected ESO profile root
-- main addon and sync-bridge installation locations and versions
-- full archive and sync-bridge SavedVariables paths, detection status, and bridge file size
-- Install / Repair Addon
-- Choose ESO Folder
-- Sync Now
-- Import Data From Addon
-- open AddOns or SavedVariables folders
-- open the addon GitHub repository
-
-A linked character’s **Character Settings** panel shows account, server, ESO ID, last snapshot time, addon version, active overrides, and whether its source profile is currently active.
+`/attbcharacters` lists the snapshots currently held in the multi-character archive.
 
 ## Failure behavior
 
-- Missing main-addon and bridge folders are shown independently from their SavedVariables files.
-- A missing SavedVariables file means ESO has not written that source yet; it is not treated as corrupted data.
-- A missing bridge does not destroy full-archive synchronization; it only removes the small sync-bridge path.
-- Unsupported SavedVariables schemas are rejected with an explicit error.
-- Malformed or executable Lua is rejected without evaluating it.
-- A character cannot be linked to a build for a different class through either the UI or the IPC boundary.
-- Turning sync off preserves the last imported state, the character, its selected build, and its notes.
-- Unlinking makes the current effective values manual and dismisses that snapshot until it is rediscovered.
+- Missing addon folder: Settings offers Install / Repair.
+- Addon installed but no SavedVariables file: log into ESO and run `/reloadui` once.
+- Unsupported archive schema: sync stops with an explicit error.
+- Malformed/executable Lua: rejected before data reaches Character Tracker.
+- Newer manually installed addon: preserved by default rather than downgraded.
+- Retired bridge folder: removed only when positively identified as ATTB's old bridge.
+- Sync disabled: the last imported desktop state and selected build remain intact.
+- Unlinked character: current effective values become manual and the snapshot remains available for later relinking.
 
-### 1.0.0 normal-play save behavior
+## Development disclosure
 
-- The durable `ArrowToTheBuild` archive is intentionally excluded from normal-play SavedVariables autosaving. It remains the fuller source and is expected to persist at natural ESO save points such as loading screens, `/reloadui`, logout, and exit.
-- The small `ArrowToTheBuildBridge` remains eligible for normal-play autosaving and priority-save requests.
-- A meaningful gameplay capture that lands inside the local priority-request cooldown replaces the bridge with the newest state and schedules exactly one deferred retry for the next eligible request time. Later changes coalesce into that same pending retry.
-- `player-activated` still refreshes the current snapshot after a loading screen but does not request priority. `player-deactivated` captures the pre-transition state and relies on ESO's natural save rather than spending a priority request.
-- Action-bar refresh listens for individual slot changes, all-hotbar updates, hotbar-slot updates, and weapon-pair changes.
-- `/attbstatus` reports whether bridge state is dirty, whether a priority retry is deferred, and how long remains before that retry becomes eligible.
-
-These rules improve the chance that a heavily-modded ESO installation gets the small bridge to disk promptly without claiming that the addon can force an immediate write. ESO remains the authority over actual disk persistence.
-
-## Bundled addon version
-
-This app release bundles:
-
-```text
-ArrowToTheBuild 1.0.0
-  SavedVariables: ArrowToTheBuild.lua
-  SavedVariables schema 1
-  Compact character snapshot schema 2
-
-ArrowToTheBuildBridge 1.0.0
-  SavedVariables: ArrowToTheBuildBridge.lua
-  Bridge SavedVariables schema 2
-  Internal soft budget: 32 KiB
-```
-
-The addon has its own source repository and release cadence: [Arrow-to-the-Build-ESO-Addon](https://github.com/DeadxxSmile/Arrow-to-the-Build-ESO-Addon). Desktop compatibility is based on the two explicit SavedVariables contracts rather than executing addon code.
+The project uses AI-assisted development. Addon changes are expected to be reviewed against the current ESO API, covered by regression tests, and kept maintainable rather than accepted simply because generated code runs. The addon source README carries the same disclosure and the unofficial-project disclaimer.

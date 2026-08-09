@@ -167,22 +167,84 @@ export function effectiveCompletedSet(build, character) {
   return completed
 }
 
+function catalogPassiveRankGate(item, build) {
+  if (!item?.catalog_skill_id || !build) return 0
+  const hit = catalogSkillMap.get(item.catalog_skill_id)
+  const gates = hit?.skill?.unlock_ranks
+  if (hit?.skill?.type !== 'Passive' || !Array.isArray(gates) || !gates.length) return 0
+  const family = buildIndex(build).bySkillId.get(item.catalog_skill_id) || []
+  const index = family.findIndex(row => row.id === item.id)
+  return index >= 0 ? Math.max(0, Number(gates[index]) || 0) : 0
+}
+
+export function requiredRankFor(item, build = null) {
+  const authored = Math.max(0, Number(item?.required_rank) || 0)
+  const catalog = Math.max(0, Number(catalogSkillMap.get(item?.catalog_skill_id)?.skill?.required_rank) || 0)
+  const passivePointGate = catalogPassiveRankGate(item, build)
+  // The catalog is allowed to raise an older authored gate. Per-point passive gates are especially
+  // important because rank I and rank II/III often unlock at very different skill-line ranks.
+  return Math.max(authored, catalog, passivePointGate)
+}
+
 export function unlockState(item, character, build = null) {
   const completed = build ? effectiveCompletedSet(build, character) : new Set(character?.completed || [])
   if (completed.has(item.id)) return 'complete'
   const requires = build ? requirementsFor(build, item.id) : (item.requires || [])
   if (requires.some(id => !completed.has(id))) return 'blocked'
   const rank = item.line ? Number(character?.skill_ranks?.[item.line] || 0) : Infinity
-  if (rank < (Number(item.required_rank) || 0)) return 'locked'
+  if (rank < requiredRankFor(item, build)) return 'locked'
+  // ATTB cannot prove the base ability has reached rank IV yet, so a morph is a training target,
+  // not an immediately purchasable recommendation.
   if (item.kind === 'Morph') return 'train'
   return 'available'
 }
 
 const STATE_ORDER = { available: 0, train: 1, locked: 2, blocked: 3, complete: 4 }
+function lineRankGap(item, character, build) {
+  if (!item?.line) return 0
+  const current = Number(character?.skill_ranks?.[item.line] || 0)
+  return Math.max(0, requiredRankFor(item, build) - current)
+}
 export function recommendedUnlocks(build, character) {
   return (build?.unlock_order || [])
     .map(item => ({ ...item, state: unlockState(item, character, build) }))
-    .sort((a, b) => (STATE_ORDER[a.state] - STATE_ORDER[b.state]) || ((Number(a.priority) || 0) - (Number(b.priority) || 0)))
+    .sort((a, b) => {
+      const state = STATE_ORDER[a.state] - STATE_ORDER[b.state]
+      if (state) return state
+      if (a.state === 'locked') {
+        const distance = lineRankGap(a, character, build) - lineRankGap(b, character, build)
+        if (distance) return distance
+      }
+      return (Number(a.priority) || 0) - (Number(b.priority) || 0)
+    })
+}
+
+// "Do these next" must mean exactly that: every row returned here is purchasable from the
+// character state ATTB currently knows. Locked/blocked rows and morph-training reminders stay on
+// the full line pages instead of masquerading as Suggested Next Picks.
+export function actionableUnlocks(build, character) {
+  const points = Math.max(0, Number(character?.actual_unspent_skill_points) || 0)
+  return recommendedUnlocks(build, character).filter(item => {
+    if (item.state !== 'available') return false
+    const hit = catalogSkillMap.get(item?.catalog_skill_id)
+    const catalogSkill = hit?.skill
+    // If this row spends a special currency (for example Class Mastery), ATTB does not currently
+    // track that currency balance. Exclude it from "Do these next" rather than claim it is buyable.
+    if (catalogSkill?.currency && catalogSkill.currency !== 'skill_point') return false
+
+    // For passives, an authored build row is not enough proof that the live ESO rank gate is still
+    // correct. Verified per-point gates live in the catalog. Until a passive has those gates, the
+    // conservative safe point is the skill-line maximum, where every rank in that line is unlocked.
+    // This intentionally prefers a missed suggestion over another false "AVAILABLE" card.
+    if (catalogSkill?.type === 'Passive' && catalogPassiveRankGate(item, build) <= 0) {
+      const currentRank = Number(character?.skill_ranks?.[item.line] || 0)
+      const lineMax = Math.max(1, Number(hit?.line?.max_rank || catalogLineMap.get(item.line)?.max_rank) || 50)
+      if (currentRank < lineMax) return false
+    }
+
+    const cost = Math.max(1, Number(item.skill_point_cost) || 1)
+    return points >= cost
+  })
 }
 
 export function currentPhase(build, level, championPoints = 0, loadoutId = '') {

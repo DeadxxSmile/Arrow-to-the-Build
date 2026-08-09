@@ -1,13 +1,15 @@
 # Updating ATTB for ESO game patches
 
 ATTB is built so a new ESO update does not require touching React or Electron. Almost everything a
-patch changes lives in two data layers:
+patch changes lives in three data layers:
 
 1. The **skill catalog** (`resources/data/eso-skill-catalog.json`), generated from
-   `tools/generate_skill_catalog.py`. This is the game's classes, skill lines, skills, morphs, and
-   passives.
-2. The **bundled builds** (`resources/builds/*.json`), which reference the catalog by stable id and
-   supply metadata, class configuration, recommendation order, progression phases, loadouts, gear, and Champion Point plans.
+   `tools/generate_skill_catalog.py`. This is the game's classes, skill lines, skills, morphs, passives,
+   and audited per-point passive unlock gates.
+2. The **companion catalog** (`resources/data/eso-companions.json`), which records the current combat-companion
+   roster and ATTB's curated companion preset library.
+3. The **bundled builds** (`resources/builds/*.json`), which reference the player catalog by stable id and
+   supply metadata, class configuration, recommendation order, progression phases, loadouts, gear, Champion Point plans, and optional companion targets.
 
 The app matches builds to the catalog by `catalog_skill_id`, never by display name, so renames in a
 patch do not break saved characters or community build files. That is the property this whole design
@@ -32,9 +34,9 @@ is a permanent contract with every build file and every saved character that ref
 In `tools/generate_skill_catalog.py`, update these three fields near the bottom before regenerating:
 
 ```python
-'catalog_version':'0.4.1-u50',   # bump, e.g. 0.5.0-u51
-'game_version':'Update 50',      # the ESO update this reflects
-'verified_date':'2026-08-07',    # the date you checked it
+'catalog_version':'0.5.1-u50-rank-gates',  # bump again for the next data revision
+'game_version':'Update 50',                # the ESO update this reflects
+'verified_date':'2026-08-09',              # the date you checked it
 ```
 
 `catalog_version` is free-form but the `x.y.z-uNN` shape (catalog revision plus ESO update) has worked
@@ -48,6 +50,18 @@ catalog fix between game updates.
 3. `npm test`
 
 The id is unchanged, so nothing else needs to move.
+
+## Scenario: a passive unlock rank changed
+
+Multi-rank passives need **per-point** skill-line gates, not one shared number. For audited passives, update the `set_unlock_ranks(...)` data in `tools/generate_skill_catalog.py`, regenerate the catalog, and add/update a regression test.
+
+Example: a two-rank passive with points available at line ranks 38 and 46 should emit:
+
+```json
+"unlock_ranks": [38, 46]
+```
+
+Do not “fix” this only by changing one bundled build's `required_rank`; other builds may carry a different stale value. The catalog gate is the shared safety floor used by Suggested Next Picks. If a passive has not been verified yet, the immediate queue intentionally falls back conservatively to the skill-line maximum.
 
 ## Scenario: a new passive, active, or morph was added to an existing line
 
@@ -82,6 +96,17 @@ Preferred order:
 Community build files that still reference the removed id will fail validation on import with a
 readable message telling the author which id is gone. That is intended.
 
+
+## Scenario: companions changed
+
+The combat-companion roster and curated presets live in `resources/data/eso-companions.json`. When ESO adds or materially changes a companion:
+
+1. Verify the companion name, class, race, current abilities, and sensible roles against current sources.
+2. Add/update exactly the curated presets ATTB intends to ship. Keep companion abilities as plain companion skill names; never create player `catalog_skill_id` values for them.
+3. Update `verified_date`, source URLs, Build Editor/Character Tracker documentation if the system behavior changed, and companion regression tests.
+4. If Schema 4 needs a new optional companion field, extend it additively; do not bump the whole public schema for ordinary preset data.
+5. Run `npm test` and `npm run build:renderer`.
+
 ## Scenario: CP nodes or paths changed
 
 CP plans live entirely in each build's `cp_plans`, not in the catalog, so a CP rework is a build-data
@@ -114,13 +139,13 @@ If you truly must change an id, treat it as a migration:
 
 ## The checklist for any patch
 
-1. Update `catalog_version`, `game_version`, `verified_date` in the generator.
-2. Make the catalog edits (renames via `display_name_overrides`, additions via `add_line`).
+1. Update `catalog_version`, `game_version`, `verified_date` in the generator when player-skill data changed; update the companion catalog metadata when companion data changed.
+2. Make the catalog edits (renames via `display_name_overrides`, additions via `add_line`, passive point gates via `set_unlock_ranks`).
 3. `python tools/generate_skill_catalog.py` and confirm it prints the expected line/skill counts.
-4. Update bundled builds for new recommendations, CP changes, or removed skills.
+4. Update `resources/data/eso-companions.json` when the roster/presets changed, then update bundled builds for new recommendations, CP changes, removed skills, or companion targets.
 5. Review Schema 4 systems affected by the patch: metadata, class lines, Class Mastery, Scribing, loadouts, phases, gear, CP, transformations, requirements, and sources.
 6. Update each edited build's own `game_version` and `verified_date`.
-7. Update `docs/reference/ESO_BUILD_SYSTEM_AUDIT.md` when the patch adds a new character or build system.
+7. Update `docs/maintenance/ESO_BUILD_SYSTEM_AUDIT.md` when the patch adds a new character or build system.
 8. `npm test` and `npm run build:renderer`.
 9. Bump the app version in `package.json` if you are cutting a release.
 

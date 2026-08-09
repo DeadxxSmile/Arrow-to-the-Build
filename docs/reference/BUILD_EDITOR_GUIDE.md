@@ -351,7 +351,25 @@ Each constellation can recommend up to four unique stars. A final slot must refe
 
 Deleting or making a node non-slottable automatically removes invalid final-slot references.
 
-## 12. Loadouts & Variants
+## 12. Companions
+
+The Companion editor is a first-class Schema 4 authoring page in ATTB 2.1. It shows every companion in the bundled companion catalog with two researched starter identities and lets you copy either setup into the current build.
+
+Adding a preset copies ordinary JSON into the build. It is then fully editable and does not require the preset library to exist at runtime. You can also create a custom companion setup.
+
+For each setup you can edit:
+
+- companion and role;
+- permanent setup ID and display name;
+- summary, weapon, armor weight, and companion traits;
+- five priority-ordered normal skills;
+- separate ultimate;
+- equipment notes and gameplay notes;
+- optional preset/source metadata.
+
+Companion skills stay plain text and are never inserted into the player skill catalog, Relevant Lines, Unlock Plan, or player progression bars.
+
+## 13. Loadouts & Variants
 
 ### Loadouts
 
@@ -375,7 +393,7 @@ Remove a captured section when the setup should inherit the base value again.
 Base Build → Selected Loadout → Selected Variant
 ```
 
-## 13. Review & Save
+## 14. Review & Save
 
 Review & Save is the final authoring workspace, not only a schema error list.
 
@@ -411,7 +429,7 @@ Use the optional note to summarize meaningful changes, especially game-version u
 
 Restoring an older revision loads it into the recovery draft; it does not erase newer revisions. Saving the restored draft creates a new revision.
 
-## 14. Import, export, and file storage
+## 15. Import, export, and file storage
 
 ### Import/Export page
 
@@ -435,7 +453,7 @@ ATTB keeps drafts and history in SQLite. If the folder is missing or read-only, 
 
 ATTB detects files changed outside the app and preserves them instead of silently overwriting them. Review or import the external version intentionally.
 
-## 15. Build Editor Settings
+## 16. Build Editor Settings
 
 Current settings include:
 
@@ -446,7 +464,7 @@ Current settings include:
 - game-version compatibility warnings;
 - user-build storage folder.
 
-## 16. A practical authoring order
+## 17. A practical authoring order
 
 For a new build, this sequence minimizes rework:
 

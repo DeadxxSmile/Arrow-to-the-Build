@@ -50,7 +50,7 @@ export default function AttributesEditor({ character, build, onChange, allowOver
       <div><small>Build target total</small><b>{summary.targetTotal}</b></div>
     </div>
 
-    {syncedLocked && <div className="quiet-box sync-lock-note">These values are synced from ESO. Enable synced-data overrides in App Settings to test a different split.</div>}
+    {syncedLocked && <div className="quiet-box sync-lock-note">These values are synced from ESO. Enable synced-data overrides in Settings &gt; ESO Addon &amp; Sync to test a different split.</div>}
 
     {summary.overAvailable > 0 && <div className="notice-banner warn-banner" role="status">
       {summary.spent} points are recorded but level {character.level} normally provides {summary.available}.

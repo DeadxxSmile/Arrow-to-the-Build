@@ -86,9 +86,15 @@ export function buildItemsForCatalogSkill(build, lineId, skill) {
   return index.byLine.get(lineId)?.get(normalizeSkillName(skill.name)) || []
 }
 
+export function effectiveSkillMaxPoints(character, skill) {
+  const liveMax = Number(character?.addon_sync?.live?.skill_max_points?.[skill?.id])
+  if (Number.isInteger(liveMax) && liveMax > 0) return liveMax
+  return Math.max(1, Number(skill?.max_points) || 1)
+}
+
 export function effectiveAllocation(character, build, lineId, skill) {
   const saved = character?.skill_allocations?.[skill.id]
-  const max = Number(skill.max_points) || 1
+  const max = effectiveSkillMaxPoints(character, skill)
   // An explicit 0 means the user deselected it, so it has to win over anything inferred below.
   if (saved !== undefined) return Math.max(0, Math.min(max, Number(saved) || 0))
   const linked = buildItemsForCatalogSkill(build, lineId, skill)

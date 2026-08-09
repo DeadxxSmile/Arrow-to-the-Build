@@ -1,6 +1,19 @@
 # ATTB Testing Guide
 
-Use this checklist for the current 2.0 codebase. It replaces the historical per-milestone beta checklists.
+Use this checklist for the current 2.1 codebase. It replaces the historical per-milestone beta checklists.
+
+## Automated test policy
+
+ATTB keeps automated tests focused on contracts that can break data, behavior, packaging, or known regressions. The suite should not become a second implementation of the UI.
+
+- Prefer behavioral tests over source-text inspection whenever the module can be exercised directly.
+- Keep persistence, migration, parser, validation, build-logic, addon-integration, and security edge cases even when they increase the test count. Those protect user data or correctness.
+- Use source-text tests only for narrow regressions that are difficult to exercise without a browser or live ESO client.
+- Do not block a build on exact wording, decorative CSS measurements, marketing copy, screenshot inventory, or the absence of long-retired historical files.
+- Avoid testing the same release contract in multiple files. Version, schema, and packaging ownership should each have one authoritative check.
+- A regression test should explain the bug class it protects, not freeze unrelated implementation details.
+
+The v2.1.3 test-suite audit reduced the suite from 335 to 278 tests while retaining the behavioral and data-safety coverage. See `TEST_SUITE_AUDIT_2_1_3.md`.
 
 ## Automated checks
 
@@ -30,7 +43,7 @@ npm start 2>&1 | Tee-Object -FilePath ".\attb-dev.log"
 
 - Switch between Character Tracker and Build Editor and confirm each remembers its last page.
 - Confirm the no-character screen keeps the Character Tracker sidebar and still offers the Build Editor.
-- Change theme, startup workspace, sidebar collapse state, and Build Editor settings; restart and confirm persistence.
+- Change Default/Dark/Light/Old Scrolls theme, startup workspace, sidebar collapse state, and Build Editor settings; restart and confirm persistence.
 - Confirm a development database migrates without losing characters, builds, drafts, revisions, or settings.
 
 ## Ownership, drafts, and revisions
@@ -65,6 +78,7 @@ npm start 2>&1 | Tee-Object -FilePath ".\attb-dev.log"
 - Add gear stages, sets, sources, pieces, alternatives, mythics, and perfected items.
 - Edit all three Champion Point trees and final four-slot bars.
 - Create loadouts and variants, capture override sections, and verify compatibility scopes.
+- Open Build Editor > Companions, add one of the sixteen curated presets, edit it into a custom setup, duplicate/delete it, and confirm validation/export/re-import preserve the data.
 
 ## Review & Save
 
@@ -80,14 +94,16 @@ npm start 2>&1 | Tee-Object -FilePath ".\attb-dev.log"
 ## Character Tracker regression
 
 - Create a character from a bundled build and from a saved user build.
-- Test Basic Setup, Current Levels, skills/passives, equipment, hotbars/rotations, Champion Points, consumables, and Help & Tools.
+- Test Basic Setup, Current Levels, skills/passives, equipment, hotbars/rotations, Champion Points, Companions, consumables, and Help & Tools.
+- On Companions, verify all eight current combat companions appear, each has two curated targets, and selecting a target persists on restart/backup import.
+- In Suggested Next Picks, confirm only rows that are immediately purchasable appear. Regression-check Medium Armor Agility/Athletics and Light Armor Concentration against their catalog `unlock_ranks`, and confirm an unverified passive is conservatively held out before line maximum.
 - Switch loadouts and variants and verify the displayed build changes without losing character progress.
 - Export and import a character backup.
 
 ## Packaging and website
 
 - Build the NSIS installer and test install, launch, upgrade, and uninstall on Windows.
-- Confirm packaged offline documentation, the blank build template, catalog, and bundled builds load. The public `BUILD_SCHEMA.json` remains source-only by design.
+- Confirm packaged offline documentation, the AI authoring guide, blank build template, player skill catalog, companion preset catalog, and bundled builds load. The public `BUILD_SCHEMA.json` remains source-only by design.
 - Check website anchors, local images, social preview, repository links, support links, and release link.
 - Confirm no databases, logs, `node_modules`, build output, or temporary files are included in the source archive.
 
@@ -97,36 +113,49 @@ npm start 2>&1 | Tee-Object -FilePath ".\attb-dev.log"
 
 - Start with no addon settings. Confirm the optional setup dialog appears once.
 - Confirm **Not Now** disables integration and does not re-open the dialog after restart.
-- Confirm **Install Addon and Enable Sync** detects a redirected Windows Documents folder, including a drive such as `E:\Documents`.
-- Test `live`, `liveeu`, and `pts` profile roots.
-- With more than one profile present, confirm a profile containing the addon or SavedVariables is preferred over an empty profile.
-- Confirm manual selection accepts the profile root, `AddOns`, `SavedVariables`, `AddOns\ArrowToTheBuild`, and `AddOns\ArrowToTheBuildBridge`.
+- Confirm **Install Addon and Enable Sync** detects redirected Windows Documents folders and supports `live`, `liveeu`, and `pts`.
+- With more than one profile present, confirm a profile containing `ArrowToTheBuild` or `ArrowToTheBuild.lua` is preferred over an empty profile.
+- Confirm manual selection accepts the profile root, `AddOns`, `SavedVariables`, and `AddOns\ArrowToTheBuild`.
 - Confirm a random folder is rejected.
-- Confirm Install / Repair places both bundled components at `<profile>\AddOns\ArrowToTheBuild` and `<profile>\AddOns\ArrowToTheBuildBridge` and does not delete either SavedVariables file.
-- Confirm a newer separately installed addon is reported rather than described as an available downgrade.
+- Confirm Install / Repair places **only** `<profile>\AddOns\ArrowToTheBuild` and never deletes `ArrowToTheBuild.lua`.
+- Confirm a newer separately installed addon is reported and preserved rather than downgraded.
+
+### Upgrade from addon 1.0.0
+
+- Create the old `<profile>\AddOns\ArrowToTheBuildBridge` folder with the exact ATTB 1.0.0 Sync Bridge manifest and create both old addon SavedVariables files. On the first v2.1.3 launch, confirm ATTB removes the verified bridge folder, removes the managed main addon folder, deletes both old SavedVariables files, and immediately reinstalls the bundled single addon.
+- After the cleanup marker is stored, create a fresh `ArrowToTheBuild.lua` and restart ATTB. Confirm the one-time cleanup does not run again and the fresh save remains intact.
+- Put an unrelated manifest in a folder named `ArrowToTheBuildBridge`; confirm ATTB refuses to delete it.
+- Confirm the main `ArrowToTheBuild.lua` archive and existing desktop character links survive the upgrade.
 
 ### SavedVariables parsing and watching
 
-- Use a real alpha.4.2/alpha.5 full-archive SavedVariables file containing at least two characters.
-- Confirm the app reads both archive records and does not execute or evaluate Lua.
-- Confirm `ArrowToTheBuildBridge.lua` is parsed independently and expands into the normal desktop snapshot contract.
+- Use a real full-archive SavedVariables file containing at least two characters.
+- Confirm the app reads all archive records and does not execute or evaluate Lua.
 - Confirm malformed content, a wrong root variable, trailing executable statements, unsupported schemas, and files over 8 MB produce controlled errors.
-- Confirm a manual Sync Now reads immediately.
-- Confirm normal ESO writes to either the archive or bridge are noticed by the folder watcher.
-- Confirm the focus and 15-second polling fallbacks do not repeatedly apply an unchanged revision.
+- Confirm Sync Now reads the single archive immediately.
+- Confirm normal ESO writes to `ArrowToTheBuild.lua` are noticed by the folder watcher.
+- Confirm the 15-second polling fallback does not repeatedly apply an unchanged revision.
 - Start ATTB before the SavedVariables directory exists, then let ESO create it; confirm polling attaches the watcher and imports data.
 - Switch between profile roots and confirm discovery/status counts show only the active profile.
 
-### ESO-controlled sync bridge
+### ESO-controlled save timing
 
-- Fresh-install both addon components, enable both in ESO, and log into one character.
-- Confirm ESO eventually creates `<profile>\SavedVariables\ArrowToTheBuildBridge.lua`.
-- Confirm Settings reports the bridge version, file path, file size, and **ESO-controlled sync bridge ready** while the file remains below the displayed normal-play threshold.
-- Without logging out or using `/reloadui`, change equipment, earn a level/skill-line rank, spend a Skill Point, or change an action bar. Keep playing through ordinary save opportunities and confirm the bridge revision/file timestamp eventually advances and the desktop character updates.
-- Record the observed delay. Do not treat sub-second updates as a requirement; ESO controls disk flush timing.
-- Confirm a loading screen, `/reloadui`, logout, or exit still produces a reliable later save opportunity.
-- Confirm an older archive snapshot cannot replace a newer bridge snapshot for the same character.
-- Disable or remove only the bridge and confirm the full archive still imports, while Settings clearly reports that the small sync bridge is unavailable.
+- Fresh-install `ArrowToTheBuild` 1.1.0, enable it in ESO, and log into one character.
+- Confirm ESO creates `<profile>\SavedVariables\ArrowToTheBuild.lua` after a save opportunity or `/reloadui`.
+- Confirm Settings reports one addon path and one SavedVariables path; there must be no live bridge budget/status UI.
+- Change level/progression, equipment, action bars, attributes, and Champion Points. Confirm the in-memory addon revision advances through the relevant event capture.
+- Run `/reloadui` and confirm the desktop sees the updated complete snapshot.
+- Treat ordinary background/loading/logout/exit saves as ESO-controlled opportunities, not as a guaranteed fixed cadence.
+- Confirm `/attbexport` refreshes the in-memory snapshot and clearly tells the user to use `/reloadui` for immediate desktop disk refresh.
+- Confirm `/attbstatus` reports the archive/memory revisions, latest capture, pending sections, and the `/reloadui` reminder without bridge/priority/budget diagnostics.
+
+### Addon source-quality regression
+
+- Confirm the shipped addon contains no generic `pcall` API wrapper, `_G[functionName]` probing, `SafeCall`, `SafeRegisterEvent`, or guessed API-name fallback list.
+- Confirm documented Update 50 / API 101050 functions and event constants are called directly.
+- Confirm old speculative events/functions are absent: `EVENT_CHAMPION_POINTS_CHANGED`, `EVENT_ATTRIBUTE_POINTS_CHANGED`, `EVENT_SKILL_LINE_LEVELED_UP`, `EVENT_SKILL_ABILITY_PROGRESSIONS_UPDATED`, `IsChampionSkillSlottable`, `GetAvailableAttributePoints`, and `GetNumAvailableAttributePoints`.
+- Confirm raw skill-XP events do not trigger full skill rescans. Rank/purchase/result events must still update purchased/rank state.
+- Confirm player activation/deactivation force a complete capture so `/reloadui` cannot be blocked by the normal event-capture cooldown.
 
 ### Character discovery and linking
 
@@ -154,35 +183,16 @@ npm start 2>&1 | Tee-Object -FilePath ".\attb-dev.log"
 
 ### Observed reference panels
 
-- Equipment shows the actual equipped item names, slots, sets, traits, enchantments, types, and requirements without altering the build’s gear-acquisition checklist.
+- Equipment shows actual equipped item names, slots, sets, traits, enchantments, types, and requirements without altering the build gear checklist.
 - Rotations shows the actual primary and backup ESO action bars without replacing authored build hotbars.
 - Champion Points shows detailed invested stars and all twelve Champion Bar positions without replacing the build CP plan.
 
 ### Packaging
 
-- Confirm every file under `resources\addon\ArrowToTheBuild` ships in the installer.
+- Confirm every file under `resources\addon\ArrowToTheBuild` ships in the installer external resources.
+- Confirm no `resources\addon\ArrowToTheBuildBridge` source exists in the release tree.
 - Install on a clean Windows account and confirm the app can copy addon files out of its packaged resources.
-- Upgrade from a pre-addon-integration v2 beta database (migration level 007) and confirm migration 008 preserves all characters, builds, drafts, revisions, settings, and build JSON paths.
-- Uninstall/reinstall and confirm ESO addon files and ATTB local app data follow the documented persistence behavior.
-
-
-### ESO-controlled sync bridge budget and reconciliation
-
-For the 2.0.0 release / addon 1.0.0:
-
-- Start from a clean app-data directory and no ATTB addon folders; verify first-run setup installs both `ArrowToTheBuild` and `ArrowToTheBuildBridge` 1.0.0.
-- Confirm `/attbstatus` reports bridge schema/budget diagnostics and the bridge estimate stays below its 32 KiB internal budget.
-- Test a low-level character and a heavily developed level-50/CP character. The complete current-character bridge must pass the 32 KiB conservative internal estimate without truncation; the desktop should also report an actual disk file comfortably below ESO's normal-play ceiling once ESO writes it.
-- After a clean `/reloadui` baseline, make one attribute/passive/equipment change during the priority cooldown. Confirm the in-memory bridge advances immediately, reports a dirty/deferred state, schedules one retry, and does not require another gameplay event to become eligible for a later priority request.
-- Make several additional changes while that retry is pending. Confirm there is still one retry and the bridge contains the newest complete current state rather than a queue of deltas.
-- Confirm `player-activated` publishes a fresh bridge snapshot without requesting priority, while `player-deactivated` captures before the transition and relies on the natural ESO save.
-- Manually edit an action-bar slot and confirm the bridge revision advances through the strengthened hotbar event coverage.
-- Change level/progression, equipment, action bars, and Champion Points without logging out. Record the gameplay-change time, bridge-file modified time, and desktop-observed time. Do not assume or advertise a fixed ESO autosave cadence.
-- Run the timing test once with only the two ATTB addon components enabled, then again with the normal full addon loadout. Record the difference so SavedVariables queue contention can be distinguished from ATTB behavior.
-- Confirm normal gameplay priority requests are limited to `ArrowToTheBuildBridge`; the durable `ArrowToTheBuild` archive should wait for loading-screen/reload/logout/exit persistence and carries `DisableSavedVariablesAutoSaving: 1`.
-- If `budgetStatus` becomes `near` or `truncated`, verify Settings displays the state. A truncated bridge must not erase the last complete equipment/skills/Champion detail stored from the archive.
-- Verify a later but older archive write cannot replace a fresher bridge snapshot, but can enrich that newer ID-first snapshot with skill/CP/equipment display metadata.
-- Verify bridge schema 1 from beta.9 is still readable so an in-place beta upgrade does not strand an existing bridge file.
+- Upgrade from a database at migration level 007/008 and confirm all characters, builds, drafts, revisions, settings, snapshots/links, overrides, companion data, and build JSON paths survive.
 
 ### Create or adapt a build from a synced character
 

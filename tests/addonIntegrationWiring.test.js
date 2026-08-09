@@ -32,5 +32,20 @@ test('addon integration imports every addonConstants symbol it references', () =
 
   assert.deepEqual(missing, [], `integration.js references addon constants without importing them: ${missing.join(', ')}`)
   assert.ok(imported.has('SAVED_VARIABLES_FILE'))
-  assert.ok(imported.has('BRIDGE_SAVED_VARIABLES_FILE'))
+  assert.ok(imported.has('BUNDLED_ADDON_VERSION'))
+})
+
+test('v2.1.3 wires a one-time verified bridge reset before the addon watcher starts', () => {
+  const integration = fs.readFileSync(integrationPath, 'utf8')
+  const profileManager = fs.readFileSync(path.join(root, 'src', 'main', 'addon', 'profileManager.js'), 'utf8')
+  const main = fs.readFileSync(path.join(root, 'src', 'main', 'main.js'), 'utf8')
+
+  assert.match(integration, /POST_UPDATE_CLEANUP_KEY/)
+  assert.match(integration, /runPostUpdateAddonCleanup/)
+  assert.match(main, /addonIntegration\.runPostUpdateAddonCleanup\(\)[\s\S]*addonIntegration\.startWatching\(\)/)
+  assert.match(profileManager, /ArrowToTheBuildBridgeSavedVariables/)
+  assert.match(profileManager, /fs\.rmSync\(retiredBridgeSavedVariablesPath\(root\)/)
+  assert.match(profileManager, /fs\.rmSync\(savedVariablesPath\(root\)/)
+  assert.match(profileManager, /fs\.rmSync\(mainFolder, \{ recursive: true, force: true \}\)/)
+  assert.match(profileManager, /installAddon\(root, \{ force: true \}\)/)
 })

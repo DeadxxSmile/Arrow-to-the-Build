@@ -66,6 +66,7 @@ contextBridge.exposeInMainWorld('api', {
     install: () => ipcRenderer.invoke('addon:install'),
     syncNow: () => ipcRenderer.invoke('addon:syncNow'),
     listDiscovered: () => ipcRenderer.invoke('addon:listDiscovered'),
+    listSnapshots: () => ipcRenderer.invoke('addon:listSnapshots'),
     importCharacter: (key, options) => ipcRenderer.invoke('addon:importCharacter', key, options),
     dismissCharacter: key => ipcRenderer.invoke('addon:dismissCharacter', key),
     rediscoverDismissed: () => ipcRenderer.invoke('addon:rediscoverDismissed'),

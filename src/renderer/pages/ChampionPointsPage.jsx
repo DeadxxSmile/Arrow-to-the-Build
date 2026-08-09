@@ -40,7 +40,7 @@ export default function ChampionPointsPage() {
   </div>
 
   return <div className="page champion-points-page">
-    <div className="page-title"><span className="eyebrow">Character-specific allocation</span><h1>Champion Points</h1><p>{character.addon_sync?.linked ? 'Constellation totals are synced from ESO. Enable override mode in App Settings to test another budget.' : 'Enter the total Champion Points earned in each constellation. ATTB turns those three budgets into an ordered path through required connections, recommended branches, optional alternatives, and final slottables.'}</p></div>
+    <div className="page-title"><span className="eyebrow">Character-specific allocation</span><h1>Champion Points</h1><p>{character.addon_sync?.linked ? 'Constellation totals are synced from ESO. Enable override mode in Settings > ESO Addon & Sync to test another budget.' : 'Enter the total Champion Points earned in each constellation. ATTB turns those three budgets into an ordered path through required connections, recommended branches, optional alternatives, and final slottables.'}</p></div>
     <LiveChampionState character={character} />
     <section className="cp-account-summary panel">
       <div><span className="eyebrow">Tracked across all constellations</span><h2>{total.toLocaleString()} earned Champion Points</h2><p>These values stay with this ATTB character profile. Account-wide tracking can be added later without changing the build plans.</p></div>

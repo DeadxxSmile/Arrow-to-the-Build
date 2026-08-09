@@ -88,7 +88,8 @@ function parseRow(row) {
     gear: parseJson(row.gear_json, {}),
     custom_skill_lines: custom,
     tracked_skill_lines: legacyTrackedLines(row),
-    skill_allocations: allocations
+    skill_allocations: allocations,
+    companion_progress: sanitizeCompanionProgress(parseJson(row.companion_progress_json, {}))
   }
 }
 
@@ -116,7 +117,7 @@ function getBuildData(buildId) {
 
 const JSON_COLUMNS = new Set([
   'attributes_json', 'skill_ranks_json', 'completed_json', 'gear_json',
-  'custom_skill_lines_json', 'tracked_skill_lines_json', 'skill_allocations_json'
+  'custom_skill_lines_json', 'tracked_skill_lines_json', 'skill_allocations_json', 'companion_progress_json'
 ])
 function updateJson(id, column, value) {
   if (!JSON_COLUMNS.has(column)) throw new Error('Invalid JSON column')
@@ -149,6 +150,7 @@ function cleanCharacterForBackup(character) {
     skill_allocations: character.skill_allocations,
     actual_unspent_skill_points: character.actual_unspent_skill_points || 0,
     actual_unspent_attribute_points: character.actual_unspent_attribute_points || 0,
+    companion_progress: sanitizeCompanionProgress(character.companion_progress),
     notes: character.notes || ''
   }
 }
@@ -163,6 +165,19 @@ function sanitizeRanks(input, build) {
     ranks[lineId] = clampInt(value, 0, 50, 0)
   }
   return ranks
+}
+
+function sanitizeCompanionProgress(input) {
+  const source = input && typeof input === 'object' && !Array.isArray(input) ? input : {}
+  const rawTargets = source.targets && typeof source.targets === 'object' && !Array.isArray(source.targets) ? source.targets : {}
+  const targets = {}
+  for (const [companionId, presetId] of Object.entries(rawTargets)) {
+    if (typeof companionId !== 'string' || typeof presetId !== 'string') continue
+    const cleanCompanion = companionId.trim().slice(0, 80)
+    const cleanPreset = presetId.trim().slice(0, 120)
+    if (cleanCompanion && cleanPreset) targets[cleanCompanion] = cleanPreset
+  }
+  return { targets }
 }
 
 function sanitizeGear(input) {
@@ -214,11 +229,11 @@ function insertCharacter(payload, build, forcedId = null) {
     INSERT INTO characters(
       id,name,build_id,loadout_id,variant_id,race,alliance,level,attribute_points,attributes_json,
       cp_craft,cp_warfare,cp_fitness,eso_plus,skill_ranks_json,completed_json,
-      gear_json,custom_skill_lines_json,tracked_skill_lines_json,skill_allocations_json,actual_unspent_skill_points,actual_unspent_attribute_points,notes
+      gear_json,custom_skill_lines_json,tracked_skill_lines_json,skill_allocations_json,companion_progress_json,actual_unspent_skill_points,actual_unspent_attribute_points,notes
     ) VALUES(
       @id,@name,@build_id,@loadout_id,@variant_id,@race,@alliance,@level,@attribute_points,@attributes_json,
       @cp_craft,@cp_warfare,@cp_fitness,0,@skill_ranks_json,@completed_json,
-      @gear_json,'[]',@tracked_skill_lines_json,@skill_allocations_json,@actual_unspent_skill_points,@actual_unspent_attribute_points,@notes
+      @gear_json,'[]',@tracked_skill_lines_json,@skill_allocations_json,@companion_progress_json,@actual_unspent_skill_points,@actual_unspent_attribute_points,@notes
     )
   `).run({
     id,
@@ -239,6 +254,7 @@ function insertCharacter(payload, build, forcedId = null) {
     gear_json: JSON.stringify(sanitizeGear(payload.gear)),
     tracked_skill_lines_json: JSON.stringify(tracked),
     skill_allocations_json: JSON.stringify(allocations),
+    companion_progress_json: JSON.stringify(sanitizeCompanionProgress(payload.companion_progress)),
     actual_unspent_skill_points: clampInt(payload.actual_unspent_skill_points, 0, 10000, 0),
     actual_unspent_attribute_points: clampInt(payload.actual_unspent_attribute_points, 0, 64, 0),
     notes: String(payload.notes || '').slice(0, MAX_NOTES)
@@ -296,13 +312,14 @@ function register(ipcMain) {
     const linked = addon.isLinked(id)
     const allowOverrides = !linked || addon.overridesAllowed()
     const requireOverride = field => {
-      if (!allowOverrides) throw new Error(`Enable synced-data overrides in App Settings before changing ${field}.`)
+      if (!allowOverrides) throw new Error(`Enable synced-data overrides in Settings > ESO Addon & Sync before changing ${field}.`)
     }
     if (source.name !== undefined) {
       if (linked) throw new Error('Synced character names come from ESO and cannot be overridden.')
       values.name = cleanName(source.name, character.name)
     }
     if (source.notes !== undefined) values.notes = String(source.notes).slice(0, MAX_NOTES)
+    if (source.companion_progress !== undefined) values.companion_progress_json = JSON.stringify(sanitizeCompanionProgress(source.companion_progress))
     if (source.race !== undefined && ESO_RACES.has(source.race)) {
       if (linked) throw new Error('Synced race is an ESO identity field and cannot be overridden.')
       values.race = source.race
@@ -532,4 +549,4 @@ function register(ipcMain) {
   })
 }
 
-module.exports = { register, parseRow, insertCharacter, importBackupData, cleanCharacterForBackup, clampInt }
+module.exports = { register, parseRow, insertCharacter, importBackupData, cleanCharacterForBackup, clampInt, sanitizeCompanionProgress }

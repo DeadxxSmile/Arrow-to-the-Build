@@ -9,9 +9,11 @@ const root = path.resolve(__dirname, '..')
 
 function markdownFiles() {
   const files = [path.join(root, 'README.md')]
-  const docsRoot = path.join(root, 'docs', 'reference')
-  for (const entry of fs.readdirSync(docsRoot, { withFileTypes: true })) {
-    if (entry.isFile() && entry.name.endsWith('.md')) files.push(path.join(docsRoot, entry.name))
+  for (const folder of ['reference', 'maintenance']) {
+    const docsRoot = path.join(root, 'docs', folder)
+    for (const entry of fs.readdirSync(docsRoot, { withFileTypes: true })) {
+      if (entry.isFile() && entry.name.endsWith('.md')) files.push(path.join(docsRoot, entry.name))
+    }
   }
   return files
 }

@@ -5,19 +5,23 @@ const path = require('path')
 const { shell, BrowserWindow } = require('electron')
 const dbModule = require('../database/db')
 const { parseSavedVariables, normalizeLuaTables } = require('./luaSavedVariables')
-
 const {
-  BUNDLED_ADDON_VERSION, ADDON_FOLDER, BRIDGE_ADDON_FOLDER,
-  SAVED_VARIABLES_FILE, BRIDGE_SAVED_VARIABLES_FILE, BRIDGE_SAVED_VARIABLE_NAME,
-  BRIDGE_SCHEMA_VERSION, ESO_NORMAL_SAVE_LIMIT_BYTES, REPOSITORY_URL
+  BUNDLED_ADDON_VERSION, ADDON_FOLDER, RETIRED_BRIDGE_FOLDER,
+  SAVED_VARIABLES_FILE, REPOSITORY_URL
 } = require('./addonConstants')
 const {
   normalizeProfileSelection, isProfileRoot, candidateRoots, chooseProfileRoot,
-  compareVersions, manifestVersion, installAddon,
-  addonsPath, installedAddonPath, savedVariablesPath, bridgeSavedVariablesPath
+  compareVersions, manifestVersion, installAddon, isLegacyBridge, resetLegacyBridgeInstall,
+  addonsPath, installedAddonPath, retiredBridgeAddonPath, savedVariablesPath
 } = require('./profileManager')
-const sessionPrompted = new Set()
+const {
+  cleanText, clampInt, normalizeName, objectOrEmpty,
+  normalizeSnapshot, liveCharacterState
+} = require('./snapshotCodec')
+const { createCharacterSyncStore } = require('./characterSyncStore')
 
+const sessionPrompted = new Set()
+const POST_UPDATE_CLEANUP_KEY = 'addon_single_exporter_cleanup_v2_1_3'
 let watcher = null
 let watcherRoot = ''
 let syncTimer = null
@@ -25,8 +29,6 @@ let pollTimer = null
 let syncing = null
 let lastParsedRevision = null
 let lastObservedFileMarker = ''
-let lastParsedBridgeRevision = null
-let lastObservedBridgeFileMarker = ''
 
 function getSetting(key, fallback = '') {
   const row = dbModule.getDb().prepare('SELECT value FROM settings WHERE key=?').get(key)
@@ -39,27 +41,25 @@ function setSetting(key, value) {
 }
 
 function boolSetting(key, fallback = false) {
-  const raw = getSetting(key, fallback ? 'true' : 'false')
-  return raw === 'true'
+  return getSetting(key, fallback ? 'true' : 'false') === 'true'
 }
 
-const {
-  cleanText, clampInt, normalizeName, asArray, objectOrEmpty,
-  decodeBridgeSnapshot, normalizeSnapshot, liveCharacterState
-} = require('./snapshotCodec')
-const { enrichBridgeFromPrevious, bridgeRootAsArchive } = require('./snapshotMerge')
-const { createCharacterSyncStore } = require('./characterSyncStore')
-
 function parseJson(value, fallback) { try { return JSON.parse(value) } catch { return fallback } }
+
+function notifyRenderer(payload) {
+  for (const win of BrowserWindow.getAllWindows()) {
+    if (!win.isDestroyed()) win.webContents.send('addon:sync-updated', payload)
+  }
+}
 
 const characterSyncStore = createCharacterSyncStore({
   dbModule, getSetting, setSetting, boolSetting, parseJson, normalizeSnapshot, liveCharacterState,
   normalizeName, cleanText, clampInt, sessionPrompted,
-  notifyRenderer: payload => notifyRenderer(payload),
+  notifyRenderer,
   getStatus: () => getStatus()
 })
 const {
-  applySnapshotToCharacter, discoveredCharacters, importCharacter, dismissCharacter, rediscoverDismissed,
+  applySnapshotToCharacter, discoveredCharacters, snapshotCharacters, importCharacter, dismissCharacter, rediscoverDismissed,
   linkedState, overridesAllowed, isLinked, setOverride, replaceOverridesByPrefix, clearOverride, setOverrideMode, unlinkCharacter
 } = characterSyncStore
 
@@ -110,10 +110,6 @@ function upsertSnapshots(root, profileRoot = getSetting('addon_profile_root')) {
   return found
 }
 
-function notifyRenderer(payload) {
-  for (const win of BrowserWindow.getAllWindows()) if (!win.isDestroyed()) win.webContents.send('addon:sync-updated', payload)
-}
-
 function pendingPromptCharacters() {
   const pending = discoveredCharacters(true).filter(item => !sessionPrompted.has(item.character_key))
   for (const item of pending) sessionPrompted.add(item.character_key)
@@ -133,50 +129,6 @@ async function stableRead(file) {
   return fs.readFileSync(file, 'utf8')
 }
 
-
-function enrichNewerBridgeSnapshotsFromArchive(root, profileRoot = getSetting('addon_profile_root')) {
-  const db = dbModule.getDb()
-  const enrichedSnapshots = []
-  const entries = Object.entries(objectOrEmpty(root.characters))
-
-  db.transaction(() => {
-    for (const [characterKey, raw] of entries) {
-      const archiveSnapshot = normalizeSnapshot(characterKey, raw, root)
-      const row = db.prepare('SELECT captured_at,snapshot_json FROM addon_character_snapshots WHERE character_key=? AND profile_root=?').get(characterKey, profileRoot)
-      if (!row) continue
-      const current = parseJson(row.snapshot_json, null)
-      if (!current || current.dataProfile !== 'near-live-bridge-v2') continue
-      if (Number(current.capturedAt || row.captured_at || 0) <= Number(archiveSnapshot.capturedAt || 0)) continue
-
-      const rootMetadata = {
-        droppedSections: asArray(current.completeness?.droppedSections),
-        reducedFields: asArray(current.completeness?.reducedFields)
-      }
-      const before = JSON.stringify(current)
-      const enrichedRaw = enrichBridgeFromPrevious(current, archiveSnapshot, rootMetadata)
-      const enriched = normalizeSnapshot(characterKey, enrichedRaw, enrichedRaw)
-      const after = JSON.stringify(enriched)
-      if (after === before) continue
-
-      db.prepare(`UPDATE addon_character_snapshots SET
-        character_name=?,class_name=?,race_name=?,alliance_name=?,snapshot_json=?,updated_at=datetime('now')
-        WHERE character_key=? AND profile_root=?`).run(
-        enriched.identity.name,
-        enriched.identity.class.name,
-        enriched.identity.race.name,
-        enriched.identity.alliance.name,
-        after,
-        characterKey,
-        profileRoot
-      )
-      const link = db.prepare('SELECT character_id FROM character_addon_links WHERE character_key=?').get(characterKey)
-      if (link) applySnapshotToCharacter(link.character_id, enriched)
-      enrichedSnapshots.push(enriched)
-    }
-  })()
-  return enrichedSnapshots
-}
-
 async function readArchiveSyncSource(profileRoot, reason) {
   const file = savedVariablesPath(profileRoot)
   if (!fs.existsSync(file)) return { found: false, processed: false, snapshots: [], version: '' }
@@ -194,42 +146,8 @@ async function readArchiveSyncSource(profileRoot, reason) {
   lastParsedRevision = revision
   lastObservedFileMarker = marker
   const snapshots = upsertSnapshots(parsed, profileRoot)
-  const enriched = enrichNewerBridgeSnapshotsFromArchive(parsed, profileRoot)
   setSetting('addon_last_revision', revision)
-  return { found: true, processed: true, snapshots: [...snapshots, ...enriched], revision, version: cleanText(parsed.addonVersion, 80) }
-}
-
-async function readBridgeSyncSource(profileRoot, reason) {
-  const file = bridgeSavedVariablesPath(profileRoot)
-  if (!fs.existsSync(file)) return { found: false, processed: false, snapshots: [], version: '' }
-  const text = await stableRead(file)
-  if (!text) return { found: true, processed: false, snapshots: [], version: '' }
-  const parsed = normalizeLuaTables(parseSavedVariables(text, BRIDGE_SAVED_VARIABLE_NAME))
-  const schema = clampInt(parsed.schemaVersion, 0, 999, 0)
-  if (![1, BRIDGE_SCHEMA_VERSION].includes(schema)) throw new Error(`Unsupported ATTB sync bridge schema ${schema}. ATTB currently supports bridge schemas 1 and ${BRIDGE_SCHEMA_VERSION}.`)
-  const revision = clampInt(parsed.revision, 0, Number.MAX_SAFE_INTEGER, 0)
-  const stat = fs.statSync(file)
-  const marker = `${profileRoot}:${revision}:${stat.size}:${Math.trunc(stat.mtimeMs)}`
-  if (reason !== 'manual' && lastParsedBridgeRevision !== null && revision === lastParsedBridgeRevision && marker === lastObservedBridgeFileMarker) {
-    return { found: true, processed: false, snapshots: [], revision, version: cleanText(parsed.addonVersion, 80), size: stat.size }
-  }
-  lastParsedBridgeRevision = revision
-  lastObservedBridgeFileMarker = marker
-  const characterKey = cleanText(parsed.characterKey, 400)
-  const previousRow = characterKey ? dbModule.getDb().prepare('SELECT snapshot_json FROM addon_character_snapshots WHERE character_key=?').get(characterKey) : null
-  const previousSnapshot = previousRow ? parseJson(previousRow.snapshot_json, null) : null
-  const synthetic = bridgeRootAsArchive(parsed, previousSnapshot)
-  const snapshots = synthetic ? upsertSnapshots(synthetic, profileRoot) : []
-  setSetting('addon_bridge_last_revision', revision)
-  setSetting('addon_bridge_last_sync_at', new Date().toISOString())
-  setSetting('addon_bridge_last_capture_at', clampInt(parsed.capturedAt, 0, Number.MAX_SAFE_INTEGER, 0))
-  setSetting('addon_bridge_estimated_bytes', clampInt(parsed.estimatedBytes, 0, 1024 * 1024, 0))
-  setSetting('addon_bridge_budget_bytes', clampInt(parsed.budgetBytes, 0, 1024 * 1024, 0))
-  setSetting('addon_bridge_budget_status', cleanText(parsed.budgetStatus, 40))
-  setSetting('addon_bridge_truncated', parsed.truncated === true ? 'true' : 'false')
-  setSetting('addon_bridge_reduced_fields', JSON.stringify(asArray(parsed.reducedFields).map(value => cleanText(value, 80))))
-  setSetting('addon_bridge_dropped_sections', JSON.stringify(asArray(parsed.droppedSections).map(value => cleanText(value, 80))))
-  return { found: true, processed: true, snapshots, revision, version: cleanText(parsed.addonVersion, 80), size: stat.size }
+  return { found: true, processed: true, snapshots, revision, version: cleanText(parsed.addonVersion, 80) }
 }
 
 async function syncNow(reason = 'manual') {
@@ -238,37 +156,27 @@ async function syncNow(reason = 'manual') {
     const profileRoot = getSetting('addon_profile_root')
     if (!boolSetting('addon_sync_enabled') || !profileRoot) return getStatus()
 
-    const errors = []
-    const snapshots = []
     let archive = { found: false, processed: false, snapshots: [], version: '' }
-    let bridge = { found: false, processed: false, snapshots: [], version: '' }
-
-    try { archive = await readArchiveSyncSource(profileRoot, reason) }
-    catch (error) { errors.push(`Character archive: ${error.message || error}`) }
-    try { bridge = await readBridgeSyncSource(profileRoot, reason) }
-    catch (error) { errors.push(`Sync bridge: ${error.message || error}`) }
-
-    snapshots.push(...(archive.snapshots || []), ...(bridge.snapshots || []))
-    const newestByKey = new Map()
-    for (const snapshot of snapshots) {
-      const previous = newestByKey.get(snapshot.characterKey)
-      if (!previous || Number(snapshot.capturedAt || 0) >= Number(previous.capturedAt || 0)) newestByKey.set(snapshot.characterKey, snapshot)
+    let errorText = ''
+    try {
+      archive = await readArchiveSyncSource(profileRoot, reason)
+    } catch (error) {
+      errorText = error.message || String(error)
     }
 
-    if (archive.found || bridge.found) setSetting('addon_last_sync_at', new Date().toISOString())
-    setSetting('addon_last_error', errors.join(' | '))
-    const detectedVersion = bridge.version || archive.version
-    if (detectedVersion) setSetting('addon_detected_version', detectedVersion)
+    if (archive.found) setSetting('addon_last_sync_at', new Date().toISOString())
+    setSetting('addon_last_error', errorText)
+    if (archive.version) setSetting('addon_detected_version', archive.version)
 
     const status = getStatus()
     notifyRenderer({
-      type: errors.length ? 'error' : 'sync',
+      type: errorText ? 'error' : 'sync',
       reason,
       status,
-      error: errors.join(' | '),
+      error: errorText,
       new_characters: pendingPromptCharacters(),
-      updated_count: newestByKey.size,
-      sources: { archive: archive.processed, bridge: bridge.processed }
+      updated_count: archive.snapshots.length,
+      sources: { archive: archive.processed }
     })
     return status
   })().finally(() => { syncing = null })
@@ -291,16 +199,12 @@ function scheduleSync(reason = 'watch') {
 }
 
 function attachWatcher(root) {
-  if (watcher) return
-  // Unit tests drive syncNow explicitly and share this module across cases; a live fs.watch
-  // callback can fire after a later test has repointed the profile root and cross-contaminate
-  // snapshots. Tests set ATTB_DISABLE_ADDON_WATCH so watching is a no-op there.
-  if (process.env.ATTB_DISABLE_ADDON_WATCH === '1') return
+  if (watcher || process.env.ATTB_DISABLE_ADDON_WATCH === '1') return
   const directory = path.dirname(savedVariablesPath(root))
   if (!fs.existsSync(directory)) return
   try {
     watcher = fs.watch(directory, { persistent: false }, (_event, filename) => {
-      if (!filename || [SAVED_VARIABLES_FILE, BRIDGE_SAVED_VARIABLES_FILE].some(file => String(filename).toLowerCase() === file.toLowerCase())) scheduleSync('watch')
+      if (!filename || String(filename).toLowerCase() === SAVED_VARIABLES_FILE.toLowerCase()) scheduleSync('watch')
     })
     watcher.on?.('error', () => { try { watcher.close() } catch { }; watcher = null })
   } catch { watcher = null }
@@ -314,8 +218,6 @@ function startWatching() {
   watcherRoot = root
   lastParsedRevision = null
   lastObservedFileMarker = ''
-  lastParsedBridgeRevision = null
-  lastObservedBridgeFileMarker = ''
   attachWatcher(root)
   if (process.env.ATTB_DISABLE_ADDON_WATCH === '1') return
   pollTimer = setInterval(() => {
@@ -335,18 +237,14 @@ function getStatus() {
   const profileRoot = getSetting('addon_profile_root')
   const enabled = boolSetting('addon_sync_enabled')
   const installedPath = profileRoot ? installedAddonPath(profileRoot) : ''
-  const bridgeInstalledPath = profileRoot ? installedAddonPath(profileRoot, BRIDGE_ADDON_FOLDER) : ''
+  const retiredBridgePath = profileRoot ? retiredBridgeAddonPath(profileRoot) : ''
   const savePath = profileRoot ? savedVariablesPath(profileRoot) : ''
-  const bridgeSavePath = profileRoot ? bridgeSavedVariablesPath(profileRoot) : ''
   const installedVersion = installedPath ? manifestVersion(path.join(installedPath, 'ArrowToTheBuild.txt')) : ''
-  const bridgeInstalledVersion = bridgeInstalledPath ? manifestVersion(path.join(bridgeInstalledPath, 'ArrowToTheBuildBridge.txt')) : ''
-  const bridgeFileSize = safeFileSize(bridgeSavePath)
+  const versionComparison = installedVersion ? compareVersions(installedVersion, BUNDLED_ADDON_VERSION) : 0
   const db = dbModule.getDb()
   const snapshotCount = profileRoot ? db.prepare('SELECT COUNT(*) AS n FROM addon_character_snapshots WHERE profile_root=?').get(profileRoot).n : 0
   const linkedCount = profileRoot ? db.prepare(`SELECT COUNT(*) AS n FROM character_addon_links l JOIN addon_character_snapshots s ON s.character_key=l.character_key WHERE s.profile_root=?`).get(profileRoot).n : 0
   const pendingCount = profileRoot ? db.prepare(`SELECT COUNT(*) AS n FROM addon_character_snapshots s LEFT JOIN character_addon_links l ON l.character_key=s.character_key WHERE s.profile_root=? AND l.character_id IS NULL AND s.discovery_status IN ('new','prompted')`).get(profileRoot).n : 0
-  const versionComparison = installedVersion ? compareVersions(installedVersion, BUNDLED_ADDON_VERSION) : 0
-  const bridgeVersionComparison = bridgeInstalledVersion ? compareVersions(bridgeInstalledVersion, BUNDLED_ADDON_VERSION) : 0
   return {
     enabled,
     onboarding_complete: boolSetting('addon_onboarding_complete'),
@@ -354,44 +252,62 @@ function getStatus() {
     profile_root: profileRoot,
     profile_name: profileRoot ? path.basename(profileRoot) : '',
     addon_path: installedPath,
-    bridge_addon_path: bridgeInstalledPath,
     saved_variables_path: savePath,
-    bridge_saved_variables_path: bridgeSavePath,
     addon_installed: !!installedVersion,
-    bridge_installed: !!bridgeInstalledVersion,
     installed_version: installedVersion,
-    bridge_installed_version: bridgeInstalledVersion,
     bundled_version: BUNDLED_ADDON_VERSION,
     addon_version_mismatch: !!installedVersion && installedVersion !== BUNDLED_ADDON_VERSION,
     addon_update_available: !!installedVersion && versionComparison < 0,
     addon_newer_than_bundled: !!installedVersion && versionComparison > 0,
-    bridge_update_available: !!bridgeInstalledVersion && bridgeVersionComparison < 0,
-    bridge_newer_than_bundled: !!bridgeInstalledVersion && bridgeVersionComparison > 0,
     saved_variables_found: !!savePath && fs.existsSync(savePath),
-    bridge_saved_variables_found: !!bridgeSavePath && fs.existsSync(bridgeSavePath),
-    bridge_file_size: bridgeFileSize,
-    bridge_save_limit: ESO_NORMAL_SAVE_LIMIT_BYTES,
-    bridge_within_normal_save_limit: bridgeFileSize === 0 || bridgeFileSize <= ESO_NORMAL_SAVE_LIMIT_BYTES,
-    near_live_ready: !!bridgeInstalledVersion && bridgeFileSize > 0 && bridgeFileSize <= ESO_NORMAL_SAVE_LIMIT_BYTES,
+    saved_variables_size: safeFileSize(savePath),
+    retired_bridge_installed: !!profileRoot && isLegacyBridge(profileRoot),
+    retired_bridge_path: retiredBridgePath,
     snapshot_count: snapshotCount,
     linked_count: linkedCount,
     pending_count: pendingCount,
     last_sync_at: getSetting('addon_last_sync_at'),
     last_revision: Number(getSetting('addon_last_revision', '0')) || 0,
-    bridge_last_revision: Number(getSetting('addon_bridge_last_revision', '0')) || 0,
-    bridge_last_sync_at: getSetting('addon_bridge_last_sync_at'),
-    bridge_last_capture_at: Number(getSetting('addon_bridge_last_capture_at', '0')) || 0,
-    bridge_estimated_bytes: Number(getSetting('addon_bridge_estimated_bytes', '0')) || 0,
-    bridge_budget_bytes: Number(getSetting('addon_bridge_budget_bytes', '32768')) || 32768,
-    bridge_budget_status: getSetting('addon_bridge_budget_status', ''),
-    bridge_truncated: boolSetting('addon_bridge_truncated'),
-    bridge_reduced_fields: parseJson(getSetting('addon_bridge_reduced_fields', '[]'), []),
-    bridge_dropped_sections: parseJson(getSetting('addon_bridge_dropped_sections', '[]'), []),
     last_error: getSetting('addon_last_error'),
     candidates: candidateRoots(),
     repository_url: REPOSITORY_URL,
     watcher_active: !!watcher || !!pollTimer
   }
+}
+
+
+function runPostUpdateAddonCleanup() {
+  if (getSetting(POST_UPDATE_CLEANUP_KEY) === 'done') return []
+  const configured = getSetting('addon_profile_root')
+  const roots = []
+  for (const root of [configured, ...candidateRoots()]) {
+    if (!root || roots.some(item => item.toLowerCase() === root.toLowerCase())) continue
+    roots.push(root)
+  }
+
+  const results = []
+  let failed = false
+  for (const root of roots) {
+    try {
+      const result = resetLegacyBridgeInstall(root)
+      if (result.found) results.push(result)
+    } catch (error) {
+      failed = true
+      const message = error.message || String(error)
+      console.error('[ATTB addon cleanup]', message)
+      setSetting('addon_last_error', message)
+    }
+  }
+
+  if (results.length) {
+    lastParsedRevision = null
+    lastObservedFileMarker = ''
+    setSetting('addon_last_revision', '0')
+    setSetting('addon_detected_version', BUNDLED_ADDON_VERSION)
+    if (!failed) setSetting('addon_last_error', '')
+  }
+  if (!failed) setSetting(POST_UPDATE_CLEANUP_KEY, 'done')
+  return results
 }
 
 async function configure({ mode = 'existing', profileRoot = '', autoDetect = true } = {}, parentWindow = null) {
@@ -400,15 +316,26 @@ async function configure({ mode = 'existing', profileRoot = '', autoDetect = tru
   if (!root) root = await chooseProfileRoot(parentWindow)
   if (!root) return null
   if (!isProfileRoot(root)) throw new Error('The selected folder is not an ESO profile folder.')
+  const cleanup = resetLegacyBridgeInstall(root)
+  if (cleanup.found) {
+    lastParsedRevision = null
+    lastObservedFileMarker = ''
+    setSetting('addon_last_revision', '0')
+    setSetting('addon_detected_version', BUNDLED_ADDON_VERSION)
+    setSetting('addon_last_error', '')
+  }
   const addonManifest = path.join(installedAddonPath(root), 'ArrowToTheBuild.txt')
-  const bridgeManifest = path.join(installedAddonPath(root, BRIDGE_ADDON_FOLDER), 'ArrowToTheBuildBridge.txt')
-  if (mode === 'existing' && !fs.existsSync(addonManifest) && !fs.existsSync(bridgeManifest) && !fs.existsSync(savedVariablesPath(root)) && !fs.existsSync(bridgeSavedVariablesPath(root))) {
-    throw new Error('ATTB could not find its companion addon or SavedVariables files in that ESO profile. Choose Install Addon, or select the profile where it is already installed.')
+  if (mode === 'existing' && !fs.existsSync(addonManifest) && !fs.existsSync(savedVariablesPath(root))) {
+    throw new Error('ATTB could not find its ESO addon or SavedVariables file in that profile. Choose Install Addon, or select the profile where it is already installed.')
   }
   if (mode === 'install') installAddon(root)
   const previousRoot = getSetting('addon_profile_root')
   setSetting('addon_profile_root', root)
-  if (previousRoot !== root) { sessionPrompted.clear(); lastParsedRevision = null; lastObservedFileMarker = ''; lastParsedBridgeRevision = null; lastObservedBridgeFileMarker = '' }
+  if (previousRoot !== root) {
+    sessionPrompted.clear()
+    lastParsedRevision = null
+    lastObservedFileMarker = ''
+  }
   setSetting('addon_sync_enabled', 'true')
   setSetting('addon_onboarding_complete', 'true')
   startWatching()
@@ -456,6 +383,7 @@ function register(ipcMain) {
   })
   ipcMain.handle('addon:syncNow', () => syncNow('manual'))
   ipcMain.handle('addon:listDiscovered', () => discoveredCharacters(true))
+  ipcMain.handle('addon:listSnapshots', () => snapshotCharacters())
   ipcMain.handle('addon:importCharacter', (_event, key, options) => importCharacter(String(key || ''), options || {}))
   ipcMain.handle('addon:dismissCharacter', (_event, key) => dismissCharacter(String(key || '')))
   ipcMain.handle('addon:rediscoverDismissed', () => rediscoverDismissed())
@@ -468,8 +396,8 @@ function register(ipcMain) {
 }
 
 module.exports = {
-  register, startWatching, stopWatching, syncNow, getStatus, candidateRoots, installAddon,
+  register, startWatching, stopWatching, syncNow, getStatus, candidateRoots, installAddon, runPostUpdateAddonCleanup, snapshotCharacters,
   linkedState, isLinked, overridesAllowed, setOverride, replaceOverridesByPrefix, clearOverride, setOverrideMode,
-  applySnapshotToCharacter, liveCharacterState, normalizeSnapshot, decodeBridgeSnapshot, bridgeRootAsArchive,
-  BUNDLED_ADDON_VERSION, BRIDGE_SCHEMA_VERSION, ESO_NORMAL_SAVE_LIMIT_BYTES
+  applySnapshotToCharacter, liveCharacterState, normalizeSnapshot,
+  BUNDLED_ADDON_VERSION, ADDON_FOLDER, RETIRED_BRIDGE_FOLDER
 }

@@ -1,4 +1,9 @@
 import json, re, os
+from skill_unlock_data import (
+    VERIFIED_DATE, GAME_VERSION, LIVE_PATCH, OFFICIAL_PATCH_URL, PRIMARY_SOURCE, PRIMARY_SOURCE_ROOT,
+    SECONDARY_SOURCE, SECONDARY_SOURCE_URL, PASSIVE_UNLOCK_RANKS, FAMILY_REQUIRED_RANK_OVERRIDES,
+    INHERENT_REQUIRED_RANKS, PASSIVE_MAX_POINTS_OVERRIDES, CURRENCY_OVERRIDES,
+)
 ROOT=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 def slug(s):
@@ -22,6 +27,18 @@ def passives(names,max_points=2,currency='skill_point'):
     return out
 
 lines=[]
+def set_unlock_ranks(line_id, skill_name, ranks):
+    skill_id=f'{line_id}__{slug(skill_name)}'
+    line=next((entry for entry in lines if entry['id']==line_id), None)
+    if not line:
+        raise ValueError(f'Unknown line for unlock ranks: {line_id}')
+    entry=next((item for item in line['skills'] if item['id']==skill_id), None)
+    if not entry:
+        raise ValueError(f'Unknown skill for unlock ranks: {skill_id}')
+    if len(ranks) != int(entry.get('max_points') or 1):
+        raise ValueError(f'Unlock-rank count does not match max_points for {skill_id}')
+    entry['unlock_ranks']=[int(rank) for rank in ranks]
+
 def add_line(id,name,group,skills,max_rank=50,cls=None,currency='skill_point',source=None,note=None):
     # Prefix item IDs with line ID for global uniqueness.
     for x in skills:
@@ -101,53 +118,78 @@ add_line('living_death','Living Death','Class',family('Reanimate','Renewing Anim
 add_line('necromancer_mastery','Necromancer Class Mastery','Class',passives([('Death’s Covenant',1),('Corpse Weaver',1),('Grave Resolve',1),('Undying Purpose',1),('Soul Collector',1)],currency='class_mastery_point'),max_rank=1,cls='Necromancer',currency='class_mastery_point',source='https://eso-hub.com/en/skills/necromancer/necromancer-class-mastery')
 
 # ---- Weapons ----
-add_line('two_handed','Two-Handed','Weapon',family('Berserker Strike','Berserker Rage','Onslaught','Ultimate',50)+[skill('Smash','Scribing',0,currency='none')]+family('Uppercut','Dizzying Swing','Wrecking Blow','Active',2)+family('Critical Charge','Stampede','Critical Rush','Active',4)+family('Cleave','Carve','Brawler','Active',14)+family('Reverse Slash','Reverse Slice','Executioner','Active',20)+family('Momentum','Forward Momentum','Rally','Active',38)+passives(['Forceful','Heavy Weapons','Balanced Blade','Follow Up','Battle Rush']),source='https://eso-hub.com/en/skills/weapon/two-handed')
-add_line('one_hand_and_shield','One Hand and Shield','Weapon',family('Shield Wall','Spell Wall','Shield Discipline','Ultimate',50)+[skill('Shield Throw','Scribing',0,currency='none')]+family('Puncture','Pierce Armor','Ransack','Active',2)+family('Low Slash','Heroic Slash','Deep Slash','Active',4)+family('Defensive Posture','Defensive Stance','Absorb Missile','Active',14)+family('Shield Charge','Shielded Assault','Invasion','Active',20)+family('Power Bash','Power Slam','Reverberating Bash','Active',38)+passives(['Fortress','Sword and Board','Deadly Bash','Deflect Bolts','Battlefield Mobility']),source='https://eso-hub.com/en/skills/weapon/one-hand-and-shield')
-add_line('dual_wield','Dual Wield','Weapon',family('Lacerate','Thrive in Chaos','Rend','Ultimate',50)+[skill('Traveling Knife','Scribing',0,currency='none')]+family('Flurry','Rapid Strikes','Bloodthirst','Active',2)+family('Twin Slashes','Rending Slashes','Blood Craze','Active',4)+family('Whirlwind','Whirling Blades','Steel Tornado','Active',14)+family('Blade Cloak','Quick Cloak','Deadly Cloak','Active',20)+family('Hidden Blade','Shrouded Daggers','Flying Blade','Active',38)+passives(['Focused Killer','Ambidextrous','Controlled Fury','Ruffian','Twin Blade and Blunt']),source='https://eso-hub.com/en/skills/weapon/dual-wield')
-add_line('bow','Bow','Weapon',family('Rapid Fire','Toxic Barrage','Ballista','Ultimate',50)+[skill('Vault','Scribing',0,currency='none')]+family('Snipe','Lethal Arrow','Focused Aim','Active',2)+family('Volley','Endless Hail','Arrow Barrage','Active',4)+family('Scatter Shot','Magnum Shot','Draining Shot','Active',14)+family('Arrow Spray','Bombard','Acid Spray','Active',20)+family('Poison Arrow','Poison Injection','Venom Arrow','Active',38)+passives(['Long Shots','Accuracy','Ranger','Hawk Eye','Hasty Retreat']),source='https://eso-hub.com/en/skills/weapon/bow')
-add_line('destruction_staff','Destruction Staff','Weapon',family('Elemental Storm','Elemental Rage','Eye of the Storm','Ultimate',50)+[skill('Elemental Explosion','Scribing',0,currency='none')]+family('Force Shock','Crushing Shock','Force Pulse','Active',2)+family('Wall of Elements','Elemental Blockade','Unstable Wall of Elements','Active',4)+family('Destructive Touch','Destructive Reach','Destructive Clench','Active',14)+family('Weakness to Elements','Elemental Drain','Elemental Susceptibility','Active',20)+family('Impulse','Elemental Ring','Pulsar','Active',38)+passives(['Tri Focus','Penetrating Magic','Elemental Force','Ancient Knowledge','Destruction Expert']),source='https://eso-hub.com/en/skills/weapon/destruction-staff')
-add_line('restoration_staff','Restoration Staff','Weapon',family('Panacea','Life Giver','Light’s Champion','Ultimate',50)+[skill("Mender's Bond",'Scribing',0,currency='none')]+family('Grand Healing','Healing Springs','Illustrious Healing','Active',2)+family('Regeneration','Radiating Regeneration','Rapid Regeneration','Active',4)+family('Blessing of Protection','Combat Prayer','Blessing of Restoration','Active',14)+family('Steadfast Ward','Healing Ward','Ward Ally','Active',20)+family('Force Siphon','Siphon Spirit','Quick Siphon','Active',38)+passives(['Essence Drain','Restoration Expert','Cycle of Life','Absorb','Restoration Master']),source='https://eso-hub.com/en/skills/weapon/restoration-staff')
+add_line('two_handed','Two-Handed','Weapon',family('Berserker Strike','Berserker Rage','Onslaught','Ultimate',50)+family('Uppercut','Dizzying Swing','Wrecking Blow','Active',2)+family('Critical Charge','Stampede','Critical Rush','Active',4)+family('Cleave','Carve','Brawler','Active',14)+family('Reverse Slash','Reverse Slice','Executioner','Active',20)+family('Momentum','Forward Momentum','Rally','Active',38)+passives(['Forceful','Heavy Weapons','Balanced Blade','Follow Up','Battle Rush']),source='https://eso-hub.com/en/skills/weapon/two-handed')
+add_line('one_hand_and_shield','One Hand and Shield','Weapon',family('Shield Wall','Spell Wall','Shield Discipline','Ultimate',50)+family('Puncture','Pierce Armor','Ransack','Active',2)+family('Low Slash','Heroic Slash','Deep Slash','Active',4)+family('Defensive Posture','Defensive Stance','Absorb Missile','Active',14)+family('Shield Charge','Shielded Assault','Invasion','Active',20)+family('Power Bash','Power Slam','Reverberating Bash','Active',38)+passives(['Fortress','Sword and Board','Deadly Bash','Deflect Bolts','Battlefield Mobility']),source='https://eso-hub.com/en/skills/weapon/one-hand-and-shield')
+add_line('dual_wield','Dual Wield','Weapon',family('Lacerate','Thrive in Chaos','Rend','Ultimate',50)+family('Flurry','Rapid Strikes','Bloodthirst','Active',2)+family('Twin Slashes','Rending Slashes','Blood Craze','Active',4)+family('Whirlwind','Whirling Blades','Steel Tornado','Active',14)+family('Blade Cloak','Quick Cloak','Deadly Cloak','Active',20)+family('Hidden Blade','Shrouded Daggers','Flying Blade','Active',38)+passives(['Focused Killer','Ambidextrous','Controlled Fury','Ruffian','Twin Blade and Blunt']),source='https://eso-hub.com/en/skills/weapon/dual-wield')
+add_line('bow','Bow','Weapon',family('Rapid Fire','Toxic Barrage','Ballista','Ultimate',50)+family('Snipe','Lethal Arrow','Focused Aim','Active',2)+family('Volley','Endless Hail','Arrow Barrage','Active',4)+family('Scatter Shot','Magnum Shot','Draining Shot','Active',14)+family('Arrow Spray','Bombard','Acid Spray','Active',20)+family('Poison Arrow','Poison Injection','Venom Arrow','Active',38)+passives(['Long Shots','Accuracy','Ranger','Hawk Eye','Hasty Retreat']),source='https://eso-hub.com/en/skills/weapon/bow')
+add_line('destruction_staff','Destruction Staff','Weapon',family('Elemental Storm','Elemental Rage','Eye of the Storm','Ultimate',50)+family('Force Shock','Crushing Shock','Force Pulse','Active',2)+family('Wall of Elements','Elemental Blockade','Unstable Wall of Elements','Active',4)+family('Destructive Touch','Destructive Reach','Destructive Clench','Active',14)+family('Weakness to Elements','Elemental Drain','Elemental Susceptibility','Active',20)+family('Impulse','Elemental Ring','Pulsar','Active',38)+passives(['Tri Focus','Penetrating Magic','Elemental Force','Ancient Knowledge','Destruction Expert']),source='https://eso-hub.com/en/skills/weapon/destruction-staff')
+add_line('restoration_staff','Restoration Staff','Weapon',family('Panacea','Life Giver','Light’s Champion','Ultimate',50)+family('Grand Healing','Healing Springs','Illustrious Healing','Active',2)+family('Regeneration','Radiating Regeneration','Rapid Regeneration','Active',4)+family('Blessing of Protection','Combat Prayer','Blessing of Restoration','Active',14)+family('Steadfast Ward','Healing Ward','Ward Ally','Active',20)+family('Force Siphon','Siphon Spirit','Quick Siphon','Active',38)+passives(['Essence Drain','Restoration Expert','Cycle of Life','Absorb','Restoration Master']),source='https://eso-hub.com/en/skills/weapon/restoration-staff')
 
 # ---- Armor ----
-add_line('light_armor','Light Armor','Armor',[skill('Annulment','Active',1,None,['Dampen Magic','Harness Magicka'],22),skill('Dampen Magic','Morph',1,'Annulment',[],22),skill('Harness Magicka','Morph',1,'Annulment',[],22)]+passives([('Grace',3),('Evocation',2),('Spell Warding',2),('Prodigy',2),('Concentration',2)]),source='https://eso-hub.com/en/skills/armor/light-armor')
-add_line('medium_armor','Medium Armor','Armor',[skill('Evasion','Active',1,None,['Elude','Shuffle'],22),skill('Elude','Morph',1,'Evasion',[],22),skill('Shuffle','Morph',1,'Evasion',[],22)]+passives([('Dexterity',3),('Wind Walker',2),('Improved Sneak',2),('Agility',2),('Athletics',2)]),source='https://eso-hub.com/en/skills/armor/medium-armor')
-add_line('heavy_armor','Heavy Armor','Armor',[skill('Immovable','Active',1,None,['Immovable Brute','Unstoppable'],22),skill('Immovable Brute','Morph',1,'Immovable',[],22),skill('Unstoppable','Morph',1,'Immovable',[],22)]+passives([('Resolve',3),('Constitution',2),('Juggernaut',2),('Revitalize',2),('Rapid Mending',2)]),source='https://eso-hub.com/en/skills/armor/heavy-armor')
+add_line('light_armor','Light Armor','Armor',[skill('Light Armor Bonuses','Passive',1,currency='none'),skill('Light Armor Penalties','Passive',1,currency='none'),skill('Annulment','Active',1,None,['Dampen Magic','Harness Magicka'],22),skill('Dampen Magic','Morph',1,'Annulment',[],22),skill('Harness Magicka','Morph',1,'Annulment',[],22)]+passives([('Grace',3),('Evocation',2),('Spell Warding',2),('Prodigy',2),('Concentration',2)]),source='https://eso-hub.com/en/skills/armor/light-armor')
+add_line('medium_armor','Medium Armor','Armor',[skill('Medium Armor Bonuses','Passive',1,currency='none'),skill('Evasion','Active',1,None,['Elude','Shuffle'],22),skill('Elude','Morph',1,'Evasion',[],22),skill('Shuffle','Morph',1,'Evasion',[],22)]+passives([('Dexterity',3),('Wind Walker',2),('Improved Sneak',2),('Agility',2),('Athletics',2)]),source='https://eso-hub.com/en/skills/armor/medium-armor')
+add_line('heavy_armor','Heavy Armor','Armor',[skill('Heavy Armor Bonuses','Passive',1,currency='none'),skill('Heavy Armor Penalties','Passive',1,currency='none'),skill('Immovable','Active',1,None,['Immovable Brute','Unstoppable'],22),skill('Immovable Brute','Morph',1,'Immovable',[],22),skill('Unstoppable','Morph',1,'Immovable',[],22)]+passives([('Resolve',3),('Constitution',2),('Juggernaut',2),('Revitalize',2),('Rapid Mending',2)]),source='https://eso-hub.com/en/skills/armor/heavy-armor')
+
+# Verified passive point gates used by Suggested Next Picks. ESO passives can have a different
+# skill-line rank requirement for each purchased point; a single required_rank value cannot
+# represent that safely. Keep these current when auditing a game update.
+for line_id, skill_name, ranks in [
+    ('light_armor','Grace',[2,10,30]),
+    ('light_armor','Evocation',[6,18]),
+    ('light_armor','Spell Warding',[14,34]),
+    ('light_armor','Prodigy',[38,46]),
+    ('light_armor','Concentration',[42,50]),
+    ('medium_armor','Dexterity',[2,10,30]),
+    ('medium_armor','Wind Walker',[6,18]),
+    ('medium_armor','Improved Sneak',[14,34]),
+    ('medium_armor','Agility',[38,46]),
+    ('medium_armor','Athletics',[42,50]),
+    ('heavy_armor','Resolve',[2,10,30]),
+    ('heavy_armor','Constitution',[6,18]),
+    ('heavy_armor','Juggernaut',[14,34]),
+    ('heavy_armor','Revitalize',[38,46]),
+    ('heavy_armor','Rapid Mending',[42,50]),
+]:
+    set_unlock_ranks(line_id, skill_name, ranks)
 
 # ---- World ----
 add_line('soul_magic','Soul Magic','World',family('Soul Strike','Soul Assault','Shatter Soul','Ultimate',6)+family('Soul Trap','Consuming Trap','Soul Splitting Trap','Active',1)+passives([('Soul Shatter',2),('Soul Summons',2),('Soul Lock',2)]),max_rank=6,source='https://eso-hub.com/en/skills/world/soul-magic')
-add_line('vampire','Vampire','World',family('Blood Scion','Swarming Scion','Perfect Scion','Ultimate',5)+family('Eviscerate','Blood for Blood','Arterial Burst','Active',1)+family('Blood Frenzy','Simmering Frenzy','Sated Fury','Active',2)+family('Vampiric Drain','Exhilarating Drain','Drain Vigor','Active',3)+family('Mesmerize','Hypnosis','Stupefy','Active',4)+family('Mist Form','Elusive Mist','Blood Mist','Active',5)+passives(['Feed','Dark Stalker','Strike from the Shadows','Undeath','Unnatural Movement']),max_rank=10,source='https://eso-hub.com/en/skills/world/vampire')
-add_line('werewolf','Werewolf','World',family('Werewolf Transformation','Pack Leader','Werewolf Berserker','Ultimate',1)+family('Pounce','Brutal Pounce','Feral Pounce','Active',1)+family('Hircine’s Bounty','Hircine’s Fortitude','Hircine’s Rage','Active',2)+family('Roar','Ferocious Roar','Deafening Roar','Active',3)+family('Piercing Howl','Howl of Despair','Howl of Agony','Active',4)+family('Infectious Claws','Claws of Life','Claws of Anguish','Active',5)+passives(['Devour','Pursuit','Blood Rage','Bloodmoon','Savage Strength','Call of the Pack']),max_rank=10,source='https://eso-hub.com/en/skills/world/werewolf')
+add_line('vampire','Vampire','World',family('Blood Scion','Swarming Scion','Perfect Scion','Ultimate',5)+family('Eviscerate','Blood for Blood','Arterial Burst','Active',1)+family('Blood Frenzy','Simmering Frenzy','Sated Fury','Active',2)+family('Vampiric Drain','Exhilarating Drain','Drain Vigor','Active',3)+family('Mesmerize','Hypnosis','Stupefy','Active',4)+family('Mist Form','Elusive Mist','Blood Mist','Active',5)+passives([('Feed',1),('Dark Stalker',2),('Strike from the Shadows',2),('Undeath',2),('Unnatural Movement',2)])+[skill('Blood Ritual','Passive',1)],max_rank=10,source='https://eso-hub.com/en/skills/world/vampire')
+add_line('werewolf','Werewolf','World',family('Werewolf Transformation','Pack Leader','Werewolf Berserker','Ultimate',1)+family('Pounce','Brutal Pounce','Feral Pounce','Active',1)+family('Hircine’s Bounty','Hircine’s Fortitude','Hircine’s Rage','Active',2)+family('Roar','Ferocious Roar','Deafening Roar','Active',3)+family('Piercing Howl','Howl of Despair','Howl of Agony','Active',4)+family('Infectious Claws','Claws of Life','Claws of Anguish','Active',5)+passives([('Devour',1),('Pursuit',2),('Blood Rage',2),('Bloodmoon',1),('Savage Strength',2),('Call of the Pack',2)]),max_rank=10,source='https://eso-hub.com/en/skills/world/werewolf')
 add_line('legerdemain','Legerdemain','World',passives([('Improved Hiding',4),('Light Fingers',4),('Trafficker',4),('Locksmith',4),('Kickback',4)]),max_rank=20,source='https://eso-hub.com/en/skills/world/legerdemain')
-add_line('scrying','Scrying','World',passives([('Antiquarian Insight',5),('Scrier’s Patience',2),('Coalescence',2),('Future Focus',2),('Dilation',2),('Farsight',2),('Preemptive Power',1)]),max_rank=10,source='https://eso-hub.com/en/skills/world/scrying')
-add_line('excavation','Excavation','World',passives([('Hand Brush',2),('Augur',2),('Trowel',2),('Keen Eye: Dig Sites',2),('Excavator’s Reserves',2),('Heavy Shovel',2)]),max_rank=10,source='https://eso-hub.com/en/skills/world/excavation')
+add_line('scrying','Scrying','World',[skill('Scry','Passive',1,currency='none')]+passives([('Antiquarian Insight',5),('Scrier’s Patience',2),('Coalescence',2),('Future Focus',2),('Dilation',2),('Farsight',2),('Preemptive Power',1)]),max_rank=10,source='https://eso-hub.com/en/skills/world/scrying')
+add_line('excavation','Excavation','World',passives([('Hand Brush',2),('Augur',2),('Trowel',2),('Keen Eye: Dig Sites',2),('Keen Eye: Treasure Chests',2),('Excavator’s Reserves',2),('Heavy Shovel',2)]),max_rank=10,source='https://eso-hub.com/en/skills/world/excavation')
 
 # ---- Guild ----
-add_line('fighters_guild','Fighters Guild','Guild',family('Dawnbreaker','Flawless Dawnbreaker','Dawnbreaker of Smiting','Ultimate',10)+family('Silver Bolts','Silver Shards','Silver Leash','Active',2)+family('Circle of Protection','Turn Evil','Ring of Preservation','Active',4)+family('Expert Hunter','Camouflaged Hunter','Evil Hunter','Active',6)+family('Trap Beast','Barbed Trap','Lightweight Beast Trap','Active',8)+passives(['Intimidating Presence',('Slayer',3),('Banish the Wicked',3),'Skilled Tracker','Bounty Hunter']),max_rank=10,source='https://eso-hub.com/en/skills/guild/fighters-guild')
-add_line('mages_guild','Mages Guild','Guild',family('Meteor','Ice Comet','Shooting Star','Ultimate',10)+family('Magelight','Inner Light','Radiant Magelight','Active',2)+family('Entropy','Degeneration','Structured Entropy','Active',4)+family('Fire Rune','Scalding Rune','Volcanic Rune','Active',6)+family('Equilibrium','Balance','Spell Symmetry','Active',8)+passives(['Persuasive Will','Mage Adept','Everlasting Magic','Magicka Controller','Might of the Guild']),max_rank=10,source='https://eso-hub.com/en/skills/guild/mages-guild')
+add_line('fighters_guild','Fighters Guild','Guild',family('Dawnbreaker','Flawless Dawnbreaker','Dawnbreaker of Smiting','Ultimate',10)+family('Silver Bolts','Silver Shards','Silver Leash','Active',2)+family('Circle of Protection','Turn Evil','Ring of Preservation','Active',4)+family('Expert Hunter','Camouflaged Hunter','Evil Hunter','Active',6)+family('Trap Beast','Barbed Trap','Lightweight Beast Trap','Active',8)+passives([('Intimidating Presence',1),('Slayer',3),('Banish the Wicked',3),('Skilled Tracker',1),('Bounty Hunter',1)]),max_rank=10,source='https://eso-hub.com/en/skills/guild/fighters-guild')
+add_line('mages_guild','Mages Guild','Guild',family('Meteor','Ice Comet','Shooting Star','Ultimate',10)+family('Magelight','Inner Light','Radiant Magelight','Active',2)+family('Entropy','Degeneration','Structured Entropy','Active',4)+family('Fire Rune','Scalding Rune','Volcanic Rune','Active',6)+family('Equilibrium','Balance','Spell Symmetry','Active',8)+passives([('Persuasive Will',1),'Mage Adept','Everlasting Magic','Magicka Controller','Might of the Guild']),max_rank=10,source='https://eso-hub.com/en/skills/guild/mages-guild')
 add_line('undaunted','Undaunted','Guild',family('Blood Altar','Overflowing Altar','Sanguine Altar','Active',1)+family('Trapping Webs','Shadow Silk','Tangling Webs','Active',2)+family('Inner Fire','Inner Beast','Inner Rage','Active',3)+family('Bone Shield','Spiked Bone Shield','Bone Surge','Active',4)+family('Necrotic Orb','Mystic Orb','Energy Orb','Active',5)+passives(['Undaunted Command','Undaunted Mettle']),max_rank=9,source='https://eso-hub.com/en/skills/guild/undaunted')
-add_line('psijic_order','Psijic Order','Guild',family('Undo','Precognition','Temporal Guard','Ultimate',10)+family('Time Stop','Time Freeze','Borrowed Time','Active',1)+family('Imbue Weapon','Crushing Weapon','Elemental Weapon','Active',3)+family('Accelerate','Race Against Time','Channeled Acceleration','Active',5)+family('Mend Wounds','Symbiosis','Mend Spirit','Active',7)+family('Meditate','Introspection','Deep Thoughts','Active',9)+passives(['See the Unseen','Clairvoyance','Spell Orb','Deliberation','Concentrated Barrier']),max_rank=10,source='https://eso-hub.com/en/skills/guild/psijic-order')
-add_line('thieves_guild','Thieves Guild','Guild',passives([('Finders Keepers',1),('Swiftly Forgotten',4),('Haggling',4),('Clemency',1),('Timely Escape',1),('Veil of Shadows',4)]),max_rank=12,source='https://eso-hub.com/en/skills/guild/thieves-guild')
-add_line('dark_brotherhood','Dark Brotherhood','Guild',[skill('Blade of Woe','Active',1)]+passives([('Scales of Pitiless Justice',4),('Padomaic Sprint',1),('Shadowy Supplier',1),('Shadow Rider',1),('Spectral Assassin',1)]),max_rank=12,source='https://eso-hub.com/en/skills/guild/dark-brotherhood')
+add_line('psijic_order','Psijic Order','Guild',family('Undo','Precognition','Temporal Guard','Ultimate',10)+family('Time Stop','Time Freeze','Borrowed Time','Active',1)+family('Imbue Weapon','Crushing Weapon','Elemental Weapon','Active',3)+family('Accelerate','Race Against Time','Channeled Acceleration','Active',5)+family('Mend Wounds','Symbiosis','Mend Spirit','Active',7)+family('Meditate','Introspection','Deep Thoughts','Active',9)+passives([('See the Unseen',1),'Clairvoyance','Spell Orb','Deliberation','Concentrated Barrier']),max_rank=10,source='https://eso-hub.com/en/skills/guild/psijic-order')
+add_line('thieves_guild','Thieves Guild','Guild',[skill('Finders Keepers','Passive',1,currency='none')]+passives([('Swiftly Forgotten',4),('Haggling',4),('Clemency',1),('Timely Escape',1),('Veil of Shadows',4)]),max_rank=12,source='https://eso-hub.com/en/skills/guild/thieves-guild')
+add_line('dark_brotherhood','Dark Brotherhood','Guild',[skill('Blade of Woe','Passive',1,currency='none')]+passives([('Scales of Pitiless Justice',4),('Padomaic Sprint',4),('Shadowy Supplier',1),('Shadow Rider',1),('Spectral Assassin',1)]),max_rank=12,source='https://eso-hub.com/en/skills/guild/dark-brotherhood')
 
 # ---- Alliance War ----
 add_line('assault','Assault','Alliance War',family('War Horn','Aggressive Horn','Sturdy Horn','Ultimate',10)+family('Vigor','Echoing Vigor','Resolving Vigor','Active',2)+family('Caltrops','Razor Caltrops','Anti-Cavalry Caltrops','Active',4)+family('Magicka Detonation','Inevitable Detonation','Proximity Detonation','Active',6)+family('Rapid Maneuver','Charging Maneuver','Retreating Maneuver','Active',8)+passives(['Continuous Attack','Reach','Combat Frenzy']),max_rank=10,source='https://eso-hub.com/en/skills/alliance-war/assault')
 add_line('support','Support','Alliance War',family('Barrier','Replenishing Barrier','Reviving Barrier','Ultimate',10)+family('Siege Shield','Siege Weapon Shield','Propelling Shield','Active',2)+family('Purge','Efficient Purge','Cleanse','Active',4)+family('Guard','Stalwart Guard','Mystic Guard','Active',6)+family('Revealing Flare','Blinding Flare','Lingering Flare','Active',8)+passives(['Magicka Aid','Combat Medic','Battle Resurrection']),max_rank=10,source='https://eso-hub.com/en/skills/alliance-war/support')
-add_line('emperor','Emperor','Alliance War',passives([('Domination',1),('Authority',1),('Monarch',1),('Tactician',1),('Emperor',1)]),max_rank=1,source='https://eso-hub.com/en/skills/alliance-war/emperor')
+add_line('emperor','Emperor','Alliance War',passives([('Domination',1),('Authority',1),('Monarch',1),('Tactician',1),('Emperor',1)]),max_rank=1,currency='none',source='https://eso-hub.com/en/skills/alliance-war/emperor')
 
 # ---- Races ----
 races={
- 'dark_elf':('Dark Elf Skills',['Ashlander',('Dynamic',3),('Resist Flame',3),('Ruination',3)]),
- 'high_elf':('High Elf Skills',['Highborn',('Spell Recharge',3),('Syrabane’s Boon',3),('Elemental Talent',3)]),
- 'wood_elf':('Wood Elf Skills',['Acrobat',('Y’ffre’s Endurance',3),('Resist Affliction',3),('Hunter’s Eye',3)]),
- 'breton':('Breton Skills',['Opportunist',('Gift of Magnus',3),('Spell Attunement',3),('Magicka Mastery',3)]),
- 'orc':('Orc Skills',['Craftsman',('Brawny',3),('Unflinching Rage',3),('Swift Warrior',3)]),
- 'redguard':('Redguard Skills',['Wayfarer',('Martial Training',3),('Conditioning',3),('Adrenaline Rush',3)]),
- 'nord':('Nord Skills',['Reveler',('Stalwart',3),('Resist Frost',3),('Rugged',3)]),
- 'argonian':('Argonian Skills',['Amphibian',('Resourceful',3),('Argonian Resistance',3),('Life Mender',3)]),
- 'khajiit':('Khajiit Skills',['Cutpurse',('Robustness',3),('Lunar Blessings',3),('Feline Ambush',3)]),
- 'imperial':('Imperial Skills',['Diplomat',('Tough',3),('Imperial Mettle',3),('Red Diamond',3)])
+ 'dark_elf':('Dark Elf Skills',[('Ashlander',1),('Dynamic',3),('Resist Flame',3),('Ruination',3)]),
+ 'high_elf':('High Elf Skills',[('Highborn',1),('Spell Recharge',3),('Syrabane’s Boon',3),('Elemental Talent',3)]),
+ 'wood_elf':('Wood Elf Skills',[('Acrobat',1),('Y’ffre’s Endurance',3),('Resist Affliction',3),('Hunter’s Eye',3)]),
+ 'breton':('Breton Skills',[('Opportunist',1),('Gift of Magnus',3),('Spell Attunement',3),('Magicka Mastery',3)]),
+ 'orc':('Orc Skills',[('Craftsman',1),('Brawny',3),('Unflinching Rage',3),('Swift Warrior',3)]),
+ 'redguard':('Redguard Skills',[('Wayfarer',1),('Martial Training',3),('Conditioning',3),('Adrenaline Rush',3)]),
+ 'nord':('Nord Skills',[('Reveler',1),('Stalwart',3),('Resist Frost',3),('Rugged',3)]),
+ 'argonian':('Argonian Skills',[('Amphibian',1),('Resourceful',3),('Argonian Resistance',3),('Life Mender',3)]),
+ 'khajiit':('Khajiit Skills',[('Cutpurse',1),('Robustness',3),('Lunar Blessings',3),('Feline Ambush',3)]),
+ 'imperial':('Imperial Skills',[('Diplomat',1),('Tough',3),('Imperial Mettle',3),('Red Diamond',3)])
 }
-for rid,(name,ps) in races.items(): add_line(rid,name,'Racial',passives(ps),max_rank=50,source=f'https://eso-hub.com/en/skills/racial/{rid.replace("_","-")}')
+for rid,(name,ps) in races.items():
+    racial_skills = passives(ps)
+    racial_skills[0]['currency'] = 'none'  # inherent rank-1 racial passive
+    add_line(rid,name,'Racial',racial_skills,max_rank=50,source=f'https://eso-hub.com/en/skills/racial/{rid.replace("_","-")}')
 
 # ---- Craft ----
 add_line('blacksmithing','Blacksmithing','Craft',passives([('Metalworking',10),('Keen Eye: Ore',3),('Miner Hireling',3),('Metal Extraction',3),('Metallurgy',4),('Temper Expertise',3)]),max_rank=50,source='https://eso-hub.com/en/skills/craft/blacksmithing')
@@ -156,34 +198,163 @@ add_line('woodworking','Woodworking','Craft',passives([('Woodworking',10),('Keen
 add_line('jewelry_crafting','Jewelry Crafting','Craft',passives([('Engraver',5),('Keen Eye: Jewelry',3),('Jewelry Extraction',3),('Lapidary Research',4),('Platings Expertise',3)]),max_rank=50,source='https://eso-hub.com/en/skills/craft/jewelry-crafting')
 add_line('alchemy','Alchemy','Craft',passives([('Solvent Proficiency',8),('Keen Eye: Reagents',3),('Medicinal Use',3),('Chemistry',3),('Laboratory Use',1),('Snakeblood',3)]),max_rank=50,source='https://eso-hub.com/en/skills/craft/alchemy')
 add_line('enchanting','Enchanting','Craft',passives([('Potency Improvement',10),('Aspect Improvement',4),('Keen Eye: Rune Stones',3),('Hireling',3),('Runestone Extraction',3)]),max_rank=50,source='https://eso-hub.com/en/skills/craft/enchanting')
-add_line('provisioning','Provisioning','Craft',passives([('Recipe Quality',6),('Recipe Improvement',6),('Gourmand',3),('Connoisseur',3),('Chef',3),('Brewer',3),('Hireling',3)]),max_rank=50,source='https://eso-hub.com/en/skills/craft/provisioning')
+add_line('provisioning','Provisioning','Craft',passives([('Recipe Quality',4),('Recipe Improvement',6),('Gourmand',3),('Connoisseur',3),('Chef',3),('Brewer',3),('Hireling',3)]),max_rank=50,source='https://eso-hub.com/en/skills/craft/provisioning')
 
 # ---- System / scribing tracker ----
 add_line('scribing','Scribing','System',[skill(x,'Scribing',0,currency='none') for x in ['Wield Soul','Soul Burst',"Ulfsild's Contingency",'Traveling Knife','Vault','Smash','Elemental Explosion',"Mender's Bond",'Shield Throw','Trample','Torchbearer','Banner Bearer']],max_rank=1,currency='none',source='https://eso-hub.com/en/scribing',note='Scribing unlocks and Grimoires are tracked, but they do not use ordinary skill points in this ledger.')
+
+# Update 49/50 moved some existing abilities between skill lines. Keep their permanent catalog
+# IDs so existing character allocations and build JSON remain valid, but place them under the
+# line ESO actually reports today. `legacy_line_id` is explicit so the catalog invariant can
+# distinguish these intentional, migration-safe exceptions from an accidental bad prefix.
+def get_line(line_id):
+    return next(line for line in lines if line['id'] == line_id)
+
+def get_family(line_id, base_id):
+    line = get_line(line_id)
+    base = next(skill for skill in line['skills'] if skill['id'] == base_id)
+    ids = {base_id, *base.get('morph_ids', [])}
+    return [skill for skill in line['skills'] if skill['id'] in ids]
+
+def set_family_rank(line_id, base_id, rank):
+    for entry in get_family(line_id, base_id):
+        entry['required_rank'] = rank
+
+def move_family(source_line_id, target_line_id, base_id, rank):
+    source = get_line(source_line_id)
+    target = get_line(target_line_id)
+    family_entries = get_family(source_line_id, base_id)
+    ids = {entry['id'] for entry in family_entries}
+    source['skills'] = [entry for entry in source['skills'] if entry['id'] not in ids]
+    for entry in family_entries:
+        entry['required_rank'] = rank
+        entry['legacy_line_id'] = source_line_id
+    target['skills'].extend(family_entries)
+
+def move_skill(source_line_id, target_line_id, skill_id, rank=None):
+    source = get_line(source_line_id)
+    target = get_line(target_line_id)
+    entry = next(skill for skill in source['skills'] if skill['id'] == skill_id)
+    source['skills'] = [skill for skill in source['skills'] if skill['id'] != skill_id]
+    entry['required_rank'] = rank
+    entry['legacy_line_id'] = source_line_id
+    target['skills'].append(entry)
+
+def sort_line_skills(line_id):
+    # Each UI section filters by type; sorting bases by unlock rank restores current in-game order
+    # without disturbing permanent family IDs.
+    order = {'Ultimate': 0, 'Active': 1, 'Morph': 2, 'Passive': 3, 'Scribing': 4}
+    get_line(line_id)['skills'].sort(key=lambda entry: (order.get(entry['type'], 9), entry.get('required_rank') if entry.get('required_rank') is not None else 999, entry['id']))
+
+# Scribing Grimoires are skills in their parent skill lines, not a second parallel Scribing skill line.
+# Preserve the already-shipped `scribing__*` IDs and migrate their catalog placement instead of
+# creating duplicate native IDs. This keeps saved build references stable and removes ambiguous name matches.
+_scribing_parent_lines = {
+    'scribing__smash': ('two_handed', 25),
+    'scribing__shield_throw': ('one_hand_and_shield', 25),
+    'scribing__traveling_knife': ('dual_wield', 25),
+    'scribing__vault': ('bow', 25),
+    'scribing__elemental_explosion': ('destruction_staff', 25),
+    'scribing__mender_s_bond': ('restoration_staff', 25),
+    'scribing__wield_soul': ('soul_magic', None),
+    'scribing__soul_burst': ('soul_magic', None),
+    'scribing__torchbearer': ('fighters_guild', 5),
+    'scribing__ulfsild_s_contingency': ('mages_guild', 5),
+    'scribing__trample': ('assault', 5),
+    'scribing__banner_bearer': ('support', 5),
+}
+for _skill_id, (_target_line, _rank) in _scribing_parent_lines.items():
+    move_skill('scribing', _target_line, _skill_id, _rank)
+for _line_id in set(target for target, _rank in _scribing_parent_lines.values()):
+    sort_line_skills(_line_id)
+
+# Dragonknight Update 49 combat refresh.
+set_family_rank('ardent_flame', 'ardent_flame__lava_whip', 1)
+move_family('draconic_power', 'ardent_flame', 'draconic_power__inhale', 20)
+move_family('earthen_heart', 'ardent_flame', 'earthen_heart__ash_cloud', 30)
+move_family('ardent_flame', 'draconic_power', 'ardent_flame__fiery_breath', 1)
+move_family('ardent_flame', 'draconic_power', 'ardent_flame__fiery_grip', 42)
+move_family('draconic_power', 'earthen_heart', 'draconic_power__spiked_armor', 42)
+for _line_id in ('ardent_flame', 'draconic_power', 'earthen_heart'):
+    sort_line_skills(_line_id)
+
+# Current Nightblade line layout: Veiled Strike begins Assassination, Blur begins Shadow, and
+# Shadow Cloak is the second Shadow active.
+set_family_rank('assassination', 'assassination__assassin_s_blade', 20)
+set_family_rank('shadow', 'shadow__shadow_cloak', 4)
+move_family('shadow', 'assassination', 'shadow__veiled_strike', 1)
+move_family('assassination', 'shadow', 'assassination__blur', 1)
+for _line_id in ('assassination', 'shadow'):
+    sort_line_skills(_line_id)
 
 # Update 50 renamed several class abilities, passives, and Class Mastery choices.
 # Preserve the existing catalog IDs so character backups and build JSON remain stable; only
 # the player-facing display names change.
 display_name_overrides = {
+    # Cross-catalog current names / rank-safe legacy IDs
+    'bow__long_shots': 'Vinedusk Training',
+    'light_armor__annulment': 'Annulment',
+    'heavy_armor__immovable': 'Unstoppable',
+    'heavy_armor__immovable_brute': 'Unstoppable Brute',
+    'heavy_armor__unstoppable': 'Immovable',
+    'aedric_spear__empowering_sweep': 'Crescent Sweep',
+    'aedric_spear__puncturing_sweeps': 'Puncturing Sweep',
+    'dark_magic__restraining_prison': 'Vibrant Shroud',
+    'dark_magic__daedric_minefield': 'Daedric Refuge',
+    'daedric_summoning__charged_atronach': 'Summon Charged Atronach',
+    'storm_calling__mage_s_fury': "Mages' Fury",
+    'storm_calling__mage_s_wrath': "Mages' Wrath",
+    'werewolf__piercing_howl': 'Gnash',
+    'werewolf__howl_of_agony': 'Bloody Gnash',
+    'werewolf__howl_of_despair': 'Rip and Tear',
+    'werewolf__infectious_claws': 'Rending Claws',
+    'werewolf__claws_of_life': 'Bloodclaws',
+    'werewolf__claws_of_anguish': 'Claw Fury',
+    'werewolf__devour': 'Insatiable Hunger',
+    'werewolf__pursuit': 'Master of the Chase',
+    'werewolf__bloodmoon': 'Shadow of the Bloodmoon',
+    'werewolf__savage_strength': 'Feral Cruelty',
+    'werewolf__call_of_the_pack': 'Call of the Hunt',
+    'enchanting__hireling': 'Enchanter Hireling',
+    'provisioning__hireling': 'Forager Hireling',
+
     # Dragonknight refresh
+    'ardent_flame__lava_whip': 'Lava Whip',
+    'ardent_flame__fiery_grip': 'Chains of Flame',
+    'ardent_flame__unrelenting_grip': 'Chains of Domination',
+    'ardent_flame__empowering_chains': 'Chains of Devastation',
     'ardent_flame__venomous_claw': 'Searing Claw',
     'ardent_flame__fiery_breath': 'Dragonfire Breath',
     'ardent_flame__noxious_breath': 'Disintegrating Dragonfire',
+    'ardent_flame__engulfing_flames': 'Engulfing Dragonfire',
     'ardent_flame__flames_of_oblivion': 'Incinerate',
     'draconic_power__spiked_armor': 'Earthspike Mantle',
     'draconic_power__volatile_armor': 'Shatterspike Mantle',
+    'draconic_power__hardened_armor': 'Earthshield Mantle',
     'draconic_power__inhale': 'Core of Flame',
     'draconic_power__deep_breath': 'Soul of Flame',
+    'draconic_power__draw_essence': 'Heart of Flame',
+    'draconic_power__green_dragon_blood': 'Blood of the Green Dragon',
+    'draconic_power__coagulating_blood': 'Blood of the Elder Dragon',
+    'draconic_power__protective_scale': 'Wing Buffet',
+    'draconic_power__protective_plate': 'Fleetstep Wings',
+    'draconic_power__dragon_fire_scale': 'Protect the Brood',
     'draconic_power__iron_skin': 'Burnished Scales',
     'draconic_power__burning_heart': 'World in Ruin',
     'draconic_power__scaled_armor': 'The Storm Voice',
+    'earthen_heart__stonefist': 'Superheated Ward',
+    'earthen_heart__stone_giant': 'Magma Fist',
+    'earthen_heart__obsidian_shard': 'Volcanic Ward',
+    'earthen_heart__ash_cloud': 'Hearthfire',
+    'earthen_heart__cinder_storm': 'Fire Keeper',
+    'earthen_heart__eruption': 'Hearth and Home',
     'earthen_heart__eternal_mountain': 'Heart of Stone',
     'earthen_heart__battle_roar': 'Landslide',
     'earthen_heart__mountain_s_blessing': 'Blessing at the Peak',
     'earthen_heart__helping_hands': 'Mountain Giant',
 
     # Necromancer refresh
-    'grave_lord__blighted_blastbones': "Grave Lord's Sacrifice",
+    'grave_lord__stalking_blastbones': "Grave Lord's Sacrifice",
     'grave_lord__archer': 'Skeletal Archer',
 
     # Class Mastery final names
@@ -203,7 +374,8 @@ display_name_overrides = {
     'nightblade_mastery__critical_motivation': 'An Eye for Exploitation',
     'nightblade_mastery__bloodied_precision': 'Above and Beyond',
     'nightblade_mastery__nocturnal_guile': 'Nocturnal Inspiration',
-    'nightblade_mastery__shadowed_intent': "Cutthroat's Focus",
+    'nightblade_mastery__shadowed_intent': 'Evasive Trance',
+    'warden_mastery__bountiful_harvest': "Nature's Bounty",
     'warden_mastery__seasonal_strength': 'Wild Adaptation',
     'warden_mastery__winter_s_dominion': 'Glacial Obstinance',
     'warden_mastery__wild_communion': "Tundra's Maw",
@@ -218,13 +390,89 @@ for line in lines:
         if entry['id'] in display_name_overrides:
             entry['name'] = display_name_overrides[entry['id']]
 
+
+# Apply the complete Update 50 unlock-gate audit after all migration-safe line moves and display-name
+# overrides. Permanent catalog IDs remain the join key, so renamed/moved abilities keep working with
+# existing character backups and build JSON.
+by_id_for_audit = {entry['id']: entry for line in lines for entry in line['skills']}
+line_for_skill = {entry['id']: line for line in lines for entry in line['skills']}
+
+# Correct known max-point/currency metadata first so per-point gate cardinality can be validated.
+for _skill_id, _max_points in PASSIVE_MAX_POINTS_OVERRIDES.items():
+    if _skill_id not in by_id_for_audit:
+        raise ValueError(f'Unlock audit refers to unknown passive: {_skill_id}')
+    by_id_for_audit[_skill_id]['max_points'] = int(_max_points)
+for _skill_id, _currency in CURRENCY_OVERRIDES.items():
+    if _skill_id not in by_id_for_audit:
+        raise ValueError(f'Unlock audit refers to unknown currency target: {_skill_id}')
+    by_id_for_audit[_skill_id]['currency'] = _currency
+
+# Exact line-rank gates for non-standard ability families. A morph shares its base family's line-rank
+# gate, but is additionally blocked until the base ability itself reaches Rank IV.
+for _base_id, _rank in FAMILY_REQUIRED_RANK_OVERRIDES.items():
+    if _base_id not in by_id_for_audit:
+        raise ValueError(f'Unlock audit refers to unknown base ability: {_base_id}')
+    _base = by_id_for_audit[_base_id]
+    _base['required_rank'] = int(_rank)
+    for _morph_id in _base.get('morph_ids', []):
+        if _morph_id not in by_id_for_audit:
+            raise ValueError(f'Unlock audit morph missing from catalog: {_morph_id}')
+        by_id_for_audit[_morph_id]['required_rank'] = int(_rank)
+
+# Every ordinary passive purchase now has an explicit gate for each purchasable point.
+for _skill_id, _ranks in PASSIVE_UNLOCK_RANKS.items():
+    if _skill_id not in by_id_for_audit:
+        raise ValueError(f'Unlock audit refers to unknown passive: {_skill_id}')
+    _entry = by_id_for_audit[_skill_id]
+    if _entry.get('type') != 'Passive':
+        raise ValueError(f'Unlock audit passive map points at non-passive: {_skill_id}')
+    if len(_ranks) != int(_entry.get('max_points') or 1):
+        raise ValueError(f'Unlock-rank count does not match max_points for {_skill_id}: {_ranks} vs {_entry.get("max_points")}')
+    _entry['unlock_ranks'] = [int(rank) for rank in _ranks]
+    _entry['required_rank'] = int(_ranks[0])
+
+# Inherent/free rows still need a real availability gate so the tracker never labels them ready early.
+for _skill_id, _rank in INHERENT_REQUIRED_RANKS.items():
+    if _skill_id not in by_id_for_audit:
+        raise ValueError(f'Unlock audit refers to unknown inherent skill: {_skill_id}')
+    by_id_for_audit[_skill_id]['required_rank'] = int(_rank)
+
+# Morphing is a two-dimensional requirement in ESO: the skill line must meet the family's line rank,
+# AND the base ability itself must be trained to Rank IV. Store both facts instead of pretending the
+# line rank alone makes a morph immediately purchasable.
+for _skill_id, _entry in by_id_for_audit.items():
+    if _entry.get('type') == 'Morph':
+        _entry['requires_base_skill_rank'] = 4
+
+# Source/provenance metadata is attached to every row so future audits can tell exactly which live
+# patch and current skill database the gate came from. Line URLs are intentionally used as stable
+# navigation roots; individual ESO-Hub skill slugs can change when ZOS renames a skill.
+for _skill_id, _entry in by_id_for_audit.items():
+    _line = line_for_skill[_skill_id]
+    _entry['unlock_verified_date'] = VERIFIED_DATE
+    _entry['unlock_patch'] = LIVE_PATCH
+    _entry['unlock_source'] = _line.get('source') or PRIMARY_SOURCE_ROOT
+    if _entry.get('currency') == 'class_mastery_point':
+        _entry['unlock_condition'] = 'Class Mastery: all three native class skill lines must reach rank 50; spend a Class Mastery choice rather than a normal skill point.'
+        _entry['requires_native_class_lines_rank'] = 50
+
+# These abilities are granted by their system/skill line rather than purchased with an ordinary skill point.
+for _skill_id in ('vampire__feed', 'werewolf__devour'):
+    by_id_for_audit[_skill_id]['currency'] = 'none'
+
 # Keep deterministic order and metadata.
 catalog={
  'schema_version':1,
- 'catalog_version':'0.4.1-u50',
- 'game_version':'Update 50',
- 'verified_date':'2026-08-07',
- 'notes':['Bundled offline tracking catalog. Build JSON supplies recommendation order and build-specific status badges.','Class Mastery entries use Class Mastery choices rather than normal skill points.','Scribing rows are tracking-only and do not count against the ordinary skill-point ledger.'],
+ 'catalog_version':'0.6.0-u50-full-unlock-audit',
+ 'game_version':GAME_VERSION,
+ 'live_patch':LIVE_PATCH,
+ 'verified_date':VERIFIED_DATE,
+ 'unlock_gate_sources':[
+     {'name': PRIMARY_SOURCE, 'url': PRIMARY_SOURCE_ROOT, 'role': 'Primary current skill-line/skill unlock source'},
+     {'name': 'ZeniMax Online Studios live patch notes', 'url': OFFICIAL_PATCH_URL, 'role': 'Defines the live Update 50 Inc. 2 patch baseline'},
+     {'name': SECONDARY_SOURCE, 'url': SECONDARY_SOURCE_URL, 'role': 'Machine-readable cross-check only; current ESO-Hub data wins on disagreement'},
+ ],
+ 'notes':['Bundled offline tracking catalog. Build JSON supplies recommendation order and build-specific status badges.','Update 50 full unlock-gate audit: every ordinary skill-point passive has one verified line-rank gate per purchasable point.','Morph rows record both the family skill-line rank and the separate base-ability Rank IV prerequisite.','Class Mastery entries use Class Mastery choices rather than normal skill points.','Scribing rows are tracking-only and do not count against the ordinary skill-point ledger.','Live ESO passiveMaxRank metadata overrides static passive rank caps when available, reducing future catalog drift.'],
  'categories':['Class','Weapon','Armor','World','Guild','Alliance War','Racial','Craft','System'],
  'lines':lines
 }
@@ -246,4 +494,16 @@ for l in lines:
     for s in l['skills']:
         for m in s['morph_ids']: assert by_id[m]['base_id']==s['id'], f"{m} does not point back at {s['id']}"
         if s['base_id']: assert s['id'] in by_id[s['base_id']]['morph_ids'], f"{s['id']} missing from its base"
-print('lines',len(lines),'skills',len(by_id),'-> ',path)
+        if s.get('type') == 'Passive' and s.get('currency') == 'skill_point':
+            ranks=s.get('unlock_ranks')
+            assert isinstance(ranks,list) and ranks, f"ordinary passive lacks audited unlock_ranks: {s['id']}"
+            assert len(ranks)==int(s.get('max_points') or 1), f"unlock_ranks/max_points mismatch: {s['id']}"
+            assert ranks==sorted(ranks), f"unlock_ranks not monotonic: {s['id']}"
+            assert all(1 <= int(rank) <= int(l['max_rank']) for rank in ranks), f"unlock rank outside line max: {s['id']}"
+            assert int(s.get('required_rank') or 0)==int(ranks[0]), f"passive required_rank must be first point gate: {s['id']}"
+        if s.get('type') == 'Morph':
+            assert s.get('requires_base_skill_rank') == 4, f"morph missing base Rank IV gate: {s['id']}"
+            assert isinstance(s.get('required_rank'),int), f"morph lacks skill-line required_rank: {s['id']}"
+        if s.get('type') in ('Active','Ultimate'):
+            assert isinstance(s.get('required_rank'),int), f"base combat skill lacks required_rank: {s['id']}"
+print('lines',len(lines),'skills',len(by_id),'ordinary_passives',sum(1 for l in lines for s in l['skills'] if s.get('type')=='Passive' and s.get('currency')=='skill_point'),'-> ',path)

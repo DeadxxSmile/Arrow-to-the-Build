@@ -611,17 +611,37 @@ Allocation behavior:
 
 # 13. Companions and performance notes
 
+ATTB 2.1 has a dedicated companion directory in the Character Tracker and a Companion page in the Build Editor. Schema 4 remains the public format; richer companion fields are additive inside the existing root `companions` array.
+
+Use the bundled `resources/data/eso-companions.json` as the current roster/preset source. Companion ability names are plain text and **must not** be added to the player `relevant_lines` or `unlock_order`.
+
 ```json
 {
   "companions": [
     {
-      "id": "healing_companion",
-      "name": "Any healing companion",
-      "role": "healer",
-      "skills": ["Companion heal", "Companion shield"],
+      "id": "isobel_shield_saint",
+      "companion_id": "isobel",
+      "companion_name": "Isobel Veloise",
+      "name": "Isobel - Shield Saint",
+      "role": "tank",
+      "summary": "Tank-oriented companion target.",
+      "weapon": "One Hand and Shield",
+      "armor_weight": "Heavy",
+      "weapon_trait": "Bolstered",
+      "armor_trait": "Bolstered",
+      "jewelry_trait": "Quickened",
+      "skills": [
+        "Priority skill 1",
+        "Priority skill 2",
+        "Priority skill 3",
+        "Priority skill 4",
+        "Priority skill 5"
+      ],
       "ultimate": "Companion ultimate",
-      "equipment": "Quickened or Soothing traits",
-      "notes": ["Optional for solo content."]
+      "equipment": ["Heavy companion gear using the recommended trait."],
+      "notes": ["Companion skills execute by priority/cooldown, not as a player rotation."],
+      "preset_id": "isobel_shield_saint",
+      "source_url": "https://example.invalid/research-source"
     }
   ],
   "performance": {
@@ -638,7 +658,9 @@ Allocation behavior:
 }
 ```
 
-These sections are optional and intentionally flexible.
+The sample companion skill/trait/source text above is structural only. A real build should use the current ATTB preset data or researched current companion buildcraft. Normal companion bars contain no more than five normal abilities; `ultimate` is separate.
+
+The Character Tracker can remember a selected preset target per character. That per-character choice is tracking data; it does not silently rewrite the portable build JSON.
 
 # 14. Complete loadouts
 

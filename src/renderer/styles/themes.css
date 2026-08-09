@@ -1,0 +1,62 @@
+/* ATTB theme palettes. Actual color values belong in this file; component CSS uses semantic variables. */
+:root{
+  --bg:#071018;--surface:#0c1822;--surface2:#12232e;--surface3:#1a3240;--line:#2d4655;--line2:#456878;
+  --text:#f3efe8;--muted:#a9b8c1;--faint:#78909e;--accent:#d4934e;--accent2:#6fb6cf;--gold:#e2b45e;
+  --red:#ef756c;--orange:#e8a25e;--green:#72c992;--blue:#6fb6cf;--purple:#b49ad7;
+  --solid-text:#ffffff;--shadow:0 18px 50px rgba(0,0,0,.38);--backdrop:rgba(0,0,0,.72);--image-shadow:rgba(0,0,0,.5);
+  --titlebar-bg:#050a0e;--sidebar-top:#0b1822;--sidebar-bottom:#071018;--control-bg:#0b1720;
+  --primary-start:#19303a;--primary-end:#24414d;--primary-border:#8f6849;--primary-text:#f3efe8;
+  --primary-hover-start:#213b47;--primary-hover-end:#2d4d59;--primary-hover-border:#d4934e;--focus-ring:rgba(111,182,207,.16);
+  --scroll-thumb:#284554;--chrome-bg:rgba(7,16,24,.94);--editor-sidebar-top:#0b1a24;--editor-sidebar-bottom:#071018;
+  --section-rail-top:#0b1a24;--section-rail-bottom:#08131b;--panel-deep:#08141c;--panel-raised:#0d1d27;
+  --panel-header-start:#102633;--panel-header-end:#0b1821;--modal-start:#122735;--modal-end:#09141d;--modal-border:#39596a;
+  --nav-active-start:#2a261f;--nav-active-end:#162833;--nav-active-border:#5a5147;--menu-hover:#153044;
+  --main-glow:#437b91;--workspace-glow:#347ea0;--code-bg:#061018;
+  --selected-bg:#173c2c;--selected-border:#3f7b5a;--selected-strong:#1d8659;--selected-strong-border:#62d99c;
+}
+html[data-theme="default"]{color-scheme:dark}
+html[data-theme="dark"]{
+  --bg:#020508;--surface:#061018;--surface2:#0a1720;--surface3:#102531;--line:#1d3948;--line2:#30586a;
+  --text:#eff7fb;--muted:#91a8b4;--faint:#637c89;--accent:#58d987;--accent2:#59bce8;--gold:#e3c15d;
+  --red:#f06f66;--orange:#eea15a;--green:#58d987;--blue:#59bce8;--purple:#ab8de0;
+  --solid-text:#ffffff;--shadow:0 20px 58px rgba(0,0,0,.52);--backdrop:rgba(0,0,0,.78);--image-shadow:rgba(0,0,0,.58);
+  --titlebar-bg:#010305;--sidebar-top:#061018;--sidebar-bottom:#020508;--control-bg:#050e15;
+  --primary-start:#0f5c3d;--primary-end:#19784f;--primary-border:#3eb47a;--primary-text:#eff7fb;
+  --primary-hover-start:#14714a;--primary-hover-end:#218d5d;--primary-hover-border:#58d987;--focus-ring:rgba(89,188,232,.14);
+  --scroll-thumb:#173647;--chrome-bg:rgba(3,9,14,.95);--editor-sidebar-top:#06131b;--editor-sidebar-bottom:#02070b;
+  --section-rail-top:#07161f;--section-rail-bottom:#031019;--panel-deep:#041019;--panel-raised:#071923;
+  --panel-header-start:#0c2230;--panel-header-end:#07151e;--modal-start:#0b202c;--modal-end:#041019;--modal-border:#285165;
+  --nav-active-start:#123826;--nav-active-end:#123044;--nav-active-border:#2d6b58;--menu-hover:#0f2c3a;
+  --main-glow:#3293bd;--workspace-glow:#2f8aad;--code-bg:#020a0f;
+  --selected-bg:#123724;--selected-border:#397b59;--selected-strong:#1d8659;--selected-strong-border:#62d99c;color-scheme:dark
+}
+html[data-theme="light"]{
+  --bg:#eef3f6;--surface:#ffffff;--surface2:#f6f9fb;--surface3:#e7eff4;--line:#c6d4dc;--line2:#9eb4c0;
+  --text:#10202a;--muted:#526b78;--faint:#78909b;--accent:#9f5f24;--accent2:#167bb0;--gold:#9a6b00;
+  --red:#c74439;--orange:#bd681d;--green:#168a57;--blue:#167bb0;--purple:#7453a9;
+  --solid-text:#ffffff;--shadow:0 14px 35px rgba(29,55,70,.12);--backdrop:rgba(16,32,42,.34);--image-shadow:rgba(16,32,42,.24);
+  --titlebar-bg:#e4ecf1;--sidebar-top:#f7fafb;--sidebar-bottom:#e9f0f4;--control-bg:#ffffff;
+  --primary-start:#f1e3d6;--primary-end:#e7d2bf;--primary-border:#a46d42;--primary-text:#3a281b;
+  --primary-hover-start:#ead7c5;--primary-hover-end:#dfc3ab;--primary-hover-border:#9f5f24;--focus-ring:rgba(22,123,176,.14);
+  --scroll-thumb:#9cb3c0;--chrome-bg:rgba(238,243,246,.94);--editor-sidebar-top:#f4f8fa;--editor-sidebar-bottom:#e9f0f4;
+  --section-rail-top:#f4f8fa;--section-rail-bottom:#e9f0f4;--panel-deep:#ffffff;--panel-raised:#edf4f7;
+  --panel-header-start:#ffffff;--panel-header-end:#eef4f7;--modal-start:#ffffff;--modal-end:#edf4f7;--modal-border:#9eb4c0;
+  --nav-active-start:#f3e8d7;--nav-active-end:#e5f0f4;--nav-active-border:#bda47b;--menu-hover:#e2edf2;
+  --main-glow:#7fb8cc;--workspace-glow:#7ab7ce;--code-bg:#ffffff;
+  --selected-bg:#dff0e6;--selected-border:#9dc3b3;--selected-strong:#1d6847;--selected-strong-border:#4a9d73;color-scheme:light
+}
+html[data-theme="old-scrolls"]{
+  --bg:#0c0d0d;--surface:#111212;--surface2:#171817;--surface3:#20211f;--line:#3f3b31;--line2:#665b3d;
+  --text:#e9e6de;--muted:#aaa69b;--faint:#77746c;--accent:#d3a62b;--accent2:#c2a15d;--gold:#d9ad32;
+  --red:#c86d5f;--orange:#c58a49;--green:#7fa36b;--blue:#899da3;--purple:#9b8aaa;
+  --solid-text:#fff8e4;--shadow:0 20px 65px rgba(0,0,0,.58);--backdrop:rgba(0,0,0,.78);--image-shadow:rgba(0,0,0,.58);
+  --titlebar-bg:#080909;--sidebar-top:#111212;--sidebar-bottom:#0b0c0c;--control-bg:#101111;
+  --primary-start:#745914;--primary-end:#98741a;--primary-border:#c7a13d;--primary-text:#fff8e4;
+  --primary-hover-start:#866716;--primary-hover-end:#a9841f;--primary-hover-border:#d9ad32;--focus-ring:rgba(211,166,43,.16);
+  --scroll-thumb:#4d493f;--chrome-bg:rgba(10,11,11,.95);--editor-sidebar-top:#111212;--editor-sidebar-bottom:#0b0c0c;
+  --section-rail-top:#131414;--section-rail-bottom:#0d0e0e;--panel-deep:#0e0f0f;--panel-raised:#171817;
+  --panel-header-start:#1a1a18;--panel-header-end:#111211;--modal-start:#181918;--modal-end:#0e0f0f;--modal-border:#665b3d;
+  --nav-active-start:#302912;--nav-active-end:#211f18;--nav-active-border:#806b2d;--menu-hover:#26231a;
+  --main-glow:#b68a20;--workspace-glow:#a98428;--code-bg:#0b0c0c;
+  --selected-bg:#2b2718;--selected-border:#74622f;--selected-strong:#856c24;--selected-strong-border:#c3a14a;color-scheme:dark
+}

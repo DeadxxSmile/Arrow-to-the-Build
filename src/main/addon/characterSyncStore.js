@@ -24,7 +24,7 @@ function createCharacterSyncStore(deps) {
     const snapshotInput = snapshot || parseJson(link.snapshot_json, null)
     if (!snapshotInput) return false
     // Re-normalize even stored snapshots before applying them. Storage normally
-    // contains normalized JSON, but bridge schema changes/partial reconciliation
+    // contains normalized JSON, but older snapshots can still have optional or sparse sections
     // should never be able to violate liveCharacterState's shape assumptions.
     const currentSnapshot = normalizeSnapshot(link.character_key, snapshotInput, snapshotInput)
     const live = liveCharacterState(currentSnapshot)
@@ -125,6 +125,45 @@ function createCharacterSyncStore(deps) {
       })
   }
 
+  function snapshotCharacters() {
+    const db = dbModule.getDb()
+    const profileRoot = getSetting('addon_profile_root')
+    if (!profileRoot) return []
+    return db.prepare(`SELECT s.character_key,s.profile_root,s.account_name,s.world_name,s.eso_character_id,s.character_name,s.class_name,
+      s.race_name,s.alliance_name,s.level,s.champion_points,s.addon_version,s.snapshot_schema,s.captured_at,s.discovery_status,
+      l.character_id AS linked_character_id,c.name AS linked_character_name,c.build_id AS linked_build_id,b.name AS linked_build_name,b.class_name AS linked_build_class
+      FROM addon_character_snapshots s
+      LEFT JOIN character_addon_links l ON l.character_key=s.character_key
+      LEFT JOIN characters c ON c.id=l.character_id
+      LEFT JOIN builds b ON b.id=c.build_id
+      WHERE s.profile_root=?
+      ORDER BY CASE WHEN l.character_id IS NOT NULL THEN 0 WHEN s.discovery_status='dismissed' THEN 2 ELSE 1 END,s.captured_at DESC,s.character_name`).all(profileRoot)
+      .map(row => ({
+        character_key: row.character_key,
+        account_name: row.account_name,
+        world_name: row.world_name,
+        eso_character_id: row.eso_character_id,
+        name: row.character_name,
+        class_name: row.class_name,
+        race: row.race_name,
+        alliance: row.alliance_name,
+        level: row.level,
+        champion_points: row.champion_points,
+        addon_version: row.addon_version,
+        snapshot_schema: row.snapshot_schema,
+        captured_at: row.captured_at,
+        discovery_status: row.discovery_status,
+        linked: !!row.linked_character_id,
+        linked_character_id: row.linked_character_id || null,
+        linked_character_name: row.linked_character_name || '',
+        linked_build_id: row.linked_build_id || '',
+        linked_build_name: row.linked_build_name || '',
+        linked_build_class: row.linked_build_class || '',
+        profile_root: row.profile_root,
+        profile_active: true
+      }))
+  }
+
   function snapshotRow(characterKey) {
     return dbModule.getDb().prepare('SELECT * FROM addon_character_snapshots WHERE character_key=?').get(characterKey)
   }
@@ -135,7 +174,7 @@ function createCharacterSyncStore(deps) {
     if (!row) throw new Error('That addon character snapshot is no longer available.')
     const activeProfileRoot = getSetting('addon_profile_root')
     if (!activeProfileRoot || row.profile_root !== activeProfileRoot) {
-      throw new Error('That character belongs to a different ESO profile. Select its profile in App Settings before importing it.')
+      throw new Error('That character belongs to a different ESO profile. Select its profile in Settings > ESO Addon & Sync before importing it.')
     }
     const existingLink = db.prepare('SELECT character_id FROM character_addon_links WHERE character_key=?').get(characterKey)
     if (existingLink) return { id: existingLink.character_id, linked: true, existing: true, character_key: characterKey }
@@ -261,7 +300,7 @@ function createCharacterSyncStore(deps) {
 
   function setOverride(characterId, fieldPath, value) {
     if (!isLinked(characterId)) return false
-    if (!overridesAllowed()) throw new Error('Enable synced-data overrides in App Settings before changing live ESO values.')
+    if (!overridesAllowed()) throw new Error('Enable synced-data overrides in Settings > ESO Addon & Sync before changing live ESO values.')
     const db = dbModule.getDb()
     const live = liveValueForPath(characterId, fieldPath)
     if (JSON.stringify(value) === JSON.stringify(live)) {
@@ -276,7 +315,7 @@ function createCharacterSyncStore(deps) {
 
   function replaceOverridesByPrefix(characterId, prefix, values, liveValues = {}) {
     if (!isLinked(characterId)) return false
-    if (!overridesAllowed()) throw new Error('Enable synced-data overrides in App Settings before changing live ESO values.')
+    if (!overridesAllowed()) throw new Error('Enable synced-data overrides in Settings > ESO Addon & Sync before changing live ESO values.')
     const db = dbModule.getDb()
     db.transaction(() => {
       db.prepare('DELETE FROM character_sync_overrides WHERE character_id=? AND field_path LIKE ?').run(characterId, `${prefix}%`)
@@ -322,7 +361,7 @@ function createCharacterSyncStore(deps) {
   }
 
   return {
-    applySnapshotToCharacter, discoveredCharacters, importCharacter, dismissCharacter, rediscoverDismissed,
+    applySnapshotToCharacter, discoveredCharacters, snapshotCharacters, importCharacter, dismissCharacter, rediscoverDismissed,
     linkedState, overridesAllowed, isLinked, setOverride, replaceOverridesByPrefix, clearOverride, setOverrideMode, unlinkCharacter
   }
 }

@@ -11,6 +11,7 @@ import SkillLinePage from './renderer/pages/SkillLinePage'
 import EquipmentPage from './renderer/pages/EquipmentPage'
 import RotationsPage from './renderer/pages/RotationsPage'
 import ConsumablesPage from './renderer/pages/ConsumablesPage'
+import CompanionsPage from './renderer/pages/CompanionsPage'
 import ChampionPointsPage from './renderer/pages/ChampionPointsPage'
 import TipsPage from './renderer/pages/TipsPage'
 import ImportExportPage from './renderer/pages/ImportExportPage'
@@ -24,6 +25,7 @@ const BuildLibraryPage = lazy(() => import('./renderer/pages/BuildLibraryPage'))
 const NewBuildPage = lazy(() => import('./renderer/pages/NewBuildPage'))
 const BuildEquipmentPage = lazy(() => import('./renderer/pages/BuildEquipmentPage'))
 const BuildChampionPointsPage = lazy(() => import('./renderer/pages/BuildChampionPointsPage'))
+const BuildCompanionsPage = lazy(() => import('./renderer/pages/BuildCompanionsPage'))
 const BuildLoadoutsPage = lazy(() => import('./renderer/pages/BuildLoadoutsPage'))
 const BuildSkillsPage = lazy(() => import('./renderer/pages/BuildSkillsPage'))
 const BuildLevelingPage = lazy(() => import('./renderer/pages/BuildLevelingPage'))
@@ -31,6 +33,7 @@ const BuildCharacterSetupPage = lazy(() => import('./renderer/pages/BuildCharact
 const BuildClassConfigurationPage = lazy(() => import('./renderer/pages/BuildClassConfigurationPage'))
 const BuildOverviewPage = lazy(() => import('./renderer/pages/BuildOverviewPage'))
 const BuildReviewPage = lazy(() => import('./renderer/pages/BuildReviewPage'))
+import './renderer/styles/themes.css'
 import './renderer/styles/global.css'
 import './renderer/styles/App.css'
 import './renderer/styles/BuildEditor.css'
@@ -44,8 +47,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <Route path="equipment" element={<EquipmentPage />} /><Route path="rotations" element={<RotationsPage />} />
     <Route path="champion-points" element={<ChampionPointsPage />} /><Route path="champion-points/:tree" element={<ChampionPointsPage />} />
     <Route path="consumables" element={<ConsumablesPage />} />
-    <Route path="help/tips" element={<TipsPage />} /><Route path="help/import-export" element={<ImportExportPage />} /><Route path="help/resources" element={<ResourcesPage />} />
-    <Route path="help/build-setup" element={<Navigate to="/build-editor/guide" replace />} />
+    <Route path="companions" element={<CompanionsPage />} />
+    <Route path="help/tips" element={<TipsPage />} /><Route path="help/guides" element={<BuildSetupGuidePage />} /><Route path="help/import-export" element={<ImportExportPage />} /><Route path="help/resources" element={<ResourcesPage />} />
+    <Route path="help/build-setup" element={<Navigate to="/help/guides" replace />} />
     <Route path="tips" element={<Navigate to="/help/tips" replace />} /><Route path="settings" element={<SettingsPage />} />
 
     <Route path="build-editor" element={<Navigate to="/build-editor/library" replace />} />
@@ -58,6 +62,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <Route path="build-editor/leveling" element={<BuildLevelingPage />} />
     <Route path="build-editor/equipment" element={<BuildEquipmentPage />} />
     <Route path="build-editor/champion-points" element={<BuildChampionPointsPage />} />
+    <Route path="build-editor/companions" element={<BuildCompanionsPage />} />
     <Route path="build-editor/loadouts" element={<BuildLoadoutsPage />} />
     <Route path="build-editor/review" element={<BuildReviewPage />} />
     <Route path="build-editor/guide" element={<BuildSetupGuidePage />} />

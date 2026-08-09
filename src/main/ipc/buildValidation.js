@@ -1,6 +1,8 @@
 'use strict'
 const catalog = require('../catalog')
 const { mergeOverrides } = require('../../shared/variantLogic.cjs')
+const companionCatalog = require('../../../resources/data/eso-companions.json')
+const COMPANION_IDS = new Set((companionCatalog.companions || []).map(row => row.id))
 
 const CURRENT_SCHEMA_VERSION = 4
 const CP_TREE_MAX = 1200
@@ -129,6 +131,48 @@ function deriveClassConfiguration(data) {
   }
 }
 
+function normalizeCatalogRows(data) {
+  if (!Array.isArray(data.unlock_order)) return false
+  let changed = false
+  if (!Array.isArray(data.relevant_lines)) data.relevant_lines = []
+  const relevantIds = new Set(data.relevant_lines.map(line => line?.id).filter(Boolean))
+
+  for (const row of data.unlock_order) {
+    if (!isObj(row) || !row.catalog_skill_id) continue
+    const hit = catalog.getSkill(row.catalog_skill_id)
+    if (!hit) continue
+    const { line, skill } = hit
+    const moved = row.line !== line.id
+    if (moved) {
+      row.line = line.id
+      row.name = skill.name
+      if (skill.required_rank !== null && skill.required_rank !== undefined) row.required_rank = Number(skill.required_rank)
+      changed = true
+    } else if (['Active', 'Ultimate', 'Morph', 'Scribing'].includes(skill.type)) {
+      // Ability names/ranks are game facts, not build preferences; keep old files aligned to the live catalog.
+      if (row.name !== skill.name) {
+        row.name = skill.name
+        changed = true
+      }
+      if (skill.required_rank !== null && skill.required_rank !== undefined
+          && Number(row.required_rank) !== Number(skill.required_rank)) {
+        row.required_rank = Number(skill.required_rank)
+        changed = true
+      }
+    }
+    if (['none', 'class_mastery_point'].includes(skill.currency) && row.skill_point_cost !== 0) {
+      row.skill_point_cost = 0
+      changed = true
+    }
+    if (!relevantIds.has(line.id)) {
+      data.relevant_lines.push({ id: line.id, name: line.name, max: Number(line.max_rank) || 50, group: line.group })
+      relevantIds.add(line.id)
+      changed = true
+    }
+  }
+  return changed
+}
+
 function normalizeOptionalSections(data) {
   if (!data.metadata) data.metadata = deriveMetadata(data)
   if (!data.class_configuration) data.class_configuration = deriveClassConfiguration(data)
@@ -216,7 +260,7 @@ function validateScribedSkills(data, errors) {
     for (const key of ['name', 'grimoire', 'focus_script', 'signature_script', 'affix_script']) if (typeof row[key] !== 'string' || !row[key].trim()) errors.push(`scribed skill "${row.id}" needs ${key}.`)
     if (row.grimoire_catalog_skill_id) {
       const hit = catalog.getSkill(row.grimoire_catalog_skill_id)
-      if (!hit || hit.line?.id !== 'scribing') errors.push(`scribed skill "${row.id}" grimoire_catalog_skill_id is not in the Scribing catalog line.`)
+      if (!hit || hit.skill?.type !== 'Scribing') errors.push(`scribed skill "${row.id}" grimoire_catalog_skill_id is not a Scribing Grimoire in the bundled catalog.`)
     }
   }
   return ids
@@ -257,6 +301,45 @@ function effectiveSelectionForValidation(data, loadout = null, variant = null) {
   return normalizeDisplaySections(effective)
 }
 
+
+function validateCompanions(data, errors) {
+  if (data.companions === undefined) return
+  if (!Array.isArray(data.companions)) return
+  const ids = new Set()
+  for (const [index, row] of data.companions.entries()) {
+    const where = `companions[${index}]`
+    if (!isObj(row)) { errors.push(`${where} must be an object.`); continue }
+    if (badId(row.id)) errors.push(`${where} needs a slug id.`)
+    else if (ids.has(row.id)) errors.push(`Duplicate companion setup id "${row.id}".`)
+    else ids.add(row.id)
+    if (typeof row.name !== 'string' || !row.name.trim()) errors.push(`${where} needs a name.`)
+    if (typeof row.role !== 'string' || !row.role.trim()) errors.push(`${where} needs a role.`)
+    if (row.companion_id !== undefined) {
+      if (badId(row.companion_id)) errors.push(`${where}.companion_id must be a slug when present.`)
+      else if (!COMPANION_IDS.has(row.companion_id)) errors.push(`${where}.companion_id "${row.companion_id}" is not in the bundled companion catalog.`)
+    }
+    if (row.companion_name !== undefined && typeof row.companion_name !== 'string') errors.push(`${where}.companion_name must be a string when present.`)
+    if (row.summary !== undefined && typeof row.summary !== 'string') errors.push(`${where}.summary must be a string when present.`)
+    for (const field of ['weapon', 'armor_weight', 'weapon_trait', 'armor_trait', 'jewelry_trait', 'ultimate', 'preset_id', 'source_url']) {
+      if (row[field] !== undefined && typeof row[field] !== 'string') errors.push(`${where}.${field} must be a string when present.`)
+    }
+    if (row.skills !== undefined) {
+      if (!Array.isArray(row.skills)) errors.push(`${where}.skills must be an array.`)
+      else {
+        if (row.skills.length > 5) errors.push(`${where}.skills can contain no more than five normal companion abilities; ultimate is separate.`)
+        const clean = row.skills.filter(value => typeof value === 'string' && value.trim()).map(value => value.trim())
+        if (clean.length !== row.skills.length) errors.push(`${where}.skills must contain only non-empty strings.`)
+        if (new Set(clean.map(value => value.toLowerCase())).size !== clean.length) errors.push(`${where}.skills must not contain duplicate abilities.`)
+      }
+    }
+    for (const field of ['equipment', 'notes']) {
+      if (row[field] !== undefined && (!Array.isArray(row[field]) || row[field].some(value => typeof value !== 'string' || !value.trim()))) {
+        errors.push(`${where}.${field} must be an array of non-empty strings when present.`)
+      }
+    }
+  }
+}
+
 function validateBuild(data, options = {}) {
   const errors = []
   if (!isObj(data)) return ['Root must be a JSON object.']
@@ -292,6 +375,7 @@ function validateBuild(data, options = {}) {
   if (data.consumables !== undefined && !isObj(data.consumables)) errors.push('consumables must be an object when present.')
   for (const key of ['requirements', 'scribed_skills', 'quickslots', 'companions', 'sources', 'loadouts']) if (data[key] !== undefined && !Array.isArray(data[key])) errors.push(`${key} must be an array when present.`)
   const scribedIds = validateScribedSkills(data, errors)
+  validateCompanions(data, errors)
 
   const lineIds = new Set()
   for (const [i, line] of (Array.isArray(data.relevant_lines) ? data.relevant_lines : []).entries()) {
@@ -554,10 +638,11 @@ function normalizeBuild(input) {
     normalizeOptionalSections(data)
     changed = true
   } else if (schema === CURRENT_SCHEMA_VERSION) {
-    // Public Schema 4 files are validated as authored. Only Schema 3 receives derived migration fields.
+    // Schema 4 remains stable, but catalog-backed display/rank placement metadata may move when ESO does.
   } else {
     errors.push(`schema_version must be 3 or ${CURRENT_SCHEMA_VERSION}; unsupported schemas cannot be imported safely.`)
   }
+  if (!errors.length && normalizeCatalogRows(data)) changed = true
   return { data, changed, errors }
 }
 

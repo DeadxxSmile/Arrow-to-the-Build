@@ -90,9 +90,25 @@ A final Champion Bar ID must:
 
 A phase’s `recommended_gear_stage_ids` must refer to existing gear-stage IDs. The visual editor cleans these references when a stage is deleted; manual edits must do so explicitly.
 
+### Invalid companion setup
+
+ATTB 2.1 validates companion rows independently from player skills. Check that the setup has a valid row ID, name, and role; that `companion_id` exists in the bundled companion catalog when present; and that a normal companion bar has no more than five unique non-empty skill names plus a separate ultimate.
+
+Never fix a companion validation issue by inventing player `catalog_skill_id` values. Companion abilities are plain companion skill names.
+
 ### Broken loadout or variant scope
 
 A default loadout and every compatible-loadout reference must point to an existing loadout ID. Loadout and variant IDs must be unique.
+
+## Suggested Next Picks safety
+
+The Character Tracker's **Do these next** queue is intentionally stricter than the full unlock roadmap. A row appears there only when ATTB can prove it is purchasable from the recorded state: prerequisites complete, required skill-line rank reached, and enough unspent Skill Points available. Morphs remain training targets until ATTB can prove the individual base ability is ready to morph; special-currency choices are also excluded when the current balance is not tracked.
+
+For multi-rank passives, ATTB uses the current catalog `unlock_ranks` and raises an older build row's authored rank to the correct per-point gate when necessary. The Update 50 full sweep now covers **every ordinary player Skill Point passive**, not only armor. The shipped catalog is tested so `unlock_ranks.length === max_points` for every such passive.
+
+Morphs have a separate prerequisite that must not be confused with the skill-line gate: the unmorphed base ability must reach **Rank IV**. Catalog morph rows expose this as `requires_base_skill_rank: 4`. Current character sync can prove line rank and ownership but not every base ability's internal I-IV training progress, so ATTB deliberately treats a morph as a training step instead of claiming it is immediately purchasable.
+
+A conservative missing-gate fallback still exists only as future-patch protection. If a later game update somehow introduces a passive whose gate is not yet in the catalog, Suggested Next Picks will delay it rather than risk another false `AVAILABLE` card. In the shipped Update 50 catalog, ordinary-passive missing-gate count must be zero.
 
 ## Import errors
 

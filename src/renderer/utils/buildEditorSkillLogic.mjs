@@ -57,7 +57,7 @@ function createUnlockRow(data, line, skill, overrides = {}) {
     catalog_skill_id: skill.id,
     section: line.group || 'Other',
     line: line.id,
-    required_rank: Number(skill.required_rank) || 0,
+    required_rank: Number(skill.type === 'Passive' && overrides.rank ? skill.unlock_ranks?.[overrides.rank - 1] ?? skill.required_rank : skill.required_rank) || 0,
     kind: skill.type,
     phase: overrides.phase || 'Leveling',
     status: overrides.status || (skill.type === 'Morph' || skill.type === 'Passive' || !skill.morph_ids?.length ? 'final' : 'temporary'),
@@ -66,7 +66,7 @@ function createUnlockRow(data, line, skill, overrides = {}) {
     morph_from: skill.base_id ? catalogSkillMap.get(skill.base_id)?.skill?.name || null : null,
     image: null,
     requires: overrides.requires || [],
-    skill_point_cost: classLineCost(data, line.id)
+    skill_point_cost: ['none', 'class_mastery_point'].includes(skill.currency) ? 0 : classLineCost(data, line.id)
   }
 }
 

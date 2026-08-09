@@ -1572,6 +1572,14 @@
           "type": "string",
           "pattern": "^[a-z0-9][a-z0-9_.-]*$"
         },
+        "companion_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+        },
+        "companion_name": {
+          "type": "string",
+          "minLength": 1
+        },
         "name": {
           "type": "string",
           "minLength": 1
@@ -1580,10 +1588,31 @@
           "type": "string",
           "minLength": 1
         },
+        "summary": {
+          "type": "string"
+        },
+        "weapon": {
+          "type": "string"
+        },
+        "armor_weight": {
+          "type": "string"
+        },
+        "weapon_trait": {
+          "type": "string"
+        },
+        "armor_trait": {
+          "type": "string"
+        },
+        "jewelry_trait": {
+          "type": "string"
+        },
         "skills": {
           "type": "array",
+          "maxItems": 5,
+          "uniqueItems": true,
           "items": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1
           }
         },
         "ultimate": {
@@ -1600,6 +1629,13 @@
           "items": {
             "type": "string"
           }
+        },
+        "preset_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+        },
+        "source_url": {
+          "type": "string"
         }
       },
       "additionalProperties": true

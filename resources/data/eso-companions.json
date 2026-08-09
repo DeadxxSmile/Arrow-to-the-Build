@@ -1,0 +1,368 @@
+{
+  "schema_version": 1,
+  "game_version": "Update 51 era",
+  "verified_date": "2026-08-09",
+  "notes": [
+    "Companion combat configuration is account-wide in ESO; rapport and companion quest state are character-specific.",
+    "Companion abilities unlock automatically and do not use player skill points or player morph rules.",
+    "The two ATTB presets per companion are curated role starting points, not the only viable ways to build that companion."
+  ],
+  "sources": [
+    "https://eso-hub.com/en/companions",
+    "https://hacktheminotaur.com/eso-companion-builds/"
+  ],
+  "companions": [
+    {
+      "id": "azandar",
+      "name": "Azandar al-Cybiades",
+      "short_name": "Azandar",
+      "class": "Arcanist",
+      "race": "Redguard",
+      "strengths": ["tank", "healer", "support"],
+      "builds": [
+        {
+          "id": "azandar_rune_knight",
+          "companion_id": "azandar",
+          "name": "Rune Knight",
+          "role": "tank",
+          "summary": "Durable tank setup that leans into Azandar's shields, recovery support, and class taunt flexibility.",
+          "weapon": "One Hand and Shield",
+          "armor_weight": "Heavy",
+          "weapon_trait": "Vigorous",
+          "armor_trait": "Quickened with a Vigorous head piece",
+          "jewelry_trait": "Vigorous",
+          "skills": ["Scathing Rune", "Abor's Augmented Ward", "Zone of Recuperation", "Shields of Erudition", "Triptych Physic"],
+          "ultimate": "Vigorous Tentacular Eruption",
+          "equipment": ["One Hand and Shield", "7 Heavy Armor", "Prioritize Vigorous and Quickened companion traits"],
+          "notes": ["Azandar has a class taunt, so this setup is less dependent on weapon-line taunt access than most companions."],
+          "source_url": "https://hacktheminotaur.com/eso-companion-builds/azandar-companion-tank-build/"
+        },
+        {
+          "id": "azandar_fate_keeper",
+          "companion_id": "azandar",
+          "name": "Fate Keeper",
+          "role": "healer",
+          "summary": "Group-friendly healer/support setup with frequent heals, shielding, and Zone of Recuperation utility.",
+          "weapon": "Restoration Staff",
+          "armor_weight": "Light",
+          "weapon_trait": "Quickened",
+          "armor_trait": "Quickened",
+          "jewelry_trait": "Quickened",
+          "skills": ["Shields of Erudition", "Zone of Recuperation", "Triptych Physic", "Rejuvenation", "Mending Incantation"],
+          "ultimate": "Vigorous Tentacular Eruption",
+          "equipment": ["Restoration Staff", "7 Light Armor", "Quickened companion traits"],
+          "notes": ["A strong pick when the player wants the companion to provide sustain and healing rather than hold boss aggro."],
+          "source_url": "https://hacktheminotaur.com/eso-companion-builds/azandar-companion-healer-build/"
+        }
+      ]
+    },
+    {
+      "id": "bastian",
+      "name": "Bastian Hallix",
+      "short_name": "Bastian",
+      "class": "Dragonknight",
+      "race": "Imperial",
+      "strengths": ["support", "tank", "healer"],
+      "builds": [
+        {
+          "id": "bastian_amplifier",
+          "companion_id": "bastian",
+          "name": "Amplifier",
+          "role": "support",
+          "summary": "Buff/debuff support setup built around Bastian's unique heavy-attack support value and defensive utility.",
+          "weapon": "Restoration Staff",
+          "armor_weight": "Light",
+          "weapon_trait": "Quickened",
+          "armor_trait": "Quickened",
+          "jewelry_trait": "Quickened",
+          "skills": ["Basalt Barrier", "Searing Weapons", "Skeletal Aegis", "Starfall", "Haste"],
+          "ultimate": "Unleashed Rage",
+          "equipment": ["Restoration Staff", "7 Light Armor", "Quickened companion traits"],
+          "notes": ["Especially attractive beside player heavy-attack/Oakensoul setups because of Bastian's unique support kit."],
+          "source_url": "https://hacktheminotaur.com/eso-companion-builds/amplifier/"
+        },
+        {
+          "id": "bastian_guardian_drake",
+          "companion_id": "bastian",
+          "name": "Guardian Drake",
+          "role": "tank",
+          "summary": "Self-healing survival tank that keeps pressure off the player in overland and dungeon-style PvE.",
+          "weapon": "One Hand and Shield",
+          "armor_weight": "Heavy",
+          "weapon_trait": "Bolstered",
+          "armor_trait": "Quickened",
+          "jewelry_trait": "Bolstered",
+          "skills": ["Provoke", "Drake's Blood", "Kindle", "On Guard", "Ritual of Salvation"],
+          "ultimate": "Unleashed Rage",
+          "equipment": ["One Hand and Shield", "7 Heavy Armor", "Mix Bolstered and Quickened companion traits"],
+          "notes": ["Prioritizes Bastian staying alive and maintaining aggro rather than maximizing his personal damage."],
+          "source_url": "https://hacktheminotaur.com/eso-companion-builds/guardian-drake/"
+        }
+      ]
+    },
+    {
+      "id": "ember",
+      "name": "Ember",
+      "short_name": "Ember",
+      "class": "Sorcerer",
+      "race": "Khajiit",
+      "strengths": ["damage", "healer"],
+      "builds": [
+        {
+          "id": "ember_lightning_archer",
+          "companion_id": "ember",
+          "name": "Lightning Archer",
+          "role": "damage",
+          "summary": "Ranged bow DPS that pairs Ember's shock magic with reliable weapon and guild attacks.",
+          "weapon": "Bow",
+          "armor_weight": "Medium",
+          "weapon_trait": "Aggressive",
+          "armor_trait": "Aggressive",
+          "jewelry_trait": "Aggressive",
+          "skills": ["Viper's Bite", "Piercing Arrow", "Crystal Blast", "Starfall", "Sniping Silver"],
+          "ultimate": "Raging Storm",
+          "equipment": ["Bow", "7 Medium Armor", "Aggressive companion traits"],
+          "notes": ["Ranged positioning keeps Ember safer while her Khajiit passive supports damage output."],
+          "source_url": "https://hacktheminotaur.com/eso-companion-builds/lightning-archer/"
+        },
+        {
+          "id": "ember_restoring_ward",
+          "companion_id": "ember",
+          "name": "Restoring Ward",
+          "role": "healer",
+          "summary": "Cooldown-focused healer using overlapping heals, wards, and defensive support.",
+          "weapon": "Restoration Staff",
+          "armor_weight": "Light",
+          "weapon_trait": "Quickened",
+          "armor_trait": "Quickened",
+          "jewelry_trait": "Quickened",
+          "skills": ["Rejuvenation", "Reverse Entropy", "Shared Wards", "Quick Fix", "Skeletal Aegis"],
+          "ultimate": "Raging Storm",
+          "equipment": ["Restoration Staff", "7 Light Armor", "Quickened companion traits"],
+          "notes": ["A forgiving option when the player supplies damage and wants passive sustain and survivability from the companion."],
+          "source_url": "https://hacktheminotaur.com/eso-companion-builds/restoring-ward/"
+        }
+      ]
+    },
+    {
+      "id": "isobel",
+      "name": "Isobel Veloise",
+      "short_name": "Isobel",
+      "class": "Templar",
+      "race": "Breton",
+      "strengths": ["tank", "healer"],
+      "builds": [
+        {
+          "id": "isobel_shield_saint",
+          "companion_id": "isobel",
+          "name": "Shield Saint",
+          "role": "tank",
+          "summary": "High-survivability tank using taunt, shields, healing-over-time, and emergency self-healing.",
+          "weapon": "One Hand and Shield",
+          "armor_weight": "Heavy",
+          "weapon_trait": "Vigorous",
+          "armor_trait": "Quickened",
+          "jewelry_trait": "Vigorous",
+          "skills": ["Provoke", "Solar Ward", "Holy Ground", "On Guard", "Blessed Sacrament"],
+          "ultimate": "Baneslayer",
+          "equipment": ["One Hand and Shield", "7 Heavy Armor", "Vigorous weapon/jewelry with Quickened armor"],
+          "notes": ["A natural complement to a solo DPS player who wants the companion to hold aggro and survive."],
+          "source_url": "https://hacktheminotaur.com/eso-companion-builds/shield-saint/"
+        },
+        {
+          "id": "isobel_light_mender",
+          "companion_id": "isobel",
+          "name": "Light Mender",
+          "role": "healer",
+          "summary": "Stacked-heal Templar setup with Restoration Staff support and multiple healing effects.",
+          "weapon": "Restoration Staff",
+          "armor_weight": "Light",
+          "weapon_trait": "Quickened",
+          "armor_trait": "Quickened",
+          "jewelry_trait": "Quickened",
+          "skills": ["Rejuvenation", "Mending Incantation", "Beam of Reproach", "Holy Ground", "Blessed Sacrament"],
+          "ultimate": "Baneslayer",
+          "equipment": ["Restoration Staff", "7 Light Armor", "Quickened companion traits"],
+          "notes": ["Use when the player or another party member already handles tanking and you want Isobel focused on healing."],
+          "source_url": "https://hacktheminotaur.com/eso-companion-builds/light-mender/"
+        }
+      ]
+    },
+    {
+      "id": "mirri",
+      "name": "Mirri Elendis",
+      "short_name": "Mirri",
+      "class": "Nightblade",
+      "race": "Dark Elf",
+      "strengths": ["healer", "damage"],
+      "builds": [
+        {
+          "id": "mirri_infusor",
+          "companion_id": "mirri",
+          "name": "Infusor",
+          "role": "healer",
+          "summary": "Fast-cycling single-target healer built around Blood Magic and Restoration Staff tools.",
+          "weapon": "Restoration Staff",
+          "armor_weight": "Light",
+          "weapon_trait": "Quickened",
+          "armor_trait": "Quickened",
+          "jewelry_trait": "Quickened",
+          "skills": ["Blood Transfusion", "Crimson Font", "Rejuvenation", "Mystic Fortress", "Reverse Entropy"],
+          "ultimate": "Impeccable Shot",
+          "equipment": ["Restoration Staff", "7 Light Armor", "Quickened companion traits"],
+          "notes": ["Mirri's short cooldowns and ranged healing make this a strong general-purpose healer setup."],
+          "source_url": "https://hacktheminotaur.com/eso-companion-builds/infusor/"
+        },
+        {
+          "id": "mirri_deadshot",
+          "companion_id": "mirri",
+          "name": "Deadshot",
+          "role": "damage",
+          "summary": "Bow-focused single-target DPS setup that keeps Mirri at range and leverages her strong ultimate.",
+          "weapon": "Bow",
+          "armor_weight": "Medium",
+          "weapon_trait": "Aggressive",
+          "armor_trait": "Aggressive",
+          "jewelry_trait": "Vigorous",
+          "skills": ["Starfall", "Piercing Arrow", "Viper's Bite", "Sniping Silver", "Parallel"],
+          "ultimate": "Impeccable Shot",
+          "equipment": ["Bow", "7 Medium Armor", "Aggressive armor/weapon with Vigorous jewelry"],
+          "notes": ["Swap Parallel for Vanish when extra survival is more valuable than damage."],
+          "source_url": "https://hacktheminotaur.com/eso-companion-builds/deadshot/"
+        }
+      ]
+    },
+    {
+      "id": "sharp_as_night",
+      "name": "Sharp-as-Night",
+      "short_name": "Sharp",
+      "class": "Warden",
+      "race": "Argonian",
+      "strengths": ["damage", "healer"],
+      "builds": [
+        {
+          "id": "sharp_beast_caller",
+          "companion_id": "sharp_as_night",
+          "name": "Beast Caller",
+          "role": "damage",
+          "summary": "Long-range bow DPS that plays directly into Sharp's ranged class skills and powerful ultimate.",
+          "weapon": "Bow",
+          "armor_weight": "Medium",
+          "weapon_trait": "Aggressive",
+          "armor_trait": "Aggressive",
+          "jewelry_trait": "Aggressive",
+          "skills": ["Char", "Swoop", "Infest", "Piercing Arrow", "Viper's Bite"],
+          "ultimate": "Gore",
+          "equipment": ["Bow", "7 Medium Armor", "Aggressive companion traits"],
+          "notes": ["Sharp is particularly comfortable at range, making this one of his cleanest damage identities."],
+          "source_url": "https://hacktheminotaur.com/eso-companion-builds/sharp-as-night-companion-dps-build/"
+        },
+        {
+          "id": "sharp_verdant_shaman",
+          "companion_id": "sharp_as_night",
+          "name": "Verdant Shaman",
+          "role": "healer",
+          "summary": "Restoration Staff support setup combining Warden-flavored class healing with short-cooldown shared heals.",
+          "weapon": "Restoration Staff",
+          "armor_weight": "Light",
+          "weapon_trait": "Quickened",
+          "armor_trait": "Quickened",
+          "jewelry_trait": "Quickened",
+          "skills": ["Rejuvenation", "Mending Incantation", "Perennial Bloom", "Fungal Forage", "Reverse Entropy"],
+          "ultimate": "Gore",
+          "equipment": ["Restoration Staff", "7 Light Armor", "Quickened companion traits"],
+          "notes": ["A straightforward support alternative when you prefer Sharp's personality/perk but need healing rather than DPS."],
+          "source_url": "https://hacktheminotaur.com/eso-companion-builds/sharp-as-night-companion-healer-build/"
+        }
+      ]
+    },
+    {
+      "id": "tanlorin",
+      "name": "Tanlorin",
+      "short_name": "Tanlorin",
+      "class": "Dragonknight",
+      "race": "High Elf",
+      "strengths": ["damage", "tank"],
+      "builds": [
+        {
+          "id": "tanlorin_soul_fighter",
+          "companion_id": "tanlorin",
+          "name": "Soul Fighter",
+          "role": "damage",
+          "summary": "Aggressive two-handed DPS setup that leans into Tanlorin's mixed Dragonknight and Soul Magic identity.",
+          "weapon": "Two Handed",
+          "armor_weight": "Medium",
+          "weapon_trait": "Aggressive",
+          "armor_trait": "Aggressive",
+          "jewelry_trait": "Aggressive",
+          "skills": ["Razor Cape", "Shattered Spirit", "Explosive Fortitude", "Internal Conflict", "Spinning Steel"],
+          "ultimate": "Ruinous Outburst",
+          "equipment": ["Two Handed", "7 Medium Armor", "Aggressive companion traits"],
+          "notes": ["Designed to let Tanlorin contribute damage rather than absorb sustained boss pressure."],
+          "source_url": "https://hacktheminotaur.com/eso-companion-builds/tanlorin-dps-build/"
+        },
+        {
+          "id": "tanlorin_cinder_knight",
+          "companion_id": "tanlorin",
+          "name": "Cinder Knight",
+          "role": "tank",
+          "summary": "Heavy-armor tank configuration using taunt, shields, healing, and defensive class utility.",
+          "weapon": "One Hand and Shield",
+          "armor_weight": "Heavy",
+          "weapon_trait": "Bolstered",
+          "armor_trait": "Vigorous",
+          "jewelry_trait": "Bolstered",
+          "skills": ["Provoke", "On Guard", "Haze of Cinders", "Kindle", "Igneous Armor"],
+          "ultimate": "Ruinous Outburst",
+          "equipment": ["One Hand and Shield", "7 Heavy Armor", "Vigorous armor with Bolstered weapon/jewelry"],
+          "notes": ["Use this when you want Tanlorin to hold enemies while the player handles most of the damage."],
+          "source_url": "https://hacktheminotaur.com/eso-companion-builds/tanlorin-tank-build/"
+        }
+      ]
+    },
+    {
+      "id": "zerith_var",
+      "name": "Zerith-var",
+      "short_name": "Zerith-var",
+      "class": "Necromancer",
+      "race": "Khajiit",
+      "strengths": ["tank", "damage"],
+      "builds": [
+        {
+          "id": "zerith_var_crescent_guardian",
+          "companion_id": "zerith_var",
+          "name": "Crescent Guardian",
+          "role": "tank",
+          "summary": "Survival and self-healing tank setup with taunt, breach support, defensive cooldowns, and Crescent Scythe sustain.",
+          "weapon": "One Hand and Shield",
+          "armor_weight": "Heavy",
+          "weapon_trait": "Bolstered",
+          "armor_trait": "Vigorous",
+          "jewelry_trait": "Bolstered",
+          "skills": ["Provoke", "Sepulchral Chill", "On Guard", "Crescent Scythe", "Atoning Spirit"],
+          "ultimate": "Blade of the Crossing",
+          "equipment": ["One Hand and Shield", "7 Heavy Armor", "Vigorous armor with Bolstered weapon/jewelry"],
+          "notes": ["A strong self-contained tank choice when the player wants both aggro control and useful enemy debuffs."],
+          "source_url": "https://hacktheminotaur.com/eso-companion-builds/zerith-var-tank-build/"
+        },
+        {
+          "id": "zerith_var_lunar_disciple",
+          "companion_id": "zerith_var",
+          "name": "Lunar Disciple",
+          "role": "damage",
+          "summary": "Two-handed damage setup mixing Necromancer-flavored class skills with aggressive weapon pressure.",
+          "weapon": "Two Handed",
+          "armor_weight": "Medium",
+          "weapon_trait": "Aggressive",
+          "armor_trait": "Aggressive",
+          "jewelry_trait": "Aggressive",
+          "skills": ["Varmiina's Visage", "Sepulchral Chill", "Crescent Scythe", "Sunder", "Sever"],
+          "ultimate": "Blade of the Crossing",
+          "equipment": ["Two Handed", "7 Medium Armor", "Aggressive companion traits"],
+          "notes": ["Good when the player already has enough survival and wants Zerith-var contributing direct single-target and area damage."],
+          "source_url": "https://hacktheminotaur.com/eso-companion-builds/zerith-var-dps-build/"
+        }
+      ]
+    }
+  ]
+}

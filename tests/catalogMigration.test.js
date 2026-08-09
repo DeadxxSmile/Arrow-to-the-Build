@@ -113,6 +113,39 @@ test('normalizing Schema 4 is a no-op and does not mutate input', () => {
   assert.equal(JSON.stringify(input), before)
 })
 
+test('Schema 4 normalization follows catalog line/rank moves and zero-cost grants without changing permanent skill ids', () => {
+  const input = base()
+  const row = input.unlock_order.find(item => item.catalog_skill_id === 'dark_elf__ashlander')
+  assert.ok(row)
+  row.skill_point_cost = 1
+  const stale = input.unlock_order.find(item => item.catalog_skill_id === 'scribing__ulfsild_s_contingency')
+  assert.ok(stale)
+  stale.line = 'scribing'
+  stale.required_rank = 0
+  const result = normalizeBuild(input)
+  assert.equal(result.changed, true)
+  assert.equal(result.data.unlock_order.find(item => item.catalog_skill_id === 'dark_elf__ashlander').skill_point_cost, 0)
+  const migrated = result.data.unlock_order.find(item => item.catalog_skill_id === 'scribing__ulfsild_s_contingency')
+  assert.equal(migrated.catalog_skill_id, 'scribing__ulfsild_s_contingency')
+  assert.equal(migrated.line, 'mages_guild')
+  assert.equal(migrated.required_rank, 5)
+  assert.ok(result.data.relevant_lines.some(line => line.id === 'mages_guild'))
+})
+
+test('Schema 4 normalization repairs current Nightblade ability placements and unlock ranks', () => {
+  const input = base()
+  const template = input.unlock_order.find(item => item.kind === 'Active')
+  input.unlock_order.push({ ...template, id: 'stale-veiled-strike', name: 'Veiled Strike', catalog_skill_id: 'shadow__veiled_strike', line: 'shadow', required_rank: 4, priority: 9991 })
+  input.unlock_order.push({ ...template, id: 'stale-assassins-blade', name: "Assassin's Blade", catalog_skill_id: 'assassination__assassin_s_blade', line: 'assassination', required_rank: 1, priority: 9992 })
+  const result = normalizeBuild(input)
+  const veiled = result.data.unlock_order.find(item => item.id === 'stale-veiled-strike')
+  const blade = result.data.unlock_order.find(item => item.id === 'stale-assassins-blade')
+  assert.equal(veiled.line, 'assassination')
+  assert.equal(veiled.required_rank, 1)
+  assert.equal(blade.line, 'assassination')
+  assert.equal(blade.required_rank, 20)
+})
+
 test('valid Schema 3 builds migrate to complete Schema 4 data', () => {
   const input = schema3Fixture(), before = JSON.stringify(input)
   const result = normalizeBuild(input)

@@ -1,11 +1,11 @@
 # Build Editor Architecture
 
-ATTB 2.0 uses one Electron window with two coordinated React workspaces:
+ATTB 2.1 uses one Electron window with two coordinated React workspaces:
 
 - **Character Tracker** follows a saved build and records what a player actually has in game.
 - **Build Editor** creates, forks, imports, reviews, and maintains Schema 4 builds.
 
-Both workspaces share SQLite, the ESO skill catalog, Schema 4 validation, settings, dialogs, and file import/export. Separate sidebars and top bars keep authoring controls out of the character-tracking workflow.
+Both workspaces share SQLite, the ESO player-skill catalog, the companion preset catalog, Schema 4 validation, settings, dialogs, and file import/export. Separate sidebars and top bars keep authoring controls out of the character-tracking workflow.
 
 ## Build ownership
 
@@ -54,15 +54,18 @@ ATTB can verify IDs, structure, version metadata, and missing references. It can
 - `src/main/ipc/buildGuidedCreation.js`: pure guided-build scaffold generation.
 - `src/main/ipc/buildCharacterImport.js`: CURRENT ESO character state to editable Schema 4 build/adaptation transforms.
 - `src/main/buildStorage.js`: safe human-readable JSON mirroring.
-- `src/main/addon/integration.js`: SavedVariables watching/sync orchestration, snapshot persistence/reconciliation, status, and addon IPC.
+- `src/main/addon/integration.js`: single-archive SavedVariables watching/sync orchestration, snapshot persistence, status, and addon IPC.
 - `src/main/addon/characterSyncStore.js`: synced-character discovery/linking, live-state application, and per-field overrides.
 - `src/main/addon/profileManager.js`: ESO profile discovery and bundled-addon install/repair.
-- `src/main/addon/snapshotCodec.js`: compact bridge/archive decoding, normalization, and catalog mapping.
-- `src/main/addon/snapshotMerge.js`: pure bridge/archive enrichment helpers.
+- `src/main/addon/snapshotCodec.js`: archive normalization, live-state conversion, and catalog mapping.
 - `src/renderer/hooks/useBuildEditor.js`: active draft, autosave, undo/redo, validation, and revisions.
-- `src/renderer/pages/Build*Page.jsx`: visual authoring sections.
+- `src/renderer/pages/Build*Page.jsx`: visual authoring sections, including `BuildCompanionsPage.jsx`.
+- `src/renderer/pages/CompanionsPage.jsx`: per-character companion target directory and selection.
+- `src/renderer/utils/companionLogic.mjs`: companion preset/build-target transforms.
+- `resources/data/eso-companions.json`: current combat-companion roster and curated preset catalog.
 - `src/renderer/utils/buildReviewLogic.mjs`: review categories, compatibility checks, and revision diffs.
 - `src/renderer/styles/App.css`: shared shell and Character Tracker styling.
 - `src/renderer/styles/BuildEditor.css`: Build Editor-specific styling.
 - `src/renderer/styles/Addon.css`: addon integration, imported-state, and sync UI styling.
 - `docs/reference/BUILD_SCHEMA.json`: machine-readable Schema 4 contract.
+- `docs/maintenance/ESO_BUILD_SYSTEM_AUDIT.md` and `UPDATING_FOR_GAME_PATCHES.md`: maintainer research/update references; intentionally not bundled into the installed guide reader.

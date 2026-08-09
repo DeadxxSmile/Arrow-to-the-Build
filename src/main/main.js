@@ -122,6 +122,7 @@ if (gotLock) {
       require('./ipc/settingsHandlers').register(ipcMain)
       const addonIntegration = require('./addon/integration')
       addonIntegration.register(ipcMain)
+      addonIntegration.runPostUpdateAddonCleanup()
       const win = createWindow()
       win.on('focus', () => addonIntegration.syncNow('focus').catch(() => {}))
       addonIntegration.startWatching()

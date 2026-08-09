@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Arrow to the Build 2.0: ESO character tracker and build editor</title>
-  <meta name="description" content="Arrow to the Build 2.0 is a free, offline-first Windows companion for The Elder Scrolls Online with automatic local character sync, a full Build Editor, audited starter builds for every class, progression tracking, gear roadmaps, Champion Points, and Schema 4 JSON builds.">
+  <title>Arrow to the Build 2.1: ESO character tracker, build editor, and companions</title>
+  <meta name="description" content="Arrow to the Build 2.1 is a free, offline-first Windows companion for The Elder Scrolls Online with automatic local character sync, a full Build Editor, audited starter builds for every class, progression tracking, gear roadmaps, Champion Points, and Schema 4 JSON builds.">
   <meta name="theme-color" content="#07131c">
   <link rel="canonical" href="https://deadxxsmile.github.io/Arrow-to-the-Build/">
   <meta property="og:title" content="Arrow to the Build">
@@ -55,7 +55,7 @@
           </div>
           <p class="cta-note">Free and open-source. No account. No cloud sync. Character data stays on your PC.</p>
           <div class="meta-row" aria-label="Project details">
-            <span class="meta-pill version">v2.0.0</span>
+            <span class="meta-pill version">v2.1.6</span>
             <span class="meta-pill">Windows</span>
             <span class="meta-pill">7 audited class builds</span>
             <span class="meta-pill">Local SQLite</span>
@@ -122,7 +122,7 @@
           <article class="feature-card card">
             <span class="feature-icon">09</span>
             <h3>Local ESO character sync</h3>
-            <p>The bundled 1.0.0 companion addon exports observed character state through ESO SavedVariables: identity, progression, skills, equipment, action bars, and Champion Points. No login, cloud service, or gameplay automation is involved.</p>
+            <p>The bundled 1.1.0 companion addon exports observed character state through one ESO SavedVariables archive: identity, progression, skills, equipment, action bars, and Champion Points. No login, cloud service, or gameplay automation is involved.</p>
           </article>
         </div>
       </section>
@@ -153,23 +153,17 @@
 
       <section class="section addon-section" id="addon">
         <div class="section-heading centered">
-          <span class="eyebrow">ATTB ESO Companion Addon 1.0.0</span>
+          <span class="eyebrow">ATTB ESO Companion Addon 1.1.0</span>
           <h2>Let ESO tell ATTB where your character really is.</h2>
-          <p>The desktop app bundles two silent, data-only ESO addon components. Together they observe the character you are playing and feed that CURRENT state into ATTB without taking ownership of your TARGET build, notes, variants, or authored progression.</p>
+          <p>The desktop app bundles one focused, data-only ESO addon. It observes the character you are playing and feeds that CURRENT state into ATTB without taking ownership of your TARGET build, notes, variants, or authored progression.</p>
         </div>
 
         <div class="addon-component-grid">
           <article class="addon-component card">
-            <span class="component-label">Durable archive</span>
+            <span class="component-label">Single local archive</span>
             <h3>ArrowToTheBuild</h3>
-            <p>The full multi-character archive keeps the richer snapshot: identity, attributes, skills and passives, action bars, equipment, Champion Point details, and readable metadata for every character captured on the active ESO profile.</p>
+            <p>The multi-character archive captures identity, attributes, skills and passives, action bars, equipment, Champion Point details, and readable metadata for every character captured on the active ESO profile.</p>
             <code>SavedVariables\ArrowToTheBuild.lua</code>
-          </article>
-          <article class="addon-component card">
-            <span class="component-label bridge">Current-character bridge</span>
-            <h3>ArrowToTheBuildBridge</h3>
-            <p>A deliberately compact ID-first snapshot of the current character. Its internal 32 KiB budget keeps it small enough to compete for normal ESO save opportunities without forcing the much larger archive through the same path.</p>
-            <code>SavedVariables\ArrowToTheBuildBridge.lua</code>
           </article>
         </div>
 
@@ -177,7 +171,7 @@
           <div class="sync-note-icon">/reloadui</div>
           <div>
             <h3>ESO controls when SavedVariables reach disk.</h3>
-            <p>ATTB captures changes in memory immediately, but ESO decides when addon data is actually serialized to the physical Lua files. Loading screens, logout, game exit, and other ESO save opportunities can refresh them naturally. If the desktop looks stale, <strong>/reloadui is the reliable “refresh now” path</strong>. ATTB deliberately does not promise an instant or fixed-minute sync cadence.</p>
+            <p>ATTB captures relevant changes in memory, but ESO decides when addon data is serialized to the physical Lua file. Loading screens, logout, game exit, and other ESO save opportunities may refresh it naturally. If the desktop looks stale, <strong>/reloadui is the reliable “refresh now” path</strong>. ATTB deliberately does not promise an instant or fixed-minute sync cadence.</p>
           </div>
         </div>
 
@@ -185,25 +179,15 @@
           <article class="card"><b>Observed CURRENT state</b><p>Import level, attributes, available points, purchased skills and morphs, passive ranks, equipped gear, live action bars, and detailed CP investments.</p></article>
           <article class="card"><b>TARGET stays yours</b><p>Sync never silently replaces the selected build, authored recommendations, Build Notes, variants, gear roadmap, or future progression.</p></article>
           <article class="card"><b>Explicit character discovery</b><p>New ESO characters are never silently created or merged. ATTB asks before adding, linking, creating a new build, or adapting an existing build.</p></article>
-          <article class="card"><b>Create or adapt from reality</b><p>Turn the latest snapshot into an editable Schema 4 draft, or adapt an existing target while preserving its future plan and labeling imported progress truthfully.</p></article>
+          <article class="card"><b>Streamlined 1.1.0 exporter</b><p>The former bridge, packed payload, budget logic, priority-save state, and dual-file reconciliation are gone. The addon now uses one direct Update 50 / API 101050 collection path.</p></article>
         </div>
 
         <div class="addon-gallery">
-          <button class="addon-shot elevated" type="button" data-lightbox="assets/screenshots/addon-manager.webp" data-title="Both ATTB addon components enabled in ESO">
-            <img src="assets/screenshots/addon-manager.webp" loading="lazy" alt="ESO Add-Ons list showing Arrow to the Build and Arrow to the Build Sync Bridge">
-            <span>Two components, one local sync system</span>
-          </button>
-          <button class="addon-shot elevated" type="button" data-lightbox="assets/screenshots/addon-status.webp" data-title="ATTB addon diagnostics in ESO chat">
-            <img src="assets/screenshots/addon-status.webp" loading="lazy" alt="ESO chat showing ATTB character capture, revision, bridge budget, and status diagnostics">
-            <span>/attbstatus exposes capture and bridge diagnostics</span>
-          </button>
           <button class="addon-shot elevated" type="button" data-lightbox="assets/screenshots/new-eso-character.webp" data-title="New ESO character discovered by the desktop app">
             <img src="assets/screenshots/new-eso-character.webp" loading="lazy" alt="ATTB dialog asking whether to add and sync a newly discovered ESO character">
             <span>Discovery always waits for your approval</span>
           </button>
         </div>
-
-        <p class="addon-capture-note">In-game screenshots were captured during final pre-release validation of the same addon contract promoted to 1.0.0, so diagnostic text visible inside the captures may still show the alpha.7 test label.</p>
 
         <div class="addon-actions">
           <a class="button primary" href="https://github.com/DeadxxSmile/Arrow-to-the-Build-ESO-Addon" target="_blank" rel="noreferrer">ESO addon source on GitHub</a>
@@ -288,7 +272,7 @@
         <div class="section-heading">
           <span class="eyebrow">App tour</span>
           <h2>One interface for the whole character journey.</h2>
-          <p>Browse the current 2.0 interface below. Open any image for the full view.</p>
+          <p>Browse the current 2.1 interface below. Open any image for the full view.</p>
         </div>
 
         <div class="carousel elevated" aria-roledescription="carousel">
@@ -387,6 +371,8 @@
               <li>Character backup import and export</li>
               <li>Two-workspace Character Tracker and Build Editor shell</li>
               <li>Configurable user build folder with automatic saved-JSON mirroring</li>
+              <li>All current combat companions with two curated starter setups each</li>
+              <li>Four appearance themes including Old Scrolls</li>
               <li>Guided visual authoring plus Schema 4 template and build export</li>
               <li>Errors, warnings, suggestions, draft preview, and revision comparison</li>
               <li>Build JSON validation, importing, copying, and saving</li>
@@ -410,16 +396,17 @@
     <footer>
       <div class="footer-brand">
         <img class="footer-wordmark" src="assets/logo/attb-words.webp" alt="Arrow to the Build">
-        <span><b>Arrow to the Build 2.0</b><small>I Used To Be Meta Like You, Then I Took An Arrow To The Build</small></span>
+        <span><b>Arrow to the Build 2.1</b><small>I Used To Be Meta Like You, Then I Took An Arrow To The Build</small></span>
       </div>
       <div class="footer-links">
         <a href="https://github.com/DeadxxSmile/Arrow-to-the-Build" target="_blank" rel="noreferrer">GitHub</a>
         <a href="https://github.com/DeadxxSmile/Arrow-to-the-Build/releases" target="_blank" rel="noreferrer">Releases</a>
         <a href="https://github.com/DeadxxSmile/Arrow-to-the-Build-ESO-Addon" target="_blank" rel="noreferrer">ESO Addon</a>
-        <a href="https://github.com/DeadxxSmile/Arrow-to-the-Build/blob/main/RELEASE_NOTES_2.0.0.md" target="_blank" rel="noreferrer">2.0 Release Notes</a>
+        <a href="https://github.com/DeadxxSmile/Arrow-to-the-Build/blob/main/README.md#whats-new-in-v216" target="_blank" rel="noreferrer">2.1.6 Release Notes</a>
         <a href="https://github.com/DeadxxSmile/Arrow-to-the-Build/blob/main/docs/reference/BUILD_QUICK_START.md" target="_blank" rel="noreferrer">Start Here</a>
         <a href="https://github.com/DeadxxSmile/Arrow-to-the-Build/blob/main/docs/reference/BUILD_EDITOR_GUIDE.md" target="_blank" rel="noreferrer">Visual Editor Guide</a>
         <a href="https://github.com/DeadxxSmile/Arrow-to-the-Build/blob/main/docs/reference/BUILD_JSON_GUIDE.md" target="_blank" rel="noreferrer">Manual JSON Guide</a>
+        <a href="https://github.com/DeadxxSmile/Arrow-to-the-Build/blob/main/docs/reference/ATTB_AI_BUILD_JSON_AUTHORING_GUIDE.md" target="_blank" rel="noreferrer">AI Authoring Guide</a>
         <a href="https://buymeacoffee.com/deadx_xsmile" target="_blank" rel="noreferrer">Buy Me a Coffee</a>
         <a href="https://linktr.ee/deadx_xsmile" target="_blank" rel="noreferrer">Linktree</a>
         <a href="#top">Back to top</a>

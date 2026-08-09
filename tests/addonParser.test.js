@@ -3,7 +3,7 @@ const test = require('node:test')
 const assert = require('node:assert/strict')
 require('./electron-stub')
 const { parseSavedVariables, normalizeLuaTables } = require('../src/main/addon/luaSavedVariables')
-const { normalizeSnapshot, liveCharacterState, decodeBridgeSnapshot, bridgeRootAsArchive } = require('../src/main/addon/integration')
+const { normalizeSnapshot, liveCharacterState } = require('../src/main/addon/integration')
 const { createCharacterBuildImport } = require('../src/main/ipc/buildCharacterImport')
 
 const fixture = `
@@ -64,6 +64,27 @@ test('the file size safety limit is enforced before parsing', () => {
 })
 
 
+test('a complete archive snapshot normalizes into live character state without bridge reconciliation', () => {
+  const key = '@Player|NA Megaserver|123'
+  const snapshot = normalizeSnapshot(key, {
+    addonVersion: '1.1.0', snapshotSchemaVersion: 2, capturedAt: 1786067300,
+    identity: {
+      characterKey: key, accountName: '@Player', worldName: 'NA Megaserver', characterId: '123', name: 'Talia Tempest', level: 24,
+      class: { id: 117, name: 'Arcanist' }, race: { id: 4, name: 'Dark Elf' }, alliance: { id: 2, name: 'Ebonheart Pact' },
+      progression: { availableSkillPoints: 7, availableAttributePoints: 0 },
+      attributes: { magicka: { spentPoints: 0 }, health: { spentPoints: 0 }, stamina: { spentPoints: 28 } }
+    },
+    skills: { lines: [{ skillType: 1, skillTypeName: 'Class', skillLineId: 218, name: 'Herald of the Tome', rank: 31, abilities: [] }], actionBars: [], activeWeaponPair: {} },
+    equipment: { items: [] }, champion: { totalEarned: 209, disciplines: [], slotted: { supported: true, slots: [] } },
+    metadata: {}, completeness: { isComplete: true }
+  }, { addonVersion: '1.1.0', apiVersion: 101050 })
+  const live = liveCharacterState(snapshot)
+  assert.equal(live.level, 24)
+  assert.equal(live.actual_unspent_skill_points, 7)
+  assert.equal(live.skill_ranks.herald, 31)
+})
+
+
 test('generic ESO Class Mastery maps to the class-specific catalog line', () => {
   const snapshot = normalizeSnapshot('@Player|NA Megaserver|1', {
     identity: {
@@ -79,102 +100,6 @@ test('generic ESO Class Mastery maps to the class-specific catalog line', () => 
   assert.ok(live.tracked_skill_lines.includes('dragonknight_mastery'))
 })
 
-
-test('legacy bridge schema 1 still expands into the normal snapshot contract', () => {
-  const parsed = normalizeLuaTables(parseSavedVariables(`ArrowToTheBuildBridgeSavedVariables={
-    schemaVersion=1,revision=4,addonVersion="0.1.0-alpha.5",apiVersion=101050,capturedAt=1786067000,
-    captureReason="level-changed",characterKey="@Player|NA Megaserver|123",
-    capturedSections={"identity","skills"},character={
-      identity="@Player\\tNA Megaserver\\t123\\tTalia Tempest\\t117\\tArcanist\\t4\\tDark Elf\\t2\\tEbonheart Pact\\t23\\t0\\t209\\t0\\t7\\t0\\t0\\t27",
-      skills={activeWeaponPair="1\\t0",lines={{header="1\\t218\\tHerald of the Tome\\t30",abilities={"185794\\t185794\\t534\\tRuneblades\\t4\\t0\\t\\t\\t0\\t0"}}},actionBars={}},
-      equipment={},champion={totalEarned=209,disciplines={},slots={}}
-    }
-  }`, 'ArrowToTheBuildBridgeSavedVariables'))
-  const decoded = decodeBridgeSnapshot(parsed)
-  assert.equal(decoded.characterKey, '@Player|NA Megaserver|123')
-  assert.equal(decoded.raw.identity.level, 23)
-  assert.equal(decoded.raw.identity.progression.availableSkillPoints, 7)
-  assert.equal(decoded.raw.skills.lines[0].name, 'Herald of the Tome')
-  assert.equal(decoded.raw.skills.lines[0].rank, 30)
-  assert.equal(decoded.raw.skills.lines[0].abilities[0].name, 'Runeblades')
-  assert.equal(decoded.raw.dataProfile, 'near-live-bridge')
-})
-
-test('bridge schema 2 decodes the flat ID-first payload and exposes budget metadata', () => {
-  const parsed = normalizeLuaTables(parseSavedVariables(`ArrowToTheBuildBridgeSavedVariables={
-    schemaVersion=2,revision=9,addonVersion="0.1.0-alpha.6",apiVersion=101050,capturedAt=1786067100,
-    captureReason="skill-progression-changed",characterKey="@Player|NA Megaserver|123",
-    capturedSections={"identity","skills"},estimatedBytes=7420,budgetBytes=32768,budgetStatus="ok",truncated=false,
-    reducedFields={},droppedSections={},character={
-      identity="@Player\\tNA Megaserver\\t123\\tTalia Tempest\\t117\\tArcanist\\t4\\tDark Elf\\t2\\tEbonheart Pact\\t23\\t0\\t209\\t0\\t7\\t0\\t0\\t27",
-      skills={activeWeaponPair="1\\t0",lines="1\\t218\\t30",abilities="218\\t185794\\t534\\t4\\t0\\t\\t0",
-        actionBars="0\\t1\\t193398\\t1\\t0\\t185794\\t534\\t218\\t0\\t4"},
-      equipment="",champion={totalEarned=209,disciplines="3\\t70\\t0",stars="",slots=""}
-    }
-  }`, 'ArrowToTheBuildBridgeSavedVariables'))
-  const decoded = decodeBridgeSnapshot(parsed)
-  assert.equal(decoded.raw.dataProfile, 'near-live-bridge-v2')
-  assert.equal(decoded.raw.skills.lines[0].skillLineId, 218)
-  assert.equal(decoded.raw.skills.lines[0].name, '')
-  assert.equal(decoded.raw.skills.lines[0].abilities[0].progressionId, 534)
-  assert.equal(decoded.raw.skills.actionBars[0].slots[0].name, 'Ability 193398')
-  assert.equal(decoded.raw.skills.actionBars[0].slots[0].matchMethod, 'progression-id')
-  assert.equal(decoded.raw.completeness.isComplete, true)
-  assert.equal(decoded.raw.completeness.estimatedBytes, 7420)
-  assert.equal(decoded.raw.completeness.budgetBytes, 32768)
-})
-
-test('schema 2 bridge IDs are enriched from an older durable archive without replacing fresher numeric state', () => {
-  const parsed = normalizeLuaTables(parseSavedVariables(`ArrowToTheBuildBridgeSavedVariables={
-    schemaVersion=2,revision=12,addonVersion="0.1.0-alpha.6",apiVersion=101050,capturedAt=1786067300,
-    captureReason="skill-progression-changed",characterKey="@Player|NA Megaserver|123",capturedSections={"skills"},
-    estimatedBytes=7200,budgetBytes=32768,budgetStatus="ok",truncated=false,reducedFields={},droppedSections={},character={
-      identity="@Player\\tNA Megaserver\\t123\\tTalia Tempest\\t117\\tArcanist\\t4\\tDark Elf\\t2\\tEbonheart Pact\\t24\\t0\\t209\\t0\\t6\\t0\\t0\\t28",
-      skills={activeWeaponPair="1\\t0",lines="1\\t218\\t31",abilities="218\\t185794\\t534\\t4\\t0\\t\\t0",
-        actionBars="0\\t1\\t193398\\t1\\t0\\t185794\\t534\\t218\\t0\\t4"},
-      equipment="",champion={totalEarned=209,disciplines="3\\t70\\t0",stars="",slots=""}
-    }
-  }`, 'ArrowToTheBuildBridgeSavedVariables'))
-  const previous = normalizeSnapshot('@Player|NA Megaserver|123', {
-    addonVersion: '0.1.0-alpha.6', snapshotSchemaVersion: 2, capturedAt: 1786067100,
-    identity: { characterKey: '@Player|NA Megaserver|123', accountName: '@Player', worldName: 'NA Megaserver', characterId: '123', name: 'Talia Tempest', level: 23, class: { id: 117, name: 'Arcanist' }, race: { id: 4, name: 'Dark Elf' }, alliance: { id: 2, name: 'Ebonheart Pact' }, progression: {}, attributes: {} },
-    skills: { lines: [{ skillType: 1, skillTypeName: 'Class', skillLineId: 218, name: 'Herald of the Tome', rank: 30, abilities: [{ abilityId: 185794, baseAbilityId: 185794, progressionId: 534, name: 'Runeblades', currentRank: 3, currentMorph: 0, isPassive: false, isUltimate: false }] }], actionBars: [], activeWeaponPair: {} },
-    equipment: { items: [] }, champion: { totalEarned: 209, disciplines: [], slotted: { supported: true, slots: [] } }, metadata: {}
-  }, { addonVersion: '0.1.0-alpha.6', apiVersion: 101050 })
-  const synthetic = bridgeRootAsArchive(parsed, previous)
-  const merged = synthetic.characters['@Player|NA Megaserver|123']
-  assert.equal(merged.identity.level, 24, 'fresher bridge level must win')
-  assert.equal(merged.skills.lines[0].rank, 31, 'fresher bridge skill rank must win')
-  assert.equal(merged.skills.lines[0].name, 'Herald of the Tome')
-  assert.equal(merged.skills.lines[0].abilities[0].name, 'Runeblades')
-  assert.equal(merged.skills.actionBars[0].slots[0].name, 'Runeblades')
-})
-
-test('bridge equipment enrichment prefers equipSlot when identical item IDs occupy different slots', () => {
-  const key = '@Player|NA Megaserver|123'
-  const previous = normalizeSnapshot(key, {
-    addonVersion: '1.0.0', snapshotSchemaVersion: 2, capturedAt: 100,
-    identity: { characterKey: key, accountName: '@Player', worldName: 'NA Megaserver', characterId: '123', name: 'Talia', level: 24, class: { id: 117, name: 'Arcanist' }, race: { id: 4, name: 'Dark Elf' }, alliance: { id: 2, name: 'Ebonheart Pact' }, progression: {}, attributes: {} },
-    skills: { lines: [], actionBars: [], activeWeaponPair: {} },
-    equipment: { items: [
-      { equipSlot: 4, slotName: 'Front Main Hand', itemId: 102035, name: 'Matched Dagger', weaponTypeName: 'Dagger', trait: {}, set: {}, enchantment: {} },
-      { equipSlot: 5, slotName: 'Front Off Hand', itemId: 102035, name: 'Matched Dagger', weaponTypeName: 'Dagger', trait: {}, set: {}, enchantment: {} }
-    ] },
-    champion: { totalEarned: 0, disciplines: [], slotted: { supported: true, slots: [] } }, metadata: {}, completeness: { isComplete: true }
-  }, { addonVersion: '1.0.0', apiVersion: 101050 })
-  const root = {
-    schemaVersion: 2, addonVersion: '1.0.0', apiVersion: 101050, revision: 2, capturedAt: 101, captureReason: 'equipment-changed', characterKey: key,
-    capturedSections: ['identity', 'equipment'], reducedFields: [], droppedSections: [], truncated: false,
-    character: {
-      identity: '@Player\tNA Megaserver\t123\tTalia\t117\t\t4\t\t2\t\t24\t0\t0\t0\t0\t0\t0\t0',
-      skills: { activeWeaponPair: '1\t0', lines: '', abilities: '', actionBars: '' },
-      equipment: '4\t102035\tMatched Dagger\t3\t24\t0\t1\t2\t0\t11\t15\t0\t\tFlame\n5\t102035\tMatched Dagger\t3\t24\t0\t1\t2\t0\t11\t15\t0\t\tFlame',
-      champion: { totalEarned: 0, disciplines: '', stars: '', slots: '' }
-    }
-  }
-  const merged = bridgeRootAsArchive(root, previous).characters[key]
-  assert.deepEqual(merged.equipment.items.map(item => item.slotName), ['Front Main Hand', 'Front Off Hand'])
-})
 
 test('imported equipment IDs remain unique even if display metadata repeats a slot label', () => {
   const slugify = value => String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'item'
@@ -210,157 +135,26 @@ test('imported equipment IDs remain unique even if display metadata repeats a sl
   assert.equal(new Set(pieces.map(piece => piece.id)).size, 2)
 })
 
-test('a truncated flat bridge can preserve omitted sections from the previous complete snapshot', () => {
-  const parsed = normalizeLuaTables(parseSavedVariables(`ArrowToTheBuildBridgeSavedVariables={
-    schemaVersion=2,revision=10,addonVersion="0.1.0-alpha.6",apiVersion=101050,capturedAt=1786067200,
-    captureReason="level-changed",characterKey="@Player|NA Megaserver|123",capturedSections={"identity"},
-    estimatedBytes=4100,budgetBytes=32768,budgetStatus="truncated",truncated=true,reducedFields={},droppedSections={"equipment"},
-    character={identity="@Player\\tNA Megaserver\\t123\\tTalia Tempest\\t117\\tArcanist\\t4\\tDark Elf\\t2\\tEbonheart Pact\\t24\\t0\\t209\\t0\\t7\\t0\\t0\\t28",
-      skills={activeWeaponPair="1\\t0",lines="",abilities="",actionBars=""},equipment="",champion={totalEarned=209,disciplines="",stars="",slots=""}}
-  }`, 'ArrowToTheBuildBridgeSavedVariables'))
-  const previous = normalizeSnapshot('@Player|NA Megaserver|123', {
-    addonVersion: '0.1.0-alpha.6', snapshotSchemaVersion: 2, capturedAt: 1786067100,
-    identity: { characterKey: '@Player|NA Megaserver|123', accountName: '@Player', worldName: 'NA Megaserver', characterId: '123', name: 'Talia Tempest', level: 23, class: { id: 117, name: 'Arcanist' }, race: { id: 4, name: 'Dark Elf' }, alliance: { id: 2, name: 'Ebonheart Pact' }, progression: {}, attributes: {} },
-    skills: { lines: [], actionBars: [], activeWeaponPair: {} },
-    equipment: { items: [{ equipSlot: 0, itemId: 999, name: 'Preserved Helm', set: { id: 281, name: 'Armor of the Trainee' }, trait: { id: 15, name: 'Training' }, enchantment: { name: 'Maximum Stamina Enchantment' } }] },
-    champion: { totalEarned: 209, disciplines: [], slotted: { supported: true, slots: [] } },
-    metadata: {}, completeness: { isComplete: true }
-  }, { addonVersion: '0.1.0-alpha.6', apiVersion: 101050 })
-  const synthetic = bridgeRootAsArchive(parsed, previous)
-  const merged = synthetic.characters['@Player|NA Megaserver|123']
-  assert.equal(merged.identity.level, 24)
-  assert.equal(merged.equipment.items[0].name, 'Preserved Helm')
-  assert.equal(merged.completeness.truncated, true)
-  const normalizedMerged = normalizeSnapshot('@Player|NA Megaserver|123', merged, merged)
-  assert.doesNotThrow(() => liveCharacterState(normalizedMerged), 'partial bridge reconciliation must preserve the live-state contract')
+test('purchased rank-zero inherent passives are treated as unlocked and expose a one-rank live cap', () => {
+  const snapshot = normalizeSnapshot('@Player|NA Megaserver|1', {
+    identity: {
+      accountName: '@Player', worldName: 'NA Megaserver', characterId: '1', name: 'Talia', level: 30,
+      class: { id: 117, name: 'Arcanist' }, race: { id: 4, name: 'Dark Elf' }, alliance: { id: 2, name: 'Ebonheart Pact' },
+      progression: {}, attributes: {}
+    },
+    skills: { lines: [{
+      skillType: 7, skillTypeName: 'Racial', skillLineId: 64, name: 'Dark Elf Skills', rank: 30,
+      abilities: [
+        { abilityId: 36588, baseAbilityId: 36588, progressionId: 0, name: 'Ashlander', currentRank: 0, currentMorph: 0, isPassive: true, isUltimate: false },
+        { abilityId: 45265, baseAbilityId: 45265, progressionId: 0, name: 'Dynamic', currentRank: 2, currentMorph: 0, passiveRank: 2, passiveMaxRank: 3, isPassive: true, isUltimate: false }
+      ]
+    }] },
+    equipment: { items: [] }, champion: { disciplines: [] }
+  }, { addonVersion: '1.0.0', apiVersion: 101050 })
+  const live = liveCharacterState(snapshot)
+  assert.equal(live.skill_allocations.dark_elf__ashlander, 1)
+  assert.equal(live.skill_max_points.dark_elf__ashlander, 1)
+  assert.equal(live.skill_allocations.dark_elf__dynamic, 2)
+  assert.equal(live.skill_max_points.dark_elf__dynamic, 3)
 })
 
-test('reconciliation survives a previous archive whose disciplines carry empty stars tables', () => {
-  // Regression: an empty Lua `stars = {}` decodes to {} (a truthy non-array). normalizeSnapshot left it
-  // as an object, and the enrich loop did `for (const star of discipline.stars || [])`, which threw
-  // "object is not iterable" and silently killed the sync bridge inside syncNow's catch.
-  const parsed = normalizeLuaTables(parseSavedVariables(`ArrowToTheBuildBridgeSavedVariables={
-    schemaVersion=2,revision=11,addonVersion="0.1.0-alpha.6",apiVersion=101050,capturedAt=1786067300,
-    captureReason="champion-changed",characterKey="@Player|NA Megaserver|123",capturedSections={"identity","champion"},
-    estimatedBytes=4200,budgetBytes=32768,budgetStatus="ok",truncated=false,reducedFields={},droppedSections={},
-    character={identity="@Player\\tNA Megaserver\\t123\\tTalia\\t117\\tArcanist\\t4\\tDark Elf\\t2\\tEbonheart Pact\\t25\\t0\\t210\\t0\\t7\\t0\\t0\\t28",
-      skills={activeWeaponPair="1\\t0",lines="",abilities="",actionBars=""},equipment="",champion={totalEarned=210,disciplines="3\\t70\\t0",stars="",slots=""}}
-  }`, 'ArrowToTheBuildBridgeSavedVariables'))
-  // The previous archive has a discipline with stars as an empty object, exactly the shape that threw.
-  const previous = normalizeSnapshot('@Player|NA Megaserver|123', {
-    addonVersion: '0.1.0-alpha.6', snapshotSchemaVersion: 2, capturedAt: 1786067200,
-    identity: { characterKey: '@Player|NA Megaserver|123', accountName: '@Player', worldName: 'NA Megaserver', characterId: '123', name: 'Talia', level: 24, class: { id: 117, name: 'Arcanist' }, race: { id: 4, name: 'Dark Elf' }, alliance: { id: 2, name: 'Ebonheart Pact' }, progression: {}, attributes: {} },
-    skills: { lines: [], actionBars: [], activeWeaponPair: {} },
-    equipment: { items: [] },
-    champion: { totalEarned: 209, disciplines: [{ disciplineId: 3, name: 'Craft', spent: 70, unspent: 0, stars: {} }], slotted: { supported: true, slots: {} } },
-    metadata: {}, completeness: { isComplete: true }
-  }, { addonVersion: '0.1.0-alpha.6', apiVersion: 101050 })
-  let synthetic
-  assert.doesNotThrow(() => { synthetic = bridgeRootAsArchive(parsed, previous) }, 'empty-object stars must not break enrichment')
-  const merged = synthetic.characters['@Player|NA Megaserver|123']
-  assert.equal(merged.identity.level, 25)
-  assert.doesNotThrow(() => liveCharacterState(normalizeSnapshot('@Player|NA Megaserver|123', merged, merged)))
-})
-
-function luaWire(value) {
-  if (value === null || value === undefined) return 'nil'
-  if (typeof value === 'number') return String(value)
-  if (typeof value === 'boolean') return value ? 'true' : 'false'
-  if (typeof value === 'string') return JSON.stringify(value)
-  if (Array.isArray(value)) return `{${value.map((item, index) => `[${index + 1}]=${luaWire(item)}`).join(',')}}`
-  return `{${Object.entries(value).map(([key, item]) => `[${JSON.stringify(key)}]=${luaWire(item)}`).join(',')}}`
-}
-
-function estimatorValue(value, seen = new Set()) {
-  if (value === null || value === undefined) return 4
-  if (typeof value === 'boolean') return value ? 4 : 5
-  if (typeof value === 'number') return String(value).length + 2
-  if (typeof value === 'string') return value.length + 6
-  if (typeof value !== 'object') return String(value).length + 8
-  if (seen.has(value)) return 8
-  seen.add(value)
-  let total = 8
-  const entries = Array.isArray(value) ? value.map((item, index) => [index + 1, item]) : Object.entries(value)
-  for (const [key, item] of entries) total += estimatorValue(key, seen) + estimatorValue(item, seen) + 10
-  seen.delete(value)
-  return total
-}
-
-function estimatedSerializedBytes(root) { return Math.ceil(estimatorValue(root) * 1.5 + 512) }
-
-function syntheticBridgeRoot({ lineCount, abilitiesPerLine, starCount, equipmentNames = true, enchantments = true }) {
-  const pack = (...values) => values.map(value => value == null ? '' : String(value)).join('\t')
-  let abilityId = 100000
-  const lines = []
-  const abilities = []
-  for (let lineIndex = 0; lineIndex < lineCount; lineIndex += 1) {
-    const lineId = 1000 + lineIndex
-    lines.push(pack((lineIndex % 8) + 1, lineId, 50))
-    for (let abilityIndex = 0; abilityIndex < abilitiesPerLine; abilityIndex += 1) {
-      abilities.push(pack(lineId, abilityId, abilityId + 2, 4, abilityIndex % 3, 2, 0))
-      abilityId += 3
-    }
-  }
-  const actionBars = []
-  for (const category of [0, 1]) for (let index = 0; index < 6; index += 1) {
-    actionBars.push(pack(category, index + 1, 300000 + index, 1, index === 5 ? 1 : 0, 300000 + index, 4000 + index, 1000 + index, 2, 4))
-  }
-  return {
-    schemaVersion: 2, addonVersion: '0.1.0-alpha.6', apiVersion: 101050, revision: 999, createdAt: 1, capturedAt: 1,
-    captureReason: 'budget-fixture', characterKey: '@Tester|NA Megaserver|9999999999999999',
-    capturedSections: ['identity', 'skills', 'equipment', 'champion'], estimatedBytes: 0, budgetBytes: 32768,
-    budgetStatus: 'ok', truncated: false, reducedFields: [], droppedSections: [], lastPrioritySaveRequestedAt: 0,
-    character: {
-      identity: pack('@Tester', 'NA Megaserver', '9999999999999999', 'Maxed Character', 117, 'Arcanist', 4, 'Dark Elf', 2, 'Ebonheart Pact', 50, 3600, 3600, 0, 250, 0, 0, 64),
-      skills: {
-        activeWeaponPair: '1\t0',
-        lines: lines.join('\n'),
-        abilities: abilities.join('\n'),
-        actionBars: actionBars.join('\n')
-      },
-      equipment: Array.from({ length: 13 }, (_, index) => pack(index, 500000 + index, equipmentNames ? `Equipment Item ${index + 1}` : '', 5, 50, 160, 1, 2, 3, 4, 15, 281, equipmentNames ? 'Long Set Name' : '', enchantments ? 'Maximum Stamina Enchantment' : '')).join('\n'),
-      champion: {
-        totalEarned: 3600,
-        disciplines: [1, 2, 3].map(disciplineId => pack(disciplineId, 1200, 0)).join('\n'),
-        stars: Array.from({ length: starCount }, (_, index) => pack((index % 3) + 1, 200000 + index, 50, 50, index % 3, index % 4 === 0 ? 1 : 0)).join('\n'),
-        slots: Array.from({ length: 12 }, (_, index) => pack(index + 1, (index % 3) + 1, 200000 + index)).join('\n')
-      }
-    }
-  }
-}
-
-test('flat schema 2 keeps both low-level and realistically maxed complete snapshots inside the hard bridge gate', () => {
-  const levelThree = syntheticBridgeRoot({ lineCount: 3, abilitiesPerLine: 1, starCount: 0 })
-  const maxed = syntheticBridgeRoot({ lineCount: 45, abilitiesPerLine: 7, starCount: 90 })
-  const maxedReducedDisplay = syntheticBridgeRoot({ lineCount: 45, abilitiesPerLine: 7, starCount: 90, equipmentNames: false, enchantments: false })
-  const lowWire = Buffer.byteLength(`ArrowToTheBuildBridgeSavedVariables=${luaWire(levelThree)}`, 'utf8')
-  const maxWire = Buffer.byteLength(`ArrowToTheBuildBridgeSavedVariables=${luaWire(maxed)}`, 'utf8')
-  const maxEstimate = estimatedSerializedBytes(maxed)
-  assert.ok(lowWire < 6 * 1024, `low-level bridge should be tiny, got ${lowWire} bytes`)
-  assert.ok(maxWire < 24 * 1024, `packed maxed-character wire should stay compact before ESO formatting; got ${maxWire}`)
-  assert.ok(maxEstimate < 32 * 1024, `conservative complete maxed-character estimate must pass the 32 KiB bridge budget; got ${maxEstimate}`)
-  assert.ok(estimatedSerializedBytes(maxedReducedDisplay) < maxEstimate, 'deterministic display reduction must make the fallback smaller')
-})
-
-test('bridge source uses packed row blobs, deterministic budget degradation, and root replacement', () => {
-  const fs = require('node:fs')
-  const path = require('node:path')
-  const source = fs.readFileSync(path.join(__dirname, '..', 'resources/addon/ArrowToTheBuildBridge/Bridge.lua'), 'utf8')
-  assert.match(source, /Bridge\.budgetBytes = 32768/)
-  assert.match(source, /local function rowsBlob/)
-  assert.match(source, /estimateValue\(root\) \* 1\.5/)
-  assert.match(source, /dropEnchantments/)
-  const stages = source.slice(source.indexOf('local stages = {'))
-  assert.ok(stages.indexOf('dropEnchantments') < stages.indexOf('dropEquipmentNames'))
-  assert.ok(stages.indexOf('dropEquipmentNames') < stages.indexOf('dropChampionDetails'))
-  assert.ok(stages.indexOf('dropChampionDetails') < stages.indexOf('dropEquipment = true'))
-  assert.ok(stages.indexOf('dropEquipment = true') < stages.indexOf('dropSkills = true'))
-  assert.match(source, /ArrowToTheBuildBridgeSavedVariables = saved/)
-  assert.match(source, /snapshot\.captureReason == \"player-deactivated\"/)
-  assert.match(source, /estimatedBytes/)
-  assert.match(source, /budgetStatus/)
-
-  const mainSource = fs.readFileSync(path.join(__dirname, '..', 'resources/addon/ArrowToTheBuild/Core.lua'), 'utf8')
-  const archivePriorityCalls = mainSource.match(/ATTB\.RequestPrioritySave\(/g) || []
-  assert.equal(archivePriorityCalls.length, 1, 'the durable archive may retain the helper definition but must not request normal-play priority')
-})

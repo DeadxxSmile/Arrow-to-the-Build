@@ -4,7 +4,7 @@ import EmptyState from './EmptyState'
 import SkillIcon from '../components/SkillIcon'
 import NumberStepper from '../components/NumberStepper'
 import { applyAllocationChange } from '../utils/buildLogic'
-import { buildItemsForCatalogSkill, effectiveAllocation, itemBuildMeta } from '../utils/catalogLogic'
+import { buildItemsForCatalogSkill, effectiveAllocation, effectiveSkillMaxPoints, itemBuildMeta } from '../utils/catalogLogic'
 import OverrideResetButton from '../components/OverrideResetButton'
 
 function stateFor(skill, rank, allocation, meta) {
@@ -33,7 +33,8 @@ export default function SkillLinePage() {
 
   const updateAllocation = (skill, nextPoints) => {
     if (syncedLocked) return
-    const { allocations, completed } = applyAllocationChange(build, character, line.id, skill, nextPoints, skills)
+    const effectiveSkill = skill.type === 'Passive' ? { ...skill, max_points: effectiveSkillMaxPoints(character, skill) } : skill
+    const { allocations, completed } = applyAllocationChange(build, character, line.id, effectiveSkill, nextPoints, skills)
     return setSkillTracking(allocations, completed)
   }
 
@@ -92,15 +93,16 @@ export default function SkillLinePage() {
     const allocation = effectiveAllocation(character, build, line.id, skill)
     const meta = itemBuildMeta(build, line.id, skill)
     const order = buildOrderLabel(skill)
-    const requiredRanks = meta.linked.map(item => item.required_rank).filter(Boolean)
+    const requiredRanks = skill.unlock_ranks?.length ? skill.unlock_ranks : meta.linked.map(item => item.required_rank).filter(Boolean)
+    const maxPoints = effectiveSkillMaxPoints(character, skill)
     return <article className={`eso-passive-row ${allocation ? 'selected' : ''}`}>
       <div className="eso-passive-icon"><SkillIcon skillId={skill.id} name={skill.name} image={skillImage(skill)} size="passive" /></div>
       <div className="eso-skill-copy">
         <div className="eso-skill-heading"><h3>{skill.name}</h3>{order && <span className="unlock-order">Build #{order}</span>}<SkillBadges skill={skill} /></div>
-        <p>{skill.currency === 'class_mastery_point' ? 'Class Mastery choice' : 'Passive'} · {skill.max_points || 1} rank{(skill.max_points || 1) === 1 ? '' : 's'}{requiredRanks.length ? ` · Build ranks ${requiredRanks.join(' / ')}` : ''}</p>
+        <p>{skill.currency === 'class_mastery_point' ? 'Class Mastery choice' : 'Passive'} · {maxPoints} rank{maxPoints === 1 ? '' : 's'}{requiredRanks.length ? ` · Unlocks at line rank${requiredRanks.length === 1 ? '' : 's'} ${requiredRanks.join(' / ')}` : ''}</p>
         <small>{meta.notes}</small>
       </div>
-      <div className="synced-control"><NumberStepper value={allocation} min={0} max={skill.max_points || 1} onChange={value => updateAllocation(skill, value)} label={`${skill.name} points`} disabled={syncedLocked} /><OverrideResetButton fieldPath={`skill_allocations.${skill.id}`} compact /></div>
+      <div className="synced-control"><NumberStepper value={allocation} min={0} max={maxPoints} onChange={value => updateAllocation(skill, value)} label={`${skill.name} points`} disabled={syncedLocked} /><OverrideResetButton fieldPath={`skill_allocations.${skill.id}`} compact /></div>
     </article>
   }
 
@@ -128,7 +130,7 @@ export default function SkillLinePage() {
       <div><span className="eyebrow">{line.group} · {line.build_relevant ? 'build and full-line tracking' : 'personal full-line tracking'}</span><h1>{line.name}</h1><p>Modeled after ESO&rsquo;s skill window: base abilities branch into two morphs, passives track individual ranks, and build badges stay visible without hiding optional purchases.</p></div>
       <Link to="/skills" className="btn secondary">← Skills overview</Link>
     </div>
-    {character.addon_sync?.linked && <div className="sync-status-banner"><span className="sync-dot" /><div><b>Live skill data from ESO</b><small>{syncedLocked ? 'Enable override mode in App Settings to test another setup.' : 'Changes create local overrides; use ↶ to restore the ESO value.'}</small></div></div>}
+    {character.addon_sync?.linked && <div className="sync-status-banner"><span className="sync-dot" /><div><b>Live skill data from ESO</b><small>{syncedLocked ? 'Enable override mode in Settings > ESO Addon & Sync to test another setup.' : 'Changes create local overrides; use ↶ to restore the ESO value.'}</small></div></div>}
     <section className="panel line-rank-panel">
       <div><span className="eyebrow">Current line rank</span><h2>{rank}/{line.max || 50}</h2></div>
       <div className="synced-control"><NumberStepper value={rank} min={0} max={line.max || 50} onChange={value => setSkillRank(line.id, value)} label={`${line.name} rank`} disabled={syncedLocked} /><OverrideResetButton fieldPath={`skill_ranks.${line.id}`} compact /></div>

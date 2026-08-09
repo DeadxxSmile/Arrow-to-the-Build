@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import {
   applyAllocationChange, applyCompletionChange, currentPhase,
-  effectiveCompletedSet, isPieceChecked, pieceKey, recommendedUnlocks, requirementsFor, unlockState
+  actionableUnlocks, effectiveCompletedSet, isPieceChecked, pieceKey, recommendedUnlocks, requiredRankFor, requirementsFor, unlockState
 } from '../src/renderer/utils/buildLogic.mjs'
 import { effectiveAllocation, skillPointUsage, catalogLineMap } from '../src/renderer/utils/catalogLogic.mjs'
 
@@ -36,6 +36,55 @@ test('synced catalog allocations translate back into build-row completion', () =
 test('rank-locked items report locked, not available', () => {
   const late = arcanist.unlock_order.find(x => Number(x.required_rank) >= 20 && !x.requires?.length)
   assert.equal(unlockState(late, character({ skill_ranks: { [late.line]: 1 } }), arcanist), 'locked')
+})
+
+test('verified armor passive point gates override stale authored ranks from older builds', () => {
+  const cases = [
+    ['agility_1', 38],
+    ['athletics_1', 42],
+    ['concentration_2', 50]
+  ]
+  for (const [id, expected] of cases) {
+    const item = templar.unlock_order.find(row => row.id === id)
+    assert.ok(item, `${id} exists in the bundled Templar build`)
+    assert.equal(requiredRankFor(item, templar), expected, `${item.name} uses the verified live armor gate`)
+    const rank = expected - 1
+    const completed = requirementsFor(templar, item.id)
+    assert.equal(unlockState(item, character({ skill_ranks: { [item.line]: rank }, completed }), templar), 'locked')
+  }
+})
+
+test('Suggested Next Picks never exposes the stale armor passives from the reported regression', () => {
+  const ranks = Object.fromEntries((templar.relevant_lines || []).map(line => [line.id, 50]))
+  ranks.medium_armor = 18
+  ranks.light_armor = 36
+  const state = character({ skill_ranks: ranks, actual_unspent_skill_points: 20 })
+  const ids = new Set(actionableUnlocks(templar, state).map(item => item.id))
+  for (const id of ['agility_1', 'athletics_1', 'concentration_2']) {
+    assert.equal(ids.has(id), false, `${id} must not be marked purchasable before its verified line rank`)
+  }
+})
+
+test('Suggested Next Picks keeps a conservative safety fallback if future catalog drift loses passive point gates', () => {
+  const passive = templar.unlock_order.find(row => row.line === 'aedric_spear' && row.kind === 'Passive')
+  assert.ok(passive, 'fixture has an Aedric Spear passive')
+  const line = catalogLineMap.get(passive.line)
+  const catalogPassive = line?.skills?.find(skill => skill.id === passive.catalog_skill_id)
+  assert.ok(Array.isArray(catalogPassive?.unlock_ranks), 'the shipped U50 catalog is fully audited')
+
+  // Deliberately simulate a future patch/catalog regression without making the real catalog incomplete.
+  const saved = catalogPassive.unlock_ranks
+  delete catalogPassive.unlock_ranks
+  try {
+    const almostMax = character({ skill_ranks: { [passive.line]: 49 }, actual_unspent_skill_points: 20 })
+    assert.equal(actionableUnlocks(templar, almostMax).some(item => item.id === passive.id), false)
+    const maxed = character({ skill_ranks: { [passive.line]: 50 }, actual_unspent_skill_points: 20 })
+    if (unlockState(passive, maxed, templar) === 'available') {
+      assert.equal(actionableUnlocks(templar, maxed).some(item => item.id === passive.id), true)
+    }
+  } finally {
+    catalogPassive.unlock_ranks = saved
+  }
 })
 
 test('passive rank II is derived as requiring rank I even though the JSON does not say so', () => {
@@ -78,6 +127,21 @@ test('next-five stays stable and available-first across all bundled builds', () 
     assert.equal(top.length, 5)
     assert.ok(top.every(x => x.state === 'available'), 'available items sort ahead of locked and blocked ones')
   }
+})
+
+
+
+test('locked recommendations prefer the closest skill-line rank before authored priority', () => {
+  const build = {
+    unlock_order: [
+      { id: 'far', line: 'a', required_rank: 40, priority: 1 },
+      { id: 'near', line: 'b', required_rank: 12, priority: 999 },
+      { id: 'middle', line: 'c', required_rank: 20, priority: 2 }
+    ]
+  }
+  const state = character({ skill_ranks: { a: 5, b: 10, c: 10 } })
+  const ids = recommendedUnlocks(build, state).map(item => item.id)
+  assert.deepEqual(ids, ['near', 'middle', 'far'])
 })
 
 test('checking a build item also moves the Skill Point ledger', () => {
@@ -158,7 +222,7 @@ test('a line the build never mentions counts as personal points only', () => {
 })
 
 test('Scribing and Class Mastery entries stay out of the ordinary point ledger', () => {
-  const scribing = catalogLineMap.get('scribing').skills[0]
+  const scribing = [...catalogLineMap.values()].flatMap(line => line.skills || []).find(skill => skill.id.startsWith('scribing__'))
   const mastery = catalogLineMap.get('arcanist_mastery').skills[0]
   const state = character({ skill_allocations: { [scribing.id]: 1, [mastery.id]: 1 } })
   assert.equal(skillPointUsage(state, arcanist).total, 0)

@@ -24,7 +24,7 @@ A complete build can include:
 - equipment stages with individual pieces, traits, enchantments, sources, and alternatives;
 - Craft, Warfare, and Fitness Champion Point plans;
 - complete named loadouts and smaller situational variants;
-- consumables, quickslots, companions, requirements, performance notes, and research sources.
+- consumables, quickslots, structured companion setups, requirements, performance notes, and research sources.
 
 The Character Tracker reads this information and turns it into a character-specific progression plan.
 
@@ -135,7 +135,13 @@ Create progression stages such as Training Gear, CP160 Starter, Dungeon Upgrade,
 
 Edit the Craft, Warfare, and Fitness plans. Add ordered core stars, recommended or optional branches, and up to four final slottables per constellation.
 
-### 8. Loadouts & Variants
+### 8. Companions
+
+ATTB 2.1 includes every current combat companion in a dedicated directory plus two starter setups per companion. In the Build Editor you can add a preset, reset an edited setup back to its preset, or author a custom companion target.
+
+Companion skills are stored separately from player skill IDs and Unlock Plan data.
+
+### 9. Loadouts & Variants
 
 Use **loadouts** for complete named configurations such as Solo, Group DPS, Boss, One-Bar, or No-DLC.
 
@@ -147,7 +153,7 @@ ATTB applies them in this order:
 Base Build → Loadout → Variant
 ```
 
-### 9. Review & Save
+### 10. Review & Save
 
 Run validation and review the three result categories:
 

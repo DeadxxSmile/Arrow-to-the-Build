@@ -24,12 +24,12 @@ export const useApp = () => useContext(AppContext)
 const characterPrimaryNav = [
   ['/setup', 'Basic Setup', '⌁'], ['/status', 'Current Levels', '◈'], ['/skills', 'Skills & Passives', '✦'],
   ['/equipment', 'Equipment', '◫'], ['/rotations', 'Skill Bars & Rotations', '↻'],
-  ['/champion-points', 'Champion Points', '✧'], ['/consumables', 'Consumables / Other', '⚗'],
-  ['/help/tips', 'Help & Tools', '?']
+  ['/champion-points', 'Champion Points', '✧'], ['/companions', 'Companions', '♟'],
+  ['/consumables', 'Consumables / Other', '⚗'], ['/help/tips', 'Help & Tools', '?']
 ]
 const characterHelpNav = [
-  ['/help/tips', 'Gameplay Tips', '◆'], ['/help/import-export', 'Character Backups', '⇄'],
-  ['/help/resources', 'Resources & Links', '↗']
+  ['/help/tips', 'Gameplay Tips', '◆'], ['/help/guides', 'ATTB Guides', '▤'],
+  ['/help/import-export', 'Character Backups', '⇄'], ['/help/resources', 'Resources & Links', '↗']
 ]
 const buildLibraryNav = [
   ['/build-editor/library', 'Build Library', '▦'], ['/build-editor/new', 'Create New Build', '＋']
@@ -38,7 +38,8 @@ const buildCurrentNav = [
   ['/build-editor/overview', 'Overview', '⌁'], ['/build-editor/character-setup', 'Character Setup', '◉'],
   ['/build-editor/class-configuration', 'Class Configuration', '◇'], ['/build-editor/skills', 'Skills & Passives', '✦'],
   ['/build-editor/leveling', 'Leveling Plan', '↟'], ['/build-editor/equipment', 'Equipment', '◫'],
-  ['/build-editor/champion-points', 'Champion Points', '✧'], ['/build-editor/loadouts', 'Loadouts & Variants', '⇄'],
+  ['/build-editor/champion-points', 'Champion Points', '✧'], ['/build-editor/companions', 'Companions', '♟'],
+  ['/build-editor/loadouts', 'Loadouts & Variants', '⇄'],
   ['/build-editor/review', 'Review & Save', '✓']
 ]
 const buildAuthoringNav = [
@@ -50,7 +51,7 @@ const cpNav = [
 ]
 const groupOrder = ['Class', 'Weapon', 'Armor', 'World', 'Guild', 'Alliance War', 'Racial', 'Craft', 'System']
 const DEFAULT_SETTINGS = {
-  theme: 'dark',
+  theme: 'default',
   eso_plus: 'false',
   remote_images: 'false',
   startup_workspace: 'last',
@@ -84,7 +85,7 @@ function SectionRail({ location, skillGroups, character }) {
   </aside>
 
   if (location.pathname.startsWith('/help')) return <aside className="section-rail tools-rail" aria-label="Help and tools">
-    <div className="section-rail-head"><span className="eyebrow">Help &amp; Tools</span><h2>Character support</h2><p>Gameplay guidance, character backups, and trusted ESO resources.</p></div>
+    <div className="section-rail-head"><span className="eyebrow">Help &amp; Tools</span><h2>Character support</h2><p>Gameplay guidance, ATTB/AI authoring docs, character backups, addon help, and trusted ESO resources.</p></div>
     {characterHelpNav.map(([to, label, icon]) => <NavLink key={to} to={to} className={({ isActive }) => `section-rail-link ${isActive ? 'active' : ''}`}><span>{icon}</span><b>{label}</b></NavLink>)}
   </aside>
   return null
@@ -166,7 +167,7 @@ export default function App() {
   const build = useMemo(() => applyVariant(loadoutBuild, character?.variant_id, activeLoadoutId), [loadoutBuild, character?.variant_id, activeLoadoutId])
   const variants = useMemo(() => listVariants(loadoutBuild), [loadoutBuild])
   const selectableVariants = useMemo(() => availableVariants(loadoutBuild, activeLoadoutId), [loadoutBuild, activeLoadoutId])
-  const theme = appSettings.theme || 'dark'
+  const theme = appSettings.theme || 'default'
   const esoPlus = appSettings.eso_plus === 'true'
   useEffect(() => { activeIdRef.current = activeId }, [activeId])
 
@@ -327,7 +328,7 @@ export default function App() {
       if (!status.enabled) { setAddonSetupOpen(true); return }
       await window.api.addon.syncNow()
       const list = await reloadAddonDiscoveries(false)
-      if (!list.length) await dialog.alert({ title: 'No new addon characters found', message: 'Every character currently stored by the addon is already linked or has been dismissed. Log into another ESO character, then reload the UI or log out so ESO writes a new snapshot.' })
+      if (!list.length) await dialog.alert({ title: 'No new addon characters found', message: 'Every character currently stored by the addon is already linked or has been dismissed. To relink an existing or dismissed snapshot, open Settings > ESO Addon & Sync. To discover a new ESO character, log into it and use /reloadui or log out so ESO writes a new snapshot.' })
       else setAddonImportOpen(true)
     } catch (error) { await dialog.alert({ title: 'Addon import unavailable', message: error.message || 'ATTB could not read the addon data.' }) }
   }, [reloadAddonStatus, reloadAddonDiscoveries, dialog])

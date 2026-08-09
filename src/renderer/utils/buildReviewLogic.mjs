@@ -6,6 +6,7 @@ const SECTION_ROUTES = {
   leveling: '/build-editor/leveling',
   equipment: '/build-editor/equipment',
   champion: '/build-editor/champion-points',
+  companions: '/build-editor/companions',
   loadouts: '/build-editor/loadouts',
   review: '/build-editor/review'
 }
@@ -14,11 +15,12 @@ function routeForMessage(message = '') {
   const text = String(message).toLowerCase()
   if (/cp_plans|champion|final_slots|constellation/.test(text)) return { section: 'Champion Points', route: SECTION_ROUTES.champion }
   if (/gear_stages|gear stage|equipment|piece|set\s|source\./.test(text)) return { section: 'Equipment', route: SECTION_ROUTES.equipment }
+  if (/companion/.test(text)) return { section: 'Companions', route: SECTION_ROUTES.companions }
   if (/loadout|variant|default_loadout/.test(text)) return { section: 'Loadouts & Variants', route: SECTION_ROUTES.loadouts }
   if (/phase|front_bar|back_bar|ultimate|rotation|milestone/.test(text)) return { section: 'Leveling Plan', route: SECTION_ROUTES.leveling }
   if (/unlock_order|catalog_skill|morph|passive|scribed|skill line|relevant_lines/.test(text)) return { section: 'Skills & Passives', route: SECTION_ROUTES.skills }
   if (/class_configuration|active_class_lines|mastery|subclass|base class/.test(text)) return { section: 'Class Configuration', route: SECTION_ROUTES.class }
-  if (/defaults|attribute|race|alliance|mundus|weapon|armor|transformation|consumable|quickslot|companion|requirement/.test(text)) return { section: 'Character Setup', route: SECTION_ROUTES.character }
+  if (/defaults|attribute|race|alliance|mundus|weapon|armor|transformation|consumable|quickslot|requirement/.test(text)) return { section: 'Character Setup', route: SECTION_ROUTES.character }
   if (/metadata|summary|author|game_version|verified_date|missing id|missing name|schema_version/.test(text)) return { section: 'Overview', route: SECTION_ROUTES.overview }
   return { section: 'Review & Save', route: SECTION_ROUTES.review }
 }

@@ -3,7 +3,7 @@ import EmptyState from './EmptyState'
 import NumberStepper from '../components/NumberStepper'
 import AttributesEditor from '../components/AttributesEditor'
 import { applyAllocationChange } from '../utils/buildLogic'
-import { effectiveAllocation } from '../utils/catalogLogic'
+import { effectiveAllocation, effectiveSkillMaxPoints } from '../utils/catalogLogic'
 import OverrideResetButton, { overrideEntry } from '../components/OverrideResetButton'
 
 const CP_FIELDS = [
@@ -19,11 +19,12 @@ export default function StatusPage() {
 
   const multiRankPassives = skillGroups.map(([group, lines]) => [group, lines.map(line => ({
     line,
-    passives: (line.skills || []).filter(skill => skill.type === 'Passive' && Number(skill.max_points || 1) > 1)
+    passives: (line.skills || []).filter(skill => skill.type === 'Passive' && effectiveSkillMaxPoints(character, skill) > 1)
   })).filter(entry => entry.passives.length)]).filter(([, lines]) => lines.length)
 
   const updatePassive = (line, skill, points) => {
-    const { allocations, completed } = applyAllocationChange(build, character, line.id, skill, points, line.skills || [])
+    const effectiveSkill = { ...skill, max_points: effectiveSkillMaxPoints(character, skill) }
+    const { allocations, completed } = applyAllocationChange(build, character, line.id, effectiveSkill, points, line.skills || [])
     return setSkillTracking(allocations, completed)
   }
 
@@ -56,7 +57,10 @@ export default function StatusPage() {
 
     <section className="panel numeric-tracking-panel">
       <div className="section-head"><div><span className="eyebrow">Passive progression</span><h2>Multi-rank passive levels</h2></div><p>Only passives with more than one purchasable rank appear here. One-rank purchases, active skills, morphs, and ultimates stay on their full skill-line pages.</p></div>
-      {multiRankPassives.length ? <div className="numeric-groups passive-groups">{multiRankPassives.map(([group, lines]) => <section className="numeric-group" key={group}><header><h3>{group}</h3><span>{lines.reduce((sum, entry) => sum + entry.passives.length, 0)} passives</span></header><div className="numeric-row-list">{lines.flatMap(({ line, passives }) => passives.map(skill => <label className="numeric-row" key={skill.id}><span><b>{skill.name}</b><small>{line.name} · {skill.max_points} ranks{character.addon_sync?.linked ? ` · Live ${character.addon_sync.live?.skill_allocations?.[skill.id] ?? 0}` : ''}</small></span><div className="synced-control"><NumberStepper value={effectiveAllocation(character, build, line.id, skill)} min={0} max={skill.max_points || 1} onChange={points => updatePassive(line, skill, points)} label={`${skill.name} passive rank`} disabled={syncedLocked} /><OverrideResetButton fieldPath={`skill_allocations.${skill.id}`} compact /></div></label>))}</div></section>)}</div> : <div className="quiet-box">No multi-rank passives are available in the tracked skill lines.</div>}
+      {multiRankPassives.length ? <div className="numeric-groups passive-groups">{multiRankPassives.map(([group, lines]) => <section className="numeric-group" key={group}><header><h3>{group}</h3><span>{lines.reduce((sum, entry) => sum + entry.passives.length, 0)} passives</span></header><div className="numeric-row-list">{lines.flatMap(({ line, passives }) => passives.map(skill => {
+        const maxPoints = effectiveSkillMaxPoints(character, skill)
+        return <label className="numeric-row" key={skill.id}><span><b>{skill.name}</b><small>{line.name} · {maxPoints} ranks{character.addon_sync?.linked ? ` · Live ${character.addon_sync.live?.skill_allocations?.[skill.id] ?? 0}` : ''}</small></span><div className="synced-control"><NumberStepper value={effectiveAllocation(character, build, line.id, skill)} min={0} max={maxPoints} onChange={points => updatePassive(line, skill, points)} label={`${skill.name} passive rank`} disabled={syncedLocked} /><OverrideResetButton fieldPath={`skill_allocations.${skill.id}`} compact /></div></label>
+      }))}</div></section>)}</div> : <div className="quiet-box">No multi-rank passives are available in the tracked skill lines.</div>}
     </section>
   </div>
 }

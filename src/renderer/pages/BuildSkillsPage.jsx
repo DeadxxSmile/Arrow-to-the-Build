@@ -47,8 +47,8 @@ function SkillCatalogRow({ data, line, skill, onChange }) {
       <button type="button" className={`eso-skill-toggle ${selected ? 'selected' : ''}`} onClick={() => setCount(selected ? 0 : 1)} aria-label={`${selected ? 'Remove' : 'Add'} ${skill.name}`}><span>{selected ? '✓' : '+'}</span></button>
       <SkillIcon skillId={skill.id} name={skill.name} size="list" />
       <div className="build-skill-copy">
-        <div className="skill-title-line"><b>{skill.name}</b><span className="mini-tag phase">{skill.type}</span>{skill.required_rank != null && <span className="mini-tag slot">Rank {skill.required_rank}</span>}</div>
-        <small>{line.name}{base ? ` · Morph of ${base.name}` : ''}</small>
+        <div className="skill-title-line"><b>{skill.name}</b><span className="mini-tag phase">{skill.type}</span>{skill.type === 'Passive' && skill.unlock_ranks?.length ? <span className="mini-tag slot">Ranks {skill.unlock_ranks.join(' / ')}</span> : skill.required_rank != null && <span className="mini-tag slot">Rank {skill.required_rank}</span>}</div>
+        <small>{line.name}{base ? ` · Morph of ${base.name}${skill.requires_base_skill_rank ? ` Rank ${['I','II','III','IV'][skill.requires_base_skill_rank - 1] || skill.requires_base_skill_rank}` : ''}` : ''}</small>
         {morphs.length > 0 && <p>Morphs into {morphs.map(item => item.name).join(' or ')}.</p>}
       </div>
       {skill.type === 'Passive' ? <NumberStepper value={count} min={0} max={max} onChange={setCount} label={`${skill.name} planned ranks`} /> : <button type="button" className={`btn compact ${selected ? 'secondary' : ''}`} onClick={() => setCount(selected ? 0 : 1)}>{selected ? 'Remove' : 'Add to plan'}</button>}

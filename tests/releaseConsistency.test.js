@@ -48,42 +48,18 @@ test('React Router release dependency is patched and lockfile-synchronized', () 
   assert.equal(lockedCore, declared, 'react-router core and react-router-dom versions must stay aligned')
 })
 
-test('bundled addon and bridge version metadata stays synchronized', () => {
+test('bundled addon version metadata stays synchronized', () => {
   const addonManifest = read('resources/addon/ArrowToTheBuild/ArrowToTheBuild.txt')
-  const bridgeManifest = read('resources/addon/ArrowToTheBuildBridge/ArrowToTheBuildBridge.txt')
   const namespaceLua = read('resources/addon/ArrowToTheBuild/Namespace.lua')
-  const bridgeLua = read('resources/addon/ArrowToTheBuildBridge/Bridge.lua')
   const constants = read('src/main/addon/addonConstants.js')
 
   const addonVersion = manifestField(addonManifest, 'Version')
-  const bridgeVersion = manifestField(bridgeManifest, 'Version')
-  assert.equal(bridgeVersion, addonVersion, 'bridge Version differs from durable addon Version')
-  assert.equal(manifestField(bridgeManifest, 'AddOnVersion'), manifestField(addonManifest, 'AddOnVersion'), 'AddOnVersion differs between addon manifests')
-  assert.equal(manifestField(bridgeManifest, 'APIVersion'), manifestField(addonManifest, 'APIVersion'), 'APIVersion differs between addon manifests')
-
+  assert.equal(addonVersion, '1.1.0')
+  assert.equal(manifestField(addonManifest, 'AddOnVersion'), '10100')
+  assert.equal(manifestField(addonManifest, 'APIVersion'), '101050')
   assert.equal(capturedVersion(namespaceLua, /ATTB\.version\s*=\s*"([^"]+)"/, 'Namespace.lua'), addonVersion)
-  assert.equal(capturedVersion(bridgeLua, /Bridge\.version\s*=\s*"([^"]+)"/, 'Bridge.lua'), addonVersion)
   assert.equal(capturedVersion(constants, /BUNDLED_ADDON_VERSION\s*=\s*'([^']+)'/, 'addonConstants.js'), addonVersion)
-})
-
-test('the Mighty Seven contains exactly one Schema 4 bundled build for every ESO class', () => {
-  const expectedClasses = new Set([
-    'Arcanist', 'Dragonknight', 'Necromancer', 'Nightblade', 'Sorcerer', 'Templar', 'Warden'
-  ])
-  const buildsDir = path.join(root, 'resources/builds')
-  const files = fs.readdirSync(buildsDir).filter(file => file.endsWith('.json')).sort()
-
-  assert.equal(files.length, expectedClasses.size, `expected ${expectedClasses.size} bundled builds, found ${files.length}`)
-  const seen = new Set()
-  for (const file of files) {
-    const build = JSON.parse(fs.readFileSync(path.join(buildsDir, file), 'utf8'))
-    assert.equal(build.schema_version, 4, `${file}: bundled build is not Schema 4`)
-    const className = build.defaults?.class
-    assert.ok(expectedClasses.has(className), `${file}: unknown or missing class "${className}"`)
-    assert.equal(seen.has(className), false, `${file}: duplicate bundled build for ${className}`)
-    seen.add(className)
-  }
-  assert.deepEqual([...seen].sort(), [...expectedClasses].sort())
+  assert.equal(fs.existsSync(path.join(root, 'resources/addon/ArrowToTheBuildBridge')), false, 'retired bridge source must not ship')
 })
 
 test('public Schema 4 reference, blank template, and runtime validator advertise the same contract', () => {

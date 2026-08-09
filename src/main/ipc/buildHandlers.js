@@ -520,10 +520,10 @@ ${[...new Set(errors)].join('\n')}`)
       quick_start: read('BUILD_QUICK_START.md'),
       editor_guide: read('BUILD_EDITOR_GUIDE.md'),
       json_guide: read('BUILD_JSON_GUIDE.md'),
+      ai_authoring: read('ATTB_AI_BUILD_JSON_AUTHORING_GUIDE.md'),
       format_and_ids: [read('BUILD_FORMAT.md'), read('SKILL_CATALOG.md'), buildSkillIdReferenceMarkdown(catalogData)].join('\n\n---\n\n'),
       validation_help: read('BUILD_VALIDATION_GUIDE.md'),
-      research_audit: read('ESO_BUILD_SYSTEM_AUDIT.md'),
-      patch_maintenance: read('UPDATING_FOR_GAME_PATCHES.md'),
+      addon_integration: read('ESO_ADDON_INTEGRATION.md'),
       schema_version: CURRENT_SCHEMA_VERSION,
       catalog_version: catalogData.catalog_version || '',
       game_version: catalogData.game_version || ''

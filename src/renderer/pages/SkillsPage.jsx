@@ -1,14 +1,20 @@
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useApp } from '../App'
 import EmptyState from './EmptyState'
 import SkillIcon from '../components/SkillIcon'
-import { effectiveCompletedSet, recommendedUnlocks, unlockState } from '../utils/buildLogic'
+import { actionableUnlocks, effectiveCompletedSet, requiredRankFor, unlockState } from '../utils/buildLogic'
 import { effectiveAllocation } from '../utils/catalogLogic'
+
+const SUGGESTIONS_PER_PAGE = 5
 
 function SkillItem({ item, build, character, lineName, toggleUnlock, compact = false, disabled = false }) {
   const state = unlockState(item, character, build)
   const blocked = state === 'blocked' || state === 'locked'
   const complete = state === 'complete'
+  const currentLineRank = item.line ? Number(character?.skill_ranks?.[item.line] || 0) : 0
+  const requiredRank = requiredRankFor(item, build)
+  const rankGap = Math.max(0, requiredRank - currentLineRank)
   return <article className={`skill-summary-item ${state} ${compact ? 'compact' : ''}`}>
     <button
       type="button"
@@ -27,33 +33,42 @@ function SkillItem({ item, build, character, lineName, toggleUnlock, compact = f
         <span className={`mini-tag ${item.status}`}>{item.status}</span>
         <span className={`mini-tag state ${state}`}>{state === 'train' ? 'morph after IV' : state}</span>
       </div>
-      <small>{lineName(item.line)} · {item.kind} · Rank {item.required_rank}</small>
+      <small>{lineName(item.line)} · {item.kind} · Rank {requiredRank}</small>
       {!compact && <p>{item.notes}</p>}
       {item.kind === 'Morph' && <em>Train {item.morph_from || 'the base skill'} to Rank IV, then select this morph.</em>}
-      {blocked && compact && <em>{state === 'locked' ? `Needs line rank ${item.required_rank}` : 'Needs an earlier purchase'}</em>}
+      {state === 'locked' && <em>Current {lineName(item.line)} rank: {currentLineRank}. Requires rank {requiredRank}{rankGap ? ` · ${rankGap} rank${rankGap === 1 ? '' : 's'} away` : ''}.</em>}
+      {state === 'blocked' && compact && <em>Needs an earlier purchase first.</em>}
     </div>
   </article>
 }
 
 export default function SkillsPage() {
   const { character, build, toggleUnlock, skillGroups, skillLines, appSettings } = useApp()
+  const [suggestionPage, setSuggestionPage] = useState(0)
+  const pendingRecommendations = useMemo(() => actionableUnlocks(build, character), [build, character])
+  const totalSuggestionPages = Math.max(1, Math.ceil(pendingRecommendations.length / SUGGESTIONS_PER_PAGE))
+  useEffect(() => { setSuggestionPage(page => Math.min(page, totalSuggestionPages - 1)) }, [totalSuggestionPages])
   if (!character || !build) return <EmptyState />
 
   const lineName = id => skillLines.find(l => l.id === id)?.name || id
   const ordered = [...(build.unlock_order || [])].sort((a, b) => (Number(a.priority) || 0) - (Number(b.priority) || 0))
-  const recommended = recommendedUnlocks(build, character).filter(x => x.state !== 'complete').slice(0, 5)
+  const recommended = pendingRecommendations.slice(suggestionPage * SUGGESTIONS_PER_PAGE, (suggestionPage + 1) * SUGGESTIONS_PER_PAGE)
+  const actionableCount = pendingRecommendations.length
   const finalItems = ordered.filter(x => x.status === 'final')
   const completed = effectiveCompletedSet(build, character)
   const syncedLocked = character.addon_sync?.linked && appSettings.addon_allow_overrides !== 'true'
   const completedFinal = finalItems.filter(x => completed.has(x.id)).length
+  const firstShown = pendingRecommendations.length ? suggestionPage * SUGGESTIONS_PER_PAGE + 1 : 0
+  const lastShown = Math.min(pendingRecommendations.length, (suggestionPage + 1) * SUGGESTIONS_PER_PAGE)
 
   return <div className="page">
     <div className="page-title"><span className="eyebrow">Build-directed progression</span><h1>Skills &amp; passives</h1><p>The recommendation queue is build-specific. Every line page also contains the complete in-game line so you can record optional skills, alternate morphs, crafting passives, and anything else you actually purchased.</p></div>
-    {character.addon_sync?.linked && <div className="sync-status-banner"><span className="sync-dot" /><div><b>Build progress reconciled with live ESO skills</b><small>{syncedLocked ? 'Owned skills and passive ranks are read-only here until override mode is enabled.' : 'Changes here create local overrides while the live ESO values remain available to restore.'}</small></div></div>}
+    {character.addon_sync?.linked && <div className="sync-status-banner"><span className="sync-dot" /><div><b>Build progress reconciled with live ESO skills</b><small>{syncedLocked ? 'Owned skills and passive ranks are read-only here until override mode is enabled in Settings > ESO Addon & Sync.' : 'Changes here create local overrides while the live ESO values remain available to restore.'}</small></div></div>}
 
     <section className="panel next-five-panel">
-      <div className="section-head"><div><span className="eyebrow">Do these next</span><h2>Next five suggestions</h2></div><small>Available skills and morph-ready choices appear first</small></div>
-      <div className="next-five-list">{recommended.length ? recommended.map((item, index) => <div className="numbered-skill" key={item.id}><span>{index + 1}</span><SkillItem item={item} build={build} character={character} lineName={lineName} toggleUnlock={toggleUnlock} disabled={syncedLocked} /></div>) : <div className="quiet-box">Everything currently available is checked. Raise your skill-line ranks to reveal the next unlocks.</div>}</div>
+      <div className="section-head"><div><span className="eyebrow">Do these next</span><h2>Unlock roadmap</h2></div><small>{actionableCount ? `${actionableCount} purchase${actionableCount === 1 ? '' : 's'} available right now from your recorded ranks, prerequisites, and unspent Skill Points.` : 'No build purchase is available right now. Raise the relevant skill lines, finish prerequisites, train base skills for morphs, or earn another Skill Point.'}</small></div>
+      <div className="next-five-list">{recommended.length ? recommended.map((item, index) => <div className="numbered-skill" key={item.id}><span>{suggestionPage * SUGGESTIONS_PER_PAGE + index + 1}</span><SkillItem item={item} build={build} character={character} lineName={lineName} toggleUnlock={toggleUnlock} disabled={syncedLocked} /></div>) : <div className="quiet-box">Nothing in the build is purchasable right now. ATTB will only place a skill or passive here when your recorded character state can actually take it.</div>}</div>
+      {pendingRecommendations.length > SUGGESTIONS_PER_PAGE && <div className="next-five-pagination"><span>Showing {firstShown}-{lastShown} of {pendingRecommendations.length}</span><div><button type="button" className="btn ghost compact" disabled={suggestionPage === 0} onClick={() => setSuggestionPage(page => Math.max(0, page - 1))}>Previous 5</button><b>Page {suggestionPage + 1} / {totalSuggestionPages}</b><button type="button" className="btn secondary compact" disabled={suggestionPage >= totalSuggestionPages - 1} onClick={() => setSuggestionPage(page => Math.min(totalSuggestionPages - 1, page + 1))}>Next 5</button></div></div>}
     </section>
 
     <section className="section-block">

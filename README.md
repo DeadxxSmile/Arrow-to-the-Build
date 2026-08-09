@@ -2,48 +2,72 @@
 
 > **I Used To Be Meta Like You, Then I Took An Arrow To The Build**
 
-**Arrow to the Build** is an offline-first Windows companion for **The Elder Scrolls Online**. It turns
-static build guides into character-specific progression plans: what to unlock next, which skill-line
-ranks matter, how to spend Champion Points, what gear to chase, and how the final hotbars and rotation
-fit together.
+**Arrow to the Build** is an offline-first Windows companion for **The Elder Scrolls Online**. It combines a character progression tracker with a full visual build editor so a static build guide becomes an actual plan for a specific character: what to unlock next, which skill-line ranks matter, how to spend Champion Points, what gear to chase, what belongs on each bar, and how the finished build fits together.
 
-ATTB is built with Electron, React, Vite, SQLite through `better-sqlite3`, and electron-builder/NSIS.
-Character data stays on the local computer. Build definitions are ordinary human-readable JSON files.
+ATTB keeps character and build data on your PC. There is no account system or cloud requirement, and build definitions remain human-readable JSON files.
 
-[Project website](https://deadxxsmile.github.io/Arrow-to-the-Build/) ·
-[Latest releases](https://github.com/DeadxxSmile/Arrow-to-the-Build/releases) ·
-[Source repository](https://github.com/DeadxxSmile/Arrow-to-the-Build) ·
-[ESO addon source](https://github.com/DeadxxSmile/Arrow-to-the-Build-ESO-Addon) ·
-[Report an issue](https://github.com/DeadxxSmile/Arrow-to-the-Build/issues) ·
+[![Latest Release](https://img.shields.io/github/v/release/DeadxxSmile/Arrow-to-the-Build)](https://github.com/DeadxxSmile/Arrow-to-the-Build/releases/latest)
+[![Platform](https://img.shields.io/badge/platform-Windows-lightgrey)](https://github.com/DeadxxSmile/Arrow-to-the-Build/releases/latest)
+[![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue.svg)](LICENSE)
+
+[Website](https://arrowtothebuild.com) ·
+[Latest Release](https://github.com/DeadxxSmile/Arrow-to-the-Build/releases/latest) ·
+[ESO Addon Source](https://github.com/DeadxxSmile/Arrow-to-the-Build-ESO-Addon) ·
+[Issues](https://github.com/DeadxxSmile/Arrow-to-the-Build/issues) ·
 [Buy Me a Coffee](https://buymeacoffee.com/deadx_xsmile) ·
-[Deadx_xSmile Linktree](https://linktr.ee/deadx_xsmile)
+[Deadx_xSmile](https://linktr.ee/deadx_xsmile)
 
-## Highlights
+---
 
-- Two remembered workspaces in one app: the Character Tracker and the Build Editor.
-- One bundled flexible PvE progression build for every ESO class: the **Mighty Seven**.
-- Character level, race, alliance, recorded attributes, three Champion Point budgets, skill-line ranks,
-  skills, morphs, passives, and ultimates.
-- Bundled **ESO companion addon 1.0.0** with first-launch setup, profile auto-detection, install/repair, SavedVariables synchronization, and explicit new-character discovery.
-- Per-field synced-data overrides for safe build testing, with one-click restoration to the latest live ESO value.
-- Dynamic next-purchase recommendations based on real prerequisites and entered line ranks.
-- A dedicated Champion Points workspace with required paths, recommended branches, optional
-  alternatives, and final slottable bars.
-- Numeric-only Current Levels entry for character level, attributes, CP totals, skill-line ranks, and
-  multi-rank passives.
-- Build-related versus personal Skill Point accounting.
-- Piece-by-piece equipment tracking across leveling, starter, intermediate, and final stages.
-- ESO-inspired front and back hotbars with structured rotations or priority systems.
-- Character backup import/export under the Character Tracker’s **Help & Tools**.
-- A dedicated **Build Editor** workspace with its own navigation, Build Library, creation entry points, offline Build Setup Guide, and build JSON import/export tools.
-- Dark and light themes, ESO Plus access notes, curated resources, and optional trusted remote images.
-- Local SQLite persistence with pre-migration backups, plus automatic human-readable JSON mirrors for every permanently saved user build.
-- A configurable user build folder that defaults to `Documents\Arrow to the Build\Builds`, with safe copy-before-switch behavior and external-change protection.
-- A narrow sandboxed Electron preload API.
+## What ATTB does
+
+ATTB is split into two remembered workspaces that share the same local character and build data.
+
+### Character Tracker
+
+The Character Tracker is the play-side workspace. It keeps the selected build beside the character's current ESO progress and answers the practical question: **what should I do next?**
+
+It can track:
+
+- character level, class, race, alliance, and attributes
+- Craft, Warfare, and Fitness Champion Point totals
+- skill-line ranks, purchased abilities, morphs, passives, and ultimates
+- build-required versus personal Skill Point spending
+- build-specific next-purchase recommendations based on prerequisites, current line ranks, and available Skill Points
+- leveling, starter, intermediate, and final equipment stages
+- front and back action bars plus rotations or priority systems
+- Champion Point paths, optional branches, and final slottables
+- combat-companion targets, equipment direction, traits, abilities, Ultimate, and playstyle notes
+- build variants and loadouts
+- character backups and restore
+
+Synced ESO values remain separate from the authored build target, so live character data never silently rewrites the build you are following.
+
+### Build Editor
+
+The Build Editor is the authoring workspace. It can create, fork, import, edit, validate, revise, and export complete ATTB builds without hand-editing JSON.
+
+Highlights include:
+
+- guided build creation and blank-build authoring
+- protected forks of bundled builds
+- autosave and recovery drafts
+- undo and redo
+- immutable saved revisions and revision comparison
+- visual editing for setup, class configuration, skills, progression phases, equipment, Champion Points, bars, rotations, companions, consumables, variants, and loadouts
+- Review & Save validation before a permanent build is written
+- automatic human-readable JSON mirrors for saved user builds
+- configurable user-build storage, defaulting to `Documents\Arrow to the Build\Builds`
+
+The visual editor and imported files use the same public **Schema 4** build format.
+
+---
 
 ## Bundled builds: the Mighty Seven
 
-| Class | Build |
+ATTB ships with one flexible PvE progression build for every ESO class.
+
+| Class | Bundled build |
 |---|---|
 | Arcanist | Stamina Arcanist Flexible PvE |
 | Dragonknight | Magicka Dragonknight Flexible PvE |
@@ -53,47 +77,138 @@ Character data stays on the local computer. Build definitions are ordinary human
 | Templar | Magicka Templar Flexible PvE |
 | Warden | Magicka Warden Flexible PvE |
 
-These are progression-oriented starting points, not claims that one loadout is perfect for every trial,
-dungeon, PvP campaign, or group composition. The frozen Update 50 buildcraft audit curates passive spending,
-weapon bars, Champion Points, Scribing recipes, gear-stage set counts, consumables, and practical alternatives
-so the bundle teaches coherent ESO builds rather than merely schema-valid JSON. Additional variants and
-community builds can be added through stable Schema 4 JSON. The Build Editor provides protected forks,
-recovery drafts, autosave, undo/redo, saved revisions, guided creation, and visual editors for the major Schema 4 sections.
+These are progression-oriented starting points rather than claims that one loadout is perfect for every dungeon, trial, PvP campaign, or group composition. They are intended to demonstrate complete, coherent ATTB builds while giving new and returning characters a practical route from leveling into permanent gear and Champion Point planning.
 
-Build research and attribution notes are in
-[`docs/reference/BUNDLED_BUILD_SOURCES.md`](docs/reference/BUNDLED_BUILD_SOURCES.md).
+Build research and attribution notes are kept in [`docs/maintenance/BUNDLED_BUILD_SOURCES.md`](docs/maintenance/BUNDLED_BUILD_SOURCES.md).
 
-## Install or build for Windows
+---
 
-### Install a published release
+## ESO addon and character synchronization
 
-1. Open the [latest releases](https://github.com/DeadxxSmile/Arrow-to-the-Build/releases) page.
+ATTB includes an optional local ESO addon named **ArrowToTheBuild**. The desktop app can install or repair it automatically; Minion or ESOUI installation is not required.
+
+The addon has one job: capture character state into ESO's normal SavedVariables system so the desktop app can read it.
+
+It can export:
+
+- character identity and level
+- attributes and available points
+- skill-line ranks
+- purchased abilities and morphs
+- passive ranks
+- current action bars
+- equipped gear
+- Champion Point investments and slotted Champion skills
+
+The integration uses one addon and one SavedVariables file:
+
+```text
+<Elder Scrolls Online profile>\AddOns\ArrowToTheBuild
+<Elder Scrolls Online profile>\SavedVariables\ArrowToTheBuild.lua
+```
+
+ATTB parses the SavedVariables file as restricted data and never executes it.
+
+### What the addon does not do
+
+The addon does **not**:
+
+- automate combat
+- spend Skill Points or Champion Points
+- equip gear
+- control the player
+- send commands from the desktop app back into ESO
+- upload character data to an ATTB server
+
+### SavedVariables timing
+
+ESO controls when addon SavedVariables are written to disk. The addon may already have newer information in memory while the physical Lua file is still unchanged.
+
+Loading screens, logout, game exit, and other ESO save opportunities may update the file naturally. When you want the desktop app to refresh immediately, **`/reloadui` is the reliable user-controlled method**.
+
+For installation, linking, refresh behavior, and troubleshooting, see [`ESO_ADDON_INTEGRATION.md`](docs/reference/ESO_ADDON_INTEGRATION.md).
+
+Standalone addon source is maintained separately at [Arrow-to-the-Build-ESO-Addon](https://github.com/DeadxxSmile/Arrow-to-the-Build-ESO-Addon).
+
+---
+
+## Combat companions
+
+ATTB includes all current ESO combat companions with two curated starter setups for each companion.
+
+A companion target can include:
+
+- role and playstyle
+- weapon type
+- armor weight
+- weapon, armor, and jewelry traits
+- equipment guidance
+- five abilities in priority order
+- Ultimate
+- notes and research source
+
+Companion targets can be selected per character in the Character Tracker or authored directly into Schema 4 builds in the Build Editor.
+
+---
+
+## Themes and interface
+
+ATTB includes four themes:
+
+- **ATTB Default** - dark navy/charcoal with bronze and muted cyan accents
+- **Deep Dark** - near-black with restrained green/cyan accents
+- **Light** - clean light surfaces using the same semantic layout system
+- **Old Scrolls** - ESO-site-inspired charcoal, black, and gold
+
+Themes change palette and surface treatment while keeping the same typography and layout metrics, so switching themes does not move labels, alter text wrapping, or change control geometry.
+
+---
+
+## Install on Windows
+
+### Published installer
+
+1. Open the [latest release](https://github.com/DeadxxSmile/Arrow-to-the-Build/releases/latest).
 2. Download `ATTB-Setup-<version>.exe` from the release assets.
-3. Run the installer.
+3. Exit ESO before upgrading if the game is running.
+4. Run the installer.
+5. Launch ATTB.
 
-ATTB does not update itself automatically. Installing a newer version keeps the local database and runs
-any required database migrations when the app starts. Exporting a character backup before an update is
-still a sensible precaution.
+Installing a newer version preserves the local database and applies any required database migrations at startup.
 
-### Requirements for building from source
+### Unsigned Windows warning
+
+ATTB is free and open source and the installer is currently unsigned. Windows may display **Unknown Publisher**, SmartScreen, or Smart App Control warnings.
+
+Only bypass a warning when the installer came from this repository or another source you trust.
+
+No additional runtime needs to be installed for the packaged application.
+
+---
+
+## Build from source
+
+### Requirements
 
 - Windows 10 or Windows 11
-- A current Node.js LTS installation with npm
-- Internet access during dependency installation and the optional build-time skill-icon download
+- a current Node.js LTS release with npm
+- internet access while installing dependencies and downloading optional ESO skill icons
 
-### One-step build
+### One-step Windows build
 
-1. Download or clone this repository.
-2. Open the repository folder.
-3. Run `BUILD-ATTB.bat`.
+Clone or download the repository, then run:
 
-The script:
+```bat
+BUILD-ATTB.bat
+```
 
-1. Installs the exact dependencies from `package-lock.json` with `npm ci`.
-2. Downloads available ESO skill icons from UESP into the local build cache. Missing icons keep ATTB's
-   initials fallback.
-3. Runs the complete test suite through Electron's embedded Node runtime.
-4. Builds the Vite renderer and creates the NSIS installer.
+The build script:
+
+1. installs the exact dependency versions from `package-lock.json`
+2. downloads available ESO skill icons into the local build cache
+3. runs the regression suite through Electron's embedded Node runtime
+4. builds the Vite renderer
+5. creates the NSIS Windows installer
 
 The finished installer is written to:
 
@@ -101,15 +216,9 @@ The finished installer is written to:
 dist\ATTB-Setup-<version>.exe
 ```
 
-The build script **does not launch the installer**.
+The build script does not launch the installer automatically.
 
-### Unsigned Windows warning
-
-ATTB is a free, open-source project and the installer is currently unsigned. Windows may display
-**Unknown Publisher**, SmartScreen, or Smart App Control warnings. Review the source and only bypass a
-warning when the files came from this repository or another source you trust.
-
-## Development
+### Development commands
 
 Install dependencies:
 
@@ -129,7 +238,7 @@ Run the test suite:
 npm test
 ```
 
-Build only the production renderer:
+Build only the renderer:
 
 ```powershell
 npm run build:renderer
@@ -147,33 +256,15 @@ Build the complete Windows package:
 npm run build
 ```
 
-Development mode stores `attb.db` in the repository root. The database and generated build folders are
-ignored by Git.
+Development mode stores `attb.db` in the repository root. Development database and generated build folders are ignored by Git.
 
-## ESO companion addon
-
-ATTB 2.0 bundles the stable **Arrow to the Build ESO Companion Addon 1.0.0**. The addon is optional and local-only: it does not automate combat, spend points, equip items, contact a server, or read data back from the desktop app. It exports observed character state through ESO's normal SavedVariables system.
-
-The integration deliberately uses two ESO addon components:
-
-- `ArrowToTheBuild` - the durable, fuller multi-character archive.
-- `ArrowToTheBuildBridge` - a deliberately small current-character bridge with a 32 KiB internal budget.
-
-Together they can provide the desktop app with character identity, level and attributes, available points, purchased skills and morphs, passive ranks, action bars, equipped gear, and Champion Point investments. The desktop keeps that observed **CURRENT** state separate from the authored **TARGET** build: synchronization never silently replaces the selected build, Build Notes, variants, recommendations, or future progression. Newly discovered characters always require approval before they are added or linked.
-
-ESO remains in control of when SavedVariables are serialized to disk. ATTB can capture a change in memory before the physical Lua file updates. Loading screens, logout, game exit, and other ESO save opportunities can refresh the files naturally; when the desktop looks stale, **`/reloadui` is the reliable on-demand refresh path**. ATTB intentionally does not promise an instant or fixed-minute synchronization interval.
-
-For the underlying ESO addon constraint, see the [ESOUI SavedVariables timing discussion](https://www.esoui.com/forums/showthread.php?t=8957) and [ESOUI data-storage reference](https://wiki.esoui.com/Storing_data_and_accessing_files).
-
-The desktop app can install/repair the bundled addon automatically. The standalone source, data-contract documentation, and manual-build tooling live in the dedicated repository:
-
-[**Arrow-to-the-Build-ESO-Addon on GitHub**](https://github.com/DeadxxSmile/Arrow-to-the-Build-ESO-Addon)
-
-Detailed desktop ownership, reconciliation, bridge-budget, and troubleshooting behavior is documented in [`ESO_ADDON_INTEGRATION.md`](docs/reference/ESO_ADDON_INTEGRATION.md).
+---
 
 ## Data, backups, and privacy
 
-The packaged app stores local data under:
+ATTB is local-first and has no account system.
+
+The packaged app stores application data under:
 
 ```text
 %LOCALAPPDATA%\ArrowToTheBuild
@@ -181,68 +272,47 @@ The packaged app stores local data under:
 
 Important locations include:
 
-- `attb.db`: active characters, builds, settings, addon snapshots, links, overrides, and progress
-- `Backups\`: automatic pre-migration database copies
-- `ImageCache\`: optional trusted remote build images
+- `attb.db` - characters, builds, settings, addon snapshots, links, overrides, and progress
+- `Backups\` - automatic pre-migration database copies
+- `ImageCache\` - optional cached images from trusted imported builds
 
-When addon synchronization is enabled, ATTB reads the local ESO profile selected by the user and can install two bundled ESO addon components:
-
-```text
-<Elder Scrolls Online profile>\AddOns\ArrowToTheBuild
-<Elder Scrolls Online profile>\AddOns\ArrowToTheBuildBridge
-```
-
-ESO writes the durable multi-character archive and a deliberately small current-character sync bridge to:
+Saved user builds default to:
 
 ```text
-<Elder Scrolls Online profile>\SavedVariables\ArrowToTheBuild.lua
-<Elder Scrolls Online profile>\SavedVariables\ArrowToTheBuildBridge.lua
+Documents\Arrow to the Build\Builds
 ```
 
-ATTB parses both files as restricted data and never executes them. The bridge is kept compact so ESO can use normal SavedVariables save opportunities without waiting for the much larger archive. ESO still controls when any addon data actually reaches disk, so `/reloadui` is the reliable way to force a fresh snapshot when the desktop looks stale. The first-enable screen explains this limitation and links to ZOS/ESOUI documentation. One ESO profile (`live`, `liveeu`, or `pts`) is active at a time. New characters are never added silently; the app can create a newly named editable build from the snapshot or attach an existing compatible-class build as the target.
+The build folder can be changed from the app. ATTB copies managed builds before switching and protects externally modified JSON from silent overwrites.
 
-ATTB has no account system and does not upload character data. External Help & Tools links open in the
-default browser. Remote build images are disabled by default and restricted to HTTPS, public network
-addresses, real image formats, and a five-megabyte limit.
+Remote build images are disabled by default. If enabled, ATTB restricts downloads to HTTPS, public network addresses, real image formats, and a five-megabyte size limit.
 
-Character backups are human-readable JSON files and include the selected build definition, profile,
-progression, gear completion, and notes. Importing and exporting is available under
-**Help & Tools → Character Backups**.
+Character backups are human-readable JSON and can be imported or exported from **Help & Tools -> Character Backups**.
 
-## Creating build JSON
+---
 
-ATTB 2.0 uses the stable public **build Schema 4**. Bundled, imported, manually authored, and visually authored files use the same format. Valid Schema 3 files are migrated automatically during import.
+## Build JSON and authoring docs
 
-### Start in the app
+ATTB uses the public **Schema 4** build format. Bundled builds, imported builds, visually authored builds, and manually edited files all use the same contract.
 
-Open **Build Editor → Build Setup Guide** for the complete offline documentation, and **Build Editor → Import / Export** to export a blank template, export any bundled or imported build as editable JSON, or import a finished build without developer tools. When forking a bundled build, assign the copy a new permanent `id` and name before importing it; bundled IDs are protected from replacement.
+Valid Schema 3 files can be normalized during import. Schema 1 and 2 were pre-release formats and are intentionally unsupported.
 
-The same source documents remain in the repository:
+Start inside the app with **Build Editor -> Build Setup Guide**. The same source documentation is available in the repository:
 
 | Task | Document |
 |---|---|
-| Understand how the app, editor, and JSON fit together | [`BUILD_QUICK_START.md`](docs/reference/BUILD_QUICK_START.md) |
-| Use every page of the visual Build Editor | [`BUILD_EDITOR_GUIDE.md`](docs/reference/BUILD_EDITOR_GUIDE.md) |
-| Hand-make or directly edit Schema 4 JSON | [`BUILD_JSON_GUIDE.md`](docs/reference/BUILD_JSON_GUIDE.md) |
-| Fix validation, draft, revision, or file-sync problems | [`BUILD_VALIDATION_GUIDE.md`](docs/reference/BUILD_VALIDATION_GUIDE.md) |
-| Copy a valid importable starting file | [`BUILD_TEMPLATE.json`](docs/reference/BUILD_TEMPLATE.json) |
+| Understand ATTB builds and JSON | [`BUILD_QUICK_START.md`](docs/reference/BUILD_QUICK_START.md) |
+| Use the visual Build Editor | [`BUILD_EDITOR_GUIDE.md`](docs/reference/BUILD_EDITOR_GUIDE.md) |
+| Hand-edit Schema 4 JSON | [`BUILD_JSON_GUIDE.md`](docs/reference/BUILD_JSON_GUIDE.md) |
+| Give an AI a complete ATTB authoring manual | [`ATTB_AI_BUILD_JSON_AUTHORING_GUIDE.md`](docs/reference/ATTB_AI_BUILD_JSON_AUTHORING_GUIDE.md) |
+| Troubleshoot validation and file sync | [`BUILD_VALIDATION_GUIDE.md`](docs/reference/BUILD_VALIDATION_GUIDE.md) |
+| Copy a blank importable build | [`BUILD_TEMPLATE.json`](docs/reference/BUILD_TEMPLATE.json) |
 | Read the compact Schema 4 contract | [`BUILD_FORMAT.md`](docs/reference/BUILD_FORMAT.md) |
 | Understand stable line and skill IDs | [`SKILL_CATALOG.md`](docs/reference/SKILL_CATALOG.md) |
-| Review the current ESO systems coverage audit | [`ESO_BUILD_SYSTEM_AUDIT.md`](docs/reference/ESO_BUILD_SYSTEM_AUDIT.md) |
-| Update the catalog and builds for an ESO patch | [`UPDATING_FOR_GAME_PATCHES.md`](docs/reference/UPDATING_FOR_GAME_PATCHES.md) |
-| Add editor validation and autocomplete | [`BUILD_SCHEMA.json`](docs/reference/BUILD_SCHEMA.json) |
-| Test the current app and Build Editor | [`TESTING.md`](docs/reference/TESTING.md) |
-| Understand the Build Editor architecture | [`BUILD_EDITOR_ARCHITECTURE.md`](docs/reference/BUILD_EDITOR_ARCHITECTURE.md) |
-| Install, test, and understand ESO addon synchronization | [`ESO_ADDON_INTEGRATION.md`](docs/reference/ESO_ADDON_INTEGRATION.md) |
-| Prepare and verify the 2.0 stable release | [`RELEASE_CHECKLIST.md`](docs/reference/RELEASE_CHECKLIST.md) |
-| Review dependency/security audit findings | [`DEPENDENCY_AUDIT.md`](docs/reference/DEPENDENCY_AUDIT.md) |
+| Install and troubleshoot ESO synchronization | [`ESO_ADDON_INTEGRATION.md`](docs/reference/ESO_ADDON_INTEGRATION.md) |
 
-The seven files in [`resources/builds/`](resources/builds/) are complete working examples. The format
-supports profile recommendations, setup help, build concepts, catalog-linked unlocks, progression
-phases, structured hotbars, rotations, piece-by-piece gear, Champion Point paths, consumables, tips,
-exact Scribing recipes, pure-class or subclass configurations, complete named loadouts, validated variants, quickslots, transformations, companions, performance notes, and namespaced extension data.
+Maintainer audits, testing notes, patch-update procedures, architecture notes, and release checklists live under [`docs/maintenance/`](docs/maintenance/) rather than being mixed into the user-facing reference material.
 
-Schema 1 and 2 were pre-release formats and are intentionally unsupported. Schema 3 is accepted and normalized to Schema 4; exports always use Schema 4.
+---
 
 ## Repository layout
 
@@ -251,60 +321,56 @@ ATTB/
 ├── BUILD-ATTB.bat
 ├── LICENSE
 ├── README.md
-├── docs/                  GitHub Pages site and technical references
-├── public/                Vite public assets and generated skill-icon cache
-├── resources/             Bundled builds, catalog, artwork, icons, and tested ESO addon
+├── docs/                  Website, user references, and maintainer notes
+├── public/                Vite assets and generated skill-icon cache
+├── resources/             Bundled builds, catalogs, artwork, and ESO addon
 ├── src/                   Electron main process, shared logic, and React renderer
-├── tests/                 Node/Electron regression suite
-├── tools/                 Catalog generator, icon fetcher, and test launcher
+├── tests/                 Regression suite
+├── tools/                 Catalog, icon, and test tooling
 ├── package.json
 └── vite.config.js
 ```
 
-## Security and issue reporting
+---
 
-Report reproducible bugs through
-[GitHub Issues](https://github.com/DeadxxSmile/Arrow-to-the-Build/issues). For a security-sensitive
-issue, avoid posting private character backups, local paths, or exploit details publicly; contact the
-repository owner through the profile information on GitHub first.
+## Reporting issues
 
-Useful diagnostic information includes:
+Report reproducible bugs through [GitHub Issues](https://github.com/DeadxxSmile/Arrow-to-the-Build/issues).
+
+Useful information includes:
 
 - ATTB version
 - Windows version
 - whether the issue occurs in development, packaged, or both
-- the first relevant console error and stack trace
 - exact steps to reproduce
+- the first relevant console error or stack trace
 
-Do not include passwords, authentication tokens, private build files, or unredacted personal paths.
+Do not include passwords, authentication tokens, private build files, or unredacted personal file paths.
+
+For security-sensitive issues, avoid posting exploit details or private data publicly; contact the repository owner through the GitHub profile first.
+
+---
 
 ## Contributing
 
 Contributions are welcome. Before submitting a pull request:
 
 1. Keep the app offline-first and build definitions human-readable.
-2. Use stable catalog IDs rather than free-form skill names.
-3. Run `npm test` and `npm run build:renderer`.
-4. Document new build sources and access requirements.
-5. Do not add copyrighted artwork unless redistribution is permitted.
+2. Use stable catalog IDs instead of free-form skill names.
+3. Keep theme-facing colors inside the shared theme palette rather than hardcoding them into components.
+4. Run `npm test` and `npm run build:renderer`.
+5. Document new build sources and access requirements.
+6. Do not add copyrighted artwork unless redistribution is permitted.
 
-## Support and creator links
+---
 
-ATTB is free and open source. To support continued development, use
-[Buy Me a Coffee](https://buymeacoffee.com/deadx_xsmile). Other Deadx_xSmile channels and profiles are
-collected on [Linktree](https://linktr.ee/deadx_xsmile).
+## Support
 
-## Current stable release
+ATTB is free and open source.
 
-**v2.0.0** is the stable major release of Arrow to the Build. It completes the shift from the original character checklist into a two-workspace **Character Tracker + Build Editor** with local ESO character synchronization.
+If you want to support continued development, use [Buy Me a Coffee](https://buymeacoffee.com/deadx_xsmile). Other Deadx_xSmile channels and profiles are collected on [Linktree](https://linktr.ee/deadx_xsmile).
 
-The 2.0 release includes guided and advanced Schema 4 authoring, protected recovery drafts and immutable revisions, autosave and undo/redo, local JSON mirroring, seven manually audited Update 50 starter builds, CURRENT-vs-TARGET character comparison, Create Build from Character, Adapt Build to Character, portable Build Notes, synchronized equipment/action bars/Champion Points, and the stable **ESO Companion Addon 1.0.0**.
-
-Release notes: [`RELEASE_NOTES_2.0.0.md`](RELEASE_NOTES_2.0.0.md)
-
-The ESO integration remains intentionally split into `ArrowToTheBuild` (durable archive) and `ArrowToTheBuildBridge` (small current-character bridge), both at **1.0.0**. ESO controls when SavedVariables reach disk; `/reloadui` remains the reliable user-controlled refresh path.
-
-For final regression and upgrade checks, see [`TESTING.md`](docs/reference/TESTING.md) and [`RELEASE_CHECKLIST.md`](docs/reference/RELEASE_CHECKLIST.md). For build creation and authoring, start with [`BUILD_QUICK_START.md`](docs/reference/BUILD_QUICK_START.md).
+---
 
 ## License and game disclaimer
 
@@ -312,7 +378,4 @@ Copyright © 2026 DeadxxSmile.
 
 ATTB is licensed under the **GNU General Public License v3.0 only**. See [`LICENSE`](LICENSE).
 
-Arrow to the Build is an unofficial community project. It is not affiliated with, endorsed by, or
-sponsored by ZeniMax Media, Bethesda Softworks, or The Elder Scrolls Online. All game names, marks, and
-game artwork belong to their respective owners. Skill icons downloaded by the build helper remain
-third-party game assets and are not covered by ATTB's GPL license.
+Arrow to the Build is an unofficial community project. It is not affiliated with, endorsed by, or sponsored by ZeniMax Media, Bethesda Softworks, or The Elder Scrolls Online. All game names, marks, and game artwork belong to their respective owners. Skill icons downloaded by the build helper remain third-party game assets and are not covered by ATTB's GPL license.

@@ -14,9 +14,9 @@ export default function BuildSetupGuidePage() {
 
   return <div className="page build-setup-page">
     <div className="page-title">
-      <span className="eyebrow">Build Editor documentation</span>
-      <h1>Build Setup Guide</h1>
-      <p>Learn the visual Build Editor, hand-author Schema 4 JSON, search the exact bundled skill IDs, troubleshoot validation, and maintain builds across ESO patches.</p>
+      <span className="eyebrow">Helpful stuff</span>
+      <h1>ATTB Guides</h1>
+      <p>Learn the app and Build Editor, hand-author Schema 4 JSON, give the bundled AI guide to an assistant, troubleshoot validation, and understand ESO addon synchronization.</p>
     </div>
     {notice && <div className="notice-banner" role="status">{notice}</div>}
     <BuildSetupGuide flash={flash} />

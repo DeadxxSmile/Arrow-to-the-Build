@@ -96,33 +96,6 @@ function fixture({ dualDaggers = false } = {}) {
 }
 
 
-function bridgeFixture({ key, id, name = 'Talia Test', level = 23, capturedAt = 1786067000, truncated = false, dualDaggers = false } = {}) {
-  return `ArrowToTheBuildBridgeSavedVariables = {
-    ["schemaVersion"] = 2, ["revision"] = 3, ["addonVersion"] = "0.1.0-alpha.6", ["apiVersion"] = 101050,
-    ["capturedAt"] = ${capturedAt}, ["captureReason"] = "level-changed", ["characterKey"] = "${key}",
-    ["capturedSections"] = { [1] = "identity", [2] = "skills", [3] = "equipment", [4] = "champion" },
-    ["estimatedBytes"] = 8192, ["budgetBytes"] = 32768, ["budgetStatus"] = "${truncated ? 'truncated' : 'ok'}",
-    ["truncated"] = ${truncated ? 'true' : 'false'},
-    ["reducedFields"] = {}, ["droppedSections"] = ${truncated ? '{ [1] = "equipment" }' : '{}'},
-    ["character"] = {
-      ["identity"] = "@Tester\\tNA Megaserver\\t${id}\\t${name}\\t117\\tArcanist\\t4\\tDark Elf\\t2\\tEbonheart Pact\\t${level}\\t0\\t209\\t0\\t7\\t0\\t0\\t27",
-      ["skills"] = {
-        ["activeWeaponPair"] = "1\\t0",
-        ["lines"] = "1\\t218\\t30",
-        ["abilities"] = "218\\t185794\\t534\\t4\\t0\\t\\t0\\n218\\t184847\\t0\\t2\\t0\\t2\\t1",
-        ["actionBars"] = "0\\t1\\t185794\\t1\\t0\\t185794\\t534\\t218\\t0\\t4\\n0\\t2\\t0\\t0\\t0\\t\\t\\t\\t\\t"
-      },
-      ["equipment"] = ${truncated ? '""' : dualDaggers ? '"4\t102035\tMatched Dagger\t3\t22\t0\t1\t2\t0\t11\t15\t0\t\tFlame\n5\t102035\tMatched Dagger\t3\t22\t0\t1\t2\t0\t11\t15\t0\t\tFlame"' : '"0\t99999\tBridge Test Helm\t3\t22\t0\t1\t2\t3\t0\t15\t281\tArmor of the Trainee\tMaximum Stamina Enchantment"'},
-      ["champion"] = {
-        ["totalEarned"] = 209,
-        ["disciplines"] = "3\\t70\\t0\\n1\\t70\\t0\\n2\\t69\\t0",
-        ["stars"] = "",
-        ["slots"] = ""
-      }
-    }
-  }`
-}
-
 function freshApp() {
   addonIntegration.stopWatching()
   dbModule.close()
@@ -154,12 +127,10 @@ test('the app installs the addon, discovers characters, links builds, syncs, and
   const configured = await ipc.call('addon:configure', { mode: 'install', profileRoot: profile, autoDetect: false })
   assert.equal(configured.enabled, true)
   assert.equal(configured.addon_installed, true)
-  assert.equal(configured.installed_version, '1.0.0')
-  assert.equal(configured.bridge_installed, true)
-  assert.equal(configured.bridge_installed_version, '1.0.0')
+  assert.equal(configured.installed_version, '1.1.0')
   assert.equal(configured.snapshot_count, 2)
   assert.ok(fs.existsSync(path.join(profile, 'AddOns', 'ArrowToTheBuild', 'ArrowToTheBuild.txt')))
-  assert.ok(fs.existsSync(path.join(profile, 'AddOns', 'ArrowToTheBuildBridge', 'ArrowToTheBuildBridge.txt')))
+  assert.equal(fs.existsSync(path.join(profile, 'AddOns', 'ArrowToTheBuildBridge')), false)
 
   const discovered = ipc.call('addon:listDiscovered')
   assert.equal(discovered.length, 2)
@@ -207,27 +178,63 @@ test('the app installs the addon, discovers characters, links builds, syncs, and
 })
 
 
-test('the small bridge updates a linked character before the full archive changes', async () => {
+test('a dismissed addon snapshot can be linked to an existing manual character and managed afterward', async () => {
   const { ipc, profile } = freshApp()
+  const manualId = ipc.call('characters:create', { name: 'Existing Manual Arcanist', build_id: 'stamina_arcanist_solo_duo', level: 1 })
   const sample = fixture()
   fs.writeFileSync(path.join(profile, 'SavedVariables', 'ArrowToTheBuild.lua'), sample.text)
+  await ipc.call('addon:configure', { mode: 'install', profileRoot: profile, autoDetect: false })
+
+  ipc.call('addon:dismissCharacter', sample.bKey)
+  let rows = ipc.call('addon:listSnapshots')
+  let snapshot = rows.find(item => item.character_key === sample.bKey)
+  assert.equal(snapshot.discovery_status, 'dismissed')
+  assert.equal(snapshot.linked, false)
+
+  const linked = ipc.call('addon:importCharacter', sample.bKey, { link_character_id: manualId })
+  assert.equal(linked.id, manualId)
+  rows = ipc.call('addon:listSnapshots')
+  snapshot = rows.find(item => item.character_key === sample.bKey)
+  assert.equal(snapshot.discovery_status, 'linked')
+  assert.equal(snapshot.linked, true)
+  assert.equal(snapshot.linked_character_id, manualId)
+  assert.equal(snapshot.linked_build_id, 'stamina_arcanist_solo_duo')
+  assert.equal(ipc.call('characters:get', manualId).addon_sync.linked, true)
+
+  ipc.call('addon:unlinkCharacter', manualId)
+  rows = ipc.call('addon:listSnapshots')
+  snapshot = rows.find(item => item.character_key === sample.bKey)
+  assert.equal(snapshot.discovery_status, 'dismissed')
+  assert.equal(snapshot.linked, false)
+
+  ipc.call('addon:rediscoverDismissed')
+  rows = ipc.call('addon:listSnapshots')
+  snapshot = rows.find(item => item.character_key === sample.bKey)
+  assert.equal(snapshot.discovery_status, 'new')
+})
+
+
+test('a newer archive snapshot updates a linked character from the single SavedVariables source', async () => {
+  const { ipc, profile } = freshApp()
+  const sample = fixture()
+  const savePath = path.join(profile, 'SavedVariables', 'ArrowToTheBuild.lua')
+  fs.writeFileSync(savePath, sample.text)
   await ipc.call('addon:configure', { mode: 'install', profileRoot: profile, autoDetect: false })
   const created = ipc.call('addon:importCharacter', sample.aKey, { build_id: 'stamina_arcanist_solo_duo' })
   assert.equal(ipc.call('characters:get', created.id).level, 22)
 
-  const bridgePath = path.join(profile, 'SavedVariables', 'ArrowToTheBuildBridge.lua')
-  fs.writeFileSync(bridgePath, bridgeFixture({ key: sample.aKey, id: '1111111111111111' }))
+  const newer = `ArrowToTheBuildSavedVariables = {
+    ["schemaVersion"] = 1, ["revision"] = 13, ["addonVersion"] = "1.1.0", ["apiVersion"] = 101050,
+    ["characters"] = { ${luaCharacter({ key: sample.aKey, id: '1111111111111111', name: 'Talia Test', level: 23, capturedAt: 1786067000 })} }
+  }`
+  fs.writeFileSync(savePath, newer)
   const status = await ipc.call('addon:syncNow')
-  assert.equal(status.bridge_saved_variables_found, true)
-  assert.equal(status.bridge_last_revision, 3)
-  assert.equal(status.bridge_within_normal_save_limit, true)
+  assert.equal(status.last_revision, 13)
+  assert.equal(status.saved_variables_found, true)
 
   const character = ipc.call('characters:get', created.id)
   assert.equal(character.level, 23)
-  assert.equal(character.actual_unspent_skill_points, 7)
-  assert.equal(character.skill_ranks.herald, 30)
-  assert.equal(character.addon_sync.observed.equipment.items[0].name, 'Bridge Test Helm')
-  assert.equal(character.addon_sync.observed.skills.actionBars[0].slots[0].matchMethod, 'progression-id')
+  assert.equal(character.addon_sync.observed.skills.actionBars[0].slots[0].progressionId, 534)
 })
 
 test('identical dual-wield item IDs keep their own slots and can be adapted without duplicate piece IDs', async () => {
@@ -237,13 +244,9 @@ test('identical dual-wield item IDs keep their own slots and can be adapted with
   await ipc.call('addon:configure', { mode: 'install', profileRoot: profile, autoDetect: false })
   const created = ipc.call('addon:importCharacter', sample.aKey, { build_id: 'stamina_arcanist_solo_duo' })
 
-  const bridgePath = path.join(profile, 'SavedVariables', 'ArrowToTheBuildBridge.lua')
-  fs.writeFileSync(bridgePath, bridgeFixture({ key: sample.aKey, id: '1111111111111111', dualDaggers: true }))
-  await ipc.call('addon:syncNow')
-
   const character = ipc.call('characters:get', created.id)
   const weapons = character.addon_sync.observed.equipment.items.filter(item => item.itemId === 102035)
-  assert.deepEqual(weapons.map(item => item.slotName), ['Front Main Hand', 'Front Off Hand'], 'same-item dual wield must enrich metadata by equip slot, not by item ID')
+  assert.deepEqual(weapons.map(item => item.slotName), ['Front Main Hand', 'Front Off Hand'], 'same-item dual wield must preserve distinct equipped slots')
 
   const draft = ipc.call('builds:adaptFromCharacter', created.id, 'stamina_arcanist_solo_duo', '', 'Test Author')
   const pieces = draft.data.gear_stages[0].sets[0].pieces.filter(piece => piece.item_id === 102035)
@@ -276,24 +279,47 @@ test('only the active ESO profile contributes discovery and status counts', asyn
   assert.equal(ipc.call('addon:listDiscovered').length, 0)
 })
 
-test('install and repair preserves a newer companion addon', async () => {
+test('the bridge-to-single-addon cleanup removes both old addon states and installs a fresh bundled addon', async () => {
   const { ipc, profile } = freshApp()
   const installed = path.join(profile, 'AddOns', 'ArrowToTheBuild')
   fs.mkdirSync(installed, { recursive: true })
-  fs.writeFileSync(path.join(installed, 'ArrowToTheBuild.txt'), '## Title: Arrow to the Build\n## Version: 1.1.0\n')
+  fs.writeFileSync(path.join(installed, 'ArrowToTheBuild.txt'), '## Title: Arrow to the Build\n## Version: 1.0.0\n## SavedVariables: ArrowToTheBuildSavedVariables\n')
+
+  const retired = path.join(profile, 'AddOns', 'ArrowToTheBuildBridge')
+  fs.mkdirSync(retired, { recursive: true })
+  fs.writeFileSync(path.join(retired, 'ArrowToTheBuildBridge.txt'), '## Title: Arrow to the Build - Sync Bridge\n## SavedVariables: ArrowToTheBuildBridgeSavedVariables\n')
+  const oldBridgeSave = path.join(profile, 'SavedVariables', 'ArrowToTheBuildBridge.lua')
+  const oldMainSave = path.join(profile, 'SavedVariables', 'ArrowToTheBuild.lua')
+  fs.writeFileSync(oldBridgeSave, 'ArrowToTheBuildBridgeSavedVariables={}')
+  fs.writeFileSync(oldMainSave, fixture().text)
+
+  const cleaned = addonIntegration.runPostUpdateAddonCleanup()
+  assert.equal(cleaned.length, 1)
+  assert.equal(cleaned[0].reinstalled, true)
+  assert.equal(fs.existsSync(retired), false, 'verified legacy bridge addon folder should be removed')
+  assert.equal(fs.existsSync(oldBridgeSave), false, 'legacy bridge SavedVariables should be removed for the clean transition')
+  assert.equal(fs.existsSync(oldMainSave), false, 'old main SavedVariables should be removed for the clean transition')
+  assert.match(fs.readFileSync(path.join(installed, 'ArrowToTheBuild.txt'), 'utf8'), /## Version: 1\.1\.0/)
+
+  fs.writeFileSync(oldMainSave, 'ArrowToTheBuildSavedVariables={schemaVersion=1,revision=1,characters={}}')
+  assert.deepEqual(addonIntegration.runPostUpdateAddonCleanup(), [], 'the first-run cleanup must not repeat after its marker is stored')
+  assert.equal(fs.existsSync(oldMainSave), true, 'a later fresh save must survive subsequent app launches')
+
+  const configured = await ipc.call('addon:configure', { mode: 'existing', profileRoot: profile, autoDetect: false })
+  assert.equal(configured.installed_version, '1.1.0')
+  assert.equal(configured.retired_bridge_installed, false)
+})
+
+test('bridge retirement refuses to delete an unrecognized addon folder with the old name', async () => {
+  const { ipc, profile } = freshApp()
+  const suspicious = path.join(profile, 'AddOns', 'ArrowToTheBuildBridge')
+  fs.mkdirSync(suspicious, { recursive: true })
+  fs.writeFileSync(path.join(suspicious, 'ArrowToTheBuildBridge.txt'), '## Title: Somebody Else\n## SavedVariables: OtherData\n')
   const sample = fixture()
   fs.writeFileSync(path.join(profile, 'SavedVariables', 'ArrowToTheBuild.lua'), sample.text)
-
-  const configured = await ipc.call('addon:configure', { mode: 'install', profileRoot: profile, autoDetect: false })
-  assert.equal(configured.installed_version, '1.1.0')
-  assert.equal(configured.addon_newer_than_bundled, true)
-  const result = ipc.call('addon:install')
-  assert.equal(result.main.skipped, true)
-  assert.equal(result.main.reason, 'newer-installed')
-  assert.equal(result.bridge.skipped, false)
-  assert.equal(result.bridge.version, '1.0.0')
-  assert.match(fs.readFileSync(path.join(installed, 'ArrowToTheBuild.txt'), 'utf8'), /1.1.0/)
-  assert.ok(fs.existsSync(path.join(profile, 'AddOns', 'ArrowToTheBuildBridge', 'ArrowToTheBuildBridge.txt')))
+  await ipc.call('addon:configure', { mode: 'install', profileRoot: profile, autoDetect: false })
+  assert.equal(fs.existsSync(suspicious), true)
+  assert.equal(ipc.call('addon:getStatus').retired_bridge_installed, false)
 })
 
 

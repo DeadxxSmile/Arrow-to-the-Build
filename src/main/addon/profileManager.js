@@ -4,8 +4,7 @@ const fs = require('fs')
 const path = require('path')
 const { app, dialog } = require('electron')
 const {
-  PROFILE_NAMES, BUNDLED_ADDON_VERSION, ADDON_FOLDER, BRIDGE_ADDON_FOLDER,
-  SAVED_VARIABLES_FILE, BRIDGE_SAVED_VARIABLES_FILE
+  PROFILE_NAMES, BUNDLED_ADDON_VERSION, ADDON_FOLDER, RETIRED_BRIDGE_FOLDER, SAVED_VARIABLES_FILE, RETIRED_BRIDGE_SAVED_VARIABLES_FILE
 } = require('./addonConstants')
 
 function bundledAddonRoot() {
@@ -13,23 +12,27 @@ function bundledAddonRoot() {
     ? path.join(process.resourcesPath, 'attb-addon')
     : path.join(app.getAppPath(), 'resources', 'addon')
 }
-function bundledAddonPath(folder = ADDON_FOLDER) { return path.join(bundledAddonRoot(), folder) }
+function bundledAddonPath() { return path.join(bundledAddonRoot(), ADDON_FOLDER) }
 function addonsPath(profileRoot) { return path.join(profileRoot, 'AddOns') }
-function installedAddonPath(profileRoot, folder = ADDON_FOLDER) { return path.join(addonsPath(profileRoot), folder) }
+function installedAddonPath(profileRoot) { return path.join(addonsPath(profileRoot), ADDON_FOLDER) }
+function retiredBridgeAddonPath(profileRoot) { return path.join(addonsPath(profileRoot), RETIRED_BRIDGE_FOLDER) }
 function savedVariablesPath(profileRoot) { return path.join(profileRoot, 'SavedVariables', SAVED_VARIABLES_FILE) }
-function bridgeSavedVariablesPath(profileRoot) { return path.join(profileRoot, 'SavedVariables', BRIDGE_SAVED_VARIABLES_FILE) }
+function retiredBridgeSavedVariablesPath(profileRoot) { return path.join(profileRoot, 'SavedVariables', RETIRED_BRIDGE_SAVED_VARIABLES_FILE) }
 
 function normalizeProfileSelection(selected) {
   if (!selected) return ''
   let target = path.resolve(selected)
   let base = path.basename(target).toLowerCase()
-  if (base === ADDON_FOLDER.toLowerCase() || base === BRIDGE_ADDON_FOLDER.toLowerCase()) target = path.dirname(path.dirname(target))
+  if (base === ADDON_FOLDER.toLowerCase() || base === RETIRED_BRIDGE_FOLDER.toLowerCase()) target = path.dirname(path.dirname(target))
   else if (base === 'addons' || base === 'savedvariables') target = path.dirname(target)
   base = path.basename(target).toLowerCase()
   if (!PROFILE_NAMES.includes(base) && fs.existsSync(target)) {
     const children = PROFILE_NAMES.map(name => path.join(target, name)).filter(candidate => fs.existsSync(candidate))
     if (children.length === 1) target = children[0]
-    else if (children.some(candidate => path.basename(candidate).toLowerCase() === 'live')) target = children.find(candidate => path.basename(candidate).toLowerCase() === 'live')
+    else {
+      const live = children.find(candidate => path.basename(candidate).toLowerCase() === 'live')
+      if (live) target = live
+    }
   }
   return target
 }
@@ -56,8 +59,8 @@ function candidateRoots() {
     if (!base) continue
     for (const profile of PROFILE_NAMES) add(path.join(base, 'Documents', 'Elder Scrolls Online', profile))
   }
-  const score = root => fs.existsSync(path.join(root, 'AddOns', ADDON_FOLDER, 'ArrowToTheBuild.txt')) && fs.existsSync(path.join(root, 'AddOns', BRIDGE_ADDON_FOLDER, 'ArrowToTheBuildBridge.txt')) ? 0
-    : fs.existsSync(savedVariablesPath(root)) || fs.existsSync(bridgeSavedVariablesPath(root)) ? 1
+  const score = root => fs.existsSync(path.join(root, 'AddOns', ADDON_FOLDER, 'ArrowToTheBuild.txt')) ? 0
+    : fs.existsSync(savedVariablesPath(root)) ? 1
       : fs.existsSync(path.join(root, 'AddOns')) ? 2 : 3
   return roots.sort((a, b) => score(a) - score(b) || PROFILE_NAMES.indexOf(path.basename(a).toLowerCase()) - PROFILE_NAMES.indexOf(path.basename(b).toLowerCase()))
 }
@@ -75,10 +78,7 @@ async function chooseProfileRoot(parentWindow = null) {
   return root
 }
 
-function versionParts(value) {
-  return String(value || '').match(/\d+/g)?.map(Number) || []
-}
-
+function versionParts(value) { return String(value || '').match(/\d+/g)?.map(Number) || [] }
 function compareVersions(a, b) {
   const left = versionParts(a)
   const right = versionParts(b)
@@ -92,8 +92,7 @@ function compareVersions(a, b) {
 
 function manifestVersion(file) {
   if (!fs.existsSync(file)) return ''
-  const text = fs.readFileSync(file, 'utf8')
-  return text.match(/^##\s*Version:\s*(.+)$/mi)?.[1]?.trim() || ''
+  return fs.readFileSync(file, 'utf8').match(/^##\s*Version:\s*(.+)$/mi)?.[1]?.trim() || ''
 }
 
 function copyDirectory(source, destination) {
@@ -107,62 +106,126 @@ function copyDirectory(source, destination) {
   }
 }
 
-function installAddonComponent(profileRoot, { folder, manifest, force = false } = {}) {
-  const root = normalizeProfileSelection(profileRoot)
-  const destination = installedAddonPath(root, folder)
-  const destinationManifest = path.join(destination, manifest)
-  const installedVersion = manifestVersion(destinationManifest)
-  if (!force && installedVersion && compareVersions(installedVersion, BUNDLED_ADDON_VERSION) > 0) {
-    return { folder, path: destination, version: installedVersion, skipped: true, reason: 'newer-installed' }
-  }
+function isLegacyBridge(profileRoot) {
+  const manifest = path.join(retiredBridgeAddonPath(profileRoot), 'ArrowToTheBuildBridge.txt')
+  if (!fs.existsSync(manifest)) return false
+  const text = fs.readFileSync(manifest, 'utf8')
+  return /^##\s*Title:\s*Arrow to the Build - Sync Bridge\s*$/mi.test(text)
+    && /^##\s*SavedVariables:\s*ArrowToTheBuildBridgeSavedVariables\s*$/mi.test(text)
+}
 
-  const temp = `${destination}.attb-installing`
-  const backup = `${destination}.attb-backup`
-  fs.rmSync(temp, { recursive: true, force: true })
-  fs.rmSync(backup, { recursive: true, force: true })
-  copyDirectory(bundledAddonPath(folder), temp)
-  if (!fs.existsSync(path.join(temp, manifest))) {
-    fs.rmSync(temp, { recursive: true, force: true })
-    throw new Error(`The bundled ${folder} manifest could not be copied.`)
-  }
 
-  let backedUp = false
+function isManagedAddon(profileRoot) {
+  const manifest = path.join(installedAddonPath(profileRoot), 'ArrowToTheBuild.txt')
+  if (!fs.existsSync(manifest)) return false
+  const text = fs.readFileSync(manifest, 'utf8')
+  return /^##\s*Title:\s*Arrow to the Build\s*$/mi.test(text)
+    && /^##\s*SavedVariables:\s*ArrowToTheBuildSavedVariables\s*$/mi.test(text)
+}
+
+function isLegacyBridgeSavedVariables(profileRoot) {
+  const file = retiredBridgeSavedVariablesPath(profileRoot)
+  if (!fs.existsSync(file)) return false
   try {
-    if (fs.existsSync(destination)) {
-      fs.renameSync(destination, backup)
-      backedUp = true
-    }
-    fs.renameSync(temp, destination)
-    fs.rmSync(backup, { recursive: true, force: true })
-  } catch (error) {
-    fs.rmSync(temp, { recursive: true, force: true })
-    if (!fs.existsSync(destination) && backedUp && fs.existsSync(backup)) {
-      try { fs.renameSync(backup, destination) } catch { }
-    }
-    throw new Error(`ATTB could not install ${folder} safely: ${error.message || error}`)
+    return /\bArrowToTheBuildBridgeSavedVariables\s*=/.test(fs.readFileSync(file, 'utf8'))
+  } catch {
+    return false
   }
-  return { folder, path: destination, version: manifestVersion(destinationManifest) || BUNDLED_ADDON_VERSION, skipped: false }
+}
+
+function hasLegacyBridgeArtifacts(profileRoot) {
+  return isLegacyBridge(profileRoot) || isLegacyBridgeSavedVariables(profileRoot)
+}
+
+function retireLegacyBridge(profileRoot) {
+  if (!isLegacyBridge(profileRoot)) return false
+  fs.rmSync(retiredBridgeAddonPath(profileRoot), { recursive: true, force: true })
+  return true
+}
+
+
+function resetLegacyBridgeInstall(profileRoot) {
+  const root = normalizeProfileSelection(profileRoot)
+  if (!isProfileRoot(root)) return { found: false, reinstalled: false }
+
+  const bridgeFolderOwned = isLegacyBridge(root)
+  const bridgeSaveOwned = isLegacyBridgeSavedVariables(root)
+  if (!bridgeFolderOwned && !bridgeSaveOwned) return { found: false, reinstalled: false }
+
+  const mainFolder = installedAddonPath(root)
+  if (fs.existsSync(mainFolder) && !isManagedAddon(root)) {
+    throw new Error(`ATTB found legacy bridge data in ${root}, but the ${ADDON_FOLDER} folder is not recognized as an ATTB addon. It was left untouched.`)
+  }
+
+  if (bridgeFolderOwned) fs.rmSync(retiredBridgeAddonPath(root), { recursive: true, force: true })
+  fs.rmSync(retiredBridgeSavedVariablesPath(root), { force: true })
+  fs.rmSync(savedVariablesPath(root), { force: true })
+  if (fs.existsSync(mainFolder)) fs.rmSync(mainFolder, { recursive: true, force: true })
+
+  const installed = installAddon(root, { force: true })
+  return {
+    found: true,
+    reinstalled: true,
+    profile_root: root,
+    bridge_folder_removed: bridgeFolderOwned,
+    bridge_saved_variables_removed: bridgeSaveOwned,
+    main_saved_variables_removed: true,
+    installed_version: installed.version
+  }
 }
 
 function installAddon(profileRoot, { force = false } = {}) {
   const root = normalizeProfileSelection(profileRoot)
   if (!isProfileRoot(root)) throw new Error('The configured ESO profile folder is not valid.')
   fs.mkdirSync(addonsPath(root), { recursive: true })
-  const main = installAddonComponent(root, { folder: ADDON_FOLDER, manifest: 'ArrowToTheBuild.txt', force })
-  const bridge = installAddonComponent(root, { folder: BRIDGE_ADDON_FOLDER, manifest: 'ArrowToTheBuildBridge.txt', force })
+
+  const destination = installedAddonPath(root)
+  const destinationManifest = path.join(destination, 'ArrowToTheBuild.txt')
+  const installedVersion = manifestVersion(destinationManifest)
+  let skipped = false
+
+  if (!force && installedVersion && compareVersions(installedVersion, BUNDLED_ADDON_VERSION) > 0) {
+    skipped = true
+  } else {
+    const temp = `${destination}.attb-installing`
+    const backup = `${destination}.attb-backup`
+    fs.rmSync(temp, { recursive: true, force: true })
+    fs.rmSync(backup, { recursive: true, force: true })
+    copyDirectory(bundledAddonPath(), temp)
+    if (!fs.existsSync(path.join(temp, 'ArrowToTheBuild.txt'))) {
+      fs.rmSync(temp, { recursive: true, force: true })
+      throw new Error('The bundled ArrowToTheBuild manifest could not be copied.')
+    }
+
+    let backedUp = false
+    try {
+      if (fs.existsSync(destination)) {
+        fs.renameSync(destination, backup)
+        backedUp = true
+      }
+      fs.renameSync(temp, destination)
+      fs.rmSync(backup, { recursive: true, force: true })
+    } catch (error) {
+      fs.rmSync(temp, { recursive: true, force: true })
+      if (!fs.existsSync(destination) && backedUp && fs.existsSync(backup)) {
+        try { fs.renameSync(backup, destination) } catch { }
+      }
+      throw new Error(`ATTB could not install ${ADDON_FOLDER} safely: ${error.message || error}`)
+    }
+  }
+
+  const retiredBridgeRemoved = retireLegacyBridge(root)
   return {
-    path: main.path,
-    version: main.version,
-    skipped: main.skipped && bridge.skipped,
-    main,
-    bridge,
-    bridge_path: bridge.path,
-    bridge_version: bridge.version
+    path: destination,
+    version: manifestVersion(destinationManifest) || installedVersion || BUNDLED_ADDON_VERSION,
+    skipped,
+    reason: skipped ? 'newer-installed' : '',
+    retired_bridge_removed: retiredBridgeRemoved
   }
 }
 
 module.exports = {
   normalizeProfileSelection, isProfileRoot, candidateRoots, chooseProfileRoot,
-  compareVersions, manifestVersion, installAddon,
-  addonsPath, installedAddonPath, savedVariablesPath, bridgeSavedVariablesPath
+  compareVersions, manifestVersion, installAddon, isLegacyBridge, isLegacyBridgeSavedVariables, hasLegacyBridgeArtifacts, isManagedAddon, retireLegacyBridge, resetLegacyBridgeInstall,
+  addonsPath, installedAddonPath, retiredBridgeAddonPath, savedVariablesPath, retiredBridgeSavedVariablesPath
 }

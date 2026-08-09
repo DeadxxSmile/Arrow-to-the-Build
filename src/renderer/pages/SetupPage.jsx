@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { useApp } from '../App'
 import { displayVariantName } from '../utils/variantLogic'
@@ -22,6 +22,10 @@ export default function SetupPage() {
   const [buildAction, setBuildAction] = useState('')
   const [buildActionError, setBuildActionError] = useState('')
   const [createSetupOpen, setCreateSetupOpen] = useState(false)
+  const buildToolsStorageKey = `attb-build-planning-hidden:${character?.id || 'none'}`
+  const [buildToolsHidden, setBuildToolsHidden] = useState(() => localStorage.getItem(buildToolsStorageKey) === 'true')
+  useEffect(() => { setBuildToolsHidden(localStorage.getItem(buildToolsStorageKey) === 'true') }, [buildToolsStorageKey])
+  const setBuildToolsVisibility = hidden => { setBuildToolsHidden(hidden); localStorage.setItem(buildToolsStorageKey, String(hidden)) }
   if (!character || !build) return <EmptyState />
   const defaults = build.defaults || {}
   const help = build.setup_help || {}
@@ -46,6 +50,7 @@ export default function SetupPage() {
         await editor.adaptFromCharacter(character.id, adaptTarget)
       }
       setCreateSetupOpen(false)
+      setBuildToolsVisibility(true)
       switchWorkspace('build-editor', '/build-editor/overview')
     } catch (error) {
       setBuildActionError(error.message || String(error))
@@ -68,7 +73,7 @@ export default function SetupPage() {
   ].filter(card => card.value)
 
   return <div className="page basic-setup-page">
-    <section className="hero-panel" style={{ '--hero-accent': build.theme?.accent || '#69e891' }}>
+    <section className="hero-panel" style={{ '--hero-accent': build.theme?.accent || 'var(--accent)' }}>
       <div className="hero-copy">
         <span className="eyebrow">{[defaults.class, defaults.race, defaults.alliance].filter(Boolean).join(' · ')}</span>
         <h1>{character.name}</h1><p>{build.summary}</p>
@@ -78,14 +83,16 @@ export default function SetupPage() {
     </section>
 
     <div className="page-title setup-title"><span className="eyebrow">Foundation</span><h1>Basic setup</h1><p>This page is the build reference: what the guide recommends, why it recommends it, and the Level 50 attribute target. Record the character's current numbers under Current Levels.</p></div>
-    {character.addon_sync?.linked && <section className="panel character-build-bridge">
+    {character.addon_sync?.linked && !buildToolsHidden && <section className="panel character-build-bridge">
       <div className="character-build-bridge-copy"><span className="eyebrow">Build planning tools</span><h2>Create another plan or adapt a target</h2><p>Start a fresh editable build from this character's latest CURRENT ESO state, or adapt an existing build as the TARGET while preserving the character's real progression underneath it.</p><small>Imported skills are marked as owned, catch-up, or future without inventing when older progression happened.</small></div>
       <div className="character-build-actions">
         <button type="button" className="btn primary" disabled={!!buildAction} onClick={() => { setBuildActionError(''); setCreateSetupOpen(true) }}>{buildAction === 'create' ? 'Creating…' : 'Create Build from Character'}</button>
         <div className="adapt-build-row"><select aria-label="Target build to adapt" value={adaptTarget} onChange={event => setAdaptTarget(event.target.value)} disabled={!!buildAction}><option value="">Choose target build…</option>{eligibleTargets.map(item => <option key={item.id} value={item.id}>{item.name}{item.is_bundled ? ' · ATTB' : ' · My build'}</option>)}</select><button type="button" className="btn secondary" disabled={!!buildAction || !adaptTarget} onClick={() => openImportedDraft('adapt')}>{buildAction === 'adapt' ? 'Adapting…' : 'Adapt Build to Character'}</button></div>
         {buildActionError && <div className="inline-error" role="alert">{buildActionError}</div>}
+        <button type="button" className="btn ghost compact character-build-dismiss" disabled={!!buildAction} onClick={() => setBuildToolsVisibility(true)}>Hide build planning tools</button>
       </div>
     </section>}
+    {character.addon_sync?.linked && buildToolsHidden && <div className="build-tools-reveal"><span>Build planning tools hidden for this character.</span><button type="button" className="btn ghost compact" onClick={() => setBuildToolsVisibility(false)}>Show build planning tools</button></div>}
 
     <div className="setup-cards">{cards.map(card => <article className="stat-card setup-stat-card" key={card.key}>
       <div className="stat-card-head"><small>{card.label}</small>{help[card.key] && <InfoPopover title={card.label}><HelpCopy info={help[card.key]} /></InfoPopover>}</div>

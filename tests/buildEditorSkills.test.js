@@ -35,6 +35,7 @@ test('passive rank controls generate no more than the catalog maximum', () => {
   const rows = logic.plannedRowsForSkill(data, 'herald__harnessed_quintessence')
   assert.equal(rows.length, 2)
   assert.equal(new Set(rows.map(row => row.id)).size, 2)
+  assert.deepEqual(rows.sort((a, b) => a.priority - b.priority).map(row => row.required_rank), [14, 27], 'each authored passive point uses its own audited live line-rank gate')
   assert.deepEqual(validateBuild(data), [])
 })
 
@@ -57,4 +58,13 @@ test('leveling choices exclude passives and phase review catches missing ultimat
   const warnings = logic.phaseQualityWarnings(data, phase)
   assert.ok(warnings.some(message => /front-bar ultimate/i.test(message)))
   assert.ok(warnings.some(message => /back-bar ultimate/i.test(message)))
+})
+
+test('editor-created inherent/free skills do not consume ordinary skill points', () => {
+  let data = template()
+  data.unlock_order = data.unlock_order.filter(row => row.catalog_skill_id !== 'dark_elf__ashlander')
+  data = logic.setPlannedSkillCount(data, 'dark_elf__ashlander', 1)
+  const row = data.unlock_order.find(item => item.catalog_skill_id === 'dark_elf__ashlander')
+  assert.ok(row)
+  assert.equal(row.skill_point_cost, 0)
 })

@@ -12,6 +12,8 @@ const characterHandlers = require('../src/main/ipc/characterHandlers')
 const settingsHandlers = require('../src/main/ipc/settingsHandlers')
 
 const BUILD_DIR = path.join(__dirname, '../resources/builds')
+const MIGRATION_DIR = path.join(__dirname, '../src/main/database/migrations')
+const EXPECTED_MIGRATIONS = fs.readdirSync(MIGRATION_DIR).filter(name => name.endsWith('.sql')).sort()
 const BUILD_FILE = path.join(BUILD_DIR, 'stamina_arcanist_solo_duo.json')
 const BUNDLED_BUILD_COUNT = fs.readdirSync(BUILD_DIR).filter(name => name.endsWith('.json')).length
 const readBuild = () => JSON.parse(fs.readFileSync(BUILD_FILE, 'utf8'))
@@ -33,9 +35,9 @@ test.afterEach(() => dbModule.close())
 test('migrations apply once, are recorded, and create the expected columns', () => {
   const { db, dir } = freshApp()
   const applied = db.prepare('SELECT filename FROM _migrations ORDER BY filename').all().map(r => r.filename)
-  assert.deepEqual(applied, ['001_initial_schema.sql', '002_character_tracking.sql', '003_catalog_skill_tracking.sql', '004_character_profile.sql', '005_build_loadouts.sql', '006_build_editor_storage.sql', '007_user_build_file_sync.sql', '008_eso_addon_integration.sql'])
+  assert.deepEqual(applied, EXPECTED_MIGRATIONS)
   const columns = db.prepare('PRAGMA table_info(characters)').all().map(c => c.name)
-  for (const col of ['tracked_skill_lines_json', 'skill_allocations_json', 'custom_skill_lines_json', 'race', 'alliance', 'loadout_id', 'actual_unspent_attribute_points']) assert.ok(columns.includes(col))
+  for (const col of ['tracked_skill_lines_json', 'skill_allocations_json', 'custom_skill_lines_json', 'race', 'alliance', 'loadout_id', 'actual_unspent_attribute_points', 'companion_progress_json']) assert.ok(columns.includes(col))
   const buildColumns = db.prepare('PRAGMA table_info(builds)').all().map(c => c.name)
   for (const col of ['origin_type', 'forked_from_build_id', 'last_saved_revision', 'build_file_path', 'build_file_hash', 'build_file_synced_at', 'build_file_sync_error']) assert.ok(buildColumns.includes(col))
   assert.ok(db.prepare("SELECT 1 FROM sqlite_master WHERE type='table' AND name='build_editor_drafts'").get())
@@ -48,7 +50,7 @@ test('migrations apply once, are recorded, and create the expected columns', () 
   // Reopening must be a no-op, not a second application.
   dbModule.close()
   dbModule.initialize(path.join(dir, 'attb.db'))
-  assert.equal(dbModule.getDb().prepare('SELECT COUNT(*) n FROM _migrations').get().n, 8)
+  assert.equal(dbModule.getDb().prepare('SELECT COUNT(*) n FROM _migrations').get().n, EXPECTED_MIGRATIONS.length)
 })
 
 test('upgrading a v0.2-era database keeps its data and backs the file up first', () => {
