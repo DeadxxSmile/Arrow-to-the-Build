@@ -17,7 +17,7 @@
   <meta name="twitter:description" content="An offline-first ESO character tracker and Build Editor with local addon synchronization, exact progression gates, combat companions, gear roadmaps, Champion Points, and structured hotbars.">
   <meta name="twitter:image" content="https://arrowtothebuild.com/assets/social/attb-og.webp">
   <link rel="icon" href="assets/logo/attb-logo.png">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=2.1.6-default-polish">
 </head>
 <body>
   <div class="ambient ambient-one" aria-hidden="true"></div>
@@ -313,9 +313,9 @@
           <p>ATTB is packaged as a normal Windows installer. No separate runtime, account, database server, or Minion installation is required for normal use.</p>
         </div>
         <div class="install-grid">
-          <article class="card"><span class="step-number">1</span><h3>Download the installer</h3><p>Grab <code>ATTB-Setup-2.1.6.exe</code> from GitHub Releases and run it. Existing ATTB desktop data is preserved when upgrading.</p></article>
-          <article class="card"><span class="step-number">2</span><h3>Choose addon sync or stay manual</h3><p>On first run, ATTB can detect your ESO profile and install the bundled ArrowToTheBuild addon. You can skip this and use manual tracking at any time.</p></article>
-          <article class="card"><span class="step-number">3</span><h3>Use /reloadui when you want fresh data</h3><p>ESO owns SavedVariables timing. If the desktop snapshot is stale, run <code>/reloadui</code> in ESO and ATTB can read the newly written local snapshot.</p></article>
+          <article class="card install-card"><span class="step-number">1</span><h3>Download the installer</h3><p>Grab <code>ATTB-Setup-2.1.6.exe</code> from GitHub Releases and run it. Existing ATTB desktop data is preserved when upgrading.</p></article>
+          <article class="card install-card"><span class="step-number">2</span><h3>Choose addon sync or stay manual</h3><p>On first run, ATTB can detect your ESO profile and install the bundled ArrowToTheBuild addon. You can skip this and use manual tracking at any time.</p></article>
+          <article class="card install-card"><span class="step-number">3</span><h3>Use /reloadui when you want fresh data</h3><p>ESO owns SavedVariables timing. If the desktop snapshot is stale, run <code>/reloadui</code> in ESO and ATTB can read the newly written local snapshot.</p></article>
         </div>
         <div class="install-actions">
           <a class="button primary" href="https://github.com/DeadxxSmile/Arrow-to-the-Build/releases/latest" target="_blank" rel="noreferrer">Download latest release</a>
@@ -388,6 +388,6 @@
     </div>
   </dialog>
 
-  <script src="app.js"></script>
+  <script src="app.js?v=2.1.6-default-polish"></script>
 </body>
 </html>

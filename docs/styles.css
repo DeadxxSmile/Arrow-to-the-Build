@@ -20,6 +20,12 @@
   --primary-hover-start: #213b47;
   --primary-hover-end: #2d4d59;
   --primary-border: #8f6849;
+  --main-glow: #437b91;
+  --workspace-glow: #347ea0;
+  --page-top: #09151e;
+  --shadow-soft: rgba(0, 0, 0, .34);
+  --lightbox-shadow: rgba(0, 0, 0, .82);
+  --lightbox-backdrop: rgba(0, 0, 0, .86);
   --radius: 18px;
   --radius-sm: 12px;
   --shadow: 0 22px 70px rgba(0, 0, 0, .42);
@@ -36,8 +42,8 @@ body {
   background:
     linear-gradient(color-mix(in srgb, var(--accent-2) 2.5%, transparent) 1px, transparent 1px),
     linear-gradient(90deg, color-mix(in srgb, var(--accent-2) 2.5%, transparent) 1px, transparent 1px),
-    radial-gradient(circle at 50% -10%, color-mix(in srgb, var(--accent-2) 17%, transparent), transparent 36%),
-    linear-gradient(180deg, #09151e 0%, var(--bg) 42%, var(--bg-deep) 100%);
+    radial-gradient(circle at 50% -10%, color-mix(in srgb, var(--main-glow) 28%, transparent), transparent 36%),
+    linear-gradient(180deg, var(--page-top) 0%, var(--bg) 42%, var(--bg-deep) 100%);
   background-size: 44px 44px, 44px 44px, auto, auto;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   line-height: 1.6;
@@ -73,10 +79,10 @@ strong { color: var(--text); }
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  border: 1px solid color-mix(in srgb, var(--accent-2) 26%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--line));
   border-radius: 999px;
   background: color-mix(in srgb, var(--bg-deep) 82%, transparent);
-  box-shadow: 0 12px 38px rgba(0, 0, 0, .34);
+  box-shadow: 0 12px 38px var(--shadow-soft);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
 }
@@ -148,7 +154,7 @@ strong { color: var(--text); }
 .feature-card h3 { margin: 18px 0 0; font-size: 1.08rem; }
 .feature-card p { margin: 9px 0 0; color: var(--muted); font-size: .93rem; }
 
-.workflow-section, .addon-section, .build-json-section, .install-section { border-block: 1px solid color-mix(in srgb, var(--accent-2) 14%, transparent); }
+.workflow-section, .addon-section, .build-json-section, .install-section { border-block: 1px solid color-mix(in srgb, var(--accent) 12%, var(--line)); }
 .workflow-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 15px; }
 .workflow-step { display: grid; grid-template-columns: auto 1fr; gap: 14px; padding: 20px; border: 1px solid var(--line); border-radius: 15px; background: color-mix(in srgb, var(--surface) 88%, transparent); }
 .step-number { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: color-mix(in srgb, var(--accent) 14%, var(--surface)); color: var(--accent); font-weight: 950; }
@@ -215,10 +221,21 @@ strong { color: var(--text); }
 .author-grid b { font-size: 1.04rem; }
 .author-grid p { margin: 8px 0 0; color: var(--muted); font-size: .92rem; }
 
-.install-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 14px; }
-.install-grid .card { min-height: 250px; }
-.install-grid h3 { margin: 18px 0 0; }
-.install-grid p { margin: 10px 0 0; color: var(--muted); }
+.install-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 14px; align-items: stretch; }
+.install-card {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 42px minmax(0,1fr);
+  grid-template-rows: auto auto;
+  column-gap: 15px;
+  row-gap: 6px;
+  align-content: start;
+  padding: 20px;
+  border-color: color-mix(in srgb, var(--accent) 22%, var(--line));
+}
+.install-card .step-number { grid-row: 1 / span 2; }
+.install-grid h3 { margin: 2px 0 0; line-height: 1.25; }
+.install-grid p { grid-column: 2; margin: 0; color: var(--muted); }
 .install-grid code { color: var(--gold); }
 .install-note { max-width: 90ch; margin: 20px auto 0; padding: 14px 18px; border: 1px solid color-mix(in srgb, var(--accent) 38%, var(--line)); border-radius: 12px; background: color-mix(in srgb, var(--accent) 7%, var(--surface)); color: var(--muted); text-align: center; }
 
@@ -254,9 +271,9 @@ footer { display: grid; grid-template-columns: 1fr auto; gap: 18px 28px; align-i
   border-radius: 16px;
   background: var(--bg-deep);
   color: var(--text);
-  box-shadow: 0 28px 100px rgba(0,0,0,.82);
+  box-shadow: 0 28px 100px var(--lightbox-shadow);
 }
-.lightbox::backdrop { background: rgba(0,0,0,.86); backdrop-filter: blur(6px); }
+.lightbox::backdrop { background: var(--lightbox-backdrop); backdrop-filter: blur(6px); }
 .lightbox > button { position: fixed; z-index: 2; right: max(24px, 3vw); top: max(24px, 3vh); width: 44px; height: 44px; border: 1px solid color-mix(in srgb, var(--text) 26%, transparent); border-radius: 50%; background: color-mix(in srgb, var(--bg-deep) 82%, transparent); color: var(--text); font-size: 1.55rem; cursor: pointer; }
 .lightbox-body { height: 100%; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr); }
 .lightbox-body h3 { margin: 2px 56px 10px 4px; font-size: 1rem; color: var(--muted); }
@@ -276,12 +293,12 @@ footer { display: grid; grid-template-columns: 1fr auto; gap: 18px 28px; align-i
 @media (max-width: 900px) {
   .hero-grid, .mighty-section, .json-panel { grid-template-columns: 1fr; }
   .hero-grid { padding-top: 44px; }
-  .workflow-grid, .author-grid, .install-grid { grid-template-columns: 1fr; }
+  .workflow-grid, .author-grid { grid-template-columns: 1fr; }
   .topbar-links > a:not(.button) { display: none; }
   .carousel-caption { grid-template-columns: 1fr; gap: 8px; }
-  .install-grid .card { min-height: 0; }
 }
 @media (max-width: 760px) {
+  .install-grid { grid-template-columns: 1fr; }
   .addon-component-grid, .addon-benefits-grid, .addon-gallery { grid-template-columns: 1fr; }
   .addon-gallery .addon-shot:last-child { grid-column: auto; }
   .sync-note { grid-template-columns: 1fr; }
