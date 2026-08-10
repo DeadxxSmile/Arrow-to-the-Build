@@ -40,6 +40,7 @@ jobs:
           Replace-InFile 'tests/packaging.test.js' '1.1.0' '1.1.1'
           Replace-InFile 'tests/packaging.test.js' '1\.1\.0' '1\.1\.1'
           Replace-InFile 'tests/packaging.test.js' '10100' '10101'
+          Replace-InFile 'tests/packaging.test.js' 'assert.doesNotMatch(manifest, /DisableSavedVariablesAutoSaving/)' 'assert.match(manifest, /^## DisableSavedVariablesAutoSaving: 1$/m)'
           Replace-InFile 'tests/releaseConsistency.test.js' "'1.1.0'" "'1.1.1'"
           Replace-InFile 'tests/releaseConsistency.test.js' "'10100'" "'10101'"
 
