@@ -1,9 +1,9 @@
 name: Build 2.1.7 hotfix test artifacts
 
 on:
-  push:
-    paths:
-      - '.github/workflows/build-hotfix-2.1.7.yml'
+  pull_request:
+    branches:
+      - main
 
 permissions:
   contents: read
