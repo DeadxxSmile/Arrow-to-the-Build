@@ -26,6 +26,30 @@ jobs:
         shell: pwsh
         run: npm version 2.1.7 --no-git-tag-version
 
+      - name: Align hotfix metadata
+        shell: pwsh
+        run: |
+          function Replace-InFile([string]$Path, [string]$Old, [string]$New) {
+            $text = Get-Content -LiteralPath $Path -Raw
+            $text = $text.Replace($Old, $New)
+            Set-Content -LiteralPath $Path -Value $text -NoNewline
+          }
+
+          Replace-InFile 'tests/addonIntegration.test.js' '1.1.0' '1.1.1'
+          Replace-InFile 'tests/packaging.test.js' '1.1.0' '1.1.1'
+          Replace-InFile 'tests/releaseConsistency.test.js' "'1.1.0'" "'1.1.1'"
+          Replace-InFile 'tests/releaseConsistency.test.js' "'10100'" "'10101'"
+
+          $readme = Get-Content -LiteralPath 'README.md' -Raw
+          $readme = $readme.Replace('**v2.1.6**', '**v2.1.7**')
+          if ($readme -notmatch '\*\*v2\.1\.7\*\*') {
+            $needle = '> **I Used To Be Meta Like You, Then I Took An Arrow To The Build**'
+            $readme = $readme.Replace($needle, "$needle`r`n`r`nCurrent hotfix test build: **v2.1.7**")
+          }
+          Set-Content -LiteralPath 'README.md' -Value $readme -NoNewline
+
+          Replace-InFile 'docs/index.html' 'v2.1.6' 'v2.1.7'
+
       - name: Install locked dependencies
         shell: pwsh
         run: npm ci --include=dev
@@ -57,6 +81,11 @@ jobs:
           }
           Copy-Item -LiteralPath 'package.json' -Destination (Join-Path $stage 'package.json') -Force
           Copy-Item -LiteralPath 'package-lock.json' -Destination (Join-Path $stage 'package-lock.json') -Force
+          Copy-Item -LiteralPath 'README.md' -Destination (Join-Path $stage 'README.md') -Force
+          Copy-Item -LiteralPath 'docs/index.html' -Destination (Join-Path $stage 'docs/index.html') -Force
+          Copy-Item -LiteralPath 'tests/addonIntegration.test.js' -Destination (Join-Path $stage 'tests/addonIntegration.test.js') -Force
+          Copy-Item -LiteralPath 'tests/packaging.test.js' -Destination (Join-Path $stage 'tests/packaging.test.js') -Force
+          Copy-Item -LiteralPath 'tests/releaseConsistency.test.js' -Destination (Join-Path $stage 'tests/releaseConsistency.test.js') -Force
           Compress-Archive -Path (Join-Path $stage '*') -DestinationPath 'Arrow-to-the-Build_v2.1.7-hotfix.zip' -CompressionLevel Optimal
 
       - name: Upload hotfix artifacts
