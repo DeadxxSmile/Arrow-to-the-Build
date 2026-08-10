@@ -6,6 +6,7 @@ const fs = require('node:fs')
 const path = require('node:path')
 
 const addonRoot = path.resolve(__dirname, '..', 'resources', 'addon', 'ArrowToTheBuild')
+const addonParent = path.dirname(addonRoot)
 const read = (...parts) => fs.readFileSync(path.join(addonRoot, ...parts), 'utf8')
 
 const manifest = read('ArrowToTheBuild.txt')
@@ -14,8 +15,9 @@ const util = read('Util.lua')
 const character = read('Collectors', 'Character.lua')
 const skills = read('Collectors', 'Skills.lua')
 const equipment = read('Collectors', 'Equipment.lua')
+const champion = read('Collectors', 'Champion.lua')
 const core = read('Core.lua')
-const addonSources = [namespace, util, character, skills, equipment, core].join('\n')
+const addonSources = [namespace, util, character, skills, equipment, champion, core].join('\n')
 
 test('bundled addon version and SavedVariables policy stay aligned', () => {
   assert.match(manifest, /^## Version: 1\.1\.1$/m)
@@ -23,6 +25,14 @@ test('bundled addon version and SavedVariables policy stay aligned', () => {
   assert.match(manifest, /^## APIVersion: 101050$/m)
   assert.match(manifest, /^## DisableSavedVariablesAutoSaving: 1$/m)
   assert.match(namespace, /ATTB\.version = "1\.1\.1"/)
+})
+
+test('single-exporter source does not regress to retired bridge/schema paths', () => {
+  assert.equal(fs.existsSync(path.join(addonParent, 'ArrowToTheBuildBridge')), false)
+  assert.equal(fs.existsSync(path.join(addonRoot, 'Schema.lua')), false)
+  assert.doesNotMatch(addonSources, /RequestAddOnSavedVariablesPrioritySave/)
+  assert.doesNotMatch(addonSources, /EVENT_SKILL_XP_UPDATE/)
+  assert.doesNotMatch(manifest, /ArrowToTheBuildBridge|Schema\.lua/)
 })
 
 test('enum labels use the string-prefix GetString overload', () => {
@@ -41,6 +51,7 @@ test('equipment capture uses direct documented item APIs', () => {
   assert.match(equipment, /GetItemEquipType\(BAG_WORN, slotId\)/)
   assert.match(equipment, /GetItemFunctionalQuality\(BAG_WORN, slotId\)/)
   assert.doesNotMatch(equipment, /GetItemInfo\(BAG_WORN, slotId\)/)
+  assert.match(equipment, /traitType and traitType > 0/)
 })
 
 test('worn inventory listener filters noisy durability and charge updates', () => {
@@ -48,7 +59,8 @@ test('worn inventory listener filters noisy durability and charge updates', () =
   assert.match(core, /REGISTER_FILTER_INVENTORY_UPDATE_REASON[\s\S]*INVENTORY_UPDATE_REASON_DEFAULT/)
 })
 
-test('action bar matching uses ESO ability keys before name fallback', () => {
+test('action bar matching keeps stable skill IDs and uses ESO ability keys before name fallback', () => {
+  assert.match(skills, /abilityId = morphAbilityId or rankedAbilityId or baseAbilityId/)
   assert.match(skills, /GetSpecificSkillAbilityKeysByAbilityId\(abilityId\)/)
   assert.match(skills, /"ability-keys"/)
   assert.match(skills, /matchMethod = "name"/)
