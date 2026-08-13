@@ -54,7 +54,7 @@ function Collector.Collect()
         alliance = getAllianceInfo(),
         gender = {
             id = gender,
-            name = Util.CleanName(GetString(SI_GENDER, gender)),
+            name = Util.EnumName("SI_GENDER", gender, "Unknown"),
         },
         level = GetUnitLevel("player"),
         championPoints = GetUnitChampionPoints("player"),

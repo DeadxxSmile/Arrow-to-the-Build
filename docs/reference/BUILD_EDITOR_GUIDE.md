@@ -395,7 +395,7 @@ Base Build → Selected Loadout → Selected Variant
 
 ## 14. Review & Save
 
-Review & Save is the final authoring workspace, not only a schema error list.
+Review & Save is the final authoring workspace. It does more than list schema errors.
 
 ### Errors, warnings, and suggestions
 
@@ -451,7 +451,7 @@ ATTB keeps drafts and history in SQLite. If the folder is missing or read-only, 
 
 ### External edits
 
-ATTB detects files changed outside the app and preserves them instead of silently overwriting them. Review or import the external version intentionally.
+If a build file changes outside the app, ATTB keeps that version rather than overwriting it. You then review or import the external copy yourself.
 
 ## 16. Build Editor Settings
 

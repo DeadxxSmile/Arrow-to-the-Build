@@ -38,7 +38,7 @@ export default function AddonSetupModal({ open, status, onComplete }) {
   return <div className="modal-backdrop addon-setup-backdrop">
     <section className="modal addon-setup-modal" role="dialog" aria-modal="true" aria-labelledby="addon-setup-title">
       <div className="modal-head"><div><span className="eyebrow">Optional ESO integration</span><h2 id="addon-setup-title">Automatically sync your characters?</h2></div></div>
-      <p className="modal-intro">ATTB can install its lightweight ESO companion addon, then read the SavedVariables file ESO creates for character level, attributes, skills, equipment, action bars, and Champion Points.</p>
+      <p className="modal-intro">ATTB can install its lightweight ESO addon, then read the SavedVariables file ESO creates for character level, attributes, skills, equipment, action bars, and Champion Points.</p>
       <div className="addon-setup-summary">
         <div><span>⌂</span><p><b>Local and private</b><small>ATTB reads ESO SavedVariables from your Documents folder. Nothing is sent to a server.</small></p></div>
         <div><span>✓</span><p><b>You stay in control</b><small>New characters are never silently linked or allowed to replace authored build planning.</small></p></div>

@@ -38,7 +38,7 @@ export default function AttributesEditor({ character, build, onChange, allowOver
       const live = character?.addon_sync?.live?.attributes?.[key]
       const overridden = overrideEntry(character, `attributes.${key}`)
       return <div className={`attribute-row ${key} ${overridden ? 'overridden' : ''}`} key={key}>
-        <div><b>{LABEL[key]}</b><small>Build target {summary.target[key]}{diff ? ` · ${diff > 0 ? '+' : ''}${diff}` : ' · matches'}{character?.addon_sync?.linked ? ` · Live ESO ${live ?? value}` : ''}</small></div>
+        <div><b>{LABEL[key]}</b><small>Build target {summary.target[key]}{diff ? ` · ${diff > 0 ? '+' : ''}${diff}` : ' · matches'}{character?.addon_sync?.linked ? ` · ESO snapshot: ${live ?? value}` : ''}</small></div>
         <div className="synced-control"><NumberStepper value={value} min={0} max={max} onChange={v => set(key, v)} label={`${LABEL[key]} attribute points`} disabled={syncedLocked} /><OverrideResetButton fieldPath={`attributes.${key}`} compact /></div>
       </div>
     })}</div>

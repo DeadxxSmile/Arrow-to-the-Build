@@ -1,12 +1,12 @@
 # Start Here: Builds, JSON, and the ATTB Build Editor
 
-Arrow to the Build uses **Schema 4 JSON** as the shared language for every build. The bundled builds, builds made in the visual editor, imported community files, and files edited by hand all use the same underlying structure.
+Every build in Arrow to the Build is a **Schema 4 JSON** file. Bundled builds, builds you make in the visual editor, community files you import, and files you edit by hand all use the same structure.
 
 You do **not** need to know JSON to create a build in ATTB. The Build Editor writes and validates the JSON for you. The JSON format matters because it keeps builds portable, human-readable, easy to back up, and usable outside the app.
 
 ## The two sides of ATTB
 
-ATTB contains two remembered workspaces:
+ATTB has two workspaces, and it remembers where you were in each:
 
 - **Character Tracker** - follow a build on a real character and record progression.
 - **Build Editor** - create, fork, import, update, validate, save, and export builds.

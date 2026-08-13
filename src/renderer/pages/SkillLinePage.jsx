@@ -130,7 +130,7 @@ export default function SkillLinePage() {
       <div><span className="eyebrow">{line.group} · {line.build_relevant ? 'build and full-line tracking' : 'personal full-line tracking'}</span><h1>{line.name}</h1><p>Modeled after ESO&rsquo;s skill window: base abilities branch into two morphs, passives track individual ranks, and build badges stay visible without hiding optional purchases.</p></div>
       <Link to="/skills" className="btn secondary">← Skills overview</Link>
     </div>
-    {character.addon_sync?.linked && <div className="sync-status-banner"><span className="sync-dot" /><div><b>Live skill data from ESO</b><small>{syncedLocked ? 'Enable override mode in Settings > ESO Addon & Sync to test another setup.' : 'Changes create local overrides; use ↶ to restore the ESO value.'}</small></div></div>}
+    {character.addon_sync?.linked && <div className="sync-status-banner"><span className="sync-dot" /><div><b>ESO skill snapshot</b><small>{syncedLocked ? 'Enable override mode in Settings > ESO Addon & Sync to test another setup.' : 'Changes create local overrides; use ↶ to restore the ESO value.'}</small></div></div>}
     <section className="panel line-rank-panel">
       <div><span className="eyebrow">Current line rank</span><h2>{rank}/{line.max || 50}</h2></div>
       <div className="synced-control"><NumberStepper value={rank} min={0} max={line.max || 50} onChange={value => setSkillRank(line.id, value)} label={`${line.name} rank`} disabled={syncedLocked} /><OverrideResetButton fieldPath={`skill_ranks.${line.id}`} compact /></div>

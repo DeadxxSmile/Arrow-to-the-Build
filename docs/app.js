@@ -25,9 +25,9 @@ const screenshots = [
   },
   {
     src: 'assets/screenshots/synced-basic-setup.webp',
-    kicker: 'CURRENT + TARGET',
+    kicker: 'What you have, what you want',
     title: 'Synchronized Basic Setup',
-    description: 'See the observed ESO character beside the authored build target, then create another plan or adapt a saved target without rewriting the live record.'
+    description: 'Your synced character sits right next to the build you are aiming for. Spin up another plan or adapt a saved one, and your live record stays untouched.'
   },
   {
     src: 'assets/screenshots/skills-passives.webp',
@@ -39,7 +39,7 @@ const screenshots = [
     src: 'assets/screenshots/current-action-bars.webp',
     kicker: 'Observed in ESO',
     title: 'Current Action Bars',
-    description: 'Compare the live front and back bars imported from ESO with the authored progression bars and rotations below them.'
+    description: 'Your real front and back bars from ESO, lined up against the build\'s bars and rotations right below.'
   },
   {
     src: 'assets/screenshots/champion-points.webp',
@@ -57,7 +57,7 @@ const screenshots = [
     src: 'assets/screenshots/gameplay-tips.webp',
     kicker: 'Build-specific help',
     title: 'Tips & Tricks',
-    description: 'Keep practical reminders, warnings, optional systems, and build-specific gameplay guidance beside the character instead of buried in a browser tab.'
+    description: 'Reminders, warnings, optional systems, and build-specific tips sit right next to the character, not buried in a browser tab you forgot you had open.'
   },
   {
     src: 'assets/screenshots/build-library.webp',
@@ -79,9 +79,9 @@ const screenshots = [
   },
   {
     src: 'assets/screenshots/build-editor-overview.webp',
-    kicker: 'CURRENT ESO state to editable draft',
+    kicker: 'From synced character to draft',
     title: 'Build Editor Overview',
-    description: 'A build seeded from a synchronized character preserves the imported CURRENT state while leaving future recommendations for the author to decide.'
+    description: 'Seed a build from a synced character and it keeps what you already have, leaving the future picks for you to fill in.'
   },
   {
     src: 'assets/screenshots/build-editor-champion-points.webp',

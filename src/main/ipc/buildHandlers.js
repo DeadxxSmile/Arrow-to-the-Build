@@ -277,7 +277,7 @@ const characterBuildImport = createCharacterBuildImport({
 function linkedCharacterStateOrThrow(characterId) {
   const state = require('../addon/integration').linkedState(String(characterId || ''))
   if (!state?.linked) throw new Error('This character is not linked to the ESO addon.')
-  if (!state.live) throw new Error('ATTB does not have a usable live ESO snapshot for this character yet. Sync the character first.')
+  if (!state.live) throw new Error('ATTB does not have a usable ESO snapshot for this character yet. Sync the character first.')
   return state
 }
 

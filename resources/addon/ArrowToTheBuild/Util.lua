@@ -8,6 +8,22 @@ function Util.CleanName(value)
     return zo_strformat("<<1>>", tostring(value))
 end
 
+-- ESO's two-argument GetString overload takes the string-prefix name itself
+-- (for example "SI_ARMORTYPE"), not the numeric value of the SI_* global.
+-- Keeping enum lookup here prevents collectors from accidentally indexing some
+-- unrelated localized string table when converting enum values to display text.
+function Util.EnumName(stringPrefix, enumValue, fallback)
+    if type(stringPrefix) ~= "string" or enumValue == nil then
+        return fallback
+    end
+
+    local value = GetString(stringPrefix, enumValue)
+    if value == nil or value == "" then
+        return fallback
+    end
+    return tostring(value)
+end
+
 function Util.NormalizeName(value)
     local cleaned = Util.CleanName(value)
     return cleaned and zo_strlower(tostring(cleaned)) or nil

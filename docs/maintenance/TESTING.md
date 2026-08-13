@@ -132,7 +132,7 @@ npm start 2>&1 | Tee-Object -FilePath ".\attb-dev.log"
 - Use a real full-archive SavedVariables file containing at least two characters.
 - Confirm the app reads all archive records and does not execute or evaluate Lua.
 - Confirm malformed content, a wrong root variable, trailing executable statements, unsupported schemas, and files over 8 MB produce controlled errors.
-- Confirm Sync Now reads the single archive immediately.
+- Confirm Read Latest Snapshot reads the single archive immediately.
 - Confirm normal ESO writes to `ArrowToTheBuild.lua` are noticed by the folder watcher.
 - Confirm the 15-second polling fallback does not repeatedly apply an unchanged revision.
 - Start ATTB before the SavedVariables directory exists, then let ESO create it; confirm polling attaches the watcher and imports data.
@@ -140,7 +140,7 @@ npm start 2>&1 | Tee-Object -FilePath ".\attb-dev.log"
 
 ### ESO-controlled save timing
 
-- Fresh-install `ArrowToTheBuild` 1.1.0, enable it in ESO, and log into one character.
+- Fresh-install `ArrowToTheBuild` 1.1.1, enable it in ESO, and log into one character.
 - Confirm ESO creates `<profile>\SavedVariables\ArrowToTheBuild.lua` after a save opportunity or `/reloadui`.
 - Confirm Settings reports one addon path and one SavedVariables path; there must be no live bridge budget/status UI.
 - Change level/progression, equipment, action bars, attributes, and Champion Points. Confirm the in-memory addon revision advances through the relevant event capture.

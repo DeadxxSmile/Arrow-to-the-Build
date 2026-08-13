@@ -25,7 +25,7 @@ ATTB normalizes valid Schema 3 files to Schema 4 during import, but all new file
 
 Manual JSON and visually edited builds use the same Schema 4 object. A successful **Save Build** stores an immutable revision inside ATTB and mirrors the latest saved user build to `<build-id>.json` in the configured user build folder. Recovery drafts stay in SQLite because they may be intentionally incomplete or temporarily invalid. Bundled builds remain read-only and are never mirrored into the user folder.
 
-The default folder is `Documents\Arrow to the Build\Builds`; it can be changed under Build Editor Settings. ATTB preserves files that were modified outside the app instead of silently overwriting them.
+The default folder is `Documents\Arrow to the Build\Builds`; it can be changed under Build Editor Settings. If a file was changed outside the app, ATTB keeps that version rather than overwriting it.
 
 ## Required fields
 

@@ -54,8 +54,8 @@ test('bundled addon version metadata stays synchronized', () => {
   const constants = read('src/main/addon/addonConstants.js')
 
   const addonVersion = manifestField(addonManifest, 'Version')
-  assert.equal(addonVersion, '1.1.0')
-  assert.equal(manifestField(addonManifest, 'AddOnVersion'), '10100')
+  assert.equal(addonVersion, '1.1.1')
+  assert.equal(manifestField(addonManifest, 'AddOnVersion'), '10101')
   assert.equal(manifestField(addonManifest, 'APIVersion'), '101050')
   assert.equal(capturedVersion(namespaceLua, /ATTB\.version\s*=\s*"([^"]+)"/, 'Namespace.lua'), addonVersion)
   assert.equal(capturedVersion(constants, /BUNDLED_ADDON_VERSION\s*=\s*'([^']+)'/, 'addonConstants.js'), addonVersion)

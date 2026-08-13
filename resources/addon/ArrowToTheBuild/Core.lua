@@ -234,7 +234,22 @@ function ATTB.RegisterRefreshEvents()
     EVENT_MANAGER:RegisterForEvent(ATTB.eventNamespacePrefix .. "Attributes", EVENT_ATTRIBUTE_UPGRADE_UPDATED, function()
         ATTB.ScheduleSnapshot("attributes-changed", { "identity" })
     end)
-    EVENT_MANAGER:RegisterForEvent(ATTB.eventNamespacePrefix .. "Equipment", EVENT_INVENTORY_SINGLE_SLOT_UPDATE, onEquipmentChanged)
+
+    local equipmentEventName = ATTB.eventNamespacePrefix .. "Equipment"
+    EVENT_MANAGER:RegisterForEvent(equipmentEventName, EVENT_INVENTORY_SINGLE_SLOT_UPDATE, onEquipmentChanged)
+    EVENT_MANAGER:AddFilterForEvent(
+        equipmentEventName,
+        EVENT_INVENTORY_SINGLE_SLOT_UPDATE,
+        REGISTER_FILTER_BAG_ID,
+        BAG_WORN
+    )
+    EVENT_MANAGER:AddFilterForEvent(
+        equipmentEventName,
+        EVENT_INVENTORY_SINGLE_SLOT_UPDATE,
+        REGISTER_FILTER_INVENTORY_UPDATE_REASON,
+        INVENTORY_UPDATE_REASON_DEFAULT
+    )
+
     EVENT_MANAGER:RegisterForEvent(ATTB.eventNamespacePrefix .. "Deactivated", EVENT_PLAYER_DEACTIVATED, onPlayerDeactivated)
 end
 

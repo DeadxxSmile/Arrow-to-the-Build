@@ -28,7 +28,7 @@ local function collectItem(slotId, slotLabel)
         return nil
     end
 
-    local _, _, _, _, _, equipType, _, functionalQuality = GetItemInfo(BAG_WORN, slotId)
+    local equipType = GetItemEquipType(BAG_WORN, slotId)
     local itemType = GetItemType(BAG_WORN, slotId)
     local armorType = GetItemArmorType(BAG_WORN, slotId)
     local weaponType = GetItemWeaponType(BAG_WORN, slotId)
@@ -41,27 +41,27 @@ local function collectItem(slotId, slotLabel)
         slotName = slotLabel,
         itemId = GetItemId(BAG_WORN, slotId),
         name = Util.CleanName(GetItemName(BAG_WORN, slotId)),
-        quality = functionalQuality,
+        quality = GetItemFunctionalQuality(BAG_WORN, slotId),
         requiredLevel = GetItemRequiredLevel(BAG_WORN, slotId),
         requiredChampionPoints = GetItemRequiredChampionPoints(BAG_WORN, slotId),
         equipType = equipType,
-        equipTypeName = Util.CleanName(GetString(SI_EQUIPTYPE, equipType)),
+        equipTypeName = Util.EnumName("SI_EQUIPTYPE", equipType, "Unknown"),
         itemType = itemType,
-        itemTypeName = Util.CleanName(GetString(SI_ITEMTYPE, itemType)),
+        itemTypeName = Util.EnumName("SI_ITEMTYPE", itemType, "Unknown"),
         armorType = armorType,
-        armorTypeName = Util.CleanName(GetString(SI_ARMORTYPE, armorType)),
+        armorTypeName = armorType and armorType > 0 and Util.EnumName("SI_ARMORTYPE", armorType, "Unknown") or "",
         weaponType = weaponType,
-        weaponTypeName = weaponType and weaponType > 0 and Util.CleanName(GetString(SI_WEAPONTYPE, weaponType)) or "None",
+        weaponTypeName = weaponType and weaponType > 0 and Util.EnumName("SI_WEAPONTYPE", weaponType, "Unknown") or "None",
         trait = {
             id = traitType,
-            name = Util.CleanName(GetString(SI_ITEMTRAITTYPE, traitType)),
+            name = traitType and traitType > 0 and Util.EnumName("SI_ITEMTRAITTYPE", traitType, "Unknown") or "",
         },
         set = {
             hasSet = hasSet == true,
             id = setId,
             name = Util.CleanName(setName),
         },
-        enchantment = enchantHeader ~= "" and {
+        enchantment = enchantHeader and enchantHeader ~= "" and {
             name = Util.CleanName(enchantHeader or enchantDescription),
         } or nil,
     }

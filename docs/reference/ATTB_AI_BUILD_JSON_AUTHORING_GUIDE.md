@@ -6,7 +6,7 @@
 
 **Guide revision:** 2.1 - updated for ATTB 2.1 companion authoring, preset data, and stricter actionable-progression guidance.
 
-**Current baseline when this guide was revised:** ATTB 2.1.6, public Build Schema 4. Player-skill IDs still follow the game version named by the current bundled `eso-skill-catalog.json`; companion presets use the separately maintained current companion catalog.
+**Current baseline when this guide was revised:** ATTB 2.1.7, public Build Schema 4. Player-skill IDs still follow the game version named by the current bundled `eso-skill-catalog.json`; companion presets use the separately maintained current companion catalog.
 
 **Document goal:** By the time an unfamiliar AI finishes the **START HERE** section, it should understand what ATTB is, how a build file relates to a character, what Schema 4 is trying to represent, which questions it must ask, where exact IDs come from, how sections cross-reference each other, and what must be validated before a JSON file is delivered.
 
@@ -28,7 +28,7 @@ ATTB has two important concepts:
 1. **Character Tracker**
    - Represents a real ESO character and the character's observed/current state.
    - Can contain character level, attributes, Champion Points, skill-line ranks, purchased skills/morphs/passives, action bars, equipped gear, and other tracked progress.
-   - Character data may be entered manually, imported from backup JSON, or synchronized from the optional ESO companion addon.
+   - Character data may be entered manually, imported from backup JSON, or synchronized from the optional ATTB ESO addon.
 
 2. **Build Editor / Build Definition**
    - Represents the **TARGET** plan the player wants to follow.

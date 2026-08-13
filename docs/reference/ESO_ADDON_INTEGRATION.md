@@ -13,10 +13,10 @@ The addon does not receive commands from the desktop app, automate gameplay, spe
 
 ## Current components
 
-ATTB 2.1.6 bundles one ESO addon:
+The current ATTB source bundles one ESO addon:
 
 ```text
-ArrowToTheBuild 1.1.0
+ArrowToTheBuild 1.1.1
 ESO API: 101050
 SavedVariables: ArrowToTheBuildSavedVariables
 SavedVariables file: ArrowToTheBuild.lua
@@ -25,6 +25,18 @@ Character snapshot schema: 2
 ```
 
 The former `ArrowToTheBuildBridge` component was retired in 1.1.0. It added a second schema, packed payload, size budgeting, priority-save state, a second file watcher, and reconciliation logic without providing a dependable refresh path beyond ESO's own SavedVariables timing.
+
+### 1.1.1 correctness hardening
+
+Addon 1.1.1 fixes and hardens several parts of the single-exporter rewrite:
+
+- localized enum labels use ESO's documented `GetString("SI_PREFIX", enumValue)` form rather than passing the numeric `SI_*` global as the prefix;
+- equipment collection uses the direct worn-item APIs for equip type and functional quality rather than positional unpacking from `GetItemInfo`;
+- action-bar matching uses ESO's ability-ID-to-skill-coordinate API before the final unique-name fallback, which better handles effective/chained hotbar IDs;
+- worn-inventory updates are filtered to `BAG_WORN` and `INVENTORY_UPDATE_REASON_DEFAULT` so ordinary durability-loss and weapon-discharge traffic does not repeatedly schedule equipment scans;
+- normal-play SavedVariables autosaving is disabled for this multi-character archive. The archive is expected to exceed ESO's small-file autosave limits, while `/reloadui`, loading screens, logout, and exit remain the persistence path.
+
+Static regression tests protect these source-level contracts so the enum-prefix bug and removed manifest setting cannot silently return during a later cleanup.
 
 ## Installation
 
@@ -63,6 +75,14 @@ This is **CURRENT** state. Builds remain **TARGET** plans owned by the desktop a
 
 The addon updates its in-memory SavedVariables table when relevant ESO events occur. ESO decides when that table is serialized to disk. The desktop cannot force ESO to write the file and the addon cannot directly communicate with the desktop application.
 
+The manifest deliberately contains:
+
+```text
+## DisableSavedVariablesAutoSaving: 1
+```
+
+ESO's normal-play autosave mechanism is intended for small SavedVariables payloads and defers larger files to a loading screen. ATTB keeps a multi-character archive, so it does not compete for those normal-play autosave opportunities.
+
 When the desktop needs a fresh snapshot immediately, use:
 
 ```text
@@ -81,11 +101,11 @@ and also polls at a low frequency to cover ordinary Windows file-watcher edge ca
 
 ## ESO API policy
 
-Addon 1.1.0 targets Update 50 / API 101050 and uses known ESO APIs and event constants directly.
+Addon 1.1.1 targets Update 50 / API 101050 and uses known ESO APIs and event constants directly.
 
 The addon intentionally does **not** wrap documented APIs in generic `pcall` helpers, probe `_G` for guessed function names, or register events from strings. If a supported ESO API changes, that should become a visible development error instead of silently turning real character data into a fallback value.
 
-Guards remain only where the game data itself can legitimately be absent or optional.
+A small `Util.EnumName` helper centralizes the documented two-argument `GetString` convention because ESO requires the first argument to be a string prefix such as `"SI_ARMORTYPE"`. Guards remain only where game data can legitimately be absent or optional.
 
 ## Refresh strategy
 
@@ -94,11 +114,11 @@ The addon does not rescan the complete character on every gameplay event.
 - level and attribute events refresh identity/progression;
 - Skill Point, skill-rank, skill-line, ability-rank, and ability-result events refresh skills;
 - action-bar and weapon-pair events refresh action bars;
-- worn-inventory changes refresh equipment;
+- meaningful worn-inventory changes refresh equipment;
 - Champion Point purchase and bar changes refresh Champion data;
 - player activation/deactivation schedules a full snapshot around transitions.
 
-Automatic event captures are debounced and rate-limited. Raw skill-XP ticks are deliberately not used as full-rescan triggers because ATTB cares about purchased/rank state rather than every XP increment.
+Automatic event captures are debounced and rate-limited. Raw skill-XP ticks are deliberately not used as full-rescan triggers because ATTB cares about purchased/rank state rather than every XP increment. The worn-inventory listener is filtered at the ESO event manager so durability-loss and weapon-discharge noise is discarded before ATTB's callback runs.
 
 A forced full capture still occurs before a player deactivation and after activation, so `/reloadui` receives an up-to-date complete snapshot even when a recent event capture was cooling down.
 

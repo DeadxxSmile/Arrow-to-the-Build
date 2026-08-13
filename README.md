@@ -2,6 +2,8 @@
 
 > **I Used To Be Meta Like You, Then I Took An Arrow To The Build**
 
+Current hotfix test build: **v2.1.7**
+
 **Arrow to the Build** is an offline-first Windows companion for **The Elder Scrolls Online**. It combines a character progression tracker with a full visual build editor so a static build guide becomes an actual plan for a specific character: what to unlock next, which skill-line ranks matter, how to spend Champion Points, what gear to chase, what belongs on each bar, and how the finished build fits together.
 
 ATTB keeps character and build data on your PC. There is no account system or cloud requirement, and build definitions remain human-readable JSON files.

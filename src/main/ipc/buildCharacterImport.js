@@ -322,7 +322,7 @@ function createCharacterBuildImport(deps) {
       primary_role: String(options.primary_role || 'damage'), leveling_scope: String(options.leveling_scope || 'full'),
       class_style: String(options.class_style || 'pure_class'), bar_count: targetBarCount,
       front_weapon: weapons.front, back_weapon: weapons.back,
-      summary: `An editable build draft created from ${characterName}'s live ESO state. Current progression is imported truthfully; future planning is intentionally left for the Build Editor.`
+      summary: `An editable build draft created from ${characterName}'s current ESO state. Current progression is imported truthfully; future planning is intentionally left for the Build Editor.`
     }, author)
     data.notes = ''
     data.defaults = {

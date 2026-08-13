@@ -5,7 +5,7 @@ local ATTB = ArrowToTheBuild
 
 ATTB.name = "ArrowToTheBuild"
 ATTB.displayName = "Arrow to the Build"
-ATTB.version = "1.1.0"
+ATTB.version = "1.1.1"
 ATTB.savedVariablesSchemaVersion = 1
 ATTB.snapshotSchemaVersion = 2
 ATTB.snapshotDataProfile = "compact"

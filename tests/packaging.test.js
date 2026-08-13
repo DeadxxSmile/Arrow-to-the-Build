@@ -69,11 +69,11 @@ test('runtime files and offline reference data exist and are included in app.asa
 test('the single ESO addon ships once as an external resource', () => {
   const addonRoot = path.join(root, 'resources/addon/ArrowToTheBuild')
   const manifest = read('resources/addon/ArrowToTheBuild/ArrowToTheBuild.txt')
-  assert.match(manifest, /^## Version: 1\.1\.0$/m)
-  assert.match(manifest, /^## AddOnVersion: 10100$/m)
+  assert.match(manifest, /^## Version: 1\.1\.1$/m)
+  assert.match(manifest, /^## AddOnVersion: 10101$/m)
   assert.match(manifest, /^## APIVersion: 101050$/m)
   assert.match(manifest, /^## SavedVariables: ArrowToTheBuildSavedVariables$/m)
-  assert.doesNotMatch(manifest, /DisableSavedVariablesAutoSaving/)
+  assert.match(manifest, /^## DisableSavedVariablesAutoSaving: 1$/m)
   assert.equal(fs.existsSync(path.join(root, 'resources/addon/ArrowToTheBuildBridge')), false)
   assert.equal(fs.existsSync(path.join(addonRoot, 'README.md')), true)
 

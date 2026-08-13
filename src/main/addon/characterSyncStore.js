@@ -300,7 +300,7 @@ function createCharacterSyncStore(deps) {
 
   function setOverride(characterId, fieldPath, value) {
     if (!isLinked(characterId)) return false
-    if (!overridesAllowed()) throw new Error('Enable synced-data overrides in Settings > ESO Addon & Sync before changing live ESO values.')
+    if (!overridesAllowed()) throw new Error('Enable synced-data overrides in Settings > ESO Addon & Sync before changing synced ESO values.')
     const db = dbModule.getDb()
     const live = liveValueForPath(characterId, fieldPath)
     if (JSON.stringify(value) === JSON.stringify(live)) {
@@ -315,7 +315,7 @@ function createCharacterSyncStore(deps) {
 
   function replaceOverridesByPrefix(characterId, prefix, values, liveValues = {}) {
     if (!isLinked(characterId)) return false
-    if (!overridesAllowed()) throw new Error('Enable synced-data overrides in Settings > ESO Addon & Sync before changing live ESO values.')
+    if (!overridesAllowed()) throw new Error('Enable synced-data overrides in Settings > ESO Addon & Sync before changing synced ESO values.')
     const db = dbModule.getDb()
     db.transaction(() => {
       db.prepare('DELETE FROM character_sync_overrides WHERE character_id=? AND field_path LIKE ?').run(characterId, `${prefix}%`)

@@ -23,7 +23,7 @@ function SkillItem({ item, build, character, lineName, toggleUnlock, compact = f
       aria-checked={complete}
       aria-label={`${complete ? 'Mark incomplete' : 'Mark complete'}: ${item.name}`}
       disabled={disabled}
-      title={disabled ? 'This value is controlled by the live ESO snapshot. Enable override mode to change it locally.' : undefined}
+      title={disabled ? 'This value comes from the synced ESO snapshot. Enable override mode to change it locally.' : undefined}
       onClick={() => toggleUnlock(item.id, !complete)}
     ><span aria-hidden="true">{complete ? '✓' : ''}</span></button>
     <SkillIcon skillId={item.catalog_skill_id} name={item.name} image={item.image} size={compact ? 'compact' : 'list'} />
@@ -63,7 +63,7 @@ export default function SkillsPage() {
 
   return <div className="page">
     <div className="page-title"><span className="eyebrow">Build-directed progression</span><h1>Skills &amp; passives</h1><p>The recommendation queue is build-specific. Every line page also contains the complete in-game line so you can record optional skills, alternate morphs, crafting passives, and anything else you actually purchased.</p></div>
-    {character.addon_sync?.linked && <div className="sync-status-banner"><span className="sync-dot" /><div><b>Build progress reconciled with live ESO skills</b><small>{syncedLocked ? 'Owned skills and passive ranks are read-only here until override mode is enabled in Settings > ESO Addon & Sync.' : 'Changes here create local overrides while the live ESO values remain available to restore.'}</small></div></div>}
+    {character.addon_sync?.linked && <div className="sync-status-banner"><span className="sync-dot" /><div><b>Build progress matched against your synced ESO skills</b><small>{syncedLocked ? 'Owned skills and passive ranks are read-only here until override mode is enabled in Settings > ESO Addon & Sync.' : 'Changes here create local overrides while the synced ESO values remain available to restore.'}</small></div></div>}
 
     <section className="panel next-five-panel">
       <div className="section-head"><div><span className="eyebrow">Do these next</span><h2>Unlock roadmap</h2></div><small>{actionableCount ? `${actionableCount} purchase${actionableCount === 1 ? '' : 's'} available right now from your recorded ranks, prerequisites, and unspent Skill Points.` : 'No build purchase is available right now. Raise the relevant skill lines, finish prerequisites, train base skills for morphs, or earn another Skill Point.'}</small></div>
