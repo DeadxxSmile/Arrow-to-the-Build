@@ -494,6 +494,69 @@
             "type": "string",
             "pattern": "^[a-z0-9][a-z0-9_.-]*$"
           }
+        },
+        "retire_when": {
+          "oneOf": [
+            {
+              "type": "object",
+              "required": [
+                "type",
+                "level"
+              ],
+              "properties": {
+                "type": {
+                  "const": "character_level"
+                },
+                "level": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 50
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "required": [
+                "type",
+                "line",
+                "rank"
+              ],
+              "properties": {
+                "type": {
+                  "const": "skill_line_rank"
+                },
+                "line": {
+                  "type": "string",
+                  "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+                },
+                "rank": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 50
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "required": [
+                "type",
+                "unlock_id"
+              ],
+              "properties": {
+                "type": {
+                  "const": "unlock_completed"
+                },
+                "unlock_id": {
+                  "type": "string",
+                  "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+                }
+              },
+              "additionalProperties": false
+            }
+          ],
+          "description": "Optional cutoff for a temporary unlock. Once met, Character Tracker retires the row from recommendations unless the player explicitly keeps it active."
         }
       },
       "additionalProperties": true

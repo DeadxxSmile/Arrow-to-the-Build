@@ -85,6 +85,7 @@ function parseRow(row) {
     attributes: sanitizeAttributes(parseJson(row.attributes_json, {})),
     skill_ranks: ranks,
     completed: [...new Set(parseJson(row.completed_json, []).filter(x => typeof x === 'string'))],
+    temporary_unlock_states: sanitizeTemporaryUnlockStates(parseJson(row.temporary_unlock_states_json, {})),
     gear: parseJson(row.gear_json, {}),
     custom_skill_lines: custom,
     tracked_skill_lines: legacyTrackedLines(row),
@@ -117,7 +118,8 @@ function getBuildData(buildId) {
 
 const JSON_COLUMNS = new Set([
   'attributes_json', 'skill_ranks_json', 'completed_json', 'gear_json',
-  'custom_skill_lines_json', 'tracked_skill_lines_json', 'skill_allocations_json', 'companion_progress_json'
+  'custom_skill_lines_json', 'tracked_skill_lines_json', 'skill_allocations_json', 'companion_progress_json',
+  'temporary_unlock_states_json'
 ])
 function updateJson(id, column, value) {
   if (!JSON_COLUMNS.has(column)) throw new Error('Invalid JSON column')
@@ -145,6 +147,7 @@ function cleanCharacterForBackup(character) {
     cp_fitness: character.cp_fitness,
     skill_ranks: character.skill_ranks,
     completed: character.completed,
+    temporary_unlock_states: sanitizeTemporaryUnlockStates(character.temporary_unlock_states),
     gear: character.gear,
     tracked_skill_lines: character.tracked_skill_lines,
     skill_allocations: character.skill_allocations,
@@ -178,6 +181,18 @@ function sanitizeCompanionProgress(input) {
     if (cleanCompanion && cleanPreset) targets[cleanCompanion] = cleanPreset
   }
   return { targets }
+}
+
+function sanitizeTemporaryUnlockStates(input) {
+  const source = input && typeof input === 'object' && !Array.isArray(input) ? input : {}
+  const out = {}
+  for (const [unlockId, state] of Object.entries(source)) {
+    if (typeof unlockId !== 'string') continue
+    const id = unlockId.trim().slice(0, 160)
+    if (!id || !['retired', 'active'].includes(state)) continue
+    out[id] = state
+  }
+  return out
 }
 
 function sanitizeGear(input) {
@@ -229,11 +244,11 @@ function insertCharacter(payload, build, forcedId = null) {
     INSERT INTO characters(
       id,name,build_id,loadout_id,variant_id,race,alliance,level,attribute_points,attributes_json,
       cp_craft,cp_warfare,cp_fitness,eso_plus,skill_ranks_json,completed_json,
-      gear_json,custom_skill_lines_json,tracked_skill_lines_json,skill_allocations_json,companion_progress_json,actual_unspent_skill_points,actual_unspent_attribute_points,notes
+      gear_json,custom_skill_lines_json,tracked_skill_lines_json,skill_allocations_json,companion_progress_json,temporary_unlock_states_json,actual_unspent_skill_points,actual_unspent_attribute_points,notes
     ) VALUES(
       @id,@name,@build_id,@loadout_id,@variant_id,@race,@alliance,@level,@attribute_points,@attributes_json,
       @cp_craft,@cp_warfare,@cp_fitness,0,@skill_ranks_json,@completed_json,
-      @gear_json,'[]',@tracked_skill_lines_json,@skill_allocations_json,@companion_progress_json,@actual_unspent_skill_points,@actual_unspent_attribute_points,@notes
+      @gear_json,'[]',@tracked_skill_lines_json,@skill_allocations_json,@companion_progress_json,@temporary_unlock_states_json,@actual_unspent_skill_points,@actual_unspent_attribute_points,@notes
     )
   `).run({
     id,
@@ -251,6 +266,7 @@ function insertCharacter(payload, build, forcedId = null) {
     cp_fitness: clampInt(payload.cp_fitness, 0, CP_TREE_MAX, 0),
     skill_ranks_json: JSON.stringify(ranks),
     completed_json: JSON.stringify([...new Set((Array.isArray(payload.completed) ? payload.completed : []).filter(x => typeof x === 'string'))]),
+    temporary_unlock_states_json: JSON.stringify(sanitizeTemporaryUnlockStates(payload.temporary_unlock_states)),
     gear_json: JSON.stringify(sanitizeGear(payload.gear)),
     tracked_skill_lines_json: JSON.stringify(tracked),
     skill_allocations_json: JSON.stringify(allocations),
@@ -399,6 +415,7 @@ function register(ipcMain) {
       }
       const newUnlockIds = new Set((nextSelectedBuild.unlock_order || []).map(item => item.id))
       const keptCompleted = (character.completed || []).filter(id => newUnlockIds.has(id))
+      const keptTemporaryStates = Object.fromEntries(Object.entries(character.temporary_unlock_states || {}).filter(([id]) => newUnlockIds.has(id)))
       const validGear = {}
       const stageMap = new Map((nextSelectedBuild.gear_stages || []).map(stage => [stage.id, new Set((stage.sets || []).flatMap(set => (set.pieces || []).map(piece => `id:${piece.id}`))) ]))
       for (const [stageId, pieces] of Object.entries(character.gear || {})) {
@@ -414,6 +431,7 @@ function register(ipcMain) {
       values.tracked_skill_lines_json = JSON.stringify(keptTrackedLines)
       values.skill_allocations_json = JSON.stringify(keptAllocations)
       values.completed_json = JSON.stringify(keptCompleted)
+      values.temporary_unlock_states_json = JSON.stringify(keptTemporaryStates)
       values.gear_json = JSON.stringify(sameClass ? validGear : {})
     }
     if (source.loadout_id !== undefined && values.build_id === undefined) {
@@ -469,6 +487,23 @@ function register(ipcMain) {
       updateJson(id, 'completed_json', safeCompleted)
     })()
     return { skill_allocations: safeAllocations, completed: safeCompleted }
+  })
+
+  ipcMain.handle('characters:setTemporaryUnlockState', (_e, id, unlockId, state) => {
+    const c = requireCharacter(id)
+    if (typeof unlockId !== 'string' || !unlockId.trim()) throw new Error('Invalid temporary unlock id')
+    if (state !== null && state !== undefined && !['retired', 'active'].includes(state)) throw new Error('Invalid temporary unlock state')
+    const baseBuild = getBuildData(c.build_id)
+    const loadoutBuild = applyLoadout(baseBuild, c.loadout_id)
+    const selectedBuild = applyVariant(loadoutBuild, c.variant_id, c.loadout_id)
+    const item = (selectedBuild.unlock_order || []).find(row => row?.id === unlockId)
+    if (!item) throw new Error('Build unlock not found')
+    if (item.status !== 'temporary') throw new Error('Only temporary build unlocks can be retired')
+    const next = { ...(c.temporary_unlock_states || {}) }
+    if (state === null || state === undefined) delete next[unlockId]
+    else next[unlockId] = state
+    updateJson(id, 'temporary_unlock_states_json', sanitizeTemporaryUnlockStates(next))
+    return sanitizeTemporaryUnlockStates(next)
   })
 
   ipcMain.handle('characters:addTrackedSkillLine', (_e, id, lineId) => {

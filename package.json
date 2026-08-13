@@ -1,6 +1,6 @@
 {
   "name": "arrow-to-the-build",
-  "version": "2.1.7",
+  "version": "2.1.8",
   "description": "Offline-first ESO build and progression companion with optional local addon synchronization",
   "main": "src/main/main.js",
   "imports": {

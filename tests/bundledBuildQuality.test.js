@@ -81,6 +81,19 @@ test('the curated Mighty Seven keep the researched race, weapon, CP, and passive
   }
 })
 
+
+test('every Mighty Seven temporary unlock declares a retirement cutoff', () => {
+  const supported = new Set(['character_level', 'skill_line_rank', 'unlock_completed'])
+  for (const [file, build] of Object.entries(builds)) {
+    const temporary = (build.unlock_order || []).filter(row => row.status === 'temporary')
+    assert.ok(temporary.length > 0, `${file}: expected at least one temporary leveling unlock`)
+    for (const row of temporary) {
+      assert.ok(row.retire_when && typeof row.retire_when === 'object', `${file}/${row.id}: temporary unlock needs retire_when`)
+      assert.ok(supported.has(row.retire_when.type), `${file}/${row.id}: unsupported retirement cutoff ${row.retire_when.type}`)
+    }
+  }
+})
+
 test('Medicinal Use is the combat crafting baseline without dragging whole crafting trees into the build', () => {
   for (const [file, build] of Object.entries(builds)) {
     assert.equal(passiveRanks(build, 'alchemy__medicinal_use').length, 3, `${file}: Medicinal Use should be 3/3`)

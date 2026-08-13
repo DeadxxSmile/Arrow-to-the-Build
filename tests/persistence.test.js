@@ -37,7 +37,7 @@ test('migrations apply once, are recorded, and create the expected columns', () 
   const applied = db.prepare('SELECT filename FROM _migrations ORDER BY filename').all().map(r => r.filename)
   assert.deepEqual(applied, EXPECTED_MIGRATIONS)
   const columns = db.prepare('PRAGMA table_info(characters)').all().map(c => c.name)
-  for (const col of ['tracked_skill_lines_json', 'skill_allocations_json', 'custom_skill_lines_json', 'race', 'alliance', 'loadout_id', 'actual_unspent_attribute_points', 'companion_progress_json']) assert.ok(columns.includes(col))
+  for (const col of ['tracked_skill_lines_json', 'skill_allocations_json', 'custom_skill_lines_json', 'race', 'alliance', 'loadout_id', 'actual_unspent_attribute_points', 'companion_progress_json', 'temporary_unlock_states_json']) assert.ok(columns.includes(col))
   const buildColumns = db.prepare('PRAGMA table_info(builds)').all().map(c => c.name)
   for (const col of ['origin_type', 'forked_from_build_id', 'last_saved_revision', 'build_file_path', 'build_file_hash', 'build_file_synced_at', 'build_file_sync_error']) assert.ok(buildColumns.includes(col))
   assert.ok(db.prepare("SELECT 1 FROM sqlite_master WHERE type='table' AND name='build_editor_drafts'").get())
@@ -150,6 +150,7 @@ test('changing class builds preserves profile and non-class progress while clear
   ipc.call('characters:setSkillTracking', id, {
     herald__runeblades: 1, blacksmithing__metalworking: 1
   }, ['runeblades'])
+  ipc.call('characters:setTemporaryUnlockState', id, 'runeblades', 'retired')
   ipc.call('characters:setGearPiece', id, 'leveling', 'id:any_current_level_piece_head_leveling', true)
 
   ipc.call('characters:update', id, { build_id: 'magicka_templar_solo_duo', variant_id: 'cyrodiil' })
@@ -165,6 +166,7 @@ test('changing class builds preserves profile and non-class progress while clear
   assert.equal(changed.skill_allocations.herald__runeblades, undefined, 'the previous class skill is removed')
   assert.equal(changed.skill_allocations.blacksmithing__metalworking, 1, 'non-class allocations survive')
   assert.deepEqual(changed.completed, [], 'old build completion ids are removed when they do not exist in the new build')
+  assert.deepEqual(changed.temporary_unlock_states, {}, 'temporary retirement state is scoped to unlock ids in the selected build')
   assert.deepEqual(changed.gear, {}, 'different-class build switches clear build-specific gear progress')
   assert.ok(changed.tracked_skill_lines.includes('blacksmithing'))
   assert.ok(!changed.tracked_skill_lines.includes('assassination'), 'incompatible manually tracked class lines are removed')
@@ -222,6 +224,7 @@ test('export and import round-trips a character faithfully', async () => {
   ipc.call('characters:addTrackedSkillLine', id, 'blacksmithing')
   ipc.call('characters:setGearPiece', id, 'leveling', 'id:leveling_training_head', true)
   ipc.call('characters:setSkillTracking', id, { herald__fatecarver: 1, herald__fated_fortune: 2 }, ['fatecarver', 'fated_fortune_1'])
+  ipc.call('characters:setTemporaryUnlockState', id, 'runeblades', 'retired')
 
   state.savePath = path.join(dir, 'backup.json')
   const file = await ipc.call('characters:export', id)
@@ -239,6 +242,7 @@ test('export and import round-trips a character faithfully', async () => {
   for (const key of ['level', 'cp_craft', 'cp_warfare', 'cp_fitness', 'loadout_id', 'variant_id', 'race', 'alliance']) assert.equal(restored[key], original[key])
   assert.deepEqual(restored.skill_ranks, original.skill_ranks)
   assert.deepEqual(restored.completed.sort(), original.completed.sort())
+  assert.deepEqual(restored.temporary_unlock_states, original.temporary_unlock_states)
   assert.deepEqual(restored.skill_allocations, original.skill_allocations)
   assert.deepEqual(restored.gear, original.gear)
   assert.deepEqual(restored.tracked_skill_lines, original.tracked_skill_lines)

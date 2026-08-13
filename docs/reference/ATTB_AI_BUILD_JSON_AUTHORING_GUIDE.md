@@ -6,7 +6,7 @@
 
 **Guide revision:** 2.1 - updated for ATTB 2.1 companion authoring, preset data, and stricter actionable-progression guidance.
 
-**Current baseline when this guide was revised:** ATTB 2.1.7, public Build Schema 4. Player-skill IDs still follow the game version named by the current bundled `eso-skill-catalog.json`; companion presets use the separately maintained current companion catalog.
+**Current baseline when this guide was revised:** ATTB 2.1.8, public Build Schema 4. Player-skill IDs still follow the game version named by the current bundled `eso-skill-catalog.json`; companion presets use the separately maintained current companion catalog.
 
 **Document goal:** By the time an unfamiliar AI finishes the **START HERE** section, it should understand what ATTB is, how a build file relates to a character, what Schema 4 is trying to represent, which questions it must ask, where exact IDs come from, how sections cross-reference each other, and what must be validated before a JSON file is delivered.
 
@@ -1290,6 +1290,14 @@ Do not optimize by buying everything and assuming the user will eventually find 
 
 The goal is a **practical combat roadmap** with room for normal ESO life.
 
+For every temporary unlock, decide when it stops being useful. Prefer an explicit `retire_when` cutoff when the build has a clear handoff point:
+
+- character level when the temporary skill belongs only to an early leveling phase;
+- skill-line rank when the purpose is to train that line until a replacement or passive tier becomes available;
+- replacement unlock completion when the exact successor matters more than a numeric rank.
+
+Do not keep an early filler in the recommendation queue forever simply because it is tagged `temporary`. If there is no reliable automatic cutoff, omit `retire_when` and let the player retire it manually.
+
 In the delivery summary, report the approximate/core Skill Point burden if it is useful for the build.
 
 ---
@@ -1318,6 +1326,7 @@ Use the current working ATTB examples as the structural pattern.
 - early back bars should be absent or explicitly locked;
 - do not reference a skill before the unlock plan makes it plausibly available;
 - use temporary skills intentionally to level important lines;
+- give temporary skills a sensible retirement cutoff when the handoff point is known;
 - make bar evolution understandable;
 - include clear rotation/priority guidance;
 - phase attribute targets must not exceed the game's allocation limit;
@@ -2016,7 +2025,7 @@ For each phase ask:
 - Are the skills represented in Unlock Plan?
 - Are their stated required ranks attainable by this point?
 - Is the intended morph introduced after the base skill?
-- Are temporary leveling skills clearly temporary?
+- Are temporary leveling skills clearly temporary, with a sensible `retire_when` cutoff whenever the build can know when they have served their purpose?
 - Is there a usable heal/defense plan when the content requires one?
 - Does the rotation reference only skills actually on the effective bars or deliberately described exceptions?
 - Is the recommended gear stage valid?

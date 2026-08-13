@@ -1,9 +1,10 @@
 import { Navigate, Link, useParams } from 'react-router-dom'
 import { useApp } from '../App'
+import { useAppDialog } from '../components/AppDialogProvider'
 import EmptyState from './EmptyState'
 import SkillIcon from '../components/SkillIcon'
 import NumberStepper from '../components/NumberStepper'
-import { applyAllocationChange } from '../utils/buildLogic'
+import { applyAllocationChange, temporaryRetirementState } from '../utils/buildLogic'
 import { buildItemsForCatalogSkill, effectiveAllocation, effectiveSkillMaxPoints, itemBuildMeta } from '../utils/catalogLogic'
 import OverrideResetButton from '../components/OverrideResetButton'
 
@@ -17,7 +18,8 @@ function stateFor(skill, rank, allocation, meta) {
 
 export default function SkillLinePage() {
   const { lineId } = useParams()
-  const { character, build, skillLines, setSkillRank, setSkillTracking, appSettings } = useApp()
+  const { character, build, skillLines, setSkillRank, setSkillTracking, setTemporaryUnlockState, appSettings } = useApp()
+  const dialog = useAppDialog()
   if (!character || !build) return <EmptyState />
   const syncedLocked = character.addon_sync?.linked && appSettings.addon_allow_overrides !== 'true'
   const line = skillLines.find(item => item.id === lineId)
@@ -49,9 +51,38 @@ export default function SkillLinePage() {
   }
   const skillImage = skill => buildItemsForCatalogSkill(build, line.id, skill).find(item => item.image)?.image
 
+  const retirementForMeta = meta => {
+    const temporary = meta.linked.filter(item => item.status === 'temporary')
+    if (!temporary.length || meta.linked.some(item => item.status === 'final')) return null
+    const states = temporary.map(item => ({ item, state: temporaryRetirementState(item, character, build) }))
+    return states.find(entry => entry.state.retired) || states[0]
+  }
+
+  const retireTemporary = async (item, owned) => {
+    const kind = item.kind === 'Passive' ? 'passive' : 'skill'
+    const cost = Math.max(0, item.skill_point_cost === undefined ? 1 : Number(item.skill_point_cost) || 0)
+    const ok = await dialog.confirm({
+      title: `Are you done with this temporary ${kind}?`,
+      message: owned
+        ? `${item.name} is recorded as owned. Retiring it changes only the ATTB plan: it will stop being recommended${cost ? ` and ${cost} Skill Point${cost === 1 ? '' : 's'} will be shown as reclaimable until you refund it in ESO` : ''}.`
+        : `${item.name} will be retired for this character even if the build's normal cutoff has not been reached. This does not change your ESO character.`,
+      confirmLabel: `Retire Temporary ${item.kind === 'Passive' ? 'Passive' : 'Skill'}`
+    })
+    if (ok) await setTemporaryUnlockState(item.id, 'retired')
+  }
+
+  const TemporaryControl = ({ meta, owned }) => {
+    const entry = retirementForMeta(meta)
+    if (!entry) return null
+    if (entry.state.source === 'manual-active') return <button type="button" className="btn ghost compact" onClick={() => setTemporaryUnlockState(entry.item.id, null)}>Use build cutoff</button>
+    if (entry.state.retired) return <button type="button" className="btn ghost compact" onClick={() => setTemporaryUnlockState(entry.item.id, entry.state.source === 'manual' ? null : 'active')}>{entry.state.source === 'manual' ? 'Use build cutoff' : 'Keep active'}</button>
+    return <button type="button" className="btn ghost compact" onClick={() => retireTemporary(entry.item, owned)}>Retire</button>
+  }
+
   const SkillBadges = ({ skill }) => {
     const meta = itemBuildMeta(build, line.id, skill)
-    const state = stateFor(skill, rank, effectiveAllocation(character, build, line.id, skill), meta)
+    const retired = retirementForMeta(meta)?.state?.retired
+    const state = retired ? 'retired' : stateFor(skill, rank, effectiveAllocation(character, build, line.id, skill), meta)
     return <div className="eso-badges">
       {meta.tracked ? <><span className={`mini-tag ${meta.status}`}>{meta.status}</span><span className="mini-tag phase">{meta.phase}</span></> : <span className="mini-tag tracking">tracking</span>}
       <span className={`mini-tag state ${state}`}>{state}</span>
@@ -69,7 +100,7 @@ export default function SkillLinePage() {
         <button type="button" role="checkbox" aria-checked={!!allocation} className={`eso-skill-toggle ${allocation ? 'selected' : ''}`} onClick={() => updateAllocation(skill, allocation ? 0 : 1)} disabled={syncedLocked} aria-label={`${allocation ? 'Unselect' : 'Select'} ${skill.name}`}><span aria-hidden="true">{allocation ? '✓' : ''}</span></button>
         <div className="eso-skill-icon"><SkillIcon skillId={skill.id} name={skill.name} image={skillImage(skill)} size="line" /></div>
         <div className="eso-skill-copy">
-          <div className="eso-skill-heading"><h3>{skill.name}</h3>{order && <span className="unlock-order">Build #{order}</span>}<SkillBadges skill={skill} /><OverrideResetButton fieldPath={`skill_allocations.${skill.id}`} compact /></div>
+          <div className="eso-skill-heading"><h3>{skill.name}</h3>{order && <span className="unlock-order">Build #{order}</span>}<SkillBadges skill={skill} /><TemporaryControl meta={meta} owned={allocation > 0} /><OverrideResetButton fieldPath={`skill_allocations.${skill.id}`} compact /></div>
           <p>{skill.type}{required ? ` · Unlocks at line rank ${required}` : ' · Unlock timing varies by line progression'}</p>
           <small>{meta.notes}</small>
         </div>
@@ -81,7 +112,7 @@ export default function SkillLinePage() {
         return <div className={`morph-choice-wrap ${morphPoints ? 'selected' : ''}`} key={morph.id}>
           <button type="button" className={`morph-choice ${morphPoints ? 'selected' : ''}`} onClick={() => updateAllocation(morph, morphPoints ? 0 : 1)} disabled={syncedLocked || (!allocation && morphPoints === 0)} aria-pressed={!!morphPoints} title={!allocation && morphPoints === 0 ? `Select ${skill.name} first` : undefined}>
             <span className="morph-icon-wrap"><SkillIcon skillId={morph.id} name={morph.name} image={skillImage(morph)} size="morph" />{morphPoints > 0 && <i aria-hidden="true">✓</i>}</span>
-            <div><div><b>{morph.name}</b>{morphOrder && <em>Build #{morphOrder}</em>}</div><SkillBadges skill={morph} /><small>{morphMeta.notes}</small></div>
+            <div><div><b>{morph.name}</b>{morphOrder && <em>Build #{morphOrder}</em>}</div><SkillBadges skill={morph} /><TemporaryControl meta={morphMeta} owned={morphPoints > 0} /><small>{morphMeta.notes}</small></div>
           </button>
           <OverrideResetButton fieldPath={`skill_allocations.${morph.id}`} compact />
         </div>
@@ -98,7 +129,7 @@ export default function SkillLinePage() {
     return <article className={`eso-passive-row ${allocation ? 'selected' : ''}`}>
       <div className="eso-passive-icon"><SkillIcon skillId={skill.id} name={skill.name} image={skillImage(skill)} size="passive" /></div>
       <div className="eso-skill-copy">
-        <div className="eso-skill-heading"><h3>{skill.name}</h3>{order && <span className="unlock-order">Build #{order}</span>}<SkillBadges skill={skill} /></div>
+        <div className="eso-skill-heading"><h3>{skill.name}</h3>{order && <span className="unlock-order">Build #{order}</span>}<SkillBadges skill={skill} /><TemporaryControl meta={meta} owned={allocation > 0} /></div>
         <p>{skill.currency === 'class_mastery_point' ? 'Class Mastery choice' : 'Passive'} · {maxPoints} rank{maxPoints === 1 ? '' : 's'}{requiredRanks.length ? ` · Unlocks at line rank${requiredRanks.length === 1 ? '' : 's'} ${requiredRanks.join(' / ')}` : ''}</p>
         <small>{meta.notes}</small>
       </div>
@@ -113,7 +144,7 @@ export default function SkillLinePage() {
     return <article className={`eso-passive-row ${allocation ? 'selected' : ''}`}>
       <div className="eso-passive-icon"><SkillIcon skillId={skill.id} name={skill.name} image={skillImage(skill)} size="passive" /></div>
       <div className="eso-skill-copy">
-        <div className="eso-skill-heading"><h3>{skill.name}</h3>{order && <span className="unlock-order">Build #{order}</span>}<SkillBadges skill={skill} /></div>
+        <div className="eso-skill-heading"><h3>{skill.name}</h3>{order && <span className="unlock-order">Build #{order}</span>}<SkillBadges skill={skill} /><TemporaryControl meta={meta} owned={allocation > 0} /></div>
         <p>{skill.type} · tracking only</p><small>{meta.notes}</small>
       </div>
       <div className="synced-control"><NumberStepper value={allocation} min={0} max={1} onChange={value => updateAllocation(skill, value)} label={`${skill.name} tracked`} disabled={syncedLocked} /><OverrideResetButton fieldPath={`skill_allocations.${skill.id}`} compact /></div>

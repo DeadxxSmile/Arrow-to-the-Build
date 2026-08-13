@@ -835,7 +835,11 @@
       "morph_from": null,
       "image": null,
       "requires": [],
-      "skill_point_cost": 1
+      "skill_point_cost": 1,
+      "retire_when": {
+        "type": "character_level",
+        "level": 15
+      }
     },
     {
       "id": "render_flesh",
@@ -852,7 +856,12 @@
       "morph_from": null,
       "image": null,
       "requires": [],
-      "skill_point_cost": 1
+      "skill_point_cost": 1,
+      "retire_when": {
+        "type": "skill_line_rank",
+        "line": "living_death",
+        "rank": 30
+      }
     },
     {
       "id": "sacrificial_bones",

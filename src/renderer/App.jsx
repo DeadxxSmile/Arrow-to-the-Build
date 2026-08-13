@@ -312,6 +312,11 @@ export default function App() {
     const { allocations, completed } = applyCompletionChange(build, character, itemId, done)
     await window.api.characters.setSkillTracking(activeIdRef.current, allocations, completed); await refreshActive()
   }), [run, refreshActive, build, character])
+  const setTemporaryUnlockState = useCallback((itemId, state) => run(async () => {
+    if (!activeIdRef.current) return
+    await window.api.characters.setTemporaryUnlockState(activeIdRef.current, itemId, state)
+    await refreshActive()
+  }), [run, refreshActive])
   const setGearPiece = useCallback((stage, key, done) => run(async () => { if (activeIdRef.current) { await window.api.characters.setGearPiece(activeIdRef.current, stage, key, done); await refreshActive() } }), [run, refreshActive])
   const setAppSetting = useCallback(async (key, value) => { await window.api.settings.set(key, String(value)); setAppSettings(s => ({ ...s, [key]: String(value) })) }, [])
   const addTrackedSkillLine = useCallback(lineId => run(async () => { if (activeIdRef.current) { await window.api.characters.addTrackedSkillLine(activeIdRef.current, lineId); await refreshActive() } }), [run, refreshActive])
@@ -336,13 +341,13 @@ export default function App() {
   const ctx = useMemo(() => ({
     builds, characters, activeId, setActiveId, character, build, baseBuild, loadoutBuild, buildRecord, skillLines, skillGroups, loading,
     loadouts, selectableLoadouts, variants, selectableVariants, catalog: esoCatalog, appSettings, theme, esoPlus, setAppSetting, reloadSettings,
-    reloadBuilds, reloadCharacters, refreshActive, updateCharacter, toggleUnlock, setSkillRank,
+    reloadBuilds, reloadCharacters, refreshActive, updateCharacter, toggleUnlock, setTemporaryUnlockState, setSkillRank,
     setSkillTracking, setGearPiece, addTrackedSkillLine, deleteTrackedSkillLine, openCharacterModal: () => setModal(true),
     workspace, switchWorkspace, editor, characterBuilds,
     addonStatus, reloadAddonStatus, reloadAddonDiscoveries, openAddonSetup, openAddonImport, clearAddonOverride
   }), [builds, characters, activeId, character, build, baseBuild, loadoutBuild, buildRecord, skillLines, skillGroups, loading,
     loadouts, selectableLoadouts, variants, selectableVariants, appSettings, theme, esoPlus, setAppSetting, reloadSettings, reloadBuilds, reloadCharacters,
-    refreshActive, updateCharacter, toggleUnlock, setSkillRank, setSkillTracking, setGearPiece,
+    refreshActive, updateCharacter, toggleUnlock, setTemporaryUnlockState, setSkillRank, setSkillTracking, setGearPiece,
     addTrackedSkillLine, deleteTrackedSkillLine, workspace, switchWorkspace, editor, characterBuilds,
     addonStatus, reloadAddonStatus, reloadAddonDiscoveries, openAddonSetup, openAddonImport, clearAddonOverride])
 

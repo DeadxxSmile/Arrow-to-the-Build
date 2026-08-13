@@ -831,7 +831,11 @@
       "notes": "Temporary ranged filler.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "retire_when": {
+        "type": "character_level",
+        "level": 15
+      }
     },
     {
       "id": "solar_flare",

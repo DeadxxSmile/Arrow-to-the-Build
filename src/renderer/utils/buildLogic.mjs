@@ -167,6 +167,63 @@ export function effectiveCompletedSet(build, character) {
   return completed
 }
 
+function temporaryStateOverride(item, character) {
+  if (item?.status !== 'temporary') return null
+  const value = character?.temporary_unlock_states?.[item.id]
+  return value === 'retired' || value === 'active' ? value : null
+}
+
+export function temporaryRetirementState(item, character, build = null) {
+  if (item?.status !== 'temporary') return { retired: false, source: null, reason: '' }
+  const override = temporaryStateOverride(item, character)
+  if (override === 'retired') return { retired: true, source: 'manual', reason: 'Marked done by you.' }
+  if (override === 'active') return { retired: false, source: 'manual-active', reason: 'Kept active by you.' }
+
+  const rule = item.retire_when
+  if (!isObj(rule)) return { retired: false, source: null, reason: '' }
+  if (rule.type === 'character_level') {
+    const target = Math.max(1, Math.min(50, Math.trunc(Number(rule.level) || 0)))
+    const current = Math.max(1, Math.trunc(Number(character?.level) || 1))
+    if (target && current >= target) return { retired: true, source: 'build', reason: `Build cutoff reached at character level ${target}.` }
+  }
+  if (rule.type === 'skill_line_rank') {
+    const line = typeof rule.line === 'string' && rule.line ? rule.line : item.line
+    const target = Math.max(0, Math.trunc(Number(rule.rank) || 0))
+    const current = Math.max(0, Math.trunc(Number(character?.skill_ranks?.[line]) || 0))
+    if (target && current >= target) {
+      const name = catalogLineMap.get(line)?.name || line
+      return { retired: true, source: 'build', reason: `${name} reached Rank ${target}, the build's cutoff for this temporary step.` }
+    }
+  }
+  if (rule.type === 'unlock_completed' && build && typeof rule.unlock_id === 'string' && rule.unlock_id) {
+    if (effectiveCompletedSet(build, character).has(rule.unlock_id)) {
+      const replacement = buildIndex(build).byItemId.get(rule.unlock_id)
+      return { retired: true, source: 'build', reason: replacement ? `Replaced by ${replacement.name}.` : 'The build replacement is complete.' }
+    }
+  }
+  return { retired: false, source: null, reason: '' }
+}
+
+export function retiredTemporaryUnlocks(build, character) {
+  if (!build) return []
+  const completed = effectiveCompletedSet(build, character)
+  return (build.unlock_order || [])
+    .filter(item => item?.status === 'temporary')
+    .map(item => {
+      const retirement = temporaryRetirementState(item, character, build)
+      return {
+        ...item,
+        retirement,
+        owned: completed.has(item.id),
+        reclaimable_points: completed.has(item.id)
+          ? Math.max(0, item.skill_point_cost === undefined ? 1 : Number(item.skill_point_cost) || 0)
+          : 0
+      }
+    })
+    .filter(item => item.retirement.retired)
+    .sort((a, b) => (Number(a.priority) || 0) - (Number(b.priority) || 0))
+}
+
 function catalogPassiveRankGate(item, build) {
   if (!item?.catalog_skill_id || !build) return 0
   const hit = catalogSkillMap.get(item.catalog_skill_id)
@@ -187,6 +244,7 @@ export function requiredRankFor(item, build = null) {
 }
 
 export function unlockState(item, character, build = null) {
+  if (temporaryRetirementState(item, character, build).retired) return 'retired'
   const completed = build ? effectiveCompletedSet(build, character) : new Set(character?.completed || [])
   if (completed.has(item.id)) return 'complete'
   const requires = build ? requirementsFor(build, item.id) : (item.requires || [])
@@ -199,7 +257,7 @@ export function unlockState(item, character, build = null) {
   return 'available'
 }
 
-const STATE_ORDER = { available: 0, train: 1, locked: 2, blocked: 3, complete: 4 }
+const STATE_ORDER = { available: 0, train: 1, locked: 2, blocked: 3, complete: 4, retired: 5 }
 function lineRankGap(item, character, build) {
   if (!item?.line) return 0
   const current = Number(character?.skill_ranks?.[item.line] || 0)

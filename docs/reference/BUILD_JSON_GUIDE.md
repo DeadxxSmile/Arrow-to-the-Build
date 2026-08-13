@@ -291,6 +291,7 @@ Every `unlock_order.line` must appear here. The line ID must exist in the bundle
       "kind": "Active",
       "phase": "Leveling",
       "status": "temporary",
+      "retire_when": { "type": "character_level", "level": 30 },
       "priority": 10,
       "notes": "Use until the intended morph and final rotation are ready.",
       "requires": [],
@@ -311,6 +312,7 @@ Every `unlock_order.line` must appear here. The line ID must exist in the bundle
 | `required_rank` | Skill-line rank gate. |
 | `kind` | Display category such as Active, Morph, Passive, Ultimate, Scribing, or Class Mastery. |
 | `status` | Author label such as temporary, leveling, final, optional, or tracking. |
+| `retire_when` | Optional cutoff for `temporary` rows. Supported types: `character_level`, `skill_line_rank`, or `unlock_completed`. |
 | `priority` | Lower numbers are recommended earlier. |
 | `requires` | Other unlock-row IDs that must come first. |
 | `skill_point_cost` | Ordinary Skill Points consumed; foreign class purchases use `2`. |
@@ -319,6 +321,8 @@ Every `unlock_order.line` must appear here. The line ID must exist in the bundle
 Set either `catalog_skill_id` or `scribed_skill_id`, not both.
 
 Morph rows should require their base ability. ATTB also prevents two alternate morphs from both being marked final.
+
+Temporary rows may omit `retire_when`, which leaves retirement entirely to the player. When a cutoff is authored, Character Tracker stops recommending the row after the condition is met. A player can still retire a temporary row early or explicitly keep it active for that character without changing synced ESO ownership data.
 
 # 8. Scribed Skills
 

@@ -17,7 +17,7 @@
   <meta name="twitter:description" content="An offline-first ESO character tracker and Build Editor with local addon synchronization, exact progression gates, combat companions, gear roadmaps, Champion Points, and structured hotbars.">
   <meta name="twitter:image" content="https://arrowtothebuild.com/assets/social/attb-og.webp">
   <link rel="icon" href="assets/logo/attb-logo.png">
-  <link rel="stylesheet" href="styles.css?v=2.1.7-default-polish">
+  <link rel="stylesheet" href="styles.css?v=2.1.8-progression-polish">
 </head>
 <body>
   <div class="ambient ambient-one" aria-hidden="true"></div>
@@ -29,7 +29,7 @@
         <a class="brand" href="#top" aria-label="Arrow to the Build home">
           <img src="assets/logo/attb-logo.png" alt="">
           <span>Arrow to the Build</span>
-          <small>v2.1.7</small>
+          <small>v2.1.8</small>
         </a>
         <div class="topbar-links">
           <a href="#features">Features</a>
@@ -55,7 +55,7 @@
           </div>
           <p class="cta-note">Free and open source. No account. No cloud sync. Character and build data stay on your PC.</p>
           <div class="meta-row" aria-label="Project details">
-            <span class="meta-pill version">v2.1.7</span>
+            <span class="meta-pill version">v2.1.8</span>
             <span class="meta-pill">Windows 10 / 11</span>
             <span class="meta-pill">ESO Addon 1.1.1</span>
             <span class="meta-pill">Update 50 audited</span>
@@ -80,7 +80,7 @@
 
         <div class="feature-grid">
           <article class="feature-card card"><span class="feature-icon">01</span><h3>Character-specific progression</h3><p>Track the real name, level, race, alliance, attributes, skill-line ranks, purchases, gear, Champion Points, build, and variant for each character.</p></article>
-          <article class="feature-card card"><span class="feature-icon">02</span><h3>Exact unlock roadmap</h3><p>Recommendations use audited Update 50 line ranks, exact passive-point gates, prerequisites, morph readiness, Skill Points, and build priority before calling a purchase available.</p></article>
+          <article class="feature-card card"><span class="feature-icon">02</span><h3>Exact unlock roadmap</h3><p>Recommendations use audited Update 50 line ranks, exact passive-point gates, prerequisites, morph readiness, Skill Points, and build priority before calling a purchase available. Temporary leveling skills also know when their job is done, so yesterday's filler stops shouting from the top of the list.</p></article>
           <article class="feature-card card"><span class="feature-icon">03</span><h3>Complete skill tracking</h3><p>Every skill line counts: class, weapon, armor, World, Guild, Alliance War, racial, crafting, Scribing, and Class Mastery. Not just the two bars you fight with.</p></article>
           <article class="feature-card card"><span class="feature-icon">04</span><h3>Gear roadmaps</h3><p>Leveling, starter, intermediate, and final stages can track every individual armor slot, jewelry piece, and weapon with traits, enchants, sources, and alternatives.</p></article>
           <article class="feature-card card"><span class="feature-icon">05</span><h3>Action bars &amp; rotations</h3><p>Put what you're actually slotting next to what the build wants: front and back bars, ultimates, when each skill comes online, and a rotation to run for every stage of leveling.</p></article>
@@ -164,7 +164,7 @@
         <div class="mighty-copy">
           <span class="eyebrow">The Mighty Seven</span>
           <h2>One solid build per class, ready to level.</h2>
-          <p>Every class gets a flexible, pure-class PvE build to start from. Each one comes fully loaded: setup help, catalog-linked unlocks, leveling bands, hotbars, gear stages, Champion Point paths, consumables, warnings, Scribing guidance, Class Mastery picks, and companion recommendations.</p>
+          <p>Every class gets a flexible, pure-class PvE build to start from. Each one comes fully loaded: setup help, catalog-linked unlocks, leveling bands, hotbars, gear stages, Champion Point paths, consumables, warnings, Scribing guidance, Class Mastery picks, and companion recommendations. Temporary leveling purchases now come with real handoff points too, so the build knows when it is time to stop asking for the skill that got you there.</p>
           <p class="muted">They're starting points that carry you from early levels to a working endgame setup. They're not a promise that one loadout wins every trial, arena, and PvP campaign. Nothing does.</p>
         </div>
         <div class="class-orbit" aria-label="Bundled classes">
@@ -177,12 +177,14 @@
           <div class="showcase-copy">
             <span class="eyebrow">Audited progression data</span>
             <h2>It won't tell you to buy something you can't buy yet.</h2>
-            <p>The Update 50 catalog knows the exact rank each active skill unlocks at and the exact point each passive opens up. It also knows a morph isn't the same as the rank that unlocks the skill, so it won't confuse the two and send you shopping early.</p>
+            <p>The Update 50 catalog knows the exact rank each active skill unlocks at and the exact point each passive opens up. It also knows a morph isn't the same as the rank that unlocks the skill, so it won't confuse the two and send you shopping early. And when a leveling skill has finally done its job, ATTB can retire it from the roadmap instead of nagging you to buy it forever.</p>
             <ul class="check-list">
               <li>967 player skill rows in the audited catalog</li>
               <li>Every ordinary passive point has a verified unlock rank</li>
               <li>Morphs require the base ability to reach Rank IV</li>
               <li>Recommendations also respect prerequisites and available Skill Points</li>
+              <li>Temporary unlocks can retire by level, skill-line rank, or a replacement unlock</li>
+              <li>Owned retired skills show reclaimable Skill Points without rewriting the ESO snapshot</li>
             </ul>
           </div>
           <button class="showcase-shot elevated" type="button" data-lightbox="assets/screenshots/skills-passives.webp" data-title="Skills and Passives unlock roadmap">
@@ -229,7 +231,7 @@
         <div class="section-heading">
           <span class="eyebrow">Current app tour</span>
           <h2>Here's what it actually looks like.</h2>
-          <p>All current v2.1.7 screenshots. Click any of them to blow it up to full size.</p>
+          <p>All current v2.1.8 screenshots. Click any of them to blow it up to full size.</p>
         </div>
 
         <div class="carousel elevated" aria-roledescription="carousel">
@@ -313,7 +315,7 @@
           <p>ATTB is a normal Windows installer. No runtime to install first, no account to make, no database to set up, no Minion. Just the app.</p>
         </div>
         <div class="install-grid">
-          <article class="card install-card"><span class="step-number">1</span><h3>Download the installer</h3><p>Grab <code>ATTB-Setup-2.1.7.exe</code> from GitHub Releases and run it. Existing ATTB desktop data is preserved when upgrading.</p></article>
+          <article class="card install-card"><span class="step-number">1</span><h3>Download the installer</h3><p>Grab <code>ATTB-Setup-2.1.8.exe</code> from GitHub Releases and run it. Existing ATTB desktop data is preserved when upgrading.</p></article>
           <article class="card install-card"><span class="step-number">2</span><h3>Choose addon sync or stay manual</h3><p>On first run, ATTB can detect your ESO profile and install the bundled ArrowToTheBuild addon. You can skip this and use manual tracking at any time.</p></article>
           <article class="card install-card"><span class="step-number">3</span><h3>Use /reloadui when you want fresh data</h3><p>ESO owns SavedVariables timing. If the desktop snapshot is stale, run <code>/reloadui</code> in ESO and ATTB can read the newly written local snapshot.</p></article>
         </div>
@@ -388,6 +390,6 @@
     </div>
   </dialog>
 
-  <script src="app.js?v=2.1.7-default-polish"></script>
+  <script src="app.js?v=2.1.8-progression-polish"></script>
 </body>
 </html>

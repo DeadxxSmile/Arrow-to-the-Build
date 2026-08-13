@@ -3,7 +3,8 @@ import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import {
   applyAllocationChange, applyCompletionChange, currentPhase,
-  actionableUnlocks, effectiveCompletedSet, isPieceChecked, pieceKey, recommendedUnlocks, requiredRankFor, requirementsFor, unlockState
+  actionableUnlocks, effectiveCompletedSet, isPieceChecked, pieceKey, recommendedUnlocks, requiredRankFor, requirementsFor,
+  retiredTemporaryUnlocks, temporaryRetirementState, unlockState
 } from '../src/renderer/utils/buildLogic.mjs'
 import { effectiveAllocation, skillPointUsage, catalogLineMap } from '../src/renderer/utils/catalogLogic.mjs'
 
@@ -31,6 +32,37 @@ test('synced catalog allocations translate back into build-row completion', () =
   assert.equal(unlockState(arcanist.unlock_order.find(x => x.id === 'fated_fortune_2'), synced, arcanist), 'complete')
   const offered = recommendedUnlocks(arcanist, synced).filter(x => x.state === 'available' || x.state === 'train').slice(0, 5)
   assert.equal(offered.some(x => x.catalog_skill_id === skillId), false, 'owned synced passive ranks must not remain in Next Five')
+})
+
+test('temporary unlocks retire automatically at their authored cutoff', () => {
+  const runeblades = arcanist.unlock_order.find(x => x.id === 'runeblades')
+  const before = character({ skill_ranks: { herald: 19 }, actual_unspent_skill_points: 10 })
+  const after = character({ skill_ranks: { herald: 20 }, actual_unspent_skill_points: 10 })
+  assert.equal(temporaryRetirementState(runeblades, before, arcanist).retired, false)
+  assert.equal(temporaryRetirementState(runeblades, after, arcanist).retired, true)
+  assert.equal(unlockState(runeblades, after, arcanist), 'retired')
+  assert.equal(actionableUnlocks(arcanist, after).some(item => item.id === 'runeblades'), false)
+})
+
+test('player retirement overrides the guide without changing synced ownership', () => {
+  const runeblades = arcanist.unlock_order.find(x => x.id === 'runeblades')
+  const state = character({
+    skill_ranks: { herald: 1 },
+    skill_allocations: { [runeblades.catalog_skill_id]: 1 },
+    temporary_unlock_states: { runeblades: 'retired' }
+  })
+  assert.equal(temporaryRetirementState(runeblades, state, arcanist).source, 'manual')
+  assert.equal(state.skill_allocations[runeblades.catalog_skill_id], 1, 'retirement does not rewrite ESO ownership')
+  const retired = retiredTemporaryUnlocks(arcanist, state).find(item => item.id === 'runeblades')
+  assert.equal(retired.owned, true)
+  assert.equal(retired.reclaimable_points, 1)
+})
+
+test('player can explicitly keep a temporary unlock active past the build cutoff', () => {
+  const runeblades = arcanist.unlock_order.find(x => x.id === 'runeblades')
+  const state = character({ skill_ranks: { herald: 50 }, temporary_unlock_states: { runeblades: 'active' }, actual_unspent_skill_points: 10 })
+  assert.equal(temporaryRetirementState(runeblades, state, arcanist).retired, false)
+  assert.equal(unlockState(runeblades, state, arcanist), 'available')
 })
 
 test('rank-locked items report locked, not available', () => {

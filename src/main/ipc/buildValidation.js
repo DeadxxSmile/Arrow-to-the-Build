@@ -420,11 +420,27 @@ function validateBuild(data, options = {}) {
       }
     }
     if (item.skill_point_cost !== undefined && (!Number.isInteger(Number(item.skill_point_cost)) || Number(item.skill_point_cost) < 0)) errors.push(`unlock_order "${item.id}" skill_point_cost must be a whole number of 0 or more.`)
+    if (item.retire_when !== undefined) {
+      const rule = item.retire_when
+      if (item.status !== 'temporary') errors.push(`unlock_order "${item.id}" retire_when is only valid for temporary unlocks.`)
+      if (!isObj(rule)) errors.push(`unlock_order "${item.id}" retire_when must be an object.`)
+      else if (!['character_level', 'skill_line_rank', 'unlock_completed'].includes(rule.type)) errors.push(`unlock_order "${item.id}" retire_when.type is not supported.`)
+      else if (rule.type === 'character_level' && (!Number.isInteger(Number(rule.level)) || Number(rule.level) < 1 || Number(rule.level) > 50)) errors.push(`unlock_order "${item.id}" character-level retirement must use a whole level from 1 to 50.`)
+      else if (rule.type === 'skill_line_rank') {
+        if (badId(rule.line)) errors.push(`unlock_order "${item.id}" skill-line retirement needs a valid line id.`)
+        else if (!lineIds.has(rule.line)) errors.push(`unlock_order "${item.id}" retirement line "${rule.line}" is not in relevant_lines.`)
+        if (!Number.isInteger(Number(rule.rank)) || Number(rule.rank) < 1 || Number(rule.rank) > 50) errors.push(`unlock_order "${item.id}" skill-line retirement rank must be a whole number from 1 to 50.`)
+      } else if (rule.type === 'unlock_completed' && badId(rule.unlock_id)) errors.push(`unlock_order "${item.id}" replacement retirement needs a valid unlock_id.`)
+    }
   }
 
   for (const item of items) {
     for (const req of (Array.isArray(item?.requires) ? item.requires : [])) {
       if (!seen.has(req)) errors.push(`unlock_order "${item.id}" requires "${req}", which does not exist.`)
+    }
+    if (item?.retire_when?.type === 'unlock_completed') {
+      if (!seen.has(item.retire_when.unlock_id)) errors.push(`unlock_order "${item.id}" retires after "${item.retire_when.unlock_id}", which does not exist.`)
+      else if (item.retire_when.unlock_id === item.id) errors.push(`unlock_order "${item.id}" cannot retire itself.`)
     }
   }
   for (const cycle of findRequireCycles(items)) errors.push(`unlock_order has a circular requires chain: ${cycle.join(' -> ')}.`)

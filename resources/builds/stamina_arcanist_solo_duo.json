@@ -810,7 +810,12 @@
       "morph_from": null,
       "image": null,
       "requires": [],
-      "skill_point_cost": 1
+      "skill_point_cost": 1,
+      "retire_when": {
+        "type": "skill_line_rank",
+        "line": "herald",
+        "rank": 20
+      }
     },
     {
       "id": "runic_jolt",
@@ -827,7 +832,11 @@
       "morph_from": null,
       "image": null,
       "requires": [],
-      "skill_point_cost": 1
+      "skill_point_cost": 1,
+      "retire_when": {
+        "type": "character_level",
+        "level": 30
+      }
     },
     {
       "id": "runemend",
@@ -844,7 +853,12 @@
       "morph_from": null,
       "image": null,
       "requires": [],
-      "skill_point_cost": 1
+      "skill_point_cost": 1,
+      "retire_when": {
+        "type": "skill_line_rank",
+        "line": "curative",
+        "rank": 50
+      }
     },
     {
       "id": "twin_slashes",
@@ -860,7 +874,12 @@
       "notes": "Temporary Dual Wield leveling skill. Leave unmorphed and replace it when Quick Cloak arrives.",
       "morph_from": null,
       "image": null,
-      "requires": []
+      "requires": [],
+      "retire_when": {
+        "type": "skill_line_rank",
+        "line": "dual_wield",
+        "rank": 20
+      }
     },
     {
       "id": "fatecarver",

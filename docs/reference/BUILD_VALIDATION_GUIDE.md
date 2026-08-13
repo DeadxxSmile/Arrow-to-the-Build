@@ -120,6 +120,10 @@ JSON does not allow comments, trailing commas, or unquoted keys. Use a JSON-awar
 
 New files should use `schema_version: 4`. Valid Schema 3 files are migrated during import. Schema 1 and 2 were pre-release formats and are unsupported.
 
+### Temporary retirement rule is invalid
+
+`retire_when` is only valid on `status: "temporary"` unlock rows. Character-level cutoffs must be 1-50, skill-line cutoffs must reference a line in `relevant_lines` and use rank 1-50, and replacement cutoffs must reference another valid `unlock_order.id`.
+
 ### Bundled ID is protected
 
 A community file cannot replace a bundled ATTB build. Change the build’s permanent `id` and display `name`, or fork the bundled build inside the Build Library.

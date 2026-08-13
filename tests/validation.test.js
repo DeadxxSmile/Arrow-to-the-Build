@@ -130,6 +130,29 @@ test('Schema 4 requires structured hotbars and grouped individual equipment piec
   }
 })
 
+test('Schema 4 validates temporary unlock retirement rules', () => {
+  assert.deepEqual(errorsFor(b => {
+    const row = b.unlock_order.find(item => item.status === 'temporary')
+    row.retire_when = { type: 'character_level', level: 30 }
+  }), [])
+  assert.ok(matches(errorsFor(b => {
+    const row = b.unlock_order.find(item => item.status === 'temporary')
+    row.retire_when = { type: 'character_level', level: 51 }
+  }), /character-level retirement/))
+  assert.ok(matches(errorsFor(b => {
+    const row = b.unlock_order.find(item => item.status === 'temporary')
+    row.retire_when = { type: 'skill_line_rank', line: 'missing_line', rank: 20 }
+  }), /retirement line/))
+  assert.ok(matches(errorsFor(b => {
+    const row = b.unlock_order.find(item => item.status === 'temporary')
+    row.retire_when = { type: 'unlock_completed', unlock_id: 'missing_unlock' }
+  }), /retires after/))
+  assert.ok(matches(errorsFor(b => {
+    const row = b.unlock_order.find(item => item.status === 'final')
+    row.retire_when = { type: 'character_level', level: 30 }
+  }), /only valid for temporary unlocks/))
+})
+
 test('Schema 4 validates phase ids, progression ranges, hotbar skills, rotations, and acquisition metadata', () => {
   assert.ok(matches(errorsFor(b => { b.phases[1].id = b.phases[0].id }), /Duplicate phases id/))
   assert.ok(matches(errorsFor(b => { b.phases[0].min_level = 0 }), /min_level must be a whole character level/))

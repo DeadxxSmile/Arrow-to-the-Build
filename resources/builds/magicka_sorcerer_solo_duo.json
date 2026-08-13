@@ -855,7 +855,11 @@
       "morph_from": null,
       "image": null,
       "requires": [],
-      "skill_point_cost": 1
+      "skill_point_cost": 1,
+      "retire_when": {
+        "type": "character_level",
+        "level": 15
+      }
     },
     {
       "id": "mage_s_fury",
@@ -872,7 +876,11 @@
       "morph_from": null,
       "image": null,
       "requires": [],
-      "skill_point_cost": 1
+      "skill_point_cost": 1,
+      "retire_when": {
+        "type": "character_level",
+        "level": 15
+      }
     },
     {
       "id": "lightning_splash",

@@ -49,6 +49,7 @@ contextBridge.exposeInMainWorld('api', {
     update: (id, patch) => ipcRenderer.invoke('characters:update', id, patch),
     setSkillRank: (id, lineId, rank) => ipcRenderer.invoke('characters:setSkillRank', id, lineId, rank),
     setSkillTracking: (id, allocations, completed) => ipcRenderer.invoke('characters:setSkillTracking', id, allocations, completed),
+    setTemporaryUnlockState: (id, unlockId, state) => ipcRenderer.invoke('characters:setTemporaryUnlockState', id, unlockId, state),
     setGearPiece: (id, stageId, pieceKey, done) => ipcRenderer.invoke('characters:setGearPiece', id, stageId, pieceKey, done),
     addTrackedSkillLine: (id, lineId) => ipcRenderer.invoke('characters:addTrackedSkillLine', id, lineId),
     deleteTrackedSkillLine: (id, lineId) => ipcRenderer.invoke('characters:deleteTrackedSkillLine', id, lineId),

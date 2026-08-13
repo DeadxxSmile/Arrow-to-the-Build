@@ -41,6 +41,16 @@ function SkillCatalogRow({ data, line, skill, onChange }) {
   const morphs = (skill.morph_ids || []).map(id => catalogSkillMap.get(id)?.skill).filter(Boolean)
   const setCount = next => onChange(current => setPlannedSkillCount(current, skill.id, next))
   const patchRows = patch => onChange(current => patchPlannedSkillRows(current, skill.id, patch))
+  const retirement = rows[0]?.retire_when
+  const retirementType = retirement?.type || 'manual'
+  const setRetirementType = type => {
+    if (type === 'manual') { patchRows({ retire_when: undefined }); return }
+    if (type === 'character_level') { patchRows({ retire_when: { type, level: 30 } }); return }
+    if (type === 'skill_line_rank') { patchRows({ retire_when: { type, line: line.id, rank: Number(line.max_rank) || 50 } }); return }
+    const replacement = (data.unlock_order || []).find(row => row?.id !== rows[0]?.id && row?.status === 'final')
+    patchRows({ retire_when: { type: 'unlock_completed', unlock_id: replacement?.id || '' } })
+  }
+  const patchRetirement = patch => patchRows({ retire_when: { ...(retirement || {}), ...patch } })
 
   return <article className={`build-skill-catalog-row ${selected ? 'selected' : ''}`}>
     <div className="build-skill-main">
@@ -54,9 +64,18 @@ function SkillCatalogRow({ data, line, skill, onChange }) {
       {skill.type === 'Passive' ? <NumberStepper value={count} min={0} max={max} onChange={setCount} label={`${skill.name} planned ranks`} /> : <button type="button" className={`btn compact ${selected ? 'secondary' : ''}`} onClick={() => setCount(selected ? 0 : 1)}>{selected ? 'Remove' : 'Add to plan'}</button>}
     </div>
     {selected && <div className="build-skill-options">
-      <label><span>Use</span><select value={rows[0]?.status || 'final'} onChange={event => patchRows({ status: event.target.value })}><option value="final">Final build</option><option value="temporary">Temporary leveling</option><option value="optional">Optional alternative</option></select></label>
+      <label><span>Use</span><select value={rows[0]?.status || 'final'} onChange={event => {
+        const status = event.target.value
+        patchRows(status === 'temporary' ? { status } : { status, retire_when: undefined })
+      }}><option value="final">Final build</option><option value="temporary">Temporary leveling</option><option value="optional">Optional alternative</option></select></label>
       <label><span>Recommended phase</span><input value={rows[0]?.phase || ''} onChange={event => patchRows({ phase: event.target.value })} placeholder="Leveling, Endgame, CP160…" /></label>
       <label className="skill-notes-field"><span>Author note</span><input value={rows[0]?.notes || ''} onChange={event => patchRows({ notes: event.target.value })} placeholder="Why or when the player should take this." /></label>
+      {rows[0]?.status === 'temporary' && <>
+        <label><span>Retire when</span><select value={retirementType} onChange={event => setRetirementType(event.target.value)}><option value="manual">Player decides</option><option value="character_level">Character reaches level</option><option value="skill_line_rank">Skill line reaches rank</option><option value="unlock_completed">Replacement unlock is complete</option></select></label>
+        {retirementType === 'character_level' && <label><span>Character level cutoff</span><input type="number" min="1" max="50" value={retirement?.level || 30} onChange={event => patchRetirement({ type: 'character_level', level: Math.max(1, Math.min(50, Number(event.target.value) || 1)) })} /></label>}
+        {retirementType === 'skill_line_rank' && <><label><span>Skill line</span><select value={retirement?.line || line.id} onChange={event => patchRetirement({ type: 'skill_line_rank', line: event.target.value })}>{(data.relevant_lines || []).map(row => <option key={row.id} value={row.id}>{row.name}</option>)}</select></label><label><span>Line-rank cutoff</span><input type="number" min="1" max="50" value={retirement?.rank || Number(line.max_rank) || 50} onChange={event => patchRetirement({ type: 'skill_line_rank', rank: Math.max(1, Math.min(50, Number(event.target.value) || 1)) })} /></label></>}
+        {retirementType === 'unlock_completed' && <label><span>Replacement unlock</span><select value={retirement?.unlock_id || ''} onChange={event => patchRetirement({ type: 'unlock_completed', unlock_id: event.target.value })}><option value="">Choose a build unlock…</option>{(data.unlock_order || []).filter(row => row?.id !== rows[0]?.id && row?.status === 'final').map(row => <option key={row.id} value={row.id}>{row.name}</option>)}</select></label>}
+      </>}
       <span className="planned-state">{planStatus(rows)}{skill.type === 'Passive' ? ` · ${count}/${max} ranks` : ''}</span>
     </div>}
   </article>

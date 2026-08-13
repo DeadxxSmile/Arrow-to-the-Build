@@ -871,7 +871,12 @@
       "morph_from": null,
       "image": null,
       "requires": [],
-      "skill_point_cost": 1
+      "skill_point_cost": 1,
+      "retire_when": {
+        "type": "skill_line_rank",
+        "line": "siphoning",
+        "rank": 30
+      }
     },
     {
       "id": "veiled_strike",

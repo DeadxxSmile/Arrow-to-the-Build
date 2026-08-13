@@ -819,7 +819,11 @@
       "morph_from": null,
       "image": null,
       "requires": [],
-      "skill_point_cost": 1
+      "skill_point_cost": 1,
+      "retire_when": {
+        "type": "character_level",
+        "level": 30
+      }
     },
     {
       "id": "fungal_growth",
@@ -836,7 +840,12 @@
       "morph_from": null,
       "image": null,
       "requires": [],
-      "skill_point_cost": 1
+      "skill_point_cost": 1,
+      "retire_when": {
+        "type": "skill_line_rank",
+        "line": "green_balance",
+        "rank": 30
+      }
     },
     {
       "id": "frost_cloak",
@@ -853,7 +862,11 @@
       "morph_from": null,
       "image": null,
       "requires": [],
-      "skill_point_cost": 1
+      "skill_point_cost": 1,
+      "retire_when": {
+        "type": "character_level",
+        "level": 15
+      }
     },
     {
       "id": "scorch",

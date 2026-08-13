@@ -1,17 +1,20 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useApp } from '../App'
+import { useAppDialog } from '../components/AppDialogProvider'
 import EmptyState from './EmptyState'
 import SkillIcon from '../components/SkillIcon'
-import { actionableUnlocks, effectiveCompletedSet, requiredRankFor, unlockState } from '../utils/buildLogic'
+import { actionableUnlocks, effectiveCompletedSet, requiredRankFor, retiredTemporaryUnlocks, temporaryRetirementState, unlockState } from '../utils/buildLogic'
 import { effectiveAllocation } from '../utils/catalogLogic'
 
 const SUGGESTIONS_PER_PAGE = 5
 
-function SkillItem({ item, build, character, lineName, toggleUnlock, compact = false, disabled = false }) {
+function SkillItem({ item, build, character, lineName, toggleUnlock, onRetireTemporary, onUseBuildCutoff, compact = false, disabled = false }) {
   const state = unlockState(item, character, build)
   const blocked = state === 'blocked' || state === 'locked'
   const complete = state === 'complete'
+  const retirement = temporaryRetirementState(item, character, build)
+  const retirementOnly = disabled && item.status === 'temporary' && !retirement.retired
   const currentLineRank = item.line ? Number(character?.skill_ranks?.[item.line] || 0) : 0
   const requiredRank = requiredRankFor(item, build)
   const rankGap = Math.max(0, requiredRank - currentLineRank)
@@ -21,10 +24,10 @@ function SkillItem({ item, build, character, lineName, toggleUnlock, compact = f
       className={`completion-box skill-summary-toggle ${complete ? 'selected' : ''}`}
       role="checkbox"
       aria-checked={complete}
-      aria-label={`${complete ? 'Mark incomplete' : 'Mark complete'}: ${item.name}`}
-      disabled={disabled}
-      title={disabled ? 'This value comes from the synced ESO snapshot. Enable override mode to change it locally.' : undefined}
-      onClick={() => toggleUnlock(item.id, !complete)}
+      aria-label={retirementOnly ? `Retire temporary unlock: ${item.name}` : `${complete ? 'Mark incomplete' : 'Mark complete'}: ${item.name}`}
+      disabled={disabled && !retirementOnly}
+      title={retirementOnly ? 'This is a temporary build step. You can retire it without overriding synced ESO data.' : disabled ? 'This value comes from the synced ESO snapshot. Enable override mode to change it locally.' : undefined}
+      onClick={() => retirementOnly ? onRetireTemporary?.(item) : toggleUnlock(item.id, !complete)}
     ><span aria-hidden="true">{complete ? '✓' : ''}</span></button>
     <SkillIcon skillId={item.catalog_skill_id} name={item.name} image={item.image} size={compact ? 'compact' : 'list'} />
     <div>
@@ -38,12 +41,16 @@ function SkillItem({ item, build, character, lineName, toggleUnlock, compact = f
       {item.kind === 'Morph' && <em>Train {item.morph_from || 'the base skill'} to Rank IV, then select this morph.</em>}
       {state === 'locked' && <em>Current {lineName(item.line)} rank: {currentLineRank}. Requires rank {requiredRank}{rankGap ? ` · ${rankGap} rank${rankGap === 1 ? '' : 's'} away` : ''}.</em>}
       {state === 'blocked' && compact && <em>Needs an earlier purchase first.</em>}
+      {!compact && item.status === 'temporary' && !retirement.retired && (retirement.source === 'manual-active'
+        ? <button type="button" className="btn ghost compact temporary-retire-btn" onClick={() => onUseBuildCutoff?.(item)}>Use build cutoff</button>
+        : <button type="button" className="btn ghost compact temporary-retire-btn" onClick={() => onRetireTemporary?.(item)}>Retire temporary step</button>)}
     </div>
   </article>
 }
 
 export default function SkillsPage() {
-  const { character, build, toggleUnlock, skillGroups, skillLines, appSettings } = useApp()
+  const { character, build, toggleUnlock, setTemporaryUnlockState, skillGroups, skillLines, appSettings } = useApp()
+  const dialog = useAppDialog()
   const [suggestionPage, setSuggestionPage] = useState(0)
   const pendingRecommendations = useMemo(() => actionableUnlocks(build, character), [build, character])
   const totalSuggestionPages = Math.max(1, Math.ceil(pendingRecommendations.length / SUGGESTIONS_PER_PAGE))
@@ -56,10 +63,26 @@ export default function SkillsPage() {
   const actionableCount = pendingRecommendations.length
   const finalItems = ordered.filter(x => x.status === 'final')
   const completed = effectiveCompletedSet(build, character)
+  const retiredTemporary = retiredTemporaryUnlocks(build, character)
   const syncedLocked = character.addon_sync?.linked && appSettings.addon_allow_overrides !== 'true'
   const completedFinal = finalItems.filter(x => completed.has(x.id)).length
   const firstShown = pendingRecommendations.length ? suggestionPage * SUGGESTIONS_PER_PAGE + 1 : 0
   const lastShown = Math.min(pendingRecommendations.length, (suggestionPage + 1) * SUGGESTIONS_PER_PAGE)
+  const reclaimablePoints = retiredTemporary.reduce((sum, item) => sum + item.reclaimable_points, 0)
+
+  const retireTemporary = async item => {
+    const kind = item.kind === 'Passive' ? 'passive' : 'skill'
+    const owned = completed.has(item.id)
+    const cost = Math.max(0, item.skill_point_cost === undefined ? 1 : Number(item.skill_point_cost) || 0)
+    const ok = await dialog.confirm({
+      title: `Are you done with this temporary ${kind}?`,
+      message: owned
+        ? `${item.name} is currently recorded as owned. Retiring it only changes the ATTB build plan: the app will stop recommending it${cost ? ` and count its ${cost} Skill Point${cost === 1 ? '' : 's'} as reclaimable` : ''}. ${cost ? 'Refund the skill in ESO whenever you are ready.' : 'This tracked unlock does not use an ordinary Skill Point.'}`
+        : `${item.name} will be retired for this character even if the build's normal cutoff has not been reached. ATTB will stop recommending it. This does not change anything in ESO.`,
+      confirmLabel: `Retire Temporary ${item.kind === 'Passive' ? 'Passive' : 'Skill'}`
+    })
+    if (ok) await setTemporaryUnlockState(item.id, 'retired')
+  }
 
   return <div className="page">
     <div className="page-title"><span className="eyebrow">Build-directed progression</span><h1>Skills &amp; passives</h1><p>The recommendation queue is build-specific. Every line page also contains the complete in-game line so you can record optional skills, alternate morphs, crafting passives, and anything else you actually purchased.</p></div>
@@ -67,9 +90,18 @@ export default function SkillsPage() {
 
     <section className="panel next-five-panel">
       <div className="section-head"><div><span className="eyebrow">Do these next</span><h2>Unlock roadmap</h2></div><small>{actionableCount ? `${actionableCount} purchase${actionableCount === 1 ? '' : 's'} available right now from your recorded ranks, prerequisites, and unspent Skill Points.` : 'No build purchase is available right now. Raise the relevant skill lines, finish prerequisites, train base skills for morphs, or earn another Skill Point.'}</small></div>
-      <div className="next-five-list">{recommended.length ? recommended.map((item, index) => <div className="numbered-skill" key={item.id}><span>{suggestionPage * SUGGESTIONS_PER_PAGE + index + 1}</span><SkillItem item={item} build={build} character={character} lineName={lineName} toggleUnlock={toggleUnlock} disabled={syncedLocked} /></div>) : <div className="quiet-box">Nothing in the build is purchasable right now. ATTB will only place a skill or passive here when your recorded character state can actually take it.</div>}</div>
+      <div className="next-five-list">{recommended.length ? recommended.map((item, index) => <div className="numbered-skill" key={item.id}><span>{suggestionPage * SUGGESTIONS_PER_PAGE + index + 1}</span><SkillItem item={item} build={build} character={character} lineName={lineName} toggleUnlock={toggleUnlock} onRetireTemporary={retireTemporary} onUseBuildCutoff={item => setTemporaryUnlockState(item.id, null)} disabled={syncedLocked} /></div>) : <div className="quiet-box">Nothing in the build is purchasable right now. ATTB will only place a skill or passive here when your recorded character state can actually take it.</div>}</div>
       {pendingRecommendations.length > SUGGESTIONS_PER_PAGE && <div className="next-five-pagination"><span>Showing {firstShown}-{lastShown} of {pendingRecommendations.length}</span><div><button type="button" className="btn ghost compact" disabled={suggestionPage === 0} onClick={() => setSuggestionPage(page => Math.max(0, page - 1))}>Previous 5</button><b>Page {suggestionPage + 1} / {totalSuggestionPages}</b><button type="button" className="btn secondary compact" disabled={suggestionPage >= totalSuggestionPages - 1} onClick={() => setSuggestionPage(page => Math.min(totalSuggestionPages - 1, page + 1))}>Next 5</button></div></div>}
     </section>
+
+    {retiredTemporary.length > 0 && <section className="panel temporary-cleanup-panel">
+      <div className="section-head"><div><span className="eyebrow">Leveling cleanup</span><h2>Retired temporary skills &amp; passives</h2></div><small>{reclaimablePoints ? `${reclaimablePoints} Skill Point${reclaimablePoints === 1 ? '' : 's'} currently reclaimable from owned temporary purchases.` : 'These leveling-only steps no longer belong in your active build plan.'}</small></div>
+      <div className="temporary-cleanup-list">{retiredTemporary.map(item => <article className="temporary-cleanup-item" key={item.id}>
+        <SkillIcon skillId={item.catalog_skill_id} name={item.name} image={item.image} size="compact" />
+        <div><div className="skill-title-line"><b>{item.name}</b><span className="mini-tag temporary">temporary</span><span className="mini-tag state retired">retired</span></div><small>{lineName(item.line)} · {item.kind}</small><p>{item.retirement.reason}{item.owned ? ` Recorded as owned: ${item.reclaimable_points} Skill Point${item.reclaimable_points === 1 ? '' : 's'} can be refunded when convenient.` : ' You never need to buy this for the current plan.'}</p></div>
+        <button type="button" className="btn ghost compact" onClick={() => setTemporaryUnlockState(item.id, item.retirement.source === 'manual' ? null : 'active')}>{item.retirement.source === 'manual' ? 'Use build cutoff' : 'Keep active'}</button>
+      </article>)}</div>
+    </section>}
 
     <section className="section-block">
       <div className="section-head"><div><span className="eyebrow">Destination overview</span><h2>Final build skills &amp; passives</h2></div><p>{completedFinal}/{finalItems.length} final-build purchases tracked. Numbered order and the full line are available from each submenu page.</p></div>
@@ -79,7 +111,7 @@ export default function SkillsPage() {
         if (!items.length) return null
         return <article className="panel final-group" key={group}>
           <div className="final-group-head"><h3>{group}</h3><span>{items.filter(x => completed.has(x.id)).length}/{items.length}</span></div>
-          <div>{items.map(item => <SkillItem key={item.id} item={item} build={build} character={character} lineName={lineName} toggleUnlock={toggleUnlock} compact disabled={syncedLocked} />)}</div>
+          <div>{items.map(item => <SkillItem key={item.id} item={item} build={build} character={character} lineName={lineName} toggleUnlock={toggleUnlock} onRetireTemporary={retireTemporary} onUseBuildCutoff={item => setTemporaryUnlockState(item.id, null)} compact disabled={syncedLocked} />)}</div>
         </article>
       })}</div>
     </section>

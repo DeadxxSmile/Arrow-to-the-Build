@@ -2,7 +2,7 @@
 
 > **I Used To Be Meta Like You, Then I Took An Arrow To The Build**
 
-Current hotfix test build: **v2.1.7**
+Current release: **v2.1.8**
 
 **Arrow to the Build** is an offline-first Windows companion for **The Elder Scrolls Online**. It combines a character progression tracker with a full visual build editor so a static build guide becomes an actual plan for a specific character: what to unlock next, which skill-line ranks matter, how to spend Champion Points, what gear to chase, what belongs on each bar, and how the finished build fits together.
 
@@ -36,6 +36,7 @@ It can track:
 - skill-line ranks, purchased abilities, morphs, passives, and ultimates
 - build-required versus personal Skill Point spending
 - build-specific next-purchase recommendations based on prerequisites, current line ranks, and available Skill Points
+- temporary leveling unlocks that retire when their job is done, with per-character keep/retire choices and reclaimable Skill Point cleanup
 - leveling, starter, intermediate, and final equipment stages
 - front and back action bars plus rotations or priority systems
 - Champion Point paths, optional branches, and final slottables
@@ -57,6 +58,7 @@ Highlights include:
 - undo and redo
 - immutable saved revisions and revision comparison
 - visual editing for setup, class configuration, skills, progression phases, equipment, Champion Points, bars, rotations, companions, consumables, variants, and loadouts
+- temporary-unlock retirement cutoffs by character level, skill-line rank, or replacement unlock
 - Review & Save validation before a permanent build is written
 - automatic human-readable JSON mirrors for saved user builds
 - configurable user-build storage, defaulting to `Documents\Arrow to the Build\Builds`
@@ -79,7 +81,7 @@ ATTB ships with one flexible PvE progression build for every ESO class.
 | Templar | Magicka Templar Flexible PvE |
 | Warden | Magicka Warden Flexible PvE |
 
-These are progression-oriented starting points rather than claims that one loadout is perfect for every dungeon, trial, PvP campaign, or group composition. They are intended to demonstrate complete, coherent ATTB builds while giving new and returning characters a practical route from leveling into permanent gear and Champion Point planning.
+These are progression-oriented starting points rather than claims that one loadout is perfect for every dungeon, trial, PvP campaign, or group composition. They are intended to demonstrate complete, coherent ATTB builds while giving new and returning characters a practical route from leveling into permanent gear and Champion Point planning. Temporary leveling purchases in the Mighty Seven now carry explicit retirement cutoffs, so filler skills can leave the recommendation queue once the build has moved past them.
 
 Build research and attribution notes are kept in [`docs/maintenance/BUNDLED_BUILD_SOURCES.md`](docs/maintenance/BUNDLED_BUILD_SOURCES.md).
 

@@ -1,13 +1,13 @@
-# ATTB 2.1.6 Release Checklist
+# ATTB 2.1.8 Release Checklist
 
-The release target is **ATTB v2.1.6** with the streamlined single ESO addon at **v1.1.0**. v2.1.6 keeps the v2.1.5 theme/routing cleanup and restores one shared typography system across every theme. Theme switching may change palette and surface treatment, but it must not change font family, size, weight, spacing, line height, wrapping, or layout metrics. Freeze the branch after these corrections for regression fixes, packaging, and final test evidence.
+The release target is **ATTB v2.1.8** with the streamlined single ESO addon at **v1.1.1**. v2.1.8 adds the temporary-unlock retirement lifecycle, updates all Mighty Seven temporary purchases with explicit cutoffs, preserves player choice through per-character retirement overrides, and includes the user-facing wording cleanup begun in v2.1.7. The public build format remains **Schema 4**; `retire_when` is an optional backward-compatible Schema 4 field. Freeze the branch after these corrections for regression fixes, packaging, and final test evidence.
 
 ## Freeze rules
 
-- Do not add features beyond the v2.1.1 skill-gate/build-reconciliation correctness scope unless a verified release blocker requires one.
+- Do not add features beyond the approved v2.1.8 temporary-unlock retirement and wording-cleanup scope unless a verified release blocker requires one.
 - Prefer deleting dead code/data over adding compatibility scaffolding for unreleased behavior.
 - Preserve desktop character data, build revisions, user JSON files, and addon links across upgrades. The v2.1.3 legacy bridge migration intentionally discards only the two obsolete ESO addon SavedVariables files before a fresh single-addon snapshot is generated.
-- Treat bundled builds and Schema 4 compatibility as public contracts.
+- Treat bundled builds and Schema 4 compatibility as public contracts. Existing Schema 4 builds without `retire_when` must continue to import and behave normally.
 - Keep the ESO integration local-only and describe SavedVariables timing as ESO-controlled. `/reloadui` remains the reliable on-demand refresh path.
 
 ## Required automated gates
@@ -48,13 +48,18 @@ On a clean Windows profile:
 - confirm General Settings remains selected when opened from the Build Editor Settings route;
 - confirm Default primary actions use the restrained dark/bronze treatment rather than bright orange fills;
 - confirm switching among all four themes does not change typography, text wrapping, or control geometry;
-- confirm the title bar shows the running `v2.1.6` value;
+- confirm the title bar shows the running `v2.1.8` value;
 - confirm the Simple ATTB mark is used for Windows/app chrome and the Words mark only on large branding surfaces;
 - test all eight combat companions in the Character Tracker and both curated targets per companion;
 - author, duplicate, edit, validate, save, export, and re-import companion setups in the Build Editor;
 - reproduce the Agility/Athletics/Concentration rank-gate regression and confirm Suggested Next Picks does not label them available early.
 - spot-check one class, weapon, World, Guild, Alliance War, racial, and crafting passive against the generated Update 50 unlock ledger; confirm each next passive point stays locked until its exact catalog gate.
 - confirm the Build Editor creates multi-point passives with distinct per-point `required_rank` values and morph rows retain the base-skill dependency.
+- confirm every Mighty Seven `status: "temporary"` unlock has a valid `retire_when` rule and older Schema 4 builds without one still validate.
+- confirm authored retirement cutoffs remove temporary unlocks from Do These Next without marking the ESO skill unowned.
+- confirm an owned retired temporary unlock appears in Leveling Cleanup with the correct reclaimable Skill Point total.
+- confirm a synced/read-only character can manually retire a temporary unlock without enabling general override mode, and can later choose Keep active or Use build cutoff.
+- confirm temporary retirement state survives restart, character backup export/import, and remains scoped to unlock IDs in the selected build.
 
 On an upgrade install with existing beta data:
 
@@ -63,31 +68,32 @@ On an upgrade install with existing beta data:
 
 ## ESO addon regression pass
 
-With bundled `ArrowToTheBuild` 1.1.0 enabled:
+With bundled `ArrowToTheBuild` 1.1.1 enabled:
 
 - verify manifest/API/version metadata match the release package;
 - verify only one addon component and one active SavedVariables archive are installed/watched;
-- verify an exact legacy 1.0.0 bridge addon folder is safely retired while its old SavedVariables file is preserved;
+- verify a verified legacy bridge installation is retired conservatively: recognized old addon/SavedVariables files are removed for the one-time reset, while unrecognized addon folders are left untouched;
 - verify first-enable messaging clearly explains ESO-controlled disk timing and links to the ZOS/ESOUI references;
 - verify `/reloadui` produces a reliable fresh desktop snapshot;
 - verify level, attributes, available points, skills/passives, action bars, equipment, and detailed Champion data reconcile correctly;
 - verify new-character discovery never adds or links a character without approval;
 - verify Create Build from Character and Adapt Build to Character preserve CURRENT-vs-TARGET ownership;
-- verify overrides remain separate from live ESO data and disabling override mode removes them cleanly;
+- verify overrides remain separate from synced ESO data and disabling override mode removes them cleanly;
 - verify the Lua source-quality regression rejects generic API `pcall`/`_G` probing, obsolete event guesses, bridge/priority-save code, and skill-XP rescan spam.
 
 ## Documentation and repository hygiene
 
 - README version/status matches `package.json`.
-- GitHub Pages version text, addon section, screenshots, and release links match the 2.1.6 package and published claims.
+- Website version text, addon section, screenshots, progression copy, and release links match the 2.1.8 package and published claims.
 - Build Quick Start, Editor Guide, JSON Guide, Format, Validation, Skill Catalog, patch-maintenance guide, addon-integration guide, and Testing guide match current behavior.
 - `BUILD_SCHEMA.json` and `BUILD_TEMPLATE.json` match Schema 4 behavior and validation.
 - No historical milestone plans, obsolete conversion scripts, temp archives, databases, logs, `node_modules`, generated installers, or unreferenced build assets are present in the source ZIP.
+- GitHub release descriptions/notes are standalone release handoff artifacts only. Do not keep versioned files such as `2-1-8_release.md` in the repository root or package them in the desktop source ZIP.
 - Desktop source ZIP naming follows `Arrow-to-the-Build_vX.X.X[-tag].zip`. Standalone addon source archives use `ATTB-ESOAddon-Source-vX.X.X.zip`; the addon repository build script may create `ATTB-ESOAddon-Built-vX.X.X.zip` for manual installation.
 
 ## Final release handoff
 
-Before publishing the v2.1.6 release:
+Before publishing the v2.1.8 release:
 
 1. Run the complete native suite twice.
 2. Run the renderer build and all-route boot test.

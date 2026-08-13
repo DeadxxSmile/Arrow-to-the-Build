@@ -75,7 +75,15 @@ A configuration contains exactly three active class lines, lists all three in `r
 
 Use `catalog_skill_id` for ordinary ESO skills and Grimoires. Use `scribed_skill_id` for a specific recipe declared in `scribed_skills`. Do not set both on the same row.
 
-`unlock_order` rows may also define `requires`, `required_rank`, `priority`, `status`, `phase`, `notes`, `skill_point_cost`, and `loadout_ids`.
+`unlock_order` rows may also define `requires`, `required_rank`, `priority`, `status`, `phase`, `notes`, `skill_point_cost`, `loadout_ids`, and optional temporary-unlock retirement rules under `retire_when`.
+
+For `status: "temporary"`, `retire_when` may use one of three backward-compatible Schema 4 conditions:
+
+- `{ "type": "character_level", "level": 30 }`
+- `{ "type": "skill_line_rank", "line": "herald", "rank": 20 }`
+- `{ "type": "unlock_completed", "unlock_id": "replacement_skill" }`
+
+Once a cutoff is met, the Character Tracker retires that temporary step from recommendations. Retirement is character-specific: the player may retire it early or keep it active without changing the ESO snapshot itself.
 
 ## Progression phases
 
