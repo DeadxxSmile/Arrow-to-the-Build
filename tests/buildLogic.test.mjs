@@ -58,6 +58,55 @@ test('player retirement overrides the guide without changing synced ownership', 
   assert.equal(retired.reclaimable_points, 1)
 })
 
+test('a retired base skill is not reported reclaimable while a morph of it is still active', () => {
+  // Real catalog ids so the base morph_ids resolve: Twin Slashes -> Blood Craze.
+  const build = {
+    schema_version: 4,
+    id: 'morph_dependency_case',
+    unlock_order: [
+      { id: 'twin_slashes', name: 'Twin Slashes', line: 'dual_wield', kind: 'Active', status: 'temporary', catalog_skill_id: 'dual_wield__twin_slashes', skill_point_cost: 1, retire_when: { type: 'character_level', level: 10 } },
+      { id: 'blood_craze', name: 'Blood Craze', line: 'dual_wield', kind: 'Morph', status: 'temporary', catalog_skill_id: 'dual_wield__blood_craze', skill_point_cost: 1, retire_when: { type: 'character_level', level: 40 } }
+    ]
+  }
+  const owns = { 'dual_wield__twin_slashes': 1, 'dual_wield__blood_craze': 1 }
+
+  // Level 10: base retires but the morph is still active, so the base point stays spent.
+  const bridging = character({ level: 10, skill_allocations: owns })
+  const base = retiredTemporaryUnlocks(build, bridging).find(item => item.id === 'twin_slashes')
+  assert.ok(base, 'base is retired at its cutoff')
+  assert.equal(base.owned, true)
+  assert.equal(base.reclaimable_points, 0, 'base point is not reclaimable while the morph is active')
+  assert.equal(base.reclaim_blocked_by, 'Blood Craze')
+
+  // Level 40: the morph retires too, so the base point becomes genuinely reclaimable.
+  const done = character({ level: 40, skill_allocations: owns })
+  const freed = retiredTemporaryUnlocks(build, done).find(item => item.id === 'twin_slashes')
+  assert.equal(freed.reclaim_blocked_by, null)
+  assert.equal(freed.reclaimable_points, 1, 'base point reclaims once no morph of it is active')
+})
+
+
+test('a retired base skill is not reclaimable while an untracked personal morph is still owned', () => {
+  const build = {
+    schema_version: 4,
+    id: 'personal_morph_dependency_case',
+    unlock_order: [
+      { id: 'twin_slashes', name: 'Twin Slashes', line: 'dual_wield', kind: 'Active', status: 'temporary', catalog_skill_id: 'dual_wield__twin_slashes', skill_point_cost: 1, retire_when: { type: 'character_level', level: 10 } }
+    ]
+  }
+  const state = character({
+    level: 10,
+    skill_allocations: {
+      'dual_wield__twin_slashes': 1,
+      'dual_wield__blood_craze': 1
+    }
+  })
+  const base = retiredTemporaryUnlocks(build, state).find(item => item.id === 'twin_slashes')
+  assert.ok(base)
+  assert.equal(base.reclaimable_points, 0, 'personal morph ownership must keep the base point spent')
+  assert.equal(base.reclaim_blocked_by, 'Blood Craze')
+})
+
 test('player can explicitly keep a temporary unlock active past the build cutoff', () => {
   const runeblades = arcanist.unlock_order.find(x => x.id === 'runeblades')
   const state = character({ skill_ranks: { herald: 50 }, temporary_unlock_states: { runeblades: 'active' }, actual_unspent_skill_points: 10 })

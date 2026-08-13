@@ -4,7 +4,7 @@ import { useAppDialog } from '../components/AppDialogProvider'
 import EmptyState from './EmptyState'
 import SkillIcon from '../components/SkillIcon'
 import NumberStepper from '../components/NumberStepper'
-import { applyAllocationChange, temporaryRetirementState } from '../utils/buildLogic'
+import { applyAllocationChange, reclaimablePointsFor, temporaryRetirementState } from '../utils/buildLogic'
 import { buildItemsForCatalogSkill, effectiveAllocation, effectiveSkillMaxPoints, itemBuildMeta } from '../utils/catalogLogic'
 import OverrideResetButton from '../components/OverrideResetButton'
 
@@ -60,7 +60,7 @@ export default function SkillLinePage() {
 
   const retireTemporary = async (item, owned) => {
     const kind = item.kind === 'Passive' ? 'passive' : 'skill'
-    const cost = Math.max(0, item.skill_point_cost === undefined ? 1 : Number(item.skill_point_cost) || 0)
+    const cost = reclaimablePointsFor(item, build, character)
     const ok = await dialog.confirm({
       title: `Are you done with this temporary ${kind}?`,
       message: owned

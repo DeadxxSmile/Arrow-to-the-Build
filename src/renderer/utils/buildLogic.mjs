@@ -1,4 +1,4 @@
-import { buildIndex, catalogLineMap, catalogSkillMap, normalizeSkillName } from './catalogLogic.mjs'
+import { buildIndex, catalogLineMap, catalogSkillMap, effectiveAllocation, normalizeSkillName } from './catalogLogic.mjs'
 
 export const CP_TREE_MAX = 1200
 export const CP_ACCOUNT_MAX = 3600
@@ -204,6 +204,39 @@ export function temporaryRetirementState(item, character, build = null) {
   return { retired: false, source: null, reason: '' }
 }
 
+const authoredSkillPointCost = item => Math.max(0, item?.skill_point_cost === undefined ? 1 : Number(item?.skill_point_cost) || 0)
+
+// A base ability's point is not really free while a morph of it is still slotted.
+// Refunding the base in ESO would drop the morph the character is actually using, so
+// return that morph's name to explain why the point stays spent for now.
+function activeMorphBlockingReclaim(item, build, character, completed) {
+  const morphIds = catalogSkillMap.get(item?.catalog_skill_id)?.skill?.morph_ids
+  if (!Array.isArray(morphIds) || !morphIds.length) return null
+  const completedRaw = new Set(character?.completed || [])
+  const index = buildIndex(build)
+
+  for (const morphId of morphIds) {
+    const hit = catalogSkillMap.get(morphId)
+    if (!hit) continue
+    const owned = effectiveAllocation(character, build, hit.line.id, hit.skill) > 0 || completedRaw.has(morphId)
+    if (!owned) continue
+
+    const rows = index.bySkillId.get(morphId) || []
+    if (!rows.length) return hit.skill.name || 'a morph'
+
+    const activeRow = rows.find(row => completed.has(row.id) && !temporaryRetirementState(row, character, build).retired)
+    if (activeRow) return activeRow.name || hit.skill.name || 'a morph'
+  }
+  return null
+}
+
+export function reclaimablePointsFor(item, build, character) {
+  const completed = effectiveCompletedSet(build, character)
+  if (!completed.has(item?.id)) return 0
+  if (activeMorphBlockingReclaim(item, build, character, completed)) return 0
+  return authoredSkillPointCost(item)
+}
+
 export function retiredTemporaryUnlocks(build, character) {
   if (!build) return []
   const completed = effectiveCompletedSet(build, character)
@@ -211,13 +244,14 @@ export function retiredTemporaryUnlocks(build, character) {
     .filter(item => item?.status === 'temporary')
     .map(item => {
       const retirement = temporaryRetirementState(item, character, build)
+      const owned = completed.has(item.id)
+      const blockingMorph = owned ? activeMorphBlockingReclaim(item, build, character, completed) : null
       return {
         ...item,
         retirement,
-        owned: completed.has(item.id),
-        reclaimable_points: completed.has(item.id)
-          ? Math.max(0, item.skill_point_cost === undefined ? 1 : Number(item.skill_point_cost) || 0)
-          : 0
+        owned,
+        reclaim_blocked_by: blockingMorph,
+        reclaimable_points: owned && !blockingMorph ? authoredSkillPointCost(item) : 0
       }
     })
     .filter(item => item.retirement.retired)

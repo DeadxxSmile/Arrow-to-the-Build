@@ -4,7 +4,7 @@ import { useApp } from '../App'
 import { useAppDialog } from '../components/AppDialogProvider'
 import EmptyState from './EmptyState'
 import SkillIcon from '../components/SkillIcon'
-import { actionableUnlocks, effectiveCompletedSet, requiredRankFor, retiredTemporaryUnlocks, temporaryRetirementState, unlockState } from '../utils/buildLogic'
+import { actionableUnlocks, effectiveCompletedSet, reclaimablePointsFor, requiredRankFor, retiredTemporaryUnlocks, temporaryRetirementState, unlockState } from '../utils/buildLogic'
 import { effectiveAllocation } from '../utils/catalogLogic'
 
 const SUGGESTIONS_PER_PAGE = 5
@@ -58,6 +58,12 @@ export default function SkillsPage() {
   if (!character || !build) return <EmptyState />
 
   const lineName = id => skillLines.find(l => l.id === id)?.name || id
+  const ownedNote = item => {
+    if (!item.owned) return ' You never need to buy this for the current plan.'
+    if (item.reclaim_blocked_by) return ` Recorded as owned, but ${item.reclaim_blocked_by} still uses this base ability, so the Skill Point stays spent until you drop that morph too.`
+    if (item.reclaimable_points) return ` Recorded as owned: ${item.reclaimable_points} Skill Point${item.reclaimable_points === 1 ? '' : 's'} can be refunded when convenient.`
+    return ' Recorded as owned. This tracked unlock does not tie up an ordinary Skill Point.'
+  }
   const ordered = [...(build.unlock_order || [])].sort((a, b) => (Number(a.priority) || 0) - (Number(b.priority) || 0))
   const recommended = pendingRecommendations.slice(suggestionPage * SUGGESTIONS_PER_PAGE, (suggestionPage + 1) * SUGGESTIONS_PER_PAGE)
   const actionableCount = pendingRecommendations.length
@@ -73,7 +79,7 @@ export default function SkillsPage() {
   const retireTemporary = async item => {
     const kind = item.kind === 'Passive' ? 'passive' : 'skill'
     const owned = completed.has(item.id)
-    const cost = Math.max(0, item.skill_point_cost === undefined ? 1 : Number(item.skill_point_cost) || 0)
+    const cost = reclaimablePointsFor(item, build, character)
     const ok = await dialog.confirm({
       title: `Are you done with this temporary ${kind}?`,
       message: owned
@@ -98,7 +104,7 @@ export default function SkillsPage() {
       <div className="section-head"><div><span className="eyebrow">Leveling cleanup</span><h2>Retired temporary skills &amp; passives</h2></div><small>{reclaimablePoints ? `${reclaimablePoints} Skill Point${reclaimablePoints === 1 ? '' : 's'} currently reclaimable from owned temporary purchases.` : 'These leveling-only steps no longer belong in your active build plan.'}</small></div>
       <div className="temporary-cleanup-list">{retiredTemporary.map(item => <article className="temporary-cleanup-item" key={item.id}>
         <SkillIcon skillId={item.catalog_skill_id} name={item.name} image={item.image} size="compact" />
-        <div><div className="skill-title-line"><b>{item.name}</b><span className="mini-tag temporary">temporary</span><span className="mini-tag state retired">retired</span></div><small>{lineName(item.line)} · {item.kind}</small><p>{item.retirement.reason}{item.owned ? ` Recorded as owned: ${item.reclaimable_points} Skill Point${item.reclaimable_points === 1 ? '' : 's'} can be refunded when convenient.` : ' You never need to buy this for the current plan.'}</p></div>
+        <div><div className="skill-title-line"><b>{item.name}</b><span className="mini-tag temporary">temporary</span><span className="mini-tag state retired">retired</span></div><small>{lineName(item.line)} · {item.kind}</small><p>{item.retirement.reason}{ownedNote(item)}</p></div>
         <button type="button" className="btn ghost compact" onClick={() => setTemporaryUnlockState(item.id, item.retirement.source === 'manual' ? null : 'active')}>{item.retirement.source === 'manual' ? 'Use build cutoff' : 'Keep active'}</button>
       </article>)}</div>
     </section>}
