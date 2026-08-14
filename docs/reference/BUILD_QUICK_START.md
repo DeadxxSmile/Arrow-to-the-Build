@@ -4,14 +4,15 @@ Every build in Arrow to the Build is a **Schema 4 JSON** file. Bundled builds, b
 
 You do **not** need to know JSON to create a build in ATTB. The Build Editor writes and validates the JSON for you. The JSON format matters because it keeps builds portable, human-readable, easy to back up, and usable outside the app.
 
-## The two sides of ATTB
+## The three workspaces of ATTB
 
-ATTB has two workspaces, and it remembers where you were in each:
+ATTB has three workspaces, and it remembers where you were in each:
 
 - **Character Tracker** - follow a build on a real character and record progression.
 - **Build Editor** - create, fork, import, update, validate, save, and export builds.
+- **Help & Tools** - look up Gear, Combat, Progression, Companion, and general build-reference topics without leaving the app.
 
-Select **Build Creator** in the Character Tracker sidebar to enter the Build Editor. Select **Character Tracker** in the Build Editor sidebar to return.
+The three-tab workspace switcher at the top of the sidebar moves between Character, Build, and Help. Each workspace remembers the last real page you used there, while Settings stays pinned separately at the bottom of the sidebar.
 
 ## What one build contains
 
@@ -182,7 +183,7 @@ The default folder is:
 Documents\Arrow to the Build\Builds
 ```
 
-Change it under **Settings → Build Editor Settings**.
+Change it under **Settings → Build Editor**.
 
 Drafts are intentionally not written as ordinary build files because an unfinished draft may not be valid or shareable yet.
 

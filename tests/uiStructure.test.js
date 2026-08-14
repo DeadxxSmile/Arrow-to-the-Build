@@ -16,14 +16,78 @@ const readAppCss = () => [
 // This file intentionally stays small. It is for renderer regressions that are difficult to
 // exercise without a browser harness, not for asserting every label, CSS value, or route.
 
-test('the main shell still exposes both workspaces and the first-character path', () => {
+test('the main shell exposes all three workspaces and the first-character path', () => {
   const app = read('src/renderer/App.jsx')
   const routes = read('src/index.jsx')
   assert.match(app, /Add First Character/)
   assert.match(app, /<CharacterSwitcher/)
   assert.match(app, /Character Tracker/)
-  assert.match(app, /BuildEditorSidebar/)
+  assert.match(app, /UnifiedSidebar/)
+  assert.match(app, /BuildEditorSidebarNav/)
+  assert.match(app, /HelpSidebarNav/)
   assert.match(routes, /build-editor\/library/)
+  assert.match(routes, /path="help" element=\{<HelpHomePage \/>\}/)
+})
+
+test('the sidebar uses header-aligned workspace tabs and quiet integrated settings navigation', () => {
+  const app = read('src/renderer/App.jsx')
+  const settings = read('src/renderer/pages/SettingsPage.jsx')
+  const css = readAppCss()
+  const titlebar = read('src/renderer/components/TitleBar.jsx')
+  assert.match(app, /function WorkspaceSwitcher/)
+  assert.match(app, /function UnifiedSidebar/)
+  assert.match(app, /function SettingsSidebarNav/)
+  assert.match(app, /\['character', 'Character', 'Character Tracker'\]/)
+  assert.match(app, /\['build-editor', 'Build', 'Build Editor'\]/)
+  assert.match(app, /\['help', 'Help', 'Help & Tools'\]/)
+  assert.doesNotMatch(app, /function SidebarIdentity/)
+  assert.doesNotMatch(app, /<SidebarIdentity/)
+  assert.doesNotMatch(app, /collapseStorageKey|toggleCollapsed|collapse-btn/)
+  assert.doesNotMatch(settings, /className="settings-tabs"/)
+  assert.match(titlebar, /<span>ATTB<\/span>\{version && <b>\| v\{version\}<\/b>\}/)
+  assert.match(app, /className=\{\(\) => `nav-item \${activeTab === id \? 'active' : ''}`\}/)
+  assert.match(css, /\.sidebar-workspace-header\{[^}]*height:84px/)
+  assert.doesNotMatch(app, /sidebar-app-name|<span>Arrow to the Build<\/span>/)
+  assert.match(css, /\.workspace-tabs\{[^}]*height:84px[^}]*grid-template-columns:repeat\(3,minmax\(0,1fr\)\)[^}]*gap:0[^}]*padding:12px 0 0/)
+  assert.match(app, /<Fragment key=\{section\.label\}>/)
+  assert.doesNotMatch(app, /className="(?:help|character)-nav-section"/)
+  assert.match(css, /\.editor-nav>\.sidebar-section-label:not\(:first-child\),\.help-tools-nav>\.sidebar-section-label:not\(:first-child\),\.character-tracker-nav>\.sidebar-section-label:not\(:first-child\)\{[^}]*margin-top:11px/)
+  assert.match(css, /\.editor-nav \.nav-item,\.help-tools-nav \.nav-item,\.character-tracker-nav \.nav-item\{[^}]*min-height:48px[^}]*padding:11px 13px/)
+  assert.match(css, /\.editor-nav \.nav-item b,\.help-tools-nav \.nav-item b,\.character-tracker-nav \.nav-item b\{[^}]*font-size:\.82rem/)
+  assert.match(css, /\.sidebar-nav-surface>\.sidebar-nav\{[^}]*scrollbar-gutter:stable/)
+  assert.match(css, /\.character-bar\{[^}]*align-items:center/)
+  assert.match(css, /\.character-bar>\.topbar-field\{[^}]*align-self:center/)
+  assert.match(css, /\.workspace-tab\{[^}]*width:100%[^}]*border-bottom:1px solid var\(--line\)/)
+  assert.match(css, /\.workspace-tab:hover:not\(\.active\)\{[^}]*border-bottom-color:var\(--line\)/)
+  assert.match(css, /\.workspace-tab\.active\{[^}]*border:1px solid var\(--line\)[^}]*border-bottom:0[^}]*border-radius:12px 12px 0 0/)
+  assert.match(css, /\.workspace-tab\{[^}]*height:72px[^}]*gap:5px/)
+  assert.match(css, /\.workspace-tab svg\{[^}]*width:28px[^}]*height:28px/)
+  assert.match(css, /\.workspace-tab span\{[^}]*font-size:\.75rem/)
+  assert.match(css, /\.workspace-tab\.active::before,\.workspace-tab\.active::after\{[^}]*width:13px[^}]*height:13px/)
+  assert.match(css, /\.workspace-tab\.active::before\{[^}]*left:-12px[^}]*radial-gradient\(circle at 0 0/)
+  assert.match(css, /\.workspace-tab\.active::after\{[^}]*right:-12px[^}]*radial-gradient\(circle at 100% 0/)
+  assert.doesNotMatch(app, /character-level-center|NumberStepper|OverrideResetButton/)
+  assert.match(app, /className="build-control topbar-field"/)
+  assert.match(app, /<span className="topbar-label">Build<\/span>/)
+  assert.match(app, /Gameplay and Build Info, Tools, and Guides/)
+  assert.doesNotMatch(app, /<span className="eyebrow">Editable build<\/span>/i)
+  assert.doesNotMatch(app, /Saved build is current/)
+  assert.match(css, /\.help-tools-bar \.character-switcher\{[^}]*width:min\(390px,40vw\)[^}]*flex:0 0 min\(390px,40vw\)/)
+  assert.match(app, /<header className="settings-workspace-bar"><h1>Application Settings<\/h1><\/header>/)
+  assert.doesNotMatch(app, /<span className="mono">\{editor\.draft\.build_id\}/)
+  assert.match(css, /\.character-bar\{[^}]*height:84px[^}]*grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/)
+  assert.match(css, /\.help-tools-bar\{[^}]*height:84px/)
+  assert.match(css, /\.settings-workspace-bar\{[^}]*height:84px/)
+  assert.doesNotMatch(css, /\.build-editor-bar\{[^}]*min-height:(?:112|150)px/)
+  assert.match(css, /\.sidebar-settings-tab\{[^}]*justify-content:center[^}]*border:0/)
+  assert.match(css, /\.sidebar-settings-dock\{[^}]*border-top:1px solid var\(--line\)/)
+  assert.match(css, /\.sidebar-settings-dock\.active\{[^}]*border-top-color:transparent[^}]*linear-gradient/)
+  assert.match(css, /\.settings-sidebar-nav \.nav-item:not\(\.active\)\{[^}]*background:transparent!important/)
+  assert.match(app, /className="sidebar-nav character-tracker-nav"/)
+  assert.match(app, /label: 'Build progress'/)
+  assert.match(app, /\['\/character-data', 'Backups & Import', '⇄'\]/)
+  assert.match(app, /Return to previous workspace/)
+  assert.match(css, /\.sidebar-mode-settings \.sidebar-nav-surface\{[^}]*linear-gradient/)
 })
 
 test('CharacterModal resets with the resolved build id instead of an undefined shorthand', () => {
@@ -185,6 +249,13 @@ test('the bundler keeps vendor code and the skill catalog out of the main chunk'
   assert.match(vite, /vendor/)
 })
 
+test('first-run addon setup cannot stack with the discovery import modal', () => {
+  const app = read('src/renderer/App.jsx')
+  assert.match(app, /if \(!addonSetupOpen && !modal\) setAddonImportOpen\(true\)/)
+  assert.match(app, /open=\{addonImportOpen && !addonSetupOpen && !modal\}/)
+  assert.match(app, /else setAddonImportOpen\(false\)/)
+})
+
 test('addon onboarding explains ESO-controlled save timing and reloadui', () => {
   const setup = read('src/renderer/components/AddonSetupModal.jsx')
   const settings = read('src/renderer/pages/SettingsPage.jsx')
@@ -240,9 +311,11 @@ test('the addon watcher callback only uses imported or locally defined constants
   assert.deepEqual(missing, [])
 })
 
-test('Build Editor General Settings keeps an explicit tab route instead of bouncing back to editor settings', () => {
+test('Settings sections keep explicit query routes instead of bouncing by workspace', () => {
+  const app = read('src/renderer/App.jsx')
   const settings = read('src/renderer/pages/SettingsPage.jsx')
-  assert.match(settings, /setSearchParams\(\{ tab: next \}, \{ replace: true \}\)/)
+  assert.match(app, /to=\{`\/settings\?tab=\$\{id\}`\}/)
+  assert.match(settings, /setSearchParams\(\{ tab \}, \{ replace: true \}\)/)
   assert.doesNotMatch(settings, /next === 'general' \? \{\}/)
 })
 
@@ -270,7 +343,7 @@ test('component styles use one complete theme palette instead of hard-coded colo
     return [...block[1].matchAll(/--([\w-]+)\s*:/g)].map(match => match[1]).sort()
   }
   const baseProps = propsFor(':root')
-  for (const selector of ['html[data-theme="dark"]', 'html[data-theme="light"]', 'html[data-theme="old-scrolls"]']) {
+  for (const selector of ['html[data-theme="dark"]', 'html[data-theme="light"]', 'html[data-theme="old-scrolls"]', 'html[data-theme="skytrim"]', 'html[data-theme="woodland"]']) {
     assert.deepEqual(propsFor(selector), baseProps, `${selector} must override the full palette contract`)
   }
 
@@ -285,9 +358,75 @@ test('component styles use one complete theme palette instead of hard-coded colo
   assert.doesNotMatch(allStyles, themeTypography)
 })
 
-test('the custom title bar shows the running desktop version instead of repeating ATTB', () => {
+test('Settings exposes every supported color theme', () => {
+  const settings = read('src/renderer/pages/SettingsPage.jsx')
+  for (const [value, label] of [
+    ['default', 'ATTB Default'],
+    ['dark', 'Deep Dark'],
+    ['light', 'Light'],
+    ['old-scrolls', 'Old Scrolls'],
+    ['skytrim', 'SkyTrim'],
+    ['woodland', 'Woodland']
+  ]) {
+    assert.match(settings, new RegExp(`<option value="${value}">${label}<\\/option>`))
+  }
+})
+
+test('the custom title bar uses compact ATTB and running-version branding', () => {
   const title = read('src/renderer/components/TitleBar.jsx')
   assert.match(title, /window\.api\.app\.getInfo\(\)/)
-  assert.match(title, /<b>v\{version\}<\/b>/)
-  assert.doesNotMatch(title, /<b>ATTB<\/b>/)
+  assert.match(title, /<span>ATTB<\/span>/)
+  assert.match(title, /<b>\| v\{version\}<\/b>/)
+  assert.doesNotMatch(title, /<span>Arrow to the Build<\/span>/)
+})
+
+test('Help and Tools is a dedicated workspace with grouped reference sections', () => {
+  const app = read('src/renderer/App.jsx')
+  const routes = read('src/index.jsx')
+  const helpMeta = read('src/renderer/utils/helpReference.mjs')
+  const home = read('src/renderer/pages/HelpHomePage.jsx')
+  const reference = read('src/renderer/pages/BuildReferencePage.jsx')
+  const traits = read('src/renderer/pages/TraitReferencePage.jsx')
+
+  assert.match(app, /function HelpSidebarNav/)
+  assert.match(app, /function WorkspaceSwitcher/)
+  assert.match(app, /\['build-editor', 'Build', 'Build Editor'\]/)
+  assert.match(app, /\['help', 'Help', 'Help & Tools'\]/)
+  assert.match(app, /workspace === 'help'/)
+  assert.match(routes, /path="help" element=\{<HelpHomePage \/>\}/)
+  assert.match(routes, /path="help\/topic\/:topic" element=\{<BuildReferencePage \/>\}/)
+  assert.match(routes, /path="help\/topic\/traits" element=\{<TraitReferencePage \/>\}/)
+  assert.match(routes, /path="help\/traits" element=\{<Navigate to="\/help\/topic\/traits" replace \/>\}/)
+
+  for (const section of ['Gear', 'Combat', 'Progression', 'Companions', 'Reference']) assert.match(helpMeta, new RegExp(`label: '${section}'`))
+  for (const topic of ['Gear & Sets', 'Enchantments & Glyphs', 'Combat Stats & Caps', 'Buffs, Debuffs & Status Effects', 'Mundus Stones', 'Champion Points', 'Scribing', 'Consumables', 'Build Glossary', 'Companion Builds & Traits']) {
+    assert.match(helpMeta, new RegExp(topic.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')), `${topic} should be present in Help & Tools`)
+  }
+  assert.match(home, /ESO knowledge beside the build/)
+  assert.match(reference, /‹ Help &amp; Tools/)
+  assert.match(traits, /‹ Help &amp; Tools/)
+  for (const trait of ['Divines', 'Impenetrable', 'Charged', 'Precise', 'Bloodthirsty', 'Harmony', 'Triune']) assert.match(traits, new RegExp(`\\['${trait}'`), `${trait} should be present in the trait reference`)
+  assert.match(reference, /18,200/)
+  assert.match(reference, /125%/)
+  assert.match(reference, /Focus Script/)
+  assert.match(reference, /Aggressive/)
+})
+
+test('Settings stays concise while character backups live in Character Tracker', () => {
+  const app = read('src/renderer/App.jsx')
+  const settings = read('src/renderer/pages/SettingsPage.jsx')
+  const characterData = read('src/renderer/pages/CharacterDataPage.jsx')
+  const routes = read('src/index.jsx')
+  assert.match(app, /\['general', 'General',/)
+  assert.match(app, /\['character', 'Character',/)
+  assert.match(app, /\['addon', 'ESO Addon & Sync',/)
+  assert.match(app, /\['editor', 'Build Editor',/)
+  assert.doesNotMatch(settings, /className="settings-tabs"/)
+  assert.doesNotMatch(settings, /Export Current Character|Import Character Backup/)
+  assert.match(characterData, /<h1>Backups &amp; Import<\/h1>/)
+  assert.match(characterData, /Export Current Character/)
+  assert.match(characterData, /Import Character Backup/)
+  assert.match(routes, /path="character-data" element=\{<CharacterDataPage \/>\}/)
+  assert.match(routes, /path="help\/import-export" element=\{<Navigate to="\/character-data" replace \/>\}/)
+  assert.match(routes, /path="build-editor\/settings" element=\{<Navigate to="\/settings\?tab=editor" replace \/>\}/)
 })

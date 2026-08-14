@@ -1,5 +1,5 @@
 /* Global layout and reusable controls. Theme color values live in themes.css. */
-:root{--radius:14px;--sidebar:230px;--fs-micro:.72rem;--fs-small:.78rem;--fs-body:.88rem;--fs-base:1rem;--fs-lead:1.1rem;--fs-h3:1.15rem;--fs-h2:1.35rem}
+:root{--radius:14px;--sidebar:260px;--fs-micro:.72rem;--fs-small:.78rem;--fs-body:.88rem;--fs-base:1rem;--fs-lead:1.1rem;--fs-h3:1.15rem;--fs-h2:1.35rem}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body,#root{height:100%}
 body{font-family:Inter,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}

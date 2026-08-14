@@ -158,7 +158,7 @@ The internal revision was saved, but ATTB could not update the visible JSON file
 - cloud-sync software temporarily locked the file;
 - the file was modified outside ATTB.
 
-The SQLite revision remains safe. Restore access and select **Sync Saved Builds** in Build Editor Settings.
+The SQLite revision remains safe. Restore access and select **Sync Saved Builds** in Settings → Build Editor.
 
 ### File modified outside ATTB
 

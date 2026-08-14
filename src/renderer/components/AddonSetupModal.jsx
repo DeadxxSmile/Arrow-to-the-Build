@@ -62,7 +62,7 @@ export default function AddonSetupModal({ open, status, onComplete }) {
         <button className="btn ghost" disabled={!!busy || !acknowledged} onClick={() => configure('install', true)}>Choose Folder Manually</button>
         <button className="btn ghost" disabled={!!busy} onClick={skip}>{busy === 'skip' ? 'Saving…' : 'Not Now'}</button>
       </div>
-      <small className="setting-footnote">You can enable, repair, or disable integration later under Settings → General Settings. ATTB reads only the SavedVariables file ESO itself chooses to write.</small>
+      <small className="setting-footnote">You can enable, repair, or disable integration later under Settings → ESO Addon & Sync. ATTB reads only the SavedVariables file ESO itself chooses to write.</small>
     </section>
   </div>
 }

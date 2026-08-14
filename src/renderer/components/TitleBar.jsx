@@ -11,7 +11,7 @@ export default function TitleBar() {
   }, [])
   return <div className="titlebar">
     <div className="titlebar-drag" />
-    <div className="titlebar-brand"><img src="./logo.png" alt="" /><span>Arrow to the Build</span>{version && <b>v{version}</b>}</div>
+    <div className="titlebar-brand"><img src="./logo.png" alt="" /><span>ATTB</span>{version && <b>| v{version}</b>}</div>
     <div className="titlebar-controls">
       <button onClick={() => window.api.window.minimize()} aria-label="Minimize">−</button>
       <button onClick={() => window.api.window.maximize()} aria-label={max ? 'Restore' : 'Maximize'}>{max ? '❐' : '□'}</button>

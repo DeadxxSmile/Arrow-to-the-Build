@@ -165,13 +165,17 @@ test('tests use Electron embedded Node so native module ABIs stay aligned', () =
   assert.match(runner, /\['--test',\s*\.\.\.testFiles\]/)
 })
 
-test('the Windows build script installs, tests, and packages without launching the installer', () => {
+test('the Windows build script runs the clean release pipeline and verifies its installer', () => {
   const script = read('BUILD-ATTB.bat')
+  assert.match(script, /package-lock\.json/i)
   assert.match(script, /npm ci --include=dev --no-audit --no-fund/i)
   assert.match(script, /npm run fetch:icons/i)
   assert.match(script, /npm test/i)
+  assert.match(script, /rmdir \/s \/q "dist"/i)
   assert.match(script, /npm run build/i)
-  assert.doesNotMatch(script, /start\s+"".*ATTB-Setup|Launching installer/i)
+  assert.match(script, /dist\\ATTB-Setup-%ATTB_VERSION%\.exe/i)
+  assert.match(script, /Windows installer ready:/i)
+  assert.doesNotMatch(script, /installer was created but was not launched|Launching installer|start\s+"".*ATTB-Setup/i)
 })
 
 test('the source repository keeps the small set of release essentials', () => {

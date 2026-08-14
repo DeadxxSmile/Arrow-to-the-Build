@@ -6,7 +6,7 @@
 
 **Guide revision:** 2.1 - updated for ATTB 2.1 companion authoring, preset data, and stricter actionable-progression guidance.
 
-**Current baseline when this guide was revised:** ATTB 2.1.8, public Build Schema 4. Player-skill IDs still follow the game version named by the current bundled `eso-skill-catalog.json`; companion presets use the separately maintained current companion catalog.
+**Current baseline when this guide was revised:** ATTB 2.2.0, public Build Schema 4. Player-skill IDs still follow the game version named by the current bundled `eso-skill-catalog.json`; companion presets use the separately maintained current companion catalog.
 
 **Document goal:** By the time an unfamiliar AI finishes the **START HERE** section, it should understand what ATTB is, how a build file relates to a character, what Schema 4 is trying to represent, which questions it must ask, where exact IDs come from, how sections cross-reference each other, and what must be validated before a JSON file is delivered.
 

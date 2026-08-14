@@ -17,7 +17,7 @@
   <meta name="twitter:description" content="An offline-first ESO character tracker and Build Editor with local addon synchronization, exact progression gates, combat companions, gear roadmaps, Champion Points, and structured hotbars.">
   <meta name="twitter:image" content="https://arrowtothebuild.com/assets/social/attb-og.webp">
   <link rel="icon" href="assets/logo/attb-logo.png">
-  <link rel="stylesheet" href="styles.css?v=2.1.8-old-scrolls-web">
+  <link rel="stylesheet" href="styles.css?v=2.2.0-old-scrolls-web">
 </head>
 <body class="old-scrolls-web">
   <div class="ambient ambient-one" aria-hidden="true"></div>
@@ -29,7 +29,7 @@
         <a class="brand" href="#top" aria-label="Arrow to the Build home">
           <img src="assets/logo/attb-logo.png" alt="">
           <span>Arrow to the Build</span>
-          <small>v2.1.8</small>
+          <small>v2.2.0</small>
         </a>
         <div class="topbar-links">
           <a href="#features">Features</a>
@@ -55,7 +55,7 @@
           </div>
           <p class="cta-note">Free and open source. No account. No cloud sync. Character and build data stay on your PC.</p>
           <div class="meta-row" aria-label="Project details">
-            <span class="meta-pill version">v2.1.8</span>
+            <span class="meta-pill version">v2.2.0</span>
             <span class="meta-pill">Windows 10 / 11</span>
             <span class="meta-pill">ESO Addon 1.1.1</span>
             <span class="meta-pill">Update 50 audited</span>
@@ -90,7 +90,8 @@
           <article class="feature-card card"><span class="feature-icon">09</span><h3>Full visual Build Editor</h3><p>Create guided builds, start from the advanced template, fork protected bundled builds, import community JSON, edit every major section, and review before saving.</p></article>
           <article class="feature-card card"><span class="feature-icon">10</span><h3>Safe drafts &amp; revisions</h3><p>Recovery autosave, undo/redo, immutable saved revisions, protected bundled originals, readable JSON mirrors, and external-change protection keep authoring recoverable.</p></article>
           <article class="feature-card card"><span class="feature-icon">11</span><h3>Portable Schema 4 builds</h3><p>Bundled, imported, manually edited, and visually authored builds share the same human-readable JSON format with stable catalog IDs and runtime validation.</p></article>
-          <article class="feature-card card"><span class="feature-icon">12</span><h3>Four coherent themes</h3><p>ATTB Default, Deep Dark, Light, and Old Scrolls share the same layout and typography while changing the palette and surface treatment through one semantic theme system.</p></article>
+          <article class="feature-card card"><span class="feature-icon">12</span><h3>Six coherent themes</h3><p>ATTB Default, Deep Dark, Light, Old Scrolls, SkyTrim, and Woodland share the same layout and typography while changing the palette and surface treatment through one semantic theme system.</p></article>
+          <article class="feature-card card"><span class="feature-icon">13</span><h3>Help &amp; Tools workspace</h3><p>Help &amp; Tools is now its own workspace, with Gear, Combat, Progression, Companions, and Reference sections instead of one giant drawer. Traits, sets, glyphs, stats, buffs, Mundus Stones, Champion Points, Scribing, build jargon, and more stay close to the plan and answer the question “why does this matter to my build?”</p></article>
         </div>
       </section>
 
@@ -147,9 +148,9 @@
             <img src="assets/screenshots/new-eso-character.webp" loading="lazy" alt="ATTB dialog asking whether to add and sync a newly discovered ESO character">
             <span>Character discovery always waits for approval</span>
           </button>
-          <button class="addon-shot elevated" type="button" data-lightbox="assets/screenshots/addon-sync-settings.webp" data-title="ESO Addon and Sync settings">
-            <img src="assets/screenshots/addon-sync-settings.webp" loading="lazy" alt="ATTB Settings page showing the installed ArrowToTheBuild addon and sync controls">
-            <span>Install, repair, profile selection, sync, and overrides stay in one panel</span>
+          <button class="addon-shot elevated" type="button" data-lightbox="assets/screenshots/first-run.webp" data-title="ATTB before a character has been added">
+            <img src="assets/screenshots/first-run.webp" loading="lazy" alt="ATTB Character Tracker on a fresh profile with manual character creation and Build Editor options">
+            <span>Addon sync stays optional; the manual Character Tracker and Build Editor remain available</span>
           </button>
         </div>
 
@@ -205,7 +206,7 @@
             </ul>
           </div>
           <button class="showcase-shot elevated" type="button" data-lightbox="assets/screenshots/companions.webp" data-title="Combat Companion planner">
-            <img src="assets/screenshots/companions.webp" loading="lazy" alt="ATTB Companion page showing Azandar al-Cybiades Rune Knight tank equipment and ability priority">
+            <img src="assets/screenshots/companions.webp" loading="lazy" alt="ATTB Companion page showing Isobel Veloise Shield Saint tank equipment and ability priority">
           </button>
         </article>
 
@@ -221,8 +222,25 @@
               <li>Visual editing for skills, phases, gear, CP, companions, loadouts, variants, and review</li>
             </ul>
           </div>
-          <button class="showcase-shot elevated" type="button" data-lightbox="assets/screenshots/build-editor-overview.webp" data-title="Build Editor overview seeded from a synchronized ESO character">
-            <img src="assets/screenshots/build-editor-overview.webp" loading="lazy" alt="ATTB Build Editor showing a Health Dragonknight Tank Rebuild seeded from current ESO state">
+          <button class="showcase-shot elevated" type="button" data-lightbox="assets/screenshots/build-editor-skills-passives.webp" data-title="Build Editor Skills and Passives authoring">
+            <img src="assets/screenshots/build-editor-skills-passives.webp" loading="lazy" alt="ATTB Build Editor Skills and Passives page showing relevant lines and catalog-backed unlock authoring">
+          </button>
+        </article>
+
+        <article class="showcase-row reverse">
+          <div class="showcase-copy">
+            <span class="eyebrow">Help where you need it</span>
+            <h2>Look up the ESO concept without leaving your build behind.</h2>
+            <p>Help &amp; Tools is now a full third workspace instead of a loose collection of utility pages. The reference library is organized around the questions that actually come up while following, shopping for, or authoring a build.</p>
+            <ul class="check-list">
+              <li>Gear, Combat, Progression, Companion, and general Reference sections</li>
+              <li>Character-aware Gameplay Tips available from both Character Tracker and Help &amp; Tools</li>
+              <li>Practical trait, enchantment, armor-weight, weapon-role, CP, Scribing, and build-term explanations</li>
+              <li>Trusted external resources stay one click away when the in-app answer needs a deeper source</li>
+            </ul>
+          </div>
+          <button class="showcase-shot elevated" type="button" data-lightbox="assets/screenshots/help-home.webp" data-title="Help and Tools workspace">
+            <img src="assets/screenshots/help-home.webp" loading="lazy" alt="ATTB Help and Tools home showing Gear, Combat, Progression, and Companion reference categories">
           </button>
         </article>
       </section>
@@ -231,7 +249,7 @@
         <div class="section-heading">
           <span class="eyebrow">Current app tour</span>
           <h2>Here's what it actually looks like.</h2>
-          <p>All current v2.1.8 screenshots. Click any of them to blow it up to full size.</p>
+          <p>Current ATTB screenshots. Click any of them to blow it up to full size.</p>
         </div>
 
         <div class="carousel elevated" aria-roledescription="carousel">
@@ -244,7 +262,7 @@
           </div>
           <div class="carousel-caption">
             <div><span class="eyebrow" id="carousel-kicker">Start clean</span><h3 id="carousel-title">First Run</h3></div>
-            <p id="carousel-description">ATTB remains useful before any character exists, with a clear path to manual creation, addon discovery, backups, or the standalone Build Editor.</p>
+            <p id="carousel-description">ATTB remains useful before any character exists, with direct paths to manual creation, addon discovery, backups, and the standalone Build Editor.</p>
           </div>
           <div class="carousel-thumbs" id="carousel-thumbs" aria-label="Choose screenshot"></div>
         </div>
@@ -315,7 +333,7 @@
           <p>ATTB is a normal Windows installer. No runtime to install first, no account to make, no database to set up, no Minion. Just the app.</p>
         </div>
         <div class="install-grid">
-          <article class="card install-card"><span class="step-number">1</span><h3>Download the installer</h3><p>Grab <code>ATTB-Setup-2.1.8.exe</code> from GitHub Releases and run it. Existing ATTB desktop data is preserved when upgrading.</p></article>
+          <article class="card install-card"><span class="step-number">1</span><h3>Download the installer</h3><p>Grab <code>ATTB-Setup-2.2.0.exe</code> from GitHub Releases and run it. Existing ATTB desktop data is preserved when upgrading.</p></article>
           <article class="card install-card"><span class="step-number">2</span><h3>Choose addon sync or stay manual</h3><p>On first run, ATTB can detect your ESO profile and install the bundled ArrowToTheBuild addon. You can skip this and use manual tracking at any time.</p></article>
           <article class="card install-card"><span class="step-number">3</span><h3>Use /reloadui when you want fresh data</h3><p>ESO owns SavedVariables timing. If the desktop snapshot is stale, run <code>/reloadui</code> in ESO and ATTB can read the newly written local snapshot.</p></article>
         </div>
@@ -330,19 +348,19 @@
         <div class="section-heading">
           <span class="eyebrow">Help &amp; Tools</span>
           <h2>Help where you'd expect it, plus the good ESO sites.</h2>
-          <p>Character help and backups sit in the Character Tracker; build docs and JSON tools sit in the Build Editor. Links out to other references just open in your browser.</p>
+          <p>Help &amp; Tools is now its own workspace for gameplay guidance, Gear, Combat, Progression, Companion, and reference topics. Character backups live directly in Character Tracker under Character Data, while build authoring docs and JSON tools stay with the Build Editor. External references still open in your normal browser.</p>
         </div>
         <div class="resources-grid">
           <div class="resources-copy card">
             <span class="eyebrow">Inside ATTB</span>
             <h3>What you get once it's open.</h3>
             <ul class="check-list">
-              <li>Build-specific gameplay tips and warnings</li>
-              <li>Character backup import and export</li>
+              <li>Dedicated Help &amp; Tools workspace with build-specific gameplay tips and grouped ESO reference sections</li>
+              <li>Character backup import and export under Character Tracker &gt; Character Data</li>
               <li>Create Build from Character and Adapt Build to Character</li>
               <li>Configurable user build folder with saved JSON mirrors</li>
               <li>Combat companion planning and build authoring</li>
-              <li>ATTB Default, Deep Dark, Light, and Old Scrolls themes</li>
+              <li>ATTB Default, Deep Dark, Light, Old Scrolls, SkyTrim, and Woodland themes</li>
               <li>Guided visual build authoring and advanced Schema 4 tools</li>
               <li>Errors, warnings, suggestions, preview, and revision comparison</li>
               <li>Offline documentation including the AI Build JSON Authoring Guide</li>
@@ -390,6 +408,6 @@
     </div>
   </dialog>
 
-  <script src="app.js?v=2.1.8-progression-polish"></script>
+  <script src="app.js?v=2.2.0-release"></script>
 </body>
 </html>

@@ -41,7 +41,9 @@ npm start 2>&1 | Tee-Object -FilePath ".\attb-dev.log"
 
 ## Workspace and persistence
 
-- Switch between Character Tracker and Build Editor and confirm each remembers its last page.
+- Use the top Character / Build / Help icon switcher to move among all three workspaces and confirm each remembers its last content page.
+- Upgrade from a profile that previously stored `/help` as the last Character route and confirm Character opens a real Character Tracker page instead of bouncing back to Help & Tools.
+- Open Settings from each workspace, switch away, then return and confirm Settings did not replace that workspace's remembered content page.
 - Confirm the no-character screen keeps the Character Tracker sidebar and still offers the Build Editor.
 - Change Default/Dark/Light/Old Scrolls theme, startup workspace, sidebar collapse state, and Build Editor settings; restart and confirm persistence.
 - Confirm a development database migrates without losing characters, builds, drafts, revisions, or settings.
@@ -94,11 +96,11 @@ npm start 2>&1 | Tee-Object -FilePath ".\attb-dev.log"
 ## Character Tracker regression
 
 - Create a character from a bundled build and from a saved user build.
-- Test Basic Setup, Current Levels, skills/passives, equipment, hotbars/rotations, Champion Points, Companions, consumables, and Help & Tools.
+- Test Basic Setup, Current Levels, skills/passives, equipment, hotbars/rotations, Champion Points, Companions, and consumables. Then switch to the dedicated Help & Tools workspace and verify its grouped sidebar independently.
 - On Companions, verify all eight current combat companions appear, each has two curated targets, and selecting a target persists on restart/backup import.
 - In Suggested Next Picks, confirm only rows that are immediately purchasable appear. Regression-check Medium Armor Agility/Athletics and Light Armor Concentration against their catalog `unlock_ranks`, and confirm an unverified passive is conservatively held out before line maximum.
 - Switch loadouts and variants and verify the displayed build changes without losing character progress.
-- Export and import a character backup.
+- Export and import a character backup from **Character Tracker → Character Data → Backups & Import**.
 
 ## Packaging and website
 
@@ -209,9 +211,9 @@ npm start 2>&1 | Tee-Object -FilePath ".\attb-dev.log"
 
 - During first ESO-character discovery, choose **Create a new build from this character** and verify the setup dialog appears before any permanent build ID is created.
 - Change the proposed build name and permanent ID, complete import, and verify the new synced character uses that editable build and Build Editor opens its recovery draft.
-- Confirm **Edit character profile** opens Settings directly on **Character Settings**.
-- Confirm Character Settings no longer duplicates Level, CP, available point, or attribute-allocation controls from Current Levels.
-- Confirm ESO Plus appears under General Settings.
+- Confirm **Edit character profile** opens Settings directly on **Character**.
+- Confirm the Character tab no longer duplicates Level, CP, available point, or attribute-allocation controls from Current Levels.
+- Confirm ESO Plus appears under General.
 - Confirm the first addon-enable screen requires acknowledgement of ESO SavedVariables timing and provides the ZOS/ESOUI documentation links.
 - Confirm observed action bars show skill icons instead of match-method diagnostic pills.
 - Confirm Champion Point detail uses earned/spent/unspent language rather than calling all earned points available.

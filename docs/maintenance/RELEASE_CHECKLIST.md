@@ -1,10 +1,10 @@
-# ATTB 2.1.8 Release Checklist
+# ATTB 2.2.0 Release Checklist
 
-The release target is **ATTB v2.1.8** with the streamlined single ESO addon at **v1.1.1**. v2.1.8 adds the temporary-unlock retirement lifecycle, updates all Mighty Seven temporary purchases with explicit cutoffs, preserves player choice through per-character retirement overrides, and includes the user-facing wording cleanup begun in v2.1.7. The public build format remains **Schema 4**; `retire_when` is an optional backward-compatible Schema 4 field. Freeze the branch after these corrections for regression fixes, packaging, and final test evidence.
+The release target is **ATTB v2.2.0** with the streamlined single ESO addon at **v1.1.1**. v2.2.0 promotes Help & Tools into a dedicated third workspace with grouped Gear, Combat, Progression, Companion, and Reference sections for the player-facing ESO concepts that sit around an authored build: sets, traits, enchantments, combat stats, buffs/debuffs, status effects, armor weights, weapons, shopping decisions, Mundus Stones, Champion Points, skill terminology, Scribing, consumables, common build jargon, and companion build mechanics. The v2.1.8 temporary-unlock retirement lifecycle remains part of the current baseline. The public build format remains **Schema 4** and the addon remains unchanged. Freeze the branch after this approved Help & Tools workspace expansion for regression fixes, packaging, and final test evidence.
 
 ## Freeze rules
 
-- Do not add features beyond the approved v2.1.8 temporary-unlock retirement and wording-cleanup scope unless a verified release blocker requires one.
+- Do not add features beyond the approved v2.2.0 Help & Tools workspace and release-polish scope unless a verified release blocker requires one.
 - Prefer deleting dead code/data over adding compatibility scaffolding for unreleased behavior.
 - Preserve desktop character data, build revisions, user JSON files, and addon links across upgrades. The v2.1.3 legacy bridge migration intentionally discards only the two obsolete ESO addon SavedVariables files before a fresh single-addon snapshot is generated.
 - Treat bundled builds and Schema 4 compatibility as public contracts. Existing Schema 4 builds without `retire_when` must continue to import and behave normally.
@@ -25,7 +25,7 @@ Before release, confirm:
 
 - the full Electron/native SQLite suite passes;
 - the renderer production build completes without unexpected chunk or React-import warnings;
-- every Character Tracker and Build Editor route boots without a white screen or console error;
+- every Character Tracker, Build Editor, and Help & Tools route boots without a white screen or console error;
 - all bundled builds validate against Schema 4 and the current skill catalog;
 - every bundled-build image reference resolves and no orphan build assets are packaged;
 - the preload IPC contract matches the registered main-process handlers and every renderer `window.api` call is exposed;
@@ -40,15 +40,18 @@ On a clean Windows profile:
 
 - install the generated NSIS package;
 - launch, create a manual character, restart, and confirm persistence;
-- exercise both Character Tracker and Build Editor workspaces;
+- exercise Character Tracker, Build Editor, and Help & Tools workspaces;
 - create, autosave, save, reopen, fork, export, import, and restore a build revision;
 - confirm the user-build JSON folder mirrors permanent saves but not recovery drafts;
-- test Character Backup export/import;
-- test ATTB Default, Deep Dark, Light, and Old Scrolls themes and both expanded/collapsed sidebars;
-- confirm General Settings remains selected when opened from the Build Editor Settings route;
+- test Character Backup export/import from Character Tracker → Character Data → Backups & Import and confirm the old Help & Tools backup route redirects there;
+- test ATTB Default, Deep Dark, Light, Old Scrolls, SkyTrim, and Woodland themes across Character, Build, Help, and Settings;
+- confirm the General tab remains selected when opened from the Build Editor settings route;
 - confirm Default primary actions use the restrained dark/bronze treatment rather than bright orange fills;
-- confirm switching among all four themes does not change typography, text wrapping, or control geometry;
-- confirm the title bar shows the running `v2.1.8` value;
+- confirm switching among all six themes does not change typography, text wrapping, or control geometry;
+- confirm the title bar shows the running `v2.2.0` value;
+- open the Help & Tools workspace and verify each Gear, Combat, Progression, Companion, and Reference route loads, scrolls, and inherits all six themes without hard-coded colors;
+- verify the legacy `/help/traits` route redirects to the equipment-trait reference and the Help & Tools sidebar highlights the correct topic;
+- verify the Character / Build / Help tab strip fills the top of the sidebar in all three workspaces, Settings remains separate at the bottom, and stale pre-2.2.0 Character routes such as `/help` are rejected instead of bouncing back into Help & Tools;
 - confirm the Simple ATTB mark is used for Windows/app chrome and the Words mark only on large branding surfaces;
 - test all eight combat companions in the Character Tracker and both curated targets per companion;
 - author, duplicate, edit, validate, save, export, and re-import companion setups in the Build Editor;
@@ -84,16 +87,16 @@ With bundled `ArrowToTheBuild` 1.1.1 enabled:
 ## Documentation and repository hygiene
 
 - README version/status matches `package.json`.
-- Website version text, addon section, screenshots, progression copy, and release links match the 2.1.8 package and published claims.
+- Website version text, addon section, screenshots, progression copy, Help & Tools feature copy, and release links match the 2.2.0 package and published claims.
 - Build Quick Start, Editor Guide, JSON Guide, Format, Validation, Skill Catalog, patch-maintenance guide, addon-integration guide, and Testing guide match current behavior.
 - `BUILD_SCHEMA.json` and `BUILD_TEMPLATE.json` match Schema 4 behavior and validation.
 - No historical milestone plans, obsolete conversion scripts, temp archives, databases, logs, `node_modules`, generated installers, or unreferenced build assets are present in the source ZIP.
-- GitHub release descriptions/notes are standalone release handoff artifacts only. Do not keep versioned files such as `2-1-8_release.md` in the repository root or package them in the desktop source ZIP.
+- GitHub release descriptions/notes are standalone release handoff artifacts only. Do not keep versioned files such as `2-2-0_release.md` in the repository root or package them in the desktop source ZIP.
 - Desktop source ZIP naming follows `Arrow-to-the-Build_vX.X.X[-tag].zip`. Standalone addon source archives use `ATTB-ESOAddon-Source-vX.X.X.zip`; the addon repository build script may create `ATTB-ESOAddon-Built-vX.X.X.zip` for manual installation.
 
 ## Final release handoff
 
-Before publishing the v2.1.8 release:
+Before publishing the v2.2.0 release:
 
 1. Run the complete native suite twice.
 2. Run the renderer build and all-route boot test.

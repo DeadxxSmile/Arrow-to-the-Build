@@ -9,14 +9,15 @@ import { APP_TAGLINE } from '../utils/branding'
 export default function SettingsPage() {
   const {
     builds, characters, character, build, activeId, setActiveId, theme, esoPlus, appSettings, setAppSetting,
-    updateCharacter, reloadCharacters, refreshActive, addTrackedSkillLine, deleteTrackedSkillLine,
+    updateCharacter, reloadBuilds, reloadCharacters, refreshActive, addTrackedSkillLine, deleteTrackedSkillLine,
     catalog, skillLines, selectableLoadouts, selectableVariants, workspace, openCharacterModal, characterBuilds, reloadSettings,
     addonStatus, reloadAddonStatus, reloadAddonDiscoveries, openAddonSetup, openAddonImport, clearAddonOverride
   } = useApp()
   const dialog = useAppDialog()
   const [searchParams, setSearchParams] = useSearchParams()
   const requestedTab = searchParams.get('tab')
-  const [tab, setTab] = useState(['general', 'character', 'addon', 'editor'].includes(requestedTab) ? requestedTab : (workspace === 'build-editor' ? 'editor' : 'general'))
+  const validTabs = ['general', 'character', 'addon', 'editor']
+  const tab = validTabs.includes(requestedTab) ? requestedTab : (workspace === 'build-editor' ? 'editor' : 'general')
   const [dbPath, setDbPath] = useState('')
   const [appInfo, setAppInfo] = useState({ version: '' })
   const [storageInfo, setStorageInfo] = useState(null)
@@ -55,13 +56,9 @@ export default function SettingsPage() {
   }
 
   useEffect(() => {
-    const next = ['general', 'character', 'addon', 'editor'].includes(requestedTab) ? requestedTab : (workspace === 'build-editor' ? 'editor' : 'general')
-    setTab(next)
-  }, [workspace, requestedTab])
-  const chooseTab = next => {
-    setTab(next)
-    setSearchParams({ tab: next }, { replace: true })
-  }
+    if (validTabs.includes(requestedTab)) return
+    setSearchParams({ tab }, { replace: true })
+  }, [requestedTab, setSearchParams, tab])
   useEffect(() => {
     window.api.db.getPath().then(setDbPath)
     window.api.app.getInfo().then(setAppInfo).catch(() => {})
@@ -259,18 +256,10 @@ export default function SettingsPage() {
   }
 
   return <div className="page settings-page">
-    <div className="page-title"><span className="eyebrow">Application preferences</span><h1>Settings</h1><p>Manage shared behavior, character tracking, and Build Editor defaults from one place.</p></div>
-    <div className="settings-tabs" role="tablist">
-      <button role="tab" aria-selected={tab === 'general'} className={tab === 'general' ? 'active' : ''} onClick={() => chooseTab('general')}>General Settings</button>
-      <button role="tab" aria-selected={tab === 'character'} className={tab === 'character' ? 'active' : ''} onClick={() => chooseTab('character')}>Character Settings</button>
-      <button role="tab" aria-selected={tab === 'addon'} className={tab === 'addon' ? 'active' : ''} onClick={() => chooseTab('addon')}>ESO Addon &amp; Sync</button>
-      <button role="tab" aria-selected={tab === 'editor'} className={tab === 'editor' ? 'active' : ''} onClick={() => chooseTab('editor')}>Build Editor Settings</button>
-    </div>
-    {notice && <div className="notice-banner" role="status">{notice}</div>}
-
+    {notice && <div className="notice-banner settings-notice">{notice}</div>}
     {tab === 'general' && <div className="settings-stack">
-      <section className="panel"><div className="section-head"><div><span className="eyebrow">Appearance</span><h2>Theme</h2></div></div><div className="setting-row"><div><b>Color theme</b><p>Choose the balanced ATTB icon palette, a deeper dark mode, a clean light theme, or the black-and-gold ESO-site-inspired Old Scrolls look.</p></div><select value={theme} aria-label="Color theme" onChange={event => setAppSetting('theme', event.target.value)}><option value="default">ATTB Default</option><option value="dark">Deep Dark</option><option value="light">Light</option><option value="old-scrolls">Old Scrolls</option></select></div></section>
-      <section className="panel"><div className="section-head"><div><span className="eyebrow">Startup</span><h2>Opening workspace</h2></div></div><div className="setting-row"><div><b>When ATTB launches</b><p>Choose a fixed workspace or return to whichever side of the app you used last.</p></div><select value={appSettings.startup_workspace || 'last'} onChange={event => setAppSetting('startup_workspace', event.target.value)}><option value="last">Last used workspace</option><option value="character">Character Tracker</option><option value="build-editor">Build Editor</option></select></div></section>
+      <section className="panel"><div className="section-head"><div><span className="eyebrow">Appearance</span><h2>Theme</h2></div></div><div className="setting-row"><div><b>Color theme</b><p>Choose from six palettes: ATTB Default, Deep Dark, Light, Old Scrolls, monochrome SkyTrim, or the muted hunter-green Woodland theme.</p></div><select value={theme} aria-label="Color theme" onChange={event => setAppSetting('theme', event.target.value)}><option value="default">ATTB Default</option><option value="dark">Deep Dark</option><option value="light">Light</option><option value="old-scrolls">Old Scrolls</option><option value="skytrim">SkyTrim</option><option value="woodland">Woodland</option></select></div></section>
+      <section className="panel"><div className="section-head"><div><span className="eyebrow">Startup</span><h2>Opening workspace</h2></div></div><div className="setting-row"><div><b>When ATTB launches</b><p>Choose a fixed workspace or return to whichever workspace you used last.</p></div><select value={appSettings.startup_workspace || 'last'} onChange={event => setAppSetting('startup_workspace', event.target.value)}><option value="last">Last used workspace</option><option value="character">Character Tracker</option><option value="build-editor">Build Editor</option><option value="help">Help &amp; Tools</option></select></div></section>
       <section className="panel"><div className="section-head"><div><span className="eyebrow">Network</span><h2>Remote build images</h2></div></div><label className="setting-row clickable"><div><b>Allow images referenced by trusted imported builds</b><p>ATTB remains offline by default. Remote downloads are restricted to HTTPS, five megabytes, real image formats, and a local cache.</p></div><span className="switch"><input type="checkbox" checked={remoteImages} onChange={event => setAppSetting('remote_images', event.target.checked)} /><i /></span></label></section>
       <section className="panel"><div className="section-head"><div><span className="eyebrow">Storage</span><h2>Local data</h2></div></div><div className="data-path"><small>SQLite database</small><code>{dbPath}</code></div><div className="data-path"><small>Bundled ESO catalog</small><code>{catalog?.catalog_version} · {catalog?.game_version} · {(catalog?.lines || []).length} skill lines</code></div><div className="button-row"><button className="btn secondary" onClick={clearCache}>Clear downloaded image cache</button><button className="btn danger" onClick={resetApp}>Reset entire app</button></div></section>
       <section className="panel about-panel"><div className="section-head"><div><span className="eyebrow">About</span><h2>Arrow to the Build</h2><p className="app-tagline about-tagline">{APP_TAGLINE}</p></div></div><div className="about-details"><div><small>App version</small><b>{appInfo.version ? `v${appInfo.version}` : 'Loading…'}</b></div><div><small>Built for</small><b>ESO {catalog?.game_version || 'catalog not loaded'}</b></div><div><small>Build format</small><b>Schema {builds.find(item => item.is_bundled)?.schema_version || 4}</b></div></div><div className="button-row"><button type="button" className="btn secondary" onClick={() => openProjectLink(appInfo.repository || 'https://github.com/DeadxxSmile/Arrow-to-the-Build')}>Open GitHub project</button><button type="button" className="btn ghost" onClick={() => openProjectLink(appInfo.issues || 'https://github.com/DeadxxSmile/Arrow-to-the-Build/issues')}>Report an issue</button></div></section>
@@ -295,8 +284,8 @@ export default function SettingsPage() {
           <form className="catalog-line-form" onSubmit={addLine}><label><span>Category</span><select disabled={syncedLocked} value={category} onChange={event => setCategory(event.target.value)}>{categories.map(item => <option key={item}>{item}</option>)}</select></label><label><span>Skill line</span><select ref={lineSelectRef} value={lineId} onChange={event => setLineId(event.target.value)} disabled={syncedLocked || !options.length}>{options.length ? options.map(line => <option key={line.id} value={line.id}>{line.name}{line.class ? ` · ${line.class}` : ''}</option>) : <option value="">Every line in this category is already shown</option>}</select></label><button className="btn primary" disabled={syncedLocked || !lineId}>Add skill line</button></form>
           <div className="tracked-line-list">{skillLines.filter(line => line.tracked_only).map(line => <div key={line.id}><div><b>{line.name}</b><small>{line.group}{line.class ? ` · ${line.class}` : ''}</small></div><span>{character.skill_ranks[line.id] ?? 0}/{line.max || 50}</span><button className="btn ghost danger-text" disabled={syncedLocked} onClick={() => removeLine(line)}>Remove</button></div>)}{!skillLines.some(line => line.tracked_only) && <div className="quiet-box">No additional catalog lines added yet.</div>}</div>
         </section>
-        <section className="panel danger-zone"><div><span className="eyebrow">Danger zone</span><h2>Remove character</h2><p>This removes only the ATTB profile. It cannot affect the character in ESO.</p></div><button className="btn danger" onClick={removeCharacter}>Remove {character.name}</button></section>
       </>}
+      {character && <section className="panel danger-zone"><div><span className="eyebrow">Danger zone</span><h2>Remove character</h2><p>This removes only the ATTB profile. It cannot affect the character in ESO.</p></div><button className="btn danger" onClick={removeCharacter}>Remove {character.name}</button></section>}
     </div>}
 
     {tab === 'addon' && <div className="settings-stack">

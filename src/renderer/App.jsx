@@ -1,18 +1,18 @@
-import { createContext, Suspense, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { createContext, Fragment, Suspense, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import TitleBar from './components/TitleBar'
 import CharacterModal from './components/CharacterModal'
 import CharacterSwitcher from './components/CharacterSwitcher'
 import AddonSetupModal from './components/AddonSetupModal'
 import AddonImportModal from './components/AddonImportModal'
-import NumberStepper from './components/NumberStepper'
-import OverrideResetButton from './components/OverrideResetButton'
 import ErrorBoundary from './components/ErrorBoundary'
 import { useAppDialog } from './components/AppDialogProvider'
 import useBuildEditor from './hooks/useBuildEditor'
 import { displayLine, esoCatalog } from './utils/catalogLogic'
 import { applyCompletionChange } from './utils/buildLogic'
 import { APP_TAGLINE } from './utils/branding'
+import { HELP_NAV_SECTIONS } from './utils/helpReference.mjs'
+import { fallbackForWorkspace, isWorkspaceContentPath, workspaceForPath } from './utils/workspaceLogic.mjs'
 import {
   applyLoadout, applyVariant, availableLoadouts, availableVariants,
   listLoadouts, listVariants, displayVariantName
@@ -21,15 +21,23 @@ import {
 const AppContext = createContext(null)
 export const useApp = () => useContext(AppContext)
 
-const characterPrimaryNav = [
-  ['/setup', 'Basic Setup', '⌁'], ['/status', 'Current Levels', '◈'], ['/skills', 'Skills & Passives', '✦'],
-  ['/equipment', 'Equipment', '◫'], ['/rotations', 'Skill Bars & Rotations', '↻'],
-  ['/champion-points', 'Champion Points', '✧'], ['/companions', 'Companions', '♟'],
-  ['/consumables', 'Consumables / Other', '⚗'], ['/help/tips', 'Help & Tools', '?']
-]
-const characterHelpNav = [
-  ['/help/tips', 'Gameplay Tips', '◆'], ['/help/guides', 'ATTB Guides', '▤'],
-  ['/help/import-export', 'Character Backups', '⇄'], ['/help/resources', 'Resources & Links', '↗']
+const characterNavSections = [
+  { label: 'Start here', items: [
+    ['/setup', 'Basic Setup', '⌁'], ['/status', 'Current Levels', '◈']
+  ] },
+  { label: 'Build progress', items: [
+    ['/skills', 'Skills & Passives', '✦'], ['/equipment', 'Equipment', '◫'],
+    ['/rotations', 'Skill Bars & Rotations', '↻'], ['/champion-points', 'Champion Points', '✧']
+  ] },
+  { label: 'Support', items: [
+    ['/companions', 'Companions', '♟'], ['/consumables', 'Consumables / Other', '⚗']
+  ] },
+  { label: 'Guidance', items: [
+    ['/gameplay-tips', 'Gameplay Tips', '◆']
+  ] },
+  { label: 'Character data', items: [
+    ['/character-data', 'Backups & Import', '⇄']
+  ] }
 ]
 const buildLibraryNav = [
   ['/build-editor/library', 'Build Library', '▦'], ['/build-editor/new', 'Create New Build', '＋']
@@ -66,9 +74,38 @@ const DEFAULT_SETTINGS = {
   addon_allow_overrides: 'false'
 }
 
-function isBuildEditorPath(pathname) { return pathname.startsWith('/build-editor') }
-function routeStorageKey(workspace) { return workspace === 'build-editor' ? 'attb-last-build-editor-route' : 'attb-last-character-route' }
-function collapseStorageKey(workspace) { return `attb-sidebar-collapsed-${workspace}` }
+function routeStorageKey(workspace) { return `attb-last-${workspace}-route` }
+function rememberedWorkspaceRoute(workspace, hasCharacters = true) {
+  if (workspace === 'character' && !hasCharacters) return null
+  const key = routeStorageKey(workspace)
+  const saved = localStorage.getItem(key)
+  if (!saved) return null
+  if (isWorkspaceContentPath(saved, workspace)) return saved
+  localStorage.removeItem(key)
+  return null
+}
+
+function WorkspaceGlyph({ workspace }) {
+  if (workspace === 'character') return <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.2" /><path d="M5.5 19c.7-4 3-6 6.5-6s5.8 2 6.5 6" /></svg>
+  if (workspace === 'build-editor') return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 18.8 6.2 14 15.7 4.5a2 2 0 0 1 2.8 0l1 1a2 2 0 0 1 0 2.8L10 17.8 5 18.8Z" /><path d="m14.5 5.7 3.8 3.8" /></svg>
+  return <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.2" /><path d="M9.9 9.2a2.3 2.3 0 0 1 4.5.6c0 1.7-2.4 2-2.4 3.8" /><path d="M12 17.2h.01" /></svg>
+}
+
+function WorkspaceSwitcher({ active, onSwitch }) {
+  const items = [
+    ['character', 'Character', 'Character Tracker'],
+    ['build-editor', 'Build', 'Build Editor'],
+    ['help', 'Help', 'Help & Tools']
+  ]
+  return <div className="workspace-tabs" role="navigation" aria-label="Workspaces">{items.map(([id, label, title]) => <button
+    type="button"
+    key={id}
+    className={`workspace-tab workspace-tab-${id} ${active === id ? 'active' : ''}`}
+    onClick={() => onSwitch(id)}
+    title={title}
+    aria-current={active === id ? 'page' : undefined}
+  ><WorkspaceGlyph workspace={id} /><span>{label}</span></button>)}</div>
+}
 
 function SectionRail({ location, skillGroups, character }) {
   if (location.pathname.startsWith('/skills')) return <aside className="section-rail" aria-label="Skill lines">
@@ -84,42 +121,77 @@ function SectionRail({ location, skillGroups, character }) {
     {cpNav.map(([to, label, icon, field], index) => <NavLink end={index === 0} key={to} to={to} className={({ isActive }) => `section-rail-link ${isActive ? 'active' : ''}`}><span>{icon}</span><b>{label}</b>{field && <em>{character?.[field] ?? 0}</em>}</NavLink>)}
   </aside>
 
-  if (location.pathname.startsWith('/help')) return <aside className="section-rail tools-rail" aria-label="Help and tools">
-    <div className="section-rail-head"><span className="eyebrow">Help &amp; Tools</span><h2>Character support</h2><p>Gameplay guidance, ATTB/AI authoring docs, character backups, addon help, and trusted ESO resources.</p></div>
-    {characterHelpNav.map(([to, label, icon]) => <NavLink key={to} to={to} className={({ isActive }) => `section-rail-link ${isActive ? 'active' : ''}`}><span>{icon}</span><b>{label}</b></NavLink>)}
-  </aside>
   return null
 }
 
-function CharacterSidebar({ collapsed, location, onSwitchWorkspace, onToggle }) {
-  return <aside className="sidebar">
-    <div className="sidebar-logo"><img src="./logo.png" alt="" />{!collapsed && <div><strong>ATTB</strong><small>Character Tracker</small></div>}</div>
-    <nav className="sidebar-nav" aria-label="Character Tracker">{characterPrimaryNav.map(([to, label, icon]) => <NavLink key={to} to={to} className={({ isActive }) => `nav-item ${(isActive || (to === '/skills' && location.pathname.startsWith('/skills')) || (to === '/help/tips' && location.pathname.startsWith('/help'))) ? 'active' : ''}`} title={collapsed ? label : ''}><span aria-hidden="true">{icon}</span>{collapsed ? <span className="sr-only">{label}</span> : <b>{label}</b>}</NavLink>)}</nav>
-    <div className="sidebar-footer">
-      <button type="button" className="nav-item workspace-switch" onClick={onSwitchWorkspace} title={collapsed ? 'Open Build Editor' : ''}><span aria-hidden="true">✎</span>{collapsed ? <span className="sr-only">Open Build Editor</span> : <><b>Build Creator</b><em>Open</em></>}</button>
-      <NavLink to="/settings" className={({ isActive }) => `nav-item settings-link ${isActive ? 'active' : ''}`} title={collapsed ? 'Settings' : ''}><span aria-hidden="true">⚙</span>{collapsed ? <span className="sr-only">Settings</span> : <b>Settings</b>}</NavLink>
-      <button className="collapse-btn" onClick={onToggle} aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}>{collapsed ? '›' : '‹'}</button>
-    </div>
-  </aside>
+
+const settingsNav = [
+  ['general', 'General', '⚙'],
+  ['character', 'Character', '♙'],
+  ['addon', 'ESO Addon & Sync', '↻'],
+  ['editor', 'Build Editor', '✎']
+]
+
+function SettingsSidebarNav({ location }) {
+  const params = new URLSearchParams(location.search)
+  const requested = params.get('tab')
+  const activeTab = settingsNav.some(([id]) => id === requested) ? requested : 'general'
+  return <nav className="sidebar-nav settings-sidebar-nav" aria-label="Settings">{settingsNav.map(([id, label, icon]) => <NavLink
+    key={id}
+    to={`/settings?tab=${id}`}
+    className={() => `nav-item ${activeTab === id ? 'active' : ''}`}
+    aria-current={activeTab === id ? 'page' : undefined}
+  ><span aria-hidden="true">{icon}</span><b>{label}</b></NavLink>)}</nav>
 }
 
-function BuildEditorSidebar({ collapsed, draft, onSwitchWorkspace, onToggle }) {
-  return <aside className="sidebar build-editor-sidebar">
-    <div className="sidebar-logo"><img src="./logo.png" alt="" />{!collapsed && <div><strong>ATTB</strong><small>Build Editor</small></div>}</div>
-    <nav className="sidebar-nav editor-nav" aria-label="Build Editor">
-      {!collapsed && <span className="sidebar-section-label">Library</span>}
-      {buildLibraryNav.map(([to, label, icon]) => <NavLink key={to} to={to} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} title={collapsed ? label : ''}><span aria-hidden="true">{icon}</span>{collapsed ? <span className="sr-only">{label}</span> : <b>{label}</b>}</NavLink>)}
-      {!collapsed && <span className="sidebar-section-label current-build-label">Current build</span>}
-      {buildCurrentNav.map(([to, label, icon]) => draft
-        ? <NavLink key={to} to={to} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} title={collapsed ? label : ''}><span aria-hidden="true">{icon}</span>{collapsed ? <span className="sr-only">{label}</span> : <b>{label}</b>}</NavLink>
-        : <button type="button" key={to} className="nav-item editor-disabled" disabled title={collapsed ? `${label} - open a build first` : 'Open or create a build first'}><span aria-hidden="true">{icon}</span>{collapsed ? <span className="sr-only">{label}</span> : <b>{label}</b>}</button>)}
-      {!collapsed && <span className="sidebar-section-label">Authoring</span>}
-      {buildAuthoringNav.map(([to, label, icon]) => <NavLink key={to} to={to} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} title={collapsed ? label : ''}><span aria-hidden="true">{icon}</span>{collapsed ? <span className="sr-only">{label}</span> : <b>{label}</b>}</NavLink>)}
-    </nav>
-    <div className="sidebar-footer">
-      <button type="button" className="nav-item workspace-switch return-workspace" onClick={onSwitchWorkspace} title={collapsed ? 'Return to Character Tracker' : ''}><span aria-hidden="true">←</span>{collapsed ? <span className="sr-only">Return to Character Tracker</span> : <b>Character Tracker</b>}</button>
-      <NavLink to="/build-editor/settings" className={({ isActive }) => `nav-item settings-link ${isActive ? 'active' : ''}`} title={collapsed ? 'Settings' : ''}><span aria-hidden="true">⚙</span>{collapsed ? <span className="sr-only">Settings</span> : <b>Settings</b>}</NavLink>
-      <button className="collapse-btn" onClick={onToggle} aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}>{collapsed ? '›' : '‹'}</button>
+function CharacterSidebarNav({ location }) {
+  return <nav className="sidebar-nav character-tracker-nav" aria-label="Character Tracker">{characterNavSections.map(section => <Fragment key={section.label}>
+    <span className="sidebar-section-label">{section.label}</span>
+    {section.items.map(([to, label, icon]) => <NavLink key={to} to={to} className={({ isActive }) => `nav-item ${(isActive || (to === '/skills' && location.pathname.startsWith('/skills')) || (to === '/champion-points' && location.pathname.startsWith('/champion-points'))) ? 'active' : ''}`}><span aria-hidden="true">{icon}</span><b>{label}</b></NavLink>)}
+  </Fragment>)}</nav>
+}
+
+function BuildEditorSidebarNav({ draft }) {
+  return <nav className="sidebar-nav editor-nav" aria-label="Build Editor">
+    <span className="sidebar-section-label">Library</span>
+    {buildLibraryNav.map(([to, label, icon]) => <NavLink key={to} to={to} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}><span aria-hidden="true">{icon}</span><b>{label}</b></NavLink>)}
+    <span className="sidebar-section-label current-build-label">Current build</span>
+    {buildCurrentNav.map(([to, label, icon]) => draft
+      ? <NavLink key={to} to={to} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}><span aria-hidden="true">{icon}</span><b>{label}</b></NavLink>
+      : <button type="button" key={to} className="nav-item editor-disabled" disabled title="Open or create a build first"><span aria-hidden="true">{icon}</span><b>{label}</b></button>)}
+    <span className="sidebar-section-label">Authoring</span>
+    {buildAuthoringNav.map(([to, label, icon]) => <NavLink key={to} to={to} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}><span aria-hidden="true">{icon}</span><b>{label}</b></NavLink>)}
+  </nav>
+}
+
+function HelpSidebarNav() {
+  return <nav className="sidebar-nav help-tools-nav" aria-label="Help and Tools">{HELP_NAV_SECTIONS.map(section => <Fragment key={section.label}>
+    <span className="sidebar-section-label">{section.label}</span>
+    {section.items.map(item => <NavLink end={!!item.end} key={item.to} to={item.to} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}><span aria-hidden="true">{item.icon}</span><b>{item.label}</b></NavLink>)}
+  </Fragment>)}</nav>
+}
+
+function UnifiedSidebar({ mode, workspace, location, draft, onSwitchWorkspace }) {
+  const settingsActive = mode === 'settings'
+  const settingsTarget = settingsActive ? `/settings${location.search || '?tab=general'}` : workspace === 'build-editor' ? '/settings?tab=editor' : '/settings?tab=general'
+  const closeSettings = event => {
+    if (!settingsActive) return
+    event.preventDefault()
+    const remembered = localStorage.getItem('attb-last-workspace')
+    onSwitchWorkspace(['character', 'build-editor', 'help'].includes(remembered) ? remembered : 'character')
+  }
+  return <aside className={`sidebar sidebar-mode-${mode}`}>
+    <div className="sidebar-workspace-header">
+      <WorkspaceSwitcher active={settingsActive ? '' : workspace} onSwitch={onSwitchWorkspace} />
+    </div>
+    <div className="sidebar-nav-surface">
+      {mode === 'settings' ? <SettingsSidebarNav location={location} />
+        : mode === 'build-editor' ? <BuildEditorSidebarNav draft={draft} />
+          : mode === 'help' ? <HelpSidebarNav />
+            : <CharacterSidebarNav location={location} />}
+    </div>
+    <div className={`sidebar-settings-dock ${settingsActive ? 'active' : ''}`}>
+      <NavLink to={settingsTarget} onClick={closeSettings} className={`sidebar-settings-tab ${settingsActive ? 'active' : ''}`} aria-current={settingsActive ? 'page' : undefined} title={settingsActive ? 'Return to previous workspace' : 'Open Settings'}><span aria-hidden="true">⚙</span><b>Settings</b></NavLink>
     </div>
   </aside>
 }
@@ -139,7 +211,7 @@ export default function App() {
   const dialog = useAppDialog()
   const location = useLocation()
   const navigate = useNavigate()
-  const workspace = isBuildEditorPath(location.pathname) ? 'build-editor' : 'character'
+  const workspace = workspaceForPath(location.pathname)
   const launchedWithRoute = useRef(Boolean(window.location.hash && !['#', '#/'].includes(window.location.hash)))
   const startupApplied = useRef(false)
   const [builds, setBuilds] = useState([])
@@ -152,7 +224,6 @@ export default function App() {
   const [addonSetupOpen, setAddonSetupOpen] = useState(false)
   const [addonDiscoveries, setAddonDiscoveries] = useState([])
   const [addonImportOpen, setAddonImportOpen] = useState(false)
-  const [collapsed, setCollapsed] = useState(() => localStorage.getItem(collapseStorageKey('character')) === 'true')
   const [loading, setLoading] = useState(true)
   const [appSettings, setAppSettings] = useState(DEFAULT_SETTINGS)
   const contentRef = useRef(null)
@@ -255,16 +326,17 @@ export default function App() {
             for (const item of payload.new_characters) merged.set(item.character_key, item)
             return [...merged.values()]
           })
-          setAddonImportOpen(true)
+          // First-run addon setup owns the modal layer. Queue discoveries behind it so
+          // onboarding and import can never render on top of each other.
+          if (!addonSetupOpen && !modal) setAddonImportOpen(true)
         }
       }
     }
     window.api.addon.onSyncUpdated(handle)
     return () => window.api.addon.offSyncUpdated()
-  }, [reloadCharacters, refreshActive])
+  }, [reloadCharacters, refreshActive, addonSetupOpen, modal])
   useEffect(() => { document.documentElement.dataset.theme = theme }, [theme])
-  useEffect(() => { setCollapsed(localStorage.getItem(collapseStorageKey(workspace)) === 'true') }, [workspace])
-  useEffect(() => { if (contentRef.current) contentRef.current.scrollTop = 0 }, [location.pathname, activeId, workspace])
+  useEffect(() => { if (contentRef.current) contentRef.current.scrollTop = 0 }, [location.pathname, location.search, activeId, workspace])
 
   useEffect(() => {
     if (loading || startupApplied.current) return
@@ -272,28 +344,22 @@ export default function App() {
     if (launchedWithRoute.current) return
     const preference = appSettings.startup_workspace || 'last'
     const target = preference === 'last' ? (localStorage.getItem('attb-last-workspace') || 'character') : preference
-    if (target === 'build-editor') navigate(localStorage.getItem(routeStorageKey('build-editor')) || '/build-editor/library', { replace: true })
-    else navigate(characters.length ? (localStorage.getItem(routeStorageKey('character')) || '/setup') : '/setup', { replace: true })
+    const saved = rememberedWorkspaceRoute(target, characters.length > 0)
+    navigate(saved || fallbackForWorkspace(target), { replace: true })
   }, [loading, appSettings.startup_workspace, characters.length, navigate])
 
   useEffect(() => {
-    if (loading || !startupApplied.current || location.pathname === '/') return
+    if (loading || !startupApplied.current || !isWorkspaceContentPath(location.pathname, workspace)) return
     localStorage.setItem('attb-last-workspace', workspace)
     localStorage.setItem(routeStorageKey(workspace), location.pathname)
   }, [loading, location.pathname, workspace])
 
   const switchWorkspace = useCallback((target, explicitPath = '') => {
     localStorage.setItem('attb-last-workspace', target)
-    if (location.pathname !== '/') localStorage.setItem(routeStorageKey(workspace), location.pathname)
-    const fallback = target === 'build-editor' ? '/build-editor/library' : '/setup'
-    const saved = target === 'character' && characters.length === 0 ? '/setup' : localStorage.getItem(routeStorageKey(target))
-    navigate(explicitPath || saved || fallback)
+    if (isWorkspaceContentPath(location.pathname, workspace)) localStorage.setItem(routeStorageKey(workspace), location.pathname)
+    const saved = rememberedWorkspaceRoute(target, characters.length > 0)
+    navigate(explicitPath || saved || fallbackForWorkspace(target))
   }, [characters.length, location.pathname, navigate, workspace])
-  const toggleCollapsed = useCallback(() => setCollapsed(value => {
-    const next = !value
-    localStorage.setItem(collapseStorageKey(workspace), String(next))
-    return next
-  }), [workspace])
 
   const run = useCallback(task => {
     const result = queue.current.then(task)
@@ -351,25 +417,36 @@ export default function App() {
     addTrackedSkillLine, deleteTrackedSkillLine, workspace, switchWorkspace, editor, characterBuilds,
     addonStatus, reloadAddonStatus, reloadAddonDiscoveries, openAddonSetup, openAddonImport, clearAddonOverride])
 
+  const changeHeaderBuild = useCallback(async buildId => {
+    if (!character || !buildId || buildId === character.build_id) return
+    const next = characterBuilds.find(item => item.id === buildId)
+    const classChanged = next?.class_name && next.class_name !== build?.defaults?.class
+    const message = classChanged
+      ? `Change ${character.name} from ${build?.defaults?.class || 'the current class'} to a ${next.class_name} build? ATTB will clear incompatible class selections and build-specific equipment progress, while keeping level, CP, race, alliance, and personal progression.`
+      : `Change the selected build for ${character.name}? Matching skill progress is preserved, while incompatible build completion and equipment entries are removed.`
+    const approved = await dialog.confirm({ title: 'Change selected build?', message, confirmLabel: 'Change Build' })
+    if (!approved) return
+    try { await updateCharacter({ build_id: buildId }) }
+    catch (error) { await dialog.alert({ title: 'Build could not be changed', message: error.message }) }
+  }, [build, character, characterBuilds, dialog, updateCharacter])
+
   if (loading) return <AppContext.Provider value={ctx}><div className="app-root"><TitleBar /><main className="first-run-screen loading-screen"><img src="./logo.png" alt="" /><span className="eyebrow">Arrow to the Build</span><p className="app-tagline compact">{APP_TAGLINE}</p><h1>Loading local data…</h1></main></div></AppContext.Provider>
 
   const firstRun = characters.length === 0
-  const syncedCharacter = !!character?.addon_sync?.linked
-  const syncedLocked = syncedCharacter && appSettings.addon_allow_overrides !== 'true'
-  const characterRouteNeedsProfile = workspace === 'character' && !location.pathname.startsWith('/help') && location.pathname !== '/settings'
+  const isSettings = location.pathname === '/settings' || location.pathname.endsWith('/settings')
+  const sidebarMode = isSettings ? 'settings' : workspace
+  const characterRouteNeedsProfile = workspace === 'character' && !isSettings && location.pathname !== '/character-data'
   const showCharacterWelcome = firstRun && characterRouteNeedsProfile
-  const showRail = workspace === 'character' && (location.pathname.startsWith('/help') || (!firstRun && (location.pathname.startsWith('/skills') || location.pathname.startsWith('/champion-points'))))
+  const showRail = !isSettings && workspace === 'character' && !firstRun && (location.pathname.startsWith('/skills') || location.pathname.startsWith('/champion-points'))
 
   return <AppContext.Provider value={ctx}><div className="app-root">
     <TitleBar />
-    <div className={`app-shell ${collapsed ? 'collapsed' : ''} ${workspace === 'build-editor' ? 'build-editor-shell' : 'character-shell'}`}>
-      {workspace === 'build-editor'
-        ? <BuildEditorSidebar collapsed={collapsed} draft={editor.draft} onSwitchWorkspace={() => switchWorkspace('character')} onToggle={toggleCollapsed} />
-        : <CharacterSidebar collapsed={collapsed} location={location} onSwitchWorkspace={() => switchWorkspace('build-editor')} onToggle={toggleCollapsed} />}
+    <div className={`app-shell ${sidebarMode}-shell`}>
+      <UnifiedSidebar mode={sidebarMode} workspace={workspace} location={location} draft={editor.draft} onSwitchWorkspace={switchWorkspace} />
       <main className="main-panel">
-        {workspace === 'build-editor' ? <header className="build-editor-bar">
+        {isSettings ? <header className="settings-workspace-bar"><h1>Application Settings</h1></header> : workspace === 'build-editor' ? <header className="build-editor-bar">
           {editor.draft ? <>
-            <div className="build-editor-title"><span className="eyebrow">Editable build</span><h1>{editor.draft.data.name || 'Untitled Build'}</h1><p><span className="mono">{editor.draft.build_id}</span> · {editor.draft.dirty ? 'Unsaved revision changes' : editor.revisions.length ? 'Saved build is current' : 'Not saved as a permanent build yet'}</p></div>
+            <div className="build-editor-title"><h1>{editor.draft.data.name || 'Untitled Build'}</h1></div>
             <div className="build-editor-bar-actions">
               <span className={`workspace-status ${editor.autosaveStatus}`}>{editor.autosaveStatus === 'pending' ? 'Autosave pending' : editor.autosaveStatus === 'saving' ? 'Autosaving…' : editor.autosaveStatus === 'error' ? 'Autosave failed' : editor.draft.dirty ? 'Recovery draft saved locally' : editor.revisions.length ? 'Saved' : 'Recovery draft ready'}</span>
               <button type="button" className="btn ghost compact" disabled={!editor.canUndo} onClick={editor.undo}>Undo</button>
@@ -381,29 +458,37 @@ JSON file: ${sync?.path || 'User build folder'}` }) } catch (error) { await dial
               <button type="button" className="btn ghost compact" onClick={async () => { try { await editor.closeDraft(); navigate('/build-editor/library') } catch (error) { await dialog.alert({ title: 'Draft could not be closed safely', message: error.message }) } }}>Close</button>
             </div>
           </> : <>
-            <div><span className="eyebrow">Authoring workspace</span><h1>Build Editor</h1><p>Create, fork, import, and maintain Schema 4 builds without changing character progress.</p></div>
-            <div className="build-editor-bar-actions"><span className="workspace-status">No build open</span><button type="button" className="btn primary" onClick={() => navigate('/build-editor/new')}>Create Build</button><button type="button" className="btn secondary" onClick={() => navigate('/build-editor/guide')}>Open Guide</button></div>
+            <div className="build-editor-title"><h1>Build Editor</h1></div>
+            <div className="build-editor-bar-actions"><span className="workspace-status">No build open</span><button type="button" className="btn primary compact" onClick={() => navigate('/build-editor/new')}>Create Build</button><button type="button" className="btn secondary compact" onClick={() => navigate('/build-editor/guide')}>Open Guide</button></div>
           </>}
+        </header> : workspace === 'help' ? <header className="help-tools-bar">
+          <div className="help-tools-title"><h1>Gameplay and Build Info, Tools, and Guides</h1></div>
+          {characters.length ? <CharacterSwitcher characters={characters} activeId={activeId} onSelect={setActiveId} onAdd={() => setModal(true)} /> : <button type="button" className="btn primary compact" onClick={() => setModal(true)}>＋ Add Character</button>}
         </header> : firstRun ? <header className="character-bar empty-character-bar">
-          <div><span className="eyebrow">Character Tracker</span><h2>No character selected</h2><p>Add a character when you are ready to track a build in game.</p></div>
-          <button type="button" className="btn primary" onClick={() => setModal(true)}>＋ Add Character</button>
-        </header> : <header className={`character-bar ${selectableLoadouts.length > 1 ? 'has-loadouts' : ''}`}>
+          <h2>No character selected</h2>
+          <button type="button" className="btn primary compact" onClick={() => setModal(true)}>＋ Add Character</button>
+        </header> : <header className="character-bar">
           <CharacterSwitcher characters={characters} activeId={activeId} onSelect={setActiveId} onAdd={() => setModal(true)} />
-          {selectableLoadouts.length > 1 && <label className="loadout-control topbar-field"><span className="topbar-label">Build Loadout</span><select value={character?.loadout_id || activeLoadoutId} onChange={event => updateCharacter({ loadout_id: event.target.value })}>{selectableLoadouts.map(loadout => <option key={loadout.id} value={loadout.id}>{loadout.name}</option>)}</select></label>}
-          <div className={`character-level-center topbar-field ${syncedCharacter ? 'synced-topbar-field' : ''}`}><span className="topbar-label">Level{syncedCharacter && <i className="sync-dot" title="Synced from ESO" />}</span><div className="synced-control"><NumberStepper value={character?.level || 1} min={1} max={50} onChange={level => updateCharacter({ level })} label="Overall character level" disabled={syncedLocked} /><OverrideResetButton fieldPath="level" compact /></div></div>
-          <label className="variant-control topbar-field"><span className="topbar-label">Build Variant</span><select value={character?.variant_id || ''} disabled={!character || selectableVariants.length < 2} onChange={event => updateCharacter({ variant_id: event.target.value })}>{selectableVariants.map(variant => <option key={variant.id} value={variant.id}>{displayVariantName(variant)}</option>)}</select></label>
+          <label className="build-control topbar-field"><span className="topbar-label">Build</span><select value={character?.build_id || ''} disabled={!character || !characterBuilds.length} onChange={event => changeHeaderBuild(event.target.value)}>{characterBuilds.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
+          <label className="variant-control topbar-field"><span className="topbar-label">Variant</span><select value={character?.variant_id || ''} disabled={!character || selectableVariants.length < 2} onChange={event => updateCharacter({ variant_id: event.target.value })}>{selectableVariants.map(variant => <option key={variant.id} value={variant.id}>{displayVariantName(variant)}</option>)}</select></label>
         </header>}
         <div className={`workspace ${showRail ? 'with-section-rail' : ''}`}>
           {showRail && <SectionRail location={location} skillGroups={skillGroups} character={character} />}
-          <div className="content-scroll" ref={contentRef}><ErrorBoundary resetKey={`${workspace}:${location.pathname}:${activeId || 'none'}`}>
-            {showCharacterWelcome ? <CharacterFirstRun onAdd={() => setModal(true)} onOpenEditor={() => switchWorkspace('build-editor')} /> : <Suspense fallback={<div className="page"><div className="page-title"><h1>Loading...</h1></div></div>}><Outlet key={`${workspace}:${location.pathname}:${activeId || 'none'}`} /></Suspense>}
+          <div className="content-scroll" ref={contentRef}><ErrorBoundary resetKey={`${workspace}:${location.pathname}:${location.search}:${activeId || 'none'}`}>
+            {showCharacterWelcome ? <CharacterFirstRun onAdd={() => setModal(true)} onOpenEditor={() => switchWorkspace('build-editor')} /> : <Suspense fallback={<div className="page"><div className="page-title"><h1>Loading...</h1></div></div>}><Outlet key={`${workspace}:${location.pathname}:${location.search}:${activeId || 'none'}`} /></Suspense>}
           </ErrorBoundary></div>
         </div>
       </main>
     </div>
     <CharacterModal open={modal} builds={characterBuilds} firstCharacter={firstRun} onClose={() => setModal(false)} onImportAddon={openAddonImport} onCreated={async id => { setModal(false); await reloadCharacters(id); setActiveId(id); if (workspace === 'build-editor') switchWorkspace('character', '/setup') }} />
-    <AddonSetupModal open={addonSetupOpen} status={addonStatus} onComplete={async status => { setAddonStatus(status); setAddonSetupOpen(false); await reloadSettings(); if (status?.enabled) await reloadAddonDiscoveries(true) }} />
-    <AddonImportModal open={addonImportOpen} discoveries={addonDiscoveries} builds={characterBuilds} defaultAuthor={appSettings.build_editor_default_author || 'NPC'} onClose={() => setAddonImportOpen(false)} onImported={async result => {
+    <AddonSetupModal open={addonSetupOpen} status={addonStatus} onComplete={async status => {
+      setAddonStatus(status)
+      setAddonSetupOpen(false)
+      await reloadSettings()
+      if (status?.enabled) await reloadAddonDiscoveries(true)
+      else setAddonImportOpen(false)
+    }} />
+    <AddonImportModal open={addonImportOpen && !addonSetupOpen && !modal} discoveries={addonDiscoveries} builds={characterBuilds} defaultAuthor={appSettings.build_editor_default_author || 'NPC'} onClose={() => setAddonImportOpen(false)} onImported={async result => {
       const remaining = addonDiscoveries.filter(item => item.character_key !== result.character_key)
       setAddonDiscoveries(remaining)
       setAddonImportOpen(remaining.length > 0)

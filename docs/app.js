@@ -3,49 +3,55 @@ const screenshots = [
     src: 'assets/screenshots/first-run.webp',
     kicker: 'Start clean',
     title: 'First Run',
-    description: 'ATTB remains useful before any character exists, with a clear path to manual creation, addon discovery, backups, or the standalone Build Editor.'
+    description: 'ATTB remains useful before any character exists, with direct paths to manual creation, addon discovery, backups, and the standalone Build Editor.'
   },
   {
     src: 'assets/screenshots/add-first-character.webp',
     kicker: 'Manual character setup',
     title: 'Add Your First Character',
-    description: 'Choose a target build while recording the real character name, level, race, alliance, attributes, and account-wide Champion Point budgets.'
+    description: 'Choose a target build while recording the character you actually made: name, level, race, alliance, attributes, and account-wide Champion Point budgets.'
   },
   {
     src: 'assets/screenshots/addon-onboarding.webp',
     kicker: 'Optional local integration',
     title: 'ESO Addon Onboarding',
-    description: 'ATTB explains SavedVariables timing, detects the ESO profile, and lets you install the bundled addon or stay fully manual.'
+    description: 'ATTB explains SavedVariables timing, detects your ESO profile, and lets you install the bundled addon or stay fully manual.'
   },
   {
     src: 'assets/screenshots/new-eso-character.webp',
     kicker: 'Explicit discovery',
     title: 'New ESO Character Found',
-    description: 'New local snapshots are never silently linked. Choose a compatible saved target, create a new build, defer the decision, or ignore the character.'
+    description: 'New local snapshots are never silently linked. Choose a saved target, create a new build from the character, defer the decision, or ignore it.'
   },
   {
     src: 'assets/screenshots/synced-basic-setup.webp',
     kicker: 'What you have, what you want',
     title: 'Synchronized Basic Setup',
-    description: 'Your synced character sits right next to the build you are aiming for. Spin up another plan or adapt a saved one, and your live record stays untouched.'
+    description: 'Your selected character, target build, and variant stay visible while CURRENT ESO state remains separate from the authored TARGET.'
   },
   {
     src: 'assets/screenshots/skills-passives.webp',
     kicker: 'Audited progression gates',
     title: 'Skills & Passives',
-    description: 'Exact skill-line ranks, passive point gates, prerequisites, morph readiness, and available Skill Points drive the ordered unlock roadmap.'
+    description: 'Skill-line ranks, prerequisites, morph readiness, passive gates, available Skill Points, and retirement rules drive the ordered unlock roadmap.'
+  },
+  {
+    src: 'assets/screenshots/current-equipment.webp',
+    kicker: 'Observed in ESO',
+    title: 'Equipment Roadmap',
+    description: 'See the gear ESO currently reports first, then work through the separate build-acquisition roadmap without confusing CURRENT equipment with TARGET gear.'
   },
   {
     src: 'assets/screenshots/current-action-bars.webp',
     kicker: 'Observed in ESO',
-    title: 'Current Action Bars',
-    description: 'Your real front and back bars from ESO, lined up against the build\'s bars and rotations right below.'
+    title: 'Skill Bars & Rotations',
+    description: 'Your real front and back bars from ESO sit above the build progression bands, hotbars, and rotation guidance.'
   },
   {
     src: 'assets/screenshots/champion-points.webp',
     kicker: 'Character-specific allocation',
     title: 'Champion Points',
-    description: 'Track earned, spent, and unspent points, current slottables, required paths, recommended branches, alternatives, and final bars.'
+    description: 'Track earned points, required connection paths, recommended branches, alternatives, and exactly which node the build wants next.'
   },
   {
     src: 'assets/screenshots/companions.webp',
@@ -55,9 +61,9 @@ const screenshots = [
   },
   {
     src: 'assets/screenshots/gameplay-tips.webp',
-    kicker: 'Build-specific help',
+    kicker: 'Character-aware guidance',
     title: 'Tips & Tricks',
-    description: 'Reminders, warnings, optional systems, and build-specific tips sit right next to the character, not buried in a browser tab you forgot you had open.'
+    description: 'Build-specific reminders, progression goals, warnings, and practical ESO advice stay one click away from the character you are playing.'
   },
   {
     src: 'assets/screenshots/build-library.webp',
@@ -72,22 +78,34 @@ const screenshots = [
     description: 'Start guided, begin from the complete advanced template, fork an existing foundation, or import a community Schema 4 JSON file.'
   },
   {
-    src: 'assets/screenshots/guided-build-setup.webp',
-    kicker: 'Guided foundation',
-    title: 'Guided Build Setup',
-    description: 'Choose the important identity, role, resource, progression coverage, class direction, and bar count so ATTB can create a valid editable scaffold.'
+    src: 'assets/screenshots/build-editor-skills-passives.webp',
+    kicker: 'Full visual authoring',
+    title: 'Build Editor Skills & Passives',
+    description: 'Choose relevant lines, search the audited catalog, author final, temporary, and optional purchases, and define when leveling picks should retire.'
   },
   {
-    src: 'assets/screenshots/build-editor-overview.webp',
-    kicker: 'From synced character to draft',
-    title: 'Build Editor Overview',
-    description: 'Seed a build from a synced character and it keeps what you already have, leaving the future picks for you to fill in.'
+    src: 'assets/screenshots/review-save.webp',
+    kicker: 'Validate before you commit',
+    title: 'Review & Save',
+    description: 'Run validation, review blocking errors, warnings, suggestions, and patch compatibility, then save the next permanent build revision.'
   },
   {
-    src: 'assets/screenshots/build-editor-champion-points.webp',
-    kicker: 'Full CP authoring',
-    title: 'Build Editor Champion Points',
-    description: 'Author required connection paths, optional branches, stage thresholds, slottables, notes, and final Champion bars for all three constellations.'
+    src: 'assets/screenshots/help-home.webp',
+    kicker: 'Dedicated third workspace',
+    title: 'Help & Tools',
+    description: 'Gear, Combat, Progression, Companions, and general reference material now live in a full workspace beside Character Tracker and Build Editor.'
+  },
+  {
+    src: 'assets/screenshots/equipment-traits.webp',
+    kicker: 'Practical ESO reference',
+    title: 'Equipment Traits',
+    description: 'Decode armor, weapon, and jewelry traits while shopping, including what matters now, what can be transmuted later, and what a build is actually asking for.'
+  },
+  {
+    src: 'assets/screenshots/build-glossary.webp',
+    kicker: 'Plain-English reference',
+    title: 'Build Glossary',
+    description: 'AoE, DoT, proc, uptime, front bar, back bar, bridge, flex, comfort, stat stick, and other build shorthand explained inside ATTB.'
   },
   {
     src: 'assets/screenshots/settings-default.webp',
@@ -97,15 +115,9 @@ const screenshots = [
   },
   {
     src: 'assets/screenshots/settings-old-scrolls.webp',
-    kicker: 'Four coherent themes',
+    kicker: 'Six coherent themes',
     title: 'Old Scrolls Theme',
-    description: 'Switch palettes without moving the interface: all themes share the same typography and layout metrics while changing color and surface treatment.'
-  },
-  {
-    src: 'assets/screenshots/addon-sync-settings.webp',
-    kicker: 'Single-addon sync',
-    title: 'ESO Addon & Sync',
-    description: 'See the configured profile, installed addon version, synchronization state, snapshot count, overrides, repair controls, and the /reloadui reminder together.'
+    description: 'Switch palettes without moving the interface: ATTB Default, Deep Dark, Light, Old Scrolls, SkyTrim, and Woodland share the same layout and behavior.'
   }
 ]
 

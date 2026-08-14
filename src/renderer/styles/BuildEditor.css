@@ -1,20 +1,15 @@
 /* Build Editor workspace foundation */
-.workspace-switch{border:1px solid color-mix(in srgb,var(--accent) 45%,var(--line))!important;background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 16%,var(--surface)),color-mix(in srgb,var(--accent2) 14%,var(--surface)))!important;color:var(--text)!important;cursor:pointer!important;justify-content:flex-start}
-.workspace-switch:hover{border-color:var(--accent)!important;background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 26%,var(--surface2)),color-mix(in srgb,var(--accent2) 24%,var(--surface2)))!important}
-.workspace-switch em{margin-left:auto;color:var(--accent);font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;font-style:normal}
 .return-workspace span{font-size:1.2rem}
 .build-editor-sidebar{background:linear-gradient(180deg,var(--editor-sidebar-top),var(--editor-sidebar-bottom))}
-.editor-nav{gap:3px!important}
 .sidebar-section-label{display:block;padding:13px 12px 5px;color:var(--accent2);font-size:.72rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
-.sidebar-section-label.current-build-label{color:var(--gold)}
 .editor-disabled{border:0;background:transparent;text-align:left;opacity:.42;cursor:not-allowed}
 .editor-disabled:hover{background:transparent;color:var(--muted)}
-.build-editor-bar{height:108px;min-height:108px;border-bottom:1px solid var(--line);background:var(--chrome-bg);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:space-between;gap:24px;padding:16px 24px;z-index:5}
-.build-editor-bar h1{font-size:1.55rem;margin:2px 0 3px}
-.build-editor-bar p{font-size:.82rem;max-width:720px}
+.build-editor-bar{height:84px;min-height:84px;border-bottom:1px solid var(--line);background:var(--chrome-bg);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:space-between;gap:22px;padding:9px 22px;z-index:5}
+.build-editor-bar h1{font-size:1.28rem;margin:0;line-height:1.12}
+.build-editor-bar p{font-size:.76rem;max-width:720px;line-height:1.2}
 .build-editor-bar-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap}
 .workspace-status{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 10px;color:var(--accent);font-size:.75rem;font-weight:850;white-space:nowrap}
-.empty-character-bar{display:flex;align-items:center;justify-content:space-between;height:108px;min-height:108px}
+.empty-character-bar{display:flex;align-items:center;justify-content:space-between;height:84px;min-height:84px}
 .empty-character-bar h2{margin:3px 0}
 .empty-character-bar p{font-size:.8rem}
 .workspace-empty-state{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:38px;background:radial-gradient(circle at 50% 34%,color-mix(in srgb,var(--workspace-glow) 20%,transparent),transparent 34%)}
@@ -51,8 +46,6 @@
 
 @media(max-width:1050px){
   .build-library-grid{grid-template-columns:1fr}
-  .build-editor-bar{height:auto;min-height:132px;align-items:flex-start;flex-direction:column}
-  .build-editor-bar-actions{justify-content:flex-start}
 }
 @media(max-width:760px){
   .sidebar-section-label{display:none}
@@ -64,7 +57,7 @@
 }
 
 /* Editable build drafts, autosave, and revision history */
-.build-editor-title{min-width:0}
+.build-editor-title{min-width:0;display:flex;align-items:center}
 .build-editor-title h1,.build-editor-title p{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .build-editor-bar .btn.compact{padding:7px 10px;min-height:34px;font-size:.76rem}
 .workspace-status.saving{color:var(--gold)}
@@ -87,10 +80,6 @@
 .revision-list small{color:var(--muted)}
 .revision-list p{margin:3px 0 0}
 
-@media(max-width:1180px){
-  .build-editor-title h1,.build-editor-title p{white-space:normal}
-  .build-editor-bar{min-height:150px}
-}
 @media(max-width:760px){
   .draft-safety-panel,.review-status-panel,.revision-list article{flex-direction:column}
   .draft-safety-stats{min-width:0;width:100%}

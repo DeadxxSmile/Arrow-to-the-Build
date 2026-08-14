@@ -14,9 +14,12 @@ import ConsumablesPage from './renderer/pages/ConsumablesPage'
 import CompanionsPage from './renderer/pages/CompanionsPage'
 import ChampionPointsPage from './renderer/pages/ChampionPointsPage'
 import TipsPage from './renderer/pages/TipsPage'
-import ImportExportPage from './renderer/pages/ImportExportPage'
 import ResourcesPage from './renderer/pages/ResourcesPage'
+import TraitReferencePage from './renderer/pages/TraitReferencePage'
+import HelpHomePage from './renderer/pages/HelpHomePage'
+const BuildReferencePage = lazy(() => import('./renderer/pages/BuildReferencePage'))
 import SettingsPage from './renderer/pages/SettingsPage'
+import CharacterDataPage from './renderer/pages/CharacterDataPage'
 // Build Editor is a separate workspace most sessions never open, so it loads on demand.
 // These lazy imports split it into its own chunk and keep it out of the startup bundle.
 const BuildSetupGuidePage = lazy(() => import('./renderer/pages/BuildSetupGuidePage'))
@@ -48,7 +51,20 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <Route path="champion-points" element={<ChampionPointsPage />} /><Route path="champion-points/:tree" element={<ChampionPointsPage />} />
     <Route path="consumables" element={<ConsumablesPage />} />
     <Route path="companions" element={<CompanionsPage />} />
-    <Route path="help/tips" element={<TipsPage />} /><Route path="help/guides" element={<BuildSetupGuidePage />} /><Route path="help/import-export" element={<ImportExportPage />} /><Route path="help/resources" element={<ResourcesPage />} />
+    <Route path="gameplay-tips" element={<TipsPage />} />
+    <Route path="character-data" element={<CharacterDataPage />} />
+    <Route path="help" element={<HelpHomePage />} />
+    <Route path="help/tips" element={<TipsPage />} />
+    <Route path="help/topic/traits" element={<TraitReferencePage />} />
+    <Route path="help/topic/:topic" element={<BuildReferencePage />} />
+    <Route path="help/guides" element={<BuildSetupGuidePage />} />
+    <Route path="help/resources" element={<ResourcesPage />} />
+    <Route path="help/settings" element={<Navigate to="/settings?tab=general" replace />} />
+    <Route path="help/reference" element={<Navigate to="/help" replace />} />
+    <Route path="help/reference/traits" element={<Navigate to="/help/topic/traits" replace />} />
+    <Route path="help/reference/:topic" element={<BuildReferencePage />} />
+    <Route path="help/traits" element={<Navigate to="/help/topic/traits" replace />} />
+    <Route path="help/import-export" element={<Navigate to="/character-data" replace />} />
     <Route path="help/build-setup" element={<Navigate to="/help/guides" replace />} />
     <Route path="tips" element={<Navigate to="/help/tips" replace />} /><Route path="settings" element={<SettingsPage />} />
 
@@ -67,7 +83,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <Route path="build-editor/review" element={<BuildReviewPage />} />
     <Route path="build-editor/guide" element={<BuildSetupGuidePage />} />
     <Route path="build-editor/import-export" element={<BuildEditorImportExportPage />} />
-    <Route path="build-editor/settings" element={<SettingsPage />} />
+    <Route path="build-editor/settings" element={<Navigate to="/settings?tab=editor" replace />} />
 
     <Route path="*" element={<Navigate to="/setup" replace />} />
   </Route></Routes></HashRouter></AppDialogProvider></React.StrictMode>

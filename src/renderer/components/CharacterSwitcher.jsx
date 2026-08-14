@@ -17,7 +17,7 @@ export default function CharacterSwitcher({ characters, activeId, onSelect, onAd
   return <div className="character-switcher topbar-field" ref={rootRef}>
     <span className="topbar-label">Character</span>
     <button className="character-switcher-trigger" type="button" aria-haspopup="listbox" aria-expanded={open} onClick={() => setOpen(value => !value)}>
-      <span><b>{active?.name || 'Select character'}</b><em>{active?.short_name || active?.build_name || ''}</em></span>
+      <span><b>{active?.name || 'Select character'}</b></span>
       <i aria-hidden="true">▾</i>
     </button>
     {open && <div className="character-switcher-menu" role="listbox" aria-label="Characters">

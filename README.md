@@ -2,7 +2,7 @@
 
 > **I Used To Be Meta Like You, Then I Took An Arrow To The Build**
 
-Current release: **v2.1.8**
+Current release: **v2.2.0**
 
 **Arrow to the Build** is an offline-first Windows companion for **The Elder Scrolls Online**. It combines a character progression tracker with a full visual build editor so a static build guide becomes an actual plan for a specific character: what to unlock next, which skill-line ranks matter, how to spend Champion Points, what gear to chase, what belongs on each bar, and how the finished build fits together.
 
@@ -43,6 +43,7 @@ It can track:
 - combat-companion targets, equipment direction, traits, abilities, Ultimate, and playstyle notes
 - build variants and loadouts
 - character backups and restore
+- a dedicated Help & Tools workspace with grouped Gear, Combat, Progression, Companion, and Reference sections for the ESO concepts that sit around a build
 
 Synced ESO values remain separate from the authored build target, so live character data never silently rewrites the build you are following.
 
@@ -155,14 +156,44 @@ Companion targets can be selected per character in the Character Tracker or auth
 
 ---
 
+## Help & Tools workspace
+
+ATTB 2.2.0 turns Help & Tools into a full third workspace beside Character Tracker and Build Editor. Its sidebar separates Gear, Combat, Progression, Companions, and general Reference material so the useful answer is one click away instead of buried under one giant reference page.
+
+A compact Character / Build / Help tab strip fills the top of the sidebar in every workspace, while Settings remains pinned on its own at the bottom.
+
+The reference library covers:
+
+- gear/set slot math, bar-specific sets, Monster Sets, Mythics, arena weapons, Perfected gear, and set sources
+- player equipment traits and a trader-focused shopping read
+- armor, weapon, and jewelry enchantments/glyphs
+- combat stats, penetration context, Critical Damage limits, and sustain terminology
+- Major/Minor buffs and debuffs plus damage-type status effects
+- Light, Medium, and Heavy Armor roles and mixed-weight reasoning
+- weapon-line roles, front/back bars, stat sticks, and bar swapping
+- a step-by-step ESO-Hub/guild-trader shopping checklist
+- all 13 Mundus Stones and Divines interaction
+- Champion Point paths, jump points, passives, slottables, and the four-slot rule
+- skill ranks, morphs, passives, temporary/final/optional status, Class Mastery, and Scribing terms
+- Scribing Grimoires and Focus/Signature/Affix Scripts
+- food, drinks, potions, poisons, and Medicinal Use
+- common build-language glossary terms
+- companion roles, cooldown priorities, taunts, and companion-only traits
+
+These pages are intentionally build-focused rather than exhaustive wiki replacements: they explain the mechanic and then explain why it matters while following an ATTB target.
+
+---
+
 ## Themes and interface
 
-ATTB includes four themes:
+ATTB includes six themes:
 
 - **ATTB Default** - dark navy/charcoal with bronze and muted cyan accents
 - **Deep Dark** - near-black with restrained green/cyan accents
 - **Light** - clean light surfaces using the same semantic layout system
 - **Old Scrolls** - ESO-site-inspired charcoal, black, and gold
+- **SkyTrim** - Skyrim-menu-inspired monochrome black, white, and layered gray
+- **Woodland** - muted hunter green, sage, tan, and cream built around `#3B6255`
 
 Themes change palette and surface treatment while keeping the same typography and layout metrics, so switching themes does not move labels, alter text wrapping, or change control geometry.
 
@@ -220,7 +251,7 @@ The finished installer is written to:
 dist\ATTB-Setup-<version>.exe
 ```
 
-The build script does not launch the installer automatically.
+On success, the build script prints the full path to the generated installer in `dist`.
 
 ### Development commands
 
@@ -290,7 +321,7 @@ The build folder can be changed from the app. ATTB copies managed builds before 
 
 Remote build images are disabled by default. If enabled, ATTB restricts downloads to HTTPS, public network addresses, real image formats, and a five-megabyte size limit.
 
-Character backups are human-readable JSON and can be imported or exported from **Help & Tools -> Character Backups**.
+Character backups are human-readable JSON and can be imported or exported from **Character Tracker -> Character Data -> Backups & Import**.
 
 ---
 

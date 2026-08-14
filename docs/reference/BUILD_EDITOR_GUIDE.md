@@ -95,7 +95,7 @@ The top bar reports the draft state, such as Recovery draft ready, Autosaving, S
 
 ### Autosave
 
-Autosave writes the recovery copy to SQLite after the configured interval. Change the interval in **Build Editor Settings**.
+Autosave writes the recovery copy to SQLite after the configured interval. Change the interval in **Settings → Build Editor**.
 
 Switching workspaces, changing builds, or closing a draft flushes pending edits when possible.
 
@@ -453,7 +453,7 @@ ATTB keeps drafts and history in SQLite. If the folder is missing or read-only, 
 
 If a build file changes outside the app, ATTB keeps that version rather than overwriting it. You then review or import the external copy yourself.
 
-## 16. Build Editor Settings
+## 16. Settings → Build Editor
 
 Current settings include:
 
