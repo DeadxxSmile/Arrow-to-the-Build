@@ -1,92 +1,84 @@
-/* ATTB theme palettes. Actual color values belong in this file; component CSS uses semantic variables. */
+/*
+ * ATTB theme-engine fallback palette.
+ *
+ * Runtime themes (built-in and custom) are loaded through the Theme Schema 1
+ * engine and applied as semantic CSS custom properties. This :root block is
+ * only the safe ATTB Default fallback used before renderer settings finish
+ * loading or if a custom theme becomes unavailable.
+ */
 :root{
-  --bg:#071018;--surface:#0c1822;--surface2:#12232e;--surface3:#1a3240;--line:#2d4655;--line2:#456878;
-  --text:#f3efe8;--muted:#a9b8c1;--faint:#78909e;--accent:#d4934e;--accent2:#6fb6cf;--gold:#e2b45e;
-  --red:#ef756c;--orange:#e8a25e;--green:#72c992;--blue:#6fb6cf;--purple:#b49ad7;
-  --solid-text:#ffffff;--shadow:0 18px 50px rgba(0,0,0,.38);--backdrop:rgba(0,0,0,.72);--image-shadow:rgba(0,0,0,.5);
-  --titlebar-bg:#050a0e;--sidebar-top:#0b1822;--sidebar-bottom:#071018;--control-bg:#0b1720;
-  --primary-start:#19303a;--primary-end:#24414d;--primary-border:#8f6849;--primary-text:#f3efe8;
-  --primary-hover-start:#213b47;--primary-hover-end:#2d4d59;--primary-hover-border:#d4934e;--focus-ring:rgba(111,182,207,.16);
-  --scroll-thumb:#284554;--chrome-bg:rgba(7,16,24,.94);--editor-sidebar-top:#0b1a24;--editor-sidebar-bottom:#071018;
-  --section-rail-top:#0b1a24;--section-rail-bottom:#08131b;--panel-deep:#08141c;--panel-raised:#0d1d27;
-  --panel-header-start:#102633;--panel-header-end:#0b1821;--modal-start:#122735;--modal-end:#09141d;--modal-border:#39596a;
-  --nav-active-start:#2a261f;--nav-active-end:#162833;--nav-active-border:#5a5147;--menu-hover:#153044;
-  --main-glow:#437b91;--workspace-glow:#347ea0;--code-bg:#061018;
-  --selected-bg:#173c2c;--selected-border:#3f7b5a;--selected-strong:#1d8659;--selected-strong-border:#62d99c;
+  /* Core surfaces */
+  --color-app-bg:#071018;
+  --color-surface:#0c1822;
+  --color-surface-raised:#12232e;
+  --color-surface-high:#1a3240;
+  --color-border:#2d4655;
+  --color-border-strong:#456878;
+
+  /* Text and semantic accents */
+  --color-text-primary:#f3efe8;
+  --color-text-secondary:#a9b8c1;
+  --color-text-muted:#78909e;
+  --color-accent-primary:#d4934e;
+  --color-accent-secondary:#6fb6cf;
+  --color-accent-warm:#e2b45e;
+  --color-danger:#ef756c;
+  --color-warning:#e8a25e;
+  --color-success:#72c992;
+  --color-info:#6fb6cf;
+  --color-optional:#b49ad7;
+  --color-text-on-accent:#ffffff;
+
+  /* Elevation and overlays */
+  --color-shadow:rgba(0,0,0,.38);
+  --color-backdrop:rgba(0,0,0,.72);
+  --color-image-shadow:rgba(0,0,0,.5);
+
+  /* Application chrome */
+  --color-titlebar-bg:#050a0e;
+  --color-sidebar-start:#0b1822;
+  --color-sidebar-end:#071018;
+  --color-control-bg:#0b1720;
+  --color-scroll-thumb:#284554;
+  --color-chrome-bg:rgba(7,16,24,.94);
+
+  /* Primary actions and focus */
+  --color-action-primary-start:#19303a;
+  --color-action-primary-end:#24414d;
+  --color-action-primary-border:#8f6849;
+  --color-action-primary-text:#f3efe8;
+  --color-action-primary-hover-start:#213b47;
+  --color-action-primary-hover-end:#2d4d59;
+  --color-action-primary-hover-border:#d4934e;
+  --color-focus-ring:rgba(111,182,207,.16);
+
+  /* Workspace surfaces */
+  --color-editor-sidebar-start:#0b1a24;
+  --color-editor-sidebar-end:#071018;
+  --color-section-rail-start:#0b1a24;
+  --color-section-rail-end:#08131b;
+  --color-panel-deep:#08141c;
+  --color-panel-raised:#0d1d27;
+  --color-panel-header-start:#102633;
+  --color-panel-header-end:#0b1821;
+
+  /* Modals and navigation states */
+  --color-modal-start:#122735;
+  --color-modal-end:#09141d;
+  --color-modal-border:#39596a;
+  --color-nav-active-start:#2a261f;
+  --color-nav-active-end:#162833;
+  --color-nav-active-border:#5a5147;
+  --color-nav-hover:#153044;
+
+  /* Effects and selection states */
+  --color-main-glow:#437b91;
+  --color-workspace-glow:#347ea0;
+  --color-code-bg:#061018;
+  --color-selected-bg:#173c2c;
+  --color-selected-border:#3f7b5a;
+  --color-selected-strong:#1d8659;
+  --color-selected-strong-border:#62d99c;
 }
-html[data-theme="default"]{color-scheme:dark}
-html[data-theme="dark"]{
-  --bg:#020508;--surface:#061018;--surface2:#0a1720;--surface3:#102531;--line:#1d3948;--line2:#30586a;
-  --text:#eff7fb;--muted:#91a8b4;--faint:#637c89;--accent:#58d987;--accent2:#59bce8;--gold:#e3c15d;
-  --red:#f06f66;--orange:#eea15a;--green:#58d987;--blue:#59bce8;--purple:#ab8de0;
-  --solid-text:#ffffff;--shadow:0 20px 58px rgba(0,0,0,.52);--backdrop:rgba(0,0,0,.78);--image-shadow:rgba(0,0,0,.58);
-  --titlebar-bg:#010305;--sidebar-top:#061018;--sidebar-bottom:#020508;--control-bg:#050e15;
-  --primary-start:#0f5c3d;--primary-end:#19784f;--primary-border:#3eb47a;--primary-text:#eff7fb;
-  --primary-hover-start:#14714a;--primary-hover-end:#218d5d;--primary-hover-border:#58d987;--focus-ring:rgba(89,188,232,.14);
-  --scroll-thumb:#173647;--chrome-bg:rgba(3,9,14,.95);--editor-sidebar-top:#06131b;--editor-sidebar-bottom:#02070b;
-  --section-rail-top:#07161f;--section-rail-bottom:#031019;--panel-deep:#041019;--panel-raised:#071923;
-  --panel-header-start:#0c2230;--panel-header-end:#07151e;--modal-start:#0b202c;--modal-end:#041019;--modal-border:#285165;
-  --nav-active-start:#123826;--nav-active-end:#123044;--nav-active-border:#2d6b58;--menu-hover:#0f2c3a;
-  --main-glow:#3293bd;--workspace-glow:#2f8aad;--code-bg:#020a0f;
-  --selected-bg:#123724;--selected-border:#397b59;--selected-strong:#1d8659;--selected-strong-border:#62d99c;color-scheme:dark
-}
-html[data-theme="light"]{
-  --bg:#eef3f6;--surface:#ffffff;--surface2:#f6f9fb;--surface3:#e7eff4;--line:#c6d4dc;--line2:#9eb4c0;
-  --text:#10202a;--muted:#526b78;--faint:#78909b;--accent:#9f5f24;--accent2:#167bb0;--gold:#9a6b00;
-  --red:#c74439;--orange:#bd681d;--green:#168a57;--blue:#167bb0;--purple:#7453a9;
-  --solid-text:#ffffff;--shadow:0 14px 35px rgba(29,55,70,.12);--backdrop:rgba(16,32,42,.34);--image-shadow:rgba(16,32,42,.24);
-  --titlebar-bg:#e4ecf1;--sidebar-top:#f7fafb;--sidebar-bottom:#e9f0f4;--control-bg:#ffffff;
-  --primary-start:#f1e3d6;--primary-end:#e7d2bf;--primary-border:#a46d42;--primary-text:#3a281b;
-  --primary-hover-start:#ead7c5;--primary-hover-end:#dfc3ab;--primary-hover-border:#9f5f24;--focus-ring:rgba(22,123,176,.14);
-  --scroll-thumb:#9cb3c0;--chrome-bg:rgba(238,243,246,.94);--editor-sidebar-top:#f4f8fa;--editor-sidebar-bottom:#e9f0f4;
-  --section-rail-top:#f4f8fa;--section-rail-bottom:#e9f0f4;--panel-deep:#ffffff;--panel-raised:#edf4f7;
-  --panel-header-start:#ffffff;--panel-header-end:#eef4f7;--modal-start:#ffffff;--modal-end:#edf4f7;--modal-border:#9eb4c0;
-  --nav-active-start:#f3e8d7;--nav-active-end:#e5f0f4;--nav-active-border:#bda47b;--menu-hover:#e2edf2;
-  --main-glow:#7fb8cc;--workspace-glow:#7ab7ce;--code-bg:#ffffff;
-  --selected-bg:#dff0e6;--selected-border:#9dc3b3;--selected-strong:#1d6847;--selected-strong-border:#4a9d73;color-scheme:light
-}
-html[data-theme="old-scrolls"]{
-  --bg:#0c0d0d;--surface:#111212;--surface2:#171817;--surface3:#20211f;--line:#3f3b31;--line2:#665b3d;
-  --text:#e9e6de;--muted:#aaa69b;--faint:#77746c;--accent:#d3a62b;--accent2:#c2a15d;--gold:#d9ad32;
-  --red:#c86d5f;--orange:#c58a49;--green:#7fa36b;--blue:#899da3;--purple:#9b8aaa;
-  --solid-text:#fff8e4;--shadow:0 20px 65px rgba(0,0,0,.58);--backdrop:rgba(0,0,0,.78);--image-shadow:rgba(0,0,0,.58);
-  --titlebar-bg:#080909;--sidebar-top:#111212;--sidebar-bottom:#0b0c0c;--control-bg:#101111;
-  --primary-start:#745914;--primary-end:#98741a;--primary-border:#c7a13d;--primary-text:#fff8e4;
-  --primary-hover-start:#866716;--primary-hover-end:#a9841f;--primary-hover-border:#d9ad32;--focus-ring:rgba(211,166,43,.16);
-  --scroll-thumb:#4d493f;--chrome-bg:rgba(10,11,11,.95);--editor-sidebar-top:#111212;--editor-sidebar-bottom:#0b0c0c;
-  --section-rail-top:#131414;--section-rail-bottom:#0d0e0e;--panel-deep:#0e0f0f;--panel-raised:#171817;
-  --panel-header-start:#1a1a18;--panel-header-end:#111211;--modal-start:#181918;--modal-end:#0e0f0f;--modal-border:#665b3d;
-  --nav-active-start:#302912;--nav-active-end:#211f18;--nav-active-border:#806b2d;--menu-hover:#26231a;
-  --main-glow:#b68a20;--workspace-glow:#a98428;--code-bg:#0b0c0c;
-  --selected-bg:#2b2718;--selected-border:#74622f;--selected-strong:#856c24;--selected-strong-border:#c3a14a;color-scheme:dark
-}
-html[data-theme="skytrim"]{
-  --bg:#08090a;--surface:#0e0f11;--surface2:#15171a;--surface3:#202328;--line:#32363b;--line2:#545a61;
-  --text:#f1f1ee;--muted:#b7b9bb;--faint:#7c8084;--accent:#e2e2df;--accent2:#c0c3c5;--gold:#f7f7f3;
-  --red:#d9d9d6;--orange:#c8c8c4;--green:#d0d0cc;--blue:#bfc2c5;--purple:#aeb1b5;
-  --solid-text:#ffffff;--shadow:0 20px 60px rgba(0,0,0,.52);--backdrop:rgba(0,0,0,.8);--image-shadow:rgba(0,0,0,.6);
-  --titlebar-bg:#040506;--sidebar-top:#0d0f11;--sidebar-bottom:#08090a;--control-bg:#0d0e10;
-  --primary-start:#2a2d31;--primary-end:#383c41;--primary-border:#a9adb1;--primary-text:#f7f7f3;
-  --primary-hover-start:#35393e;--primary-hover-end:#484d53;--primary-hover-border:#f1f1ee;--focus-ring:rgba(226,226,223,.12);
-  --scroll-thumb:#34383d;--chrome-bg:rgba(8,9,10,.95);--editor-sidebar-top:#0e1012;--editor-sidebar-bottom:#08090a;
-  --section-rail-top:#101214;--section-rail-bottom:#0a0b0d;--panel-deep:#0b0c0e;--panel-raised:#17191c;
-  --panel-header-start:#1b1e22;--panel-header-end:#101214;--modal-start:#1c1f23;--modal-end:#0d0f11;--modal-border:#555b62;
-  --nav-active-start:#24272b;--nav-active-end:#151719;--nav-active-border:#6d7278;--menu-hover:#1d2024;
-  --main-glow:#6c7075;--workspace-glow:#85898e;--code-bg:#060708;
-  --selected-bg:#222426;--selected-border:#5a5e63;--selected-strong:#3a3e43;--selected-strong-border:#d2d4d5;color-scheme:dark
-}
-html[data-theme="woodland"]{
-  --bg:#08110e;--surface:#0d1915;--surface2:#12241d;--surface3:#1a3329;--line:#29473a;--line2:#3b6255;
-  --text:#f1eee7;--muted:#a3b9ad;--faint:#718779;--accent:#6f9a82;--accent2:#a3b9ad;--gold:#d3b687;
-  --red:#c9756a;--orange:#d3b687;--green:#7da88e;--blue:#739aa0;--purple:#68425c;
-  --solid-text:#ffecba;--shadow:0 20px 58px rgba(0,0,0,.45);--backdrop:rgba(0,0,0,.75);--image-shadow:rgba(0,0,0,.52);
-  --titlebar-bg:#050a08;--sidebar-top:#0d1a15;--sidebar-bottom:#07100d;--control-bg:#0b1712;
-  --primary-start:#294d3f;--primary-end:#3b6255;--primary-border:#6f9a82;--primary-text:#f1eee7;
-  --primary-hover-start:#315c4b;--primary-hover-end:#477463;--primary-hover-border:#a3b9ad;--focus-ring:rgba(163,185,173,.14);
-  --scroll-thumb:#294a3c;--chrome-bg:rgba(7,16,13,.95);--editor-sidebar-top:#0e1d17;--editor-sidebar-bottom:#07100d;
-  --section-rail-top:#0f2019;--section-rail-bottom:#09150f;--panel-deep:#091610;--panel-raised:#13271f;
-  --panel-header-start:#173027;--panel-header-end:#0e1b16;--modal-start:#173027;--modal-end:#0a1511;--modal-border:#3b6255;
-  --nav-active-start:#1c342b;--nav-active-end:#13271f;--nav-active-border:#4e6f60;--menu-hover:#173429;
-  --main-glow:#3b6255;--workspace-glow:#41623e;--code-bg:#06100c;
-  --selected-bg:#173629;--selected-border:#3f7159;--selected-strong:#2d6b4f;--selected-strong-border:#6f9a82;color-scheme:dark
-}
+
+html{color-scheme:dark}

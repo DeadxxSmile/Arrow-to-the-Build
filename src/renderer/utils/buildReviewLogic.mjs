@@ -1,3 +1,5 @@
+import { resolveProgressionScope } from '../../shared/progressionScope.mjs'
+
 const SECTION_ROUTES = {
   overview: '/build-editor/overview',
   character: '/build-editor/character-setup',
@@ -17,11 +19,11 @@ function routeForMessage(message = '') {
   if (/gear_stages|gear stage|equipment|piece|set\s|source\./.test(text)) return { section: 'Equipment', route: SECTION_ROUTES.equipment }
   if (/companion/.test(text)) return { section: 'Companions', route: SECTION_ROUTES.companions }
   if (/loadout|variant|default_loadout/.test(text)) return { section: 'Loadouts & Variants', route: SECTION_ROUTES.loadouts }
-  if (/phase|front_bar|back_bar|ultimate|rotation|milestone/.test(text)) return { section: 'Leveling Plan', route: SECTION_ROUTES.leveling }
+  if (/phase|front_bar|back_bar|ultimate|rotation|milestone/.test(text)) return { section: 'Build Phases', route: SECTION_ROUTES.leveling }
   if (/unlock_order|catalog_skill|morph|passive|scribed|skill line|relevant_lines/.test(text)) return { section: 'Skills & Passives', route: SECTION_ROUTES.skills }
   if (/class_configuration|active_class_lines|mastery|subclass|base class/.test(text)) return { section: 'Class Configuration', route: SECTION_ROUTES.class }
   if (/defaults|attribute|race|alliance|mundus|weapon|armor|transformation|consumable|quickslot|requirement/.test(text)) return { section: 'Character Setup', route: SECTION_ROUTES.character }
-  if (/metadata|summary|author|game_version|verified_date|missing id|missing name|schema_version/.test(text)) return { section: 'Overview', route: SECTION_ROUTES.overview }
+  if (/metadata|progression_scope|starting_point|leveling_content_required|summary|author|game_version|verified_date|missing id|missing name|schema_version/.test(text)) return { section: 'Overview', route: SECTION_ROUTES.overview }
   return { section: 'Review & Save', route: SECTION_ROUTES.review }
 }
 
@@ -75,6 +77,7 @@ export function createBuildReview(data = {}, catalog = {}, validationErrors = []
     if (!seen.has(key)) { seen.add(key); (target.severity === 'warning' ? warnings : suggestions).push(target) }
   }
 
+  const progressionScope = resolveProgressionScope(data)
   const catalogVersion = catalog.game_version || ''
   const buildVersion = data.game_version || ''
   const buildUpdate = parseUpdate(buildVersion)
@@ -98,11 +101,11 @@ export function createBuildReview(data = {}, catalog = {}, validationErrors = []
   for (const phase of data.phases || []) {
     const phaseLabel = phase.name || phase.id || 'Unnamed phase'
     const minLevel = Number(phase.min_level) || 1
-    if (!phase.front_bar?.ultimate?.catalog_skill_id) add(issue('warning', `front-ultimate-${phase.id}`, `${phaseLabel} has no front-bar ultimate selected.`, { section: 'Leveling Plan', route: SECTION_ROUTES.leveling }))
-    if (barCount > 1 && minLevel >= 15 && !phase.back_bar?.ultimate?.catalog_skill_id) add(issue('warning', `back-ultimate-${phase.id}`, `${phaseLabel} has no back-bar ultimate selected.`, { section: 'Leveling Plan', route: SECTION_ROUTES.leveling }))
-    if (barCount > 1 && minLevel < 15 && ((phase.back_bar?.slots || []).some(slot => slot?.catalog_skill_id) || phase.back_bar?.ultimate?.catalog_skill_id)) add(issue('warning', `early-backbar-${phase.id}`, `${phaseLabel} uses the back bar before level 15.`, { section: 'Leveling Plan', route: SECTION_ROUTES.leveling }))
+    if (!phase.front_bar?.ultimate?.catalog_skill_id) add(issue('warning', `front-ultimate-${phase.id}`, `${phaseLabel} has no front-bar ultimate selected.`, { section: 'Build Phases', route: SECTION_ROUTES.leveling }))
+    if (barCount > 1 && minLevel >= 15 && !phase.back_bar?.ultimate?.catalog_skill_id) add(issue('warning', `back-ultimate-${phase.id}`, `${phaseLabel} has no back-bar ultimate selected.`, { section: 'Build Phases', route: SECTION_ROUTES.leveling }))
+    if (barCount > 1 && minLevel < 15 && ((phase.back_bar?.slots || []).some(slot => slot?.catalog_skill_id) || phase.back_bar?.ultimate?.catalog_skill_id)) add(issue('warning', `early-backbar-${phase.id}`, `${phaseLabel} uses the back bar before level 15.`, { section: 'Build Phases', route: SECTION_ROUTES.leveling }))
     const steps = [...(phase.rotation?.opening || []), ...(phase.rotation?.steps || []), ...(phase.rotation?.execute || [])]
-    if (!steps.length) add(issue('suggestion', `rotation-${phase.id}`, `${phaseLabel} has no rotation or priority steps.`, { section: 'Leveling Plan', route: SECTION_ROUTES.leveling }))
+    if (!steps.length) add(issue('suggestion', `rotation-${phase.id}`, `${phaseLabel} has no rotation or priority steps.`, { section: 'Build Phases', route: SECTION_ROUTES.leveling }))
     for (const ref of skillReferences({ phases: [phase] })) if (!unlockIds.has(ref.id)) add(issue('warning', `unplanned-${phase.id}-${ref.id}`, `${phaseLabel} references ${ref.id}, but that skill is not in the Unlock Plan.`, { section: 'Skills & Passives', route: SECTION_ROUTES.skills }))
   }
 
@@ -117,7 +120,7 @@ export function createBuildReview(data = {}, catalog = {}, validationErrors = []
   if (!String(data.summary || '').trim() || String(data.summary || '').trim().length < 60) add(issue('suggestion', 'short-summary', 'Add a clearer build summary describing role, resource, content, and intended player.', { section: 'Overview', route: SECTION_ROUTES.overview }))
   if (!String(data.author || '').trim() || String(data.author).trim().toLowerCase() === 'npc') add(issue('suggestion', 'default-author', 'Replace the default NPC author name before sharing the build.', { section: 'Overview', route: SECTION_ROUTES.overview }))
   if (!(data.sources || []).length) add(issue('suggestion', 'missing-sources', 'Add research or patch-note sources used to verify the build.', { section: 'Overview', route: SECTION_ROUTES.overview }))
-  if ((data.gear_stages || []).length < 3) add(issue('suggestion', 'gear-progression', 'Consider adding separate leveling, CP160 starter, and final gear stages.', { section: 'Equipment', route: SECTION_ROUTES.equipment }))
+  if (progressionScope.leveling_content_required && (data.gear_stages || []).length < 3) add(issue('suggestion', 'gear-progression', 'Consider adding separate leveling, CP160 starter, and final gear stages.', { section: 'Equipment', route: SECTION_ROUTES.equipment }))
   for (const [tree, plan] of Object.entries(data.cp_plans || {})) if ((plan?.final_slots || []).length < 4) add(issue('suggestion', `cp-slots-${tree}`, `${tree[0].toUpperCase() + tree.slice(1)} has fewer than four final Champion Bar stars.`, { section: 'Champion Points', route: SECTION_ROUTES.champion }))
   if (!(data.variants || []).length) add(issue('suggestion', 'no-variants', 'Add a variant when the build has a common defensive, no-DLC, solo, boss, or group adjustment.', { section: 'Loadouts & Variants', route: SECTION_ROUTES.loadouts }))
   if (!(data.tips || []).length) add(issue('suggestion', 'no-tips', 'Add practical gameplay tips or warnings for players following the build.', { section: 'Overview', route: SECTION_ROUTES.overview }))

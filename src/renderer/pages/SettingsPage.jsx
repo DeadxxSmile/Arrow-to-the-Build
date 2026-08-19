@@ -1,17 +1,21 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useApp } from '../App'
 import { ESO_ALLIANCES, ESO_RACES } from '../components/CharacterModal'
 import { displayVariantName } from '../utils/variantLogic'
 import { useAppDialog } from '../components/AppDialogProvider'
 import { APP_TAGLINE } from '../utils/branding'
+import CharacterBuildTools from '../components/CharacterBuildTools'
+import ThemeManager from '../components/ThemeManager'
+import CachedImage from '../components/CachedImage'
+import useFlashNotice from '../hooks/useFlashNotice'
 
 export default function SettingsPage() {
   const {
-    builds, characters, character, build, activeId, setActiveId, theme, esoPlus, appSettings, setAppSetting,
-    updateCharacter, reloadBuilds, reloadCharacters, refreshActive, addTrackedSkillLine, deleteTrackedSkillLine,
-    catalog, skillLines, selectableLoadouts, selectableVariants, workspace, openCharacterModal, characterBuilds, reloadSettings,
-    addonStatus, reloadAddonStatus, reloadAddonDiscoveries, openAddonSetup, openAddonImport, clearAddonOverride
+    builds, characters, character, build, activeId, setActiveId, esoPlus, appSettings, setAppSetting,
+    updateCharacter, reloadBuilds, reloadCharacters, refreshActive,
+    catalog, selectableLoadouts, selectableVariants, workspace, openCharacterModal, characterBuilds, reloadSettings,
+    addonStatus, reloadAddonStatus, reloadAddonDiscoveries, openAddonSetup, openAddonImport, clearAddonOverride, setAddonOverrideMode
   } = useApp()
   const dialog = useAppDialog()
   const [searchParams, setSearchParams] = useSearchParams()
@@ -23,16 +27,13 @@ export default function SettingsPage() {
   const [storageInfo, setStorageInfo] = useState(null)
   const [storageBusy, setStorageBusy] = useState('')
   const [addonBusy, setAddonBusy] = useState('')
+  const [portraitBusy, setPortraitBusy] = useState(false)
   const [syncSnapshots, setSyncSnapshots] = useState([])
   const [linkSnapshotKey, setLinkSnapshotKey] = useState('')
   const [linkCharacterId, setLinkCharacterId] = useState('')
-  const [notice, setNotice] = useState('')
-  const [category, setCategory] = useState('Craft')
-  const [lineId, setLineId] = useState('')
+  const { notice, flash } = useFlashNotice(3500)
   const [nameDraft, setNameDraft] = useState('')
   const [authorDraft, setAuthorDraft] = useState(appSettings.build_editor_default_author || 'NPC')
-  const lineSelectRef = useRef(null)
-  const flashTimer = useRef(null)
   const remoteImages = appSettings.remote_images === 'true'
   const showGuidance = appSettings.build_editor_show_guidance !== 'false'
   const advancedDefault = appSettings.build_editor_advanced_default === 'true'
@@ -78,10 +79,29 @@ export default function SettingsPage() {
   }, [addonStatus?.profile_root])
   useEffect(() => { if (tab === 'addon') refreshSyncSnapshots().catch(() => {}) }, [tab, refreshSyncSnapshots, addonStatus?.snapshot_count, addonStatus?.linked_count, addonStatus?.pending_count])
   useEffect(() => { setAuthorDraft(appSettings.build_editor_default_author || 'NPC') }, [appSettings.build_editor_default_author])
-  useEffect(() => () => clearTimeout(flashTimer.current), [])
-  const flash = useCallback(message => { setNotice(message); clearTimeout(flashTimer.current); flashTimer.current = setTimeout(() => setNotice(''), 3500) }, [])
 
   const clearCache = async () => { await window.api.images.clearCache(); flash('Downloaded image cache cleared.') }
+  const chooseCharacterImage = async () => {
+    if (!character?.id || portraitBusy) return
+    setPortraitBusy(true)
+    try {
+      const ref = await window.api.images.chooseCharacterImage(character.id)
+      if (!ref) return
+      await refreshActive()
+      flash('Character screenshot updated.')
+    } catch (error) { flash(error.message || 'The character screenshot could not be saved.') }
+    finally { setPortraitBusy(false) }
+  }
+  const removeCharacterImage = async () => {
+    if (!character?.id || !character.portrait_ref || portraitBusy) return
+    setPortraitBusy(true)
+    try {
+      await window.api.images.removeCharacterImage(character.id)
+      await refreshActive()
+      flash('Custom character screenshot removed. Basic Info will use the build artwork again.')
+    } catch (error) { flash(error.message || 'The character screenshot could not be removed.') }
+    finally { setPortraitBusy(false) }
+  }
   const openProjectLink = async url => {
     try { await window.api.external.open(url) }
     catch (error) { flash(error.message || 'That link could not be opened.') }
@@ -136,12 +156,12 @@ export default function SettingsPage() {
     return result
   }
   const toggleOverrides = async enabled => {
-    if (!enabled) {
-      const approved = await dialog.confirm({ title: 'Disable synced-data overrides?', message: 'All overrides across every synced character will be deleted. ATTB will restore the latest values reported by ESO.', confirmLabel: 'Disable and Restore Synced Data', danger: true })
-      if (!approved) return
-    }
-    await runAddonAction('overrides', () => window.api.addon.setOverrideMode(enabled), enabled ? 'Synced-data overrides enabled.' : 'All overrides removed and synced ESO data restored.')
-    await reloadCharacters(activeId)
+    setAddonBusy('overrides')
+    try {
+      const changed = await setAddonOverrideMode(enabled)
+      if (changed) flash(enabled ? 'Synced-data overrides enabled.' : 'All overrides removed and synced ESO data restored.')
+    } catch (error) { flash(error.message || 'Synced-data overrides could not be updated.') }
+    finally { setAddonBusy('') }
   }
   const unlinkCharacter = async (characterId, characterName) => {
     if (!characterId) return
@@ -239,26 +259,12 @@ export default function SettingsPage() {
     finally { setAddonBusy('') }
   }
 
-  const selectedIds = useMemo(() => new Set(skillLines.map(line => line.id)), [skillLines])
-  const categories = catalog?.categories || []
-  const options = useMemo(() => (catalog?.lines || []).filter(line => line.group === category && !selectedIds.has(line.id)).sort((a, b) => a.name.localeCompare(b.name)), [catalog, category, selectedIds])
-  useEffect(() => { if (!options.some(line => line.id === lineId)) setLineId(options[0]?.id || '') }, [options, lineId])
-  const addLine = async event => {
-    event.preventDefault(); if (!lineId || syncedLocked) return
-    try { const line = (catalog.lines || []).find(item => item.id === lineId); await addTrackedSkillLine(lineId); flash(`${line?.name || 'Skill line'} added to tracking.`); requestAnimationFrame(() => lineSelectRef.current?.focus()) }
-    catch (error) { flash(error.message) }
-  }
-  const removeLine = async line => {
-    if (syncedLocked) return
-    const approved = await dialog.confirm({ title: `Remove ${line.name} from tracking?`, message: 'Saved allocations remain available in exported character backups.', confirmLabel: 'Remove Skill Line', danger: true })
-    if (!approved) return
-    await deleteTrackedSkillLine(line.id); flash(`${line.name} removed from tracking.`)
-  }
+
 
   return <div className="page settings-page">
     {notice && <div className="notice-banner settings-notice">{notice}</div>}
     {tab === 'general' && <div className="settings-stack">
-      <section className="panel"><div className="section-head"><div><span className="eyebrow">Appearance</span><h2>Theme</h2></div></div><div className="setting-row"><div><b>Color theme</b><p>Choose from six palettes: ATTB Default, Deep Dark, Light, Old Scrolls, monochrome SkyTrim, or the muted hunter-green Woodland theme.</p></div><select value={theme} aria-label="Color theme" onChange={event => setAppSetting('theme', event.target.value)}><option value="default">ATTB Default</option><option value="dark">Deep Dark</option><option value="light">Light</option><option value="old-scrolls">Old Scrolls</option><option value="skytrim">SkyTrim</option><option value="woodland">Woodland</option></select></div></section>
+      <ThemeManager flash={flash} />
       <section className="panel"><div className="section-head"><div><span className="eyebrow">Startup</span><h2>Opening workspace</h2></div></div><div className="setting-row"><div><b>When ATTB launches</b><p>Choose a fixed workspace or return to whichever workspace you used last.</p></div><select value={appSettings.startup_workspace || 'last'} onChange={event => setAppSetting('startup_workspace', event.target.value)}><option value="last">Last used workspace</option><option value="character">Character Tracker</option><option value="build-editor">Build Editor</option><option value="help">Help &amp; Tools</option></select></div></section>
       <section className="panel"><div className="section-head"><div><span className="eyebrow">Network</span><h2>Remote build images</h2></div></div><label className="setting-row clickable"><div><b>Allow images referenced by trusted imported builds</b><p>ATTB remains offline by default. Remote downloads are restricted to HTTPS, five megabytes, real image formats, and a local cache.</p></div><span className="switch"><input type="checkbox" checked={remoteImages} onChange={event => setAppSetting('remote_images', event.target.checked)} /><i /></span></label></section>
       <section className="panel"><div className="section-head"><div><span className="eyebrow">Storage</span><h2>Local data</h2></div></div><div className="data-path"><small>SQLite database</small><code>{dbPath}</code></div><div className="data-path"><small>Bundled ESO catalog</small><code>{catalog?.catalog_version} · {catalog?.game_version} · {(catalog?.lines || []).length} skill lines</code></div><div className="button-row"><button className="btn secondary" onClick={clearCache}>Clear downloaded image cache</button><button className="btn danger" onClick={resetApp}>Reset entire app</button></div></section>
@@ -267,7 +273,7 @@ export default function SettingsPage() {
 
     {tab === 'character' && <div className="settings-stack">
       <section className="panel"><div className="section-head"><div><span className="eyebrow">Account-wide access</span><h2>ESO Plus</h2></div></div><label className="setting-row clickable"><div><b>ESO Plus active</b><p>Used for DLC-access notes and subscription-specific recommendations across every tracked character.</p></div><span className="switch"><input type="checkbox" checked={esoPlus} onChange={event => setAppSetting('eso_plus', event.target.checked)} /><i /></span></label></section>
-      {!character ? <section className="panel no-character-settings"><div><span className="eyebrow">Character profile</span><h2>No character selected</h2><p>Add a character to configure identity, build selection, addon linking, and personally tracked skill lines. Numeric progression lives under Current Levels.</p></div><button type="button" className="btn primary" onClick={openCharacterModal}>＋ Add Character</button></section> : <>
+      {!character ? <section className="panel no-character-settings"><div><span className="eyebrow">Character profile</span><h2>No character selected</h2><p>Add a character to configure identity, build selection, and addon linking. Numeric progression lives under Current Levels, while personal skill lines live under Skills & Passives.</p></div><button type="button" className="btn primary" onClick={openCharacterModal}>＋ Add Character</button></section> : <>
         <section className="panel"><div className="section-head"><div><span className="eyebrow">Current profile</span><h2>{character.name}</h2></div><small>{build?.name}</small></div>
           <div className="form-grid three">
             <label><span>Character name</span><input value={nameDraft} maxLength={60} disabled={syncedCharacter} onChange={event => setNameDraft(event.target.value)} onBlur={commitName} onKeyDown={event => { if (event.key === 'Enter') event.currentTarget.blur(); if (event.key === 'Escape') { setNameDraft(character.name); event.currentTarget.blur() } }} /></label>
@@ -279,11 +285,22 @@ export default function SettingsPage() {
           </div>
           {syncedCharacter && <div className="identity-lock-note"><span aria-hidden="true">🔒</span><span>Name, class, race, alliance, account, server, and ESO character ID are identity fields supplied by the addon. Override mode never changes them.</span></div>}
         </section>
-        <section className="panel"><div className="section-head"><div><span className="eyebrow">Personal progression</span><h2>Add complete skill lines</h2></div><p>Added lines are tracked without affecting build recommendations unless the build explicitly references them.</p></div>
-          {syncedLocked && <div className="quiet-box sync-lock-note">Additional tracked lines are part of synced progression. Enable synced-data overrides to add or hide one temporarily.</div>}
-          <form className="catalog-line-form" onSubmit={addLine}><label><span>Category</span><select disabled={syncedLocked} value={category} onChange={event => setCategory(event.target.value)}>{categories.map(item => <option key={item}>{item}</option>)}</select></label><label><span>Skill line</span><select ref={lineSelectRef} value={lineId} onChange={event => setLineId(event.target.value)} disabled={syncedLocked || !options.length}>{options.length ? options.map(line => <option key={line.id} value={line.id}>{line.name}{line.class ? ` · ${line.class}` : ''}</option>) : <option value="">Every line in this category is already shown</option>}</select></label><button className="btn primary" disabled={syncedLocked || !lineId}>Add skill line</button></form>
-          <div className="tracked-line-list">{skillLines.filter(line => line.tracked_only).map(line => <div key={line.id}><div><b>{line.name}</b><small>{line.group}{line.class ? ` · ${line.class}` : ''}</small></div><span>{character.skill_ranks[line.id] ?? 0}/{line.max || 50}</span><button className="btn ghost danger-text" disabled={syncedLocked} onClick={() => removeLine(line)}>Remove</button></div>)}{!skillLines.some(line => line.tracked_only) && <div className="quiet-box">No additional catalog lines added yet.</div>}</div>
+        <section className="panel character-artwork-settings-panel">
+          <div className="section-head"><div><span className="eyebrow">Character artwork</span><h2>Basic Info screenshot</h2><p>Use your own ESO screenshot in the Basic Info hero, or leave it on the build's supplied artwork.</p></div></div>
+          <div className="character-artwork-settings-grid">
+            <div className="character-artwork-preview">
+              {(character.portrait_ref || build?.images?.hero) ? <CachedImage src={character.portrait_ref || build?.images?.hero} alt={character.portrait_ref ? `${character.name} screenshot preview` : `${build?.name || 'Build'} artwork preview`} fallback="none" /> : <div className="character-artwork-placeholder"><span>◇</span><b>No artwork available</b></div>}
+              <span className="character-artwork-source">{character.portrait_ref ? 'Custom screenshot' : build?.images?.hero ? 'Build artwork' : 'No artwork'}</span>
+            </div>
+            <div className="character-artwork-copy">
+              <h3>Make the character page yours</h3>
+              <p>ATTB copies the selected image into its local app-data folder, safely decodes it, and re-encodes it as PNG before use. The screenshot fades into the right side of the Basic Info hero.</p>
+              <div className="button-row"><button type="button" className="btn primary" disabled={portraitBusy} onClick={chooseCharacterImage}>{portraitBusy ? 'Working…' : character.portrait_ref ? 'Replace Screenshot' : 'Choose Screenshot'}</button>{character.portrait_ref && <button type="button" className="btn secondary" disabled={portraitBusy} onClick={removeCharacterImage}>Use Build Artwork</button>}</div>
+              <small>PNG, JPEG, or WebP · up to 12 MB. This is a local visual preference and is intentionally not embedded in character-backup JSON.</small>
+            </div>
+          </div>
         </section>
+        <CharacterBuildTools />
       </>}
       {character && <section className="panel danger-zone"><div><span className="eyebrow">Danger zone</span><h2>Remove character</h2><p>This removes only the ATTB profile. It cannot affect the character in ESO.</p></div><button className="btn danger" onClick={removeCharacter}>Remove {character.name}</button></section>}
     </div>}

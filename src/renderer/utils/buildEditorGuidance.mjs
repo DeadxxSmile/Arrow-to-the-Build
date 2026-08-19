@@ -3,6 +3,13 @@ import { esoCatalog } from './catalogLogic.mjs'
 
 export const buildEditorGuidance = guidance
 export const classes = Object.keys(guidance.classes || {})
+export const buildRoleOptions = ['damage', 'healer', 'tank', 'support', 'solo'].map(value => ({ value, label: guidance.roles?.[value]?.label || value }))
+export const buildResourceOptions = [
+  { value: 'magicka', label: 'Magicka' },
+  { value: 'stamina', label: 'Stamina' },
+  { value: 'health', label: 'Health-focused' },
+  { value: 'hybrid', label: 'Hybrid' }
+]
 export const races = Object.keys(guidance.races || {})
 export const normalClassLines = (esoCatalog.lines || []).filter(line => line.group === 'Class' && !/mastery/i.test(line.name))
 export const classLines = className => normalClassLines.filter(line => line.class === className)
@@ -20,15 +27,8 @@ export const recommendedRace = (resource, role) => {
 export function roleDefaults(role) { return guidance.role_defaults?.[role] || guidance.role_defaults?.damage || {} }
 export function recommendedAttributes(resource) { return { magicka: 0, health: 0, stamina: 0, ...(resourceGuidance(resource).attributes || {}) } }
 export function lineRecord(line) { return { id: line.id, name: line.name, max: Number(line.max_rank) || 50, group: line.group } }
-export function selectedClassLineRows(baseClass, selected = []) {
-  return selected.map(lineId => {
-    const line = normalClassLines.find(item => item.id === lineId)
-    return line ? { line_id: line.id, source_class: line.class, mode: line.class === baseClass ? 'native' : 'subclassing', notes: [] } : null
-  }).filter(Boolean)
-}
-
 function slug(value = '') { return String(value).toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '') || 'skill' }
-export function classStarterScaffold(className) {
+function classStarterScaffold(className) {
   const lines = classLines(className)
   const activeSkills = lines.map(line => (line.skills || []).find(skill => skill.type === 'Active' && Number(skill.required_rank || 0) <= 1) || (line.skills || []).find(skill => skill.type === 'Active')).filter(Boolean)
   const ultimate = (lines[0]?.skills || []).find(skill => skill.type === 'Ultimate')

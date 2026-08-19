@@ -7,6 +7,7 @@ const dbModule = require('../database/db')
 const { upsertBuild, readJsonFile, normalizeBuild } = require('./buildHandlers')
 const { applyLoadout, applyVariant, availableLoadouts, availableVariants, defaultLoadoutId, defaultVariantId } = require('../../shared/variantLogic.cjs')
 const catalogModule = require('../catalog')
+const { assertSafeJsonStructure } = require('../../shared/jsonSafety.cjs')
 
 const MAX_NAME = 60
 const MAX_NOTES = 20000
@@ -54,6 +55,15 @@ function cleanName(value, fallback) {
   return name || fallback
 }
 
+function sanitizeManualActionBars(input) {
+  const source = input && typeof input === 'object' && !Array.isArray(input) ? input : {}
+  const cleanBar = value => Array.from({ length: 6 }, (_, index) => {
+    const id = Array.isArray(value) ? value[index] : ''
+    return typeof id === 'string' ? id.trim().slice(0, 180) : ''
+  })
+  return { front: cleanBar(source.front), back: cleanBar(source.back) }
+}
+
 function legacyTrackedLines(row) {
   const tracked = parseJson(row.tracked_skill_lines_json, [])
   if (tracked.length) return tracked.filter(id => typeof id === 'string')
@@ -90,7 +100,8 @@ function parseRow(row) {
     custom_skill_lines: custom,
     tracked_skill_lines: legacyTrackedLines(row),
     skill_allocations: allocations,
-    companion_progress: sanitizeCompanionProgress(parseJson(row.companion_progress_json, {}))
+    companion_progress: sanitizeCompanionProgress(parseJson(row.companion_progress_json, {})),
+    manual_action_bars: sanitizeManualActionBars(parseJson(row.manual_action_bars_json, {}))
   }
 }
 
@@ -119,7 +130,7 @@ function getBuildData(buildId) {
 const JSON_COLUMNS = new Set([
   'attributes_json', 'skill_ranks_json', 'completed_json', 'gear_json',
   'custom_skill_lines_json', 'tracked_skill_lines_json', 'skill_allocations_json', 'companion_progress_json',
-  'temporary_unlock_states_json'
+  'temporary_unlock_states_json', 'manual_action_bars_json'
 ])
 function updateJson(id, column, value) {
   if (!JSON_COLUMNS.has(column)) throw new Error('Invalid JSON column')
@@ -154,6 +165,7 @@ function cleanCharacterForBackup(character) {
     actual_unspent_skill_points: character.actual_unspent_skill_points || 0,
     actual_unspent_attribute_points: character.actual_unspent_attribute_points || 0,
     companion_progress: sanitizeCompanionProgress(character.companion_progress),
+    manual_action_bars: sanitizeManualActionBars(character.manual_action_bars),
     notes: character.notes || ''
   }
 }
@@ -244,11 +256,11 @@ function insertCharacter(payload, build, forcedId = null) {
     INSERT INTO characters(
       id,name,build_id,loadout_id,variant_id,race,alliance,level,attribute_points,attributes_json,
       cp_craft,cp_warfare,cp_fitness,eso_plus,skill_ranks_json,completed_json,
-      gear_json,custom_skill_lines_json,tracked_skill_lines_json,skill_allocations_json,companion_progress_json,temporary_unlock_states_json,actual_unspent_skill_points,actual_unspent_attribute_points,notes
+      gear_json,custom_skill_lines_json,tracked_skill_lines_json,skill_allocations_json,companion_progress_json,temporary_unlock_states_json,manual_action_bars_json,actual_unspent_skill_points,actual_unspent_attribute_points,notes
     ) VALUES(
       @id,@name,@build_id,@loadout_id,@variant_id,@race,@alliance,@level,@attribute_points,@attributes_json,
       @cp_craft,@cp_warfare,@cp_fitness,0,@skill_ranks_json,@completed_json,
-      @gear_json,'[]',@tracked_skill_lines_json,@skill_allocations_json,@companion_progress_json,@temporary_unlock_states_json,@actual_unspent_skill_points,@actual_unspent_attribute_points,@notes
+      @gear_json,'[]',@tracked_skill_lines_json,@skill_allocations_json,@companion_progress_json,@temporary_unlock_states_json,@manual_action_bars_json,@actual_unspent_skill_points,@actual_unspent_attribute_points,@notes
     )
   `).run({
     id,
@@ -271,6 +283,7 @@ function insertCharacter(payload, build, forcedId = null) {
     tracked_skill_lines_json: JSON.stringify(tracked),
     skill_allocations_json: JSON.stringify(allocations),
     companion_progress_json: JSON.stringify(sanitizeCompanionProgress(payload.companion_progress)),
+    manual_action_bars_json: JSON.stringify(sanitizeManualActionBars(payload.manual_action_bars)),
     actual_unspent_skill_points: clampInt(payload.actual_unspent_skill_points, 0, 10000, 0),
     actual_unspent_attribute_points: clampInt(payload.actual_unspent_attribute_points, 0, 64, 0),
     notes: String(payload.notes || '').slice(0, MAX_NOTES)
@@ -288,6 +301,7 @@ function uniqueName(base) {
 }
 
 function importBackupData(backup) {
+  assertSafeJsonStructure(backup, { label: 'Character backup' })
   if (backup?.file_type !== 'attb-character-backup' || !backup?.build || !backup?.character) {
     throw new Error('This is not a valid ATTB character backup.')
   }
@@ -336,6 +350,7 @@ function register(ipcMain) {
     }
     if (source.notes !== undefined) values.notes = String(source.notes).slice(0, MAX_NOTES)
     if (source.companion_progress !== undefined) values.companion_progress_json = JSON.stringify(sanitizeCompanionProgress(source.companion_progress))
+    if (source.manual_action_bars !== undefined) values.manual_action_bars_json = JSON.stringify(sanitizeManualActionBars(source.manual_action_bars))
     if (source.race !== undefined && ESO_RACES.has(source.race)) {
       if (linked) throw new Error('Synced race is an ESO identity field and cannot be overridden.')
       values.race = source.race
@@ -580,6 +595,9 @@ function register(ipcMain) {
     const characterId = String(id || '')
     try { addonIntegration().unlinkCharacter(characterId) } catch { }
     const info = dbModule.getDb().prepare('DELETE FROM characters WHERE id=?').run(characterId)
+    if (info.changes > 0) {
+      try { require('./imageHandlers').deleteCharacterImageFile(characterId) } catch { }
+    }
     return info.changes > 0
   })
 }

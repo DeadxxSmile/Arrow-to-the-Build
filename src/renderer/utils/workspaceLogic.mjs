@@ -1,5 +1,3 @@
-export const WORKSPACE_IDS = ['character', 'build-editor', 'help']
-
 export function workspaceForPath(pathname = '') {
   if (pathname.startsWith('/build-editor')) return 'build-editor'
   if (pathname.startsWith('/help')) return 'help'

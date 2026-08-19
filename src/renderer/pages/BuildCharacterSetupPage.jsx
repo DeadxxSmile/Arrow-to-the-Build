@@ -3,23 +3,22 @@ import AttributeAllocationEditor from '../components/AttributeAllocationEditor'
 import ChoiceChips from '../components/ChoiceChips'
 import { FieldLabel } from '../components/GuidancePopover'
 import {
-  buildEditorGuidance, races, raceGuidance, resourceGuidance, roleGuidance, recommendedAttributes, recommendedRace, roleDefaults
+  buildEditorGuidance, buildResourceOptions, buildRoleOptions, races, raceGuidance, resourceGuidance, roleGuidance, recommendedAttributes, recommendedRace, roleDefaults
 } from '../utils/buildEditorGuidance'
+import BuildEditorEmptyState from '../components/BuildEditorEmptyState'
+import { resolveProgressionScope } from '../../shared/progressionScope.mjs'
 
-const roleOptions = ['damage', 'healer', 'tank', 'support', 'solo'].map(value => ({ value, label: buildEditorGuidance.roles[value].label }))
-const resourceOptions = [{ value: 'magicka', label: 'Magicka' }, { value: 'stamina', label: 'Stamina' }, { value: 'health', label: 'Health-focused' }, { value: 'hybrid', label: 'Hybrid' }]
 
-function emptyPage() {
-  return <div className="page"><div className="page-title"><span className="eyebrow">Current build</span><h1>Character Setup</h1><p>Open or create a draft before editing this section.</p></div><section className="panel quiet-box">No editable build is currently open.</section></div>
-}
 
 export default function BuildCharacterSetupPage() {
   const { editor, appSettings } = useApp()
   const draft = editor.draft
-  if (!draft) return emptyPage()
+  if (!draft) return <BuildEditorEmptyState title="Character Setup" description="Open or create a draft before editing this section." />
   const data = draft.data
   const defaults = data.defaults || {}
   const metadata = data.metadata || {}
+  const progressionScope = resolveProgressionScope(data)
+  const levelingRequired = progressionScope.leveling_content_required
   const role = defaults.role || metadata.roles?.[0] || 'damage'
   const resource = defaults.resource || metadata.resource || 'stamina'
   const resourceHelp = resourceGuidance(resource)
@@ -73,8 +72,8 @@ export default function BuildCharacterSetupPage() {
     {showGuidance && <section className="panel contextual-guidance-banner"><div><span className="eyebrow">Contextual guidance</span><h2>{buildEditorGuidance.roles[role]?.label || role} · {resource}</h2><p>{roleGuidance(role)?.summary} {resourceHelp.summary}</p></div><button type="button" className="btn secondary" onClick={applyCommonSetup}>Apply Common Starting Setup</button></section>}
 
     <section className="panel section-block"><div className="section-head"><div><span className="eyebrow">Build direction</span><h2>Role and resource</h2></div><small>These choices drive recommendations; they do not prevent unusual builds.</small></div>
-      <div className="guided-question"><FieldLabel guidance={showGuidance ? { title: 'Primary role', summary: roleGuidance(role)?.summary } : null}>Primary role</FieldLabel><ChoiceChips name="Primary role" single values={[role]} options={roleOptions} onChange={changeRole} /></div>
-      <div className="guided-question"><FieldLabel guidance={showGuidance ? { title: 'Primary resource', summary: resourceHelp.summary, common: resourceHelp.races?.map(name => `Common race: ${name}`) || [] } : null}>Primary resource</FieldLabel><ChoiceChips name="Primary resource" single values={[resource]} options={resourceOptions} onChange={changeResource} /></div>
+      <div className="guided-question"><FieldLabel guidance={showGuidance ? { title: 'Primary role', summary: roleGuidance(role)?.summary } : null}>Primary role</FieldLabel><ChoiceChips name="Primary role" single values={[role]} options={buildRoleOptions} onChange={changeRole} /></div>
+      <div className="guided-question"><FieldLabel guidance={showGuidance ? { title: 'Primary resource', summary: resourceHelp.summary, common: resourceHelp.races?.map(name => `Common race: ${name}`) || [] } : null}>Primary resource</FieldLabel><ChoiceChips name="Primary resource" single values={[resource]} options={buildResourceOptions} onChange={changeResource} /></div>
     </section>
 
     <section className="panel section-block"><div className="section-head"><div><span className="eyebrow">Identity recommendations</span><h2>Race and alliance</h2></div><small>Race has passive bonuses, but it is not a hard class restriction.</small></div>
@@ -93,9 +92,9 @@ export default function BuildCharacterSetupPage() {
         <label><FieldLabel guidance={showGuidance ? { title: 'Mundus Stone', summary: 'Pick a general recommendation, then explain encounter-specific alternatives in loadouts or notes.', common: resourceHelp.mundus || [] } : null}>Mundus</FieldLabel><select value={defaults.mundus || ''} onChange={event => patchDefaults({ mundus: event.target.value })}><option value="">No recommendation</option>{buildEditorGuidance.mundus_options.map(name => <option key={name}>{name}</option>)}</select></label>
         <label><FieldLabel guidance={showGuidance ? { title: 'Front weapon', summary: 'The front bar usually holds the build’s primary repeatable actions and short-duration effects.', common: resourceHelp.front_weapons || [] } : null}>Front weapon</FieldLabel><select value={defaults.front_weapon || ''} onChange={event => patchDefaults({ front_weapon: event.target.value })}><option value="">Custom / undecided</option>{buildEditorGuidance.weapon_options.map(name => <option key={name}>{name}</option>)}</select></label>
         <label><FieldLabel guidance={showGuidance ? { title: 'Back weapon', summary: 'Weapon swapping unlocks at level 15. One-bar builds should state that the back bar is intentionally unavailable.', common: resourceHelp.back_weapons || [] } : null}>Back weapon</FieldLabel><select value={defaults.back_weapon || ''} onChange={event => patchDefaults({ back_weapon: event.target.value })}><option value="">Custom / undecided</option><option>One-bar setup</option>{buildEditorGuidance.weapon_options.map(name => <option key={name}>{name}</option>)}</select></label>
-        <label><span>Leveling armor</span><select value={defaults.leveling_armor || ''} onChange={event => patchDefaults({ leveling_armor: event.target.value })}><option value="">Custom mix</option>{buildEditorGuidance.armor_options.map(name => <option key={name}>{name}</option>)}</select></label>
+        <label><span>{levelingRequired ? 'Leveling armor' : 'Transition armor'}</span><select value={defaults.leveling_armor || ''} onChange={event => patchDefaults({ leveling_armor: event.target.value })}><option value="">Custom mix</option>{buildEditorGuidance.armor_options.map(name => <option key={name}>{name}</option>)}</select></label>
         <label><span>Endgame armor</span><select value={defaults.endgame_armor || ''} onChange={event => patchDefaults({ endgame_armor: event.target.value })}><option value="">Custom mix</option>{buildEditorGuidance.armor_options.map(name => <option key={name}>{name}</option>)}</select></label>
-        <label><span>Leveling trait</span><input value={defaults.leveling_trait || ''} onChange={event => patchDefaults({ leveling_trait: event.target.value })} placeholder="Training" /></label>
+        <label><span>{levelingRequired ? 'Leveling trait' : 'Transition trait guidance'}</span><input value={defaults.leveling_trait || ''} onChange={event => patchDefaults({ leveling_trait: event.target.value })} placeholder="Training" /></label>
         <label><span>Permanent gear begins</span><input value={defaults.gear_cap || ''} onChange={event => patchDefaults({ gear_cap: event.target.value })} placeholder="Level 50 / CP160" /></label>
         <label className="toggle-label"><span><b>Assumes ESO Plus</b><small>Used for access guidance; it does not change the player’s account.</small></span><input type="checkbox" checked={!!defaults.eso_plus} onChange={event => patchDefaults({ eso_plus: event.target.checked })} /></label>
         <label><span>Transformation / curse</span><select value={defaults.curse || 'none'} onChange={event => patch(current => ({ ...current, defaults: { ...(current.defaults || {}), curse: event.target.value }, transformations: { ...(current.transformations || {}), curse: event.target.value, notes: current.transformations?.notes || [] } }))}><option value="none">None</option><option value="vampire">Vampire</option><option value="werewolf">Werewolf</option></select></label>

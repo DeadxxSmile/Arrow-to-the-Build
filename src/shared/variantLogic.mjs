@@ -1,25 +1,41 @@
+import { FORBIDDEN_KEYS } from './jsonSafety.mjs'
+
 const isPlainObject = value => !!value && typeof value === 'object' && !Array.isArray(value)
 const keyedList = list => Array.isArray(list) && list.length > 0 && list.every(item => isPlainObject(item) && typeof item.id === 'string')
 
+function safeClone(value) {
+  if (Array.isArray(value)) return value.map(safeClone)
+  if (!isPlainObject(value)) return structuredClone(value)
+  const out = {}
+  for (const [key, item] of Object.entries(value)) {
+    if (FORBIDDEN_KEYS.has(key)) continue
+    out[key] = safeClone(item)
+  }
+  return out
+}
+
 // Browser-safe counterpart to variantLogic.cjs.
 function mergeOverrides(base, override) {
-  if (override === undefined) return structuredClone(base)
+  if (override === undefined) return safeClone(base)
   if (override === null) return null
   if (Array.isArray(override)) return mergeArray(base, override)
-  if (!isPlainObject(override)) return structuredClone(override)
+  if (!isPlainObject(override)) return safeClone(override)
   const out = isPlainObject(base) ? { ...base } : {}
-  for (const [key, value] of Object.entries(override)) out[key] = mergeOverrides(out[key], value)
+  for (const [key, value] of Object.entries(override)) {
+    if (FORBIDDEN_KEYS.has(key)) continue
+    out[key] = mergeOverrides(out[key], value)
+  }
   return out
 }
 
 function mergeArray(base, override) {
-  if (!keyedList(base) || !keyedList(override)) return structuredClone(override)
-  const out = base.map(entry => structuredClone(entry))
+  if (!keyedList(base) || !keyedList(override)) return safeClone(override)
+  const out = base.map(entry => safeClone(entry))
   const indexById = new Map(out.map((entry, index) => [entry.id, index]))
   for (const patch of override) {
     const at = indexById.get(patch.id)
     if (patch.$remove) { if (at !== undefined) out[at] = null; continue }
-    if (at === undefined) { indexById.set(patch.id, out.length); out.push(structuredClone(patch)); continue }
+    if (at === undefined) { indexById.set(patch.id, out.length); out.push(safeClone(patch)); continue }
     out[at] = mergeOverrides(out[at], patch)
   }
   return out.filter(Boolean)
@@ -27,7 +43,7 @@ function mergeArray(base, override) {
 
 function changedSections(overrides) {
   if (!isPlainObject(overrides)) return []
-  return Object.keys(overrides).filter(key => overrides[key] !== undefined).sort()
+  return Object.keys(overrides).filter(key => !FORBIDDEN_KEYS.has(key) && overrides[key] !== undefined).sort()
 }
 function mapSelections(rows) {
   return (rows || []).filter(row => row && typeof row.id === 'string').map(row => ({ ...row, available: row.available !== false, changes: changedSections(row.overrides) }))
@@ -46,7 +62,7 @@ function applyLoadout(base, loadoutId) {
   const loadout = findLoadout(base, loadoutId || defaultLoadoutId(base))
   const usable = loadout && loadout.available ? loadout : null
   const merged = mergeOverrides(base, isPlainObject(usable?.overrides) ? usable.overrides : {})
-  merged.loadouts = structuredClone(base.loadouts || [])
+  merged.loadouts = safeClone(base.loadouts || [])
   merged.default_loadout_id = base.default_loadout_id || ''
   merged.id = base.id
   merged.active_loadout = usable || null
@@ -75,7 +91,7 @@ function applyVariant(base, variantId, loadoutId = '') {
   const allowed = variant && availableVariants(base, loadoutId).some(item => item.id === variant.id)
   const usable = allowed ? variant : null
   const merged = mergeOverrides(base, isPlainObject(usable?.overrides) ? usable.overrides : {})
-  merged.variants = structuredClone(base.variants || [])
+  merged.variants = safeClone(base.variants || [])
   merged.id = base.id
   merged.active_variant = usable || null
   merged.variant_unavailable = variant && !allowed ? variant : null

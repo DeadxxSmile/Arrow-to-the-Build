@@ -1,108 +1,143 @@
-# ATTB 2.2.0 Release Checklist
+# ATTB 3.0.0 Release Checklist
 
-The release target is **ATTB v2.2.0** with the streamlined single ESO addon at **v1.1.1**. v2.2.0 promotes Help & Tools into a dedicated third workspace with grouped Gear, Combat, Progression, Companion, and Reference sections for the player-facing ESO concepts that sit around an authored build: sets, traits, enchantments, combat stats, buffs/debuffs, status effects, armor weights, weapons, shopping decisions, Mundus Stones, Champion Points, skill terminology, Scribing, consumables, common build jargon, and companion build mechanics. The v2.1.8 temporary-unlock retirement lifecycle remains part of the current baseline. The public build format remains **Schema 4** and the addon remains unchanged. Freeze the branch after this approved Help & Tools workspace expansion for regression fixes, packaging, and final test evidence.
+The release target is **Arrow to the Build v3.0.0** with ESO addon **v1.1.1**, public Build **Schema 4**, and Theme **Schema 1**. v3 is primarily a UI/UX, CSS-architecture, and theming release, with the custom theme engine as the major new user feature. Schema 4 also receives the backwards-compatible optional `progression_scope` extension so builds can explicitly target a new character, an existing Level 50 character, or an existing CP160+ character without inventing irrelevant leveling content.
 
 ## Freeze rules
 
-- Do not add features beyond the approved v2.2.0 Help & Tools workspace and release-polish scope unless a verified release blocker requires one.
-- Prefer deleting dead code/data over adding compatibility scaffolding for unreleased behavior.
-- Preserve desktop character data, build revisions, user JSON files, and addon links across upgrades. The v2.1.3 legacy bridge migration intentionally discards only the two obsolete ESO addon SavedVariables files before a fresh single-addon snapshot is generated.
-- Treat bundled builds and Schema 4 compatibility as public contracts. Existing Schema 4 builds without `retire_when` must continue to import and behave normally.
-- Keep the ESO integration local-only and describe SavedVariables timing as ESO-controlled. `/reloadui` remains the reliable on-demand refresh path.
+- No unrelated feature creep after final release approval.
+- Preserve character data, build revisions, drafts, user JSON, custom themes, addon links/snapshots, overrides, and saved build paths across upgrades.
+- Keep **Schema 4** backwards compatible. A build with no `progression_scope` must resolve to `new_character` with leveling content required.
+- Keep Theme Schema 1 declarative: colors/metadata only, no arbitrary CSS or executable content.
+- Keep ESO integration local-only and describe SavedVariables timing as ESO-controlled. `/reloadui` remains the reliable user-controlled refresh path.
+- Source handoff remains source ZIP -> local user build/test -> GitHub Desktop push after approval.
 
 ## Required automated gates
 
-Run from a clean dependency install:
+From a clean dependency install:
 
 ```text
 npm ci --include=dev --no-audit --no-fund
 npm test
 npm run build:renderer
+npm run check
+npm audit --omit=dev
 npm run build
 ```
 
-Before release, confirm:
+Confirm:
 
-- the full Electron/native SQLite suite passes;
-- the renderer production build completes without unexpected chunk or React-import warnings;
-- every Character Tracker, Build Editor, and Help & Tools route boots without a white screen or console error;
-- all bundled builds validate against Schema 4 and the current skill catalog;
-- every bundled-build image reference resolves and no orphan build assets are packaged;
-- the preload IPC contract matches the registered main-process handlers and every renderer `window.api` call is exposed;
-- the packaged app contains every main-process runtime file and only the reference documents it reads;
+- the complete Electron/native SQLite suite passes;
+- the production renderer builds with every route/chunk intact;
+- all seven bundled builds pass runtime and JSON Schema validation;
+- old Schema 4 files without `progression_scope` still validate;
+- guided new-character, Level 50, and CP160+ scaffolds validate;
+- package/runtime manifests include `src/shared/progressionScope.cjs` and `.mjs`;
+- preload IPC matches registered main-process handlers and renderer API usage;
 - native `.node` modules remain unpacked from ASAR;
-- the ESO addon ships once through `extraResources`, not as a duplicate copy inside ASAR;
-- source-only tests, tools, architecture notes, branding masters, and public schema files remain outside the installer.
+- the ESO addon ships once through external resources;
+- `npm audit --omit=dev` has no unresolved runtime vulnerability unless explicitly dispositioned.
 
-## Installed-app regression pass
+## Progression-scope regression
 
-On a clean Windows profile:
+- **New character** creates normal early-level phases and leveling gear guidance.
+- **Existing Level 50** does not require fabricated 1-49 history and may begin with a Level 50 -> CP160 transition.
+- **Existing CP160+** may contain only transition/bridge/final phases and gear without the old three-stage leveling suggestion.
+- Create Build from Character infers scope from current Level/CP.
+- Adapt Build to Character preserves the target while updating the fork's starting intent to the actual established character.
+- Overview can edit starting point, `leveling_content_required`, and description; values survive autosave, revision save, export/import, and restore.
+- Review & Save routes malformed progression-scope errors to Overview.
 
-- install the generated NSIS package;
-- launch, create a manual character, restart, and confirm persistence;
-- exercise Character Tracker, Build Editor, and Help & Tools workspaces;
-- create, autosave, save, reopen, fork, export, import, and restore a build revision;
-- confirm the user-build JSON folder mirrors permanent saves but not recovery drafts;
-- test Character Backup export/import from Character Tracker → Character Data → Backups & Import and confirm the old Help & Tools backup route redirects there;
-- test ATTB Default, Deep Dark, Light, Old Scrolls, SkyTrim, and Woodland themes across Character, Build, Help, and Settings;
-- confirm the General tab remains selected when opened from the Build Editor settings route;
-- confirm Default primary actions use the restrained dark/bronze treatment rather than bright orange fills;
-- confirm switching among all six themes does not change typography, text wrapping, or control geometry;
-- confirm the title bar shows the running `v2.2.0` value;
-- open the Help & Tools workspace and verify each Gear, Combat, Progression, Companion, and Reference route loads, scrolls, and inherits all six themes without hard-coded colors;
-- verify the legacy `/help/traits` route redirects to the equipment-trait reference and the Help & Tools sidebar highlights the correct topic;
-- verify the Character / Build / Help tab strip fills the top of the sidebar in all three workspaces, Settings remains separate at the bottom, and stale pre-2.2.0 Character routes such as `/help` are rejected instead of bouncing back into Help & Tools;
-- confirm the Simple ATTB mark is used for Windows/app chrome and the Words mark only on large branding surfaces;
-- test all eight combat companions in the Character Tracker and both curated targets per companion;
-- author, duplicate, edit, validate, save, export, and re-import companion setups in the Build Editor;
-- reproduce the Agility/Athletics/Concentration rank-gate regression and confirm Suggested Next Picks does not label them available early.
-- spot-check one class, weapon, World, Guild, Alliance War, racial, and crafting passive against the generated Update 50 unlock ledger; confirm each next passive point stays locked until its exact catalog gate.
-- confirm the Build Editor creates multi-point passives with distinct per-point `required_rank` values and morph rows retain the base-skill dependency.
-- confirm every Mighty Seven `status: "temporary"` unlock has a valid `retire_when` rule and older Schema 4 builds without one still validate.
-- confirm authored retirement cutoffs remove temporary unlocks from Do These Next without marking the ESO skill unowned.
-- confirm an owned retired temporary unlock appears in Leveling Cleanup with the correct reclaimable Skill Point total.
-- confirm a synced/read-only character can manually retire a temporary unlock without enabling general override mode, and can later choose Keep active or Use build cutoff.
-- confirm temporary retirement state survives restart, character backup export/import, and remains scoped to unlock IDs in the selected build.
+## Installed-app UI/UX regression
 
-On an upgrade install with existing beta data:
+On a clean Windows profile and once on an upgrade profile:
 
-- confirm migrations leave characters, bundled/user builds, drafts, revisions, settings, addon snapshots/links, overrides, and saved-build JSON paths intact;
-- confirm no user build ID, revision history, or character/build association changes unexpectedly.
+- exercise Character, Build, Help, and Settings routes;
+- verify the Character / Build / Help top workspace tabs and pinned Settings control retain consistent geometry;
+- verify disclosure rails, panel gaps, type scale, and active-navigation treatment are consistent across redesigned v3 pages;
+- verify Basic Info, Current Levels, Skills & Passives, Equipment, Skill Bars & Rotations, Champion Points, Companions, Build Editor, and Help & Tools at normal and reduced window sizes;
+- test empty states: no character, no build open, first-character modal, addon setup/discovery modal, and custom-theme editor;
+- confirm user-provided Basic Info screenshots are re-encoded/stored locally and render without changing page geometry;
+- confirm observed ESO panels appear only where appropriate and remain reference-only unless the user enables an override;
+- confirm current action bars remain usable manually when no addon snapshot is linked.
 
-## ESO addon regression pass
+## Theme engine / CSS regression
 
-With bundled `ArrowToTheBuild` 1.1.1 enabled:
+Test all twenty built-in themes:
 
-- verify manifest/API/version metadata match the release package;
-- verify only one addon component and one active SavedVariables archive are installed/watched;
-- verify a verified legacy bridge installation is retired conservatively: recognized old addon/SavedVariables files are removed for the one-time reset, while unrecognized addon folders are left untouched;
-- verify first-enable messaging clearly explains ESO-controlled disk timing and links to the ZOS/ESOUI references;
+- ATTB Default
+- Deep Dark
+- Light
+- Old Scrolls
+- SkyTrim
+- Woodland
+- Watermelon
+- Rainbow Light
+- Rainbow Dark
+- Deadx_xSmile
+- Midnight Blurple
+- Tokyo Dusk
+- Velvet Plum
+- Emberbox
+- Polar Night
+- OLED Aurora
+- Carbon Crimson
+- Paper Azure
+- Latte Rose
+- Sage Fog
+
+Confirm:
+
+- changing themes never changes layout metrics or typography;
+- Light is comfortably light rather than pure-white/blinding;
+- custom Theme Schema 1 files can inherit, override, save, export, re-import, and delete safely;
+- Theme Editor Simple/Advanced views, HEX/RGB color entry, graphical picker, reset controls, live preview, and close button work;
+- malformed IDs, oversized files, unsupported schema versions, invalid colors, inheritance cycles, and CSS/code-like payloads are rejected or ignored safely;
+- no component CSS introduces raw theme palette values or new cascade-fighting overrides outside the semantic token architecture.
+
+## ESO addon regression
+
+With bundled **ArrowToTheBuild 1.1.1**:
+
+- verify manifest/API/version metadata and one-addon/one-SavedVariables architecture;
+- verify install/repair and conservative legacy-bridge cleanup;
+- verify first-enable messaging clearly explains ESO-controlled disk timing;
 - verify `/reloadui` produces a reliable fresh desktop snapshot;
-- verify level, attributes, available points, skills/passives, action bars, equipment, and detailed Champion data reconcile correctly;
-- verify new-character discovery never adds or links a character without approval;
-- verify Create Build from Character and Adapt Build to Character preserve CURRENT-vs-TARGET ownership;
-- verify overrides remain separate from synced ESO data and disabling override mode removes them cleanly;
-- verify the Lua source-quality regression rejects generic API `pcall`/`_G` probing, obsolete event guesses, bridge/priority-save code, and skill-XP rescan spam.
+- verify identity, level, attributes, skill-line ranks, skills/passives/morphs, action bars, equipment, and Champion data reconcile correctly;
+- verify discovery never creates/links a character without approval;
+- verify synced values remain CURRENT and do not silently overwrite TARGET build data;
+- verify overrides remain separate and can be cleared cleanly.
+
+## Build/editor regression
+
+- Create, autosave, save, reopen, fork, export, import, and restore a user build.
+- Validate temporary-unlock retirement, Keep Active / Retire / Use Build Cutoff, and reclaimable Skill Point behavior.
+- Verify morph-aware reclaim safety for both build-tracked and personal/untracked morphs.
+- Verify companion targets, loadouts/variants, equipment stages, CP plans, and bars survive revisions/import/export.
+- Confirm human-readable JSON mirrors are written only for permanent user builds, not recovery drafts.
+- Confirm CURRENT character data imported into a build remains distinguishable from authored TARGET recommendations.
 
 ## Documentation and repository hygiene
 
-- README version/status matches `package.json`.
-- Website version text, addon section, screenshots, progression copy, Help & Tools feature copy, and release links match the 2.2.0 package and published claims.
-- Build Quick Start, Editor Guide, JSON Guide, Format, Validation, Skill Catalog, patch-maintenance guide, addon-integration guide, and Testing guide match current behavior.
-- `BUILD_SCHEMA.json` and `BUILD_TEMPLATE.json` match Schema 4 behavior and validation.
-- No historical milestone plans, obsolete conversion scripts, temp archives, databases, logs, `node_modules`, generated installers, or unreferenced build assets are present in the source ZIP.
-- GitHub release descriptions/notes are standalone release handoff artifacts only. Do not keep versioned files such as `2-2-0_release.md` in the repository root or package them in the desktop source ZIP.
-- Desktop source ZIP naming follows `Arrow-to-the-Build_vX.X.X[-tag].zip`. Standalone addon source archives use `ATTB-ESOAddon-Source-vX.X.X.zip`; the addon repository build script may create `ATTB-ESOAddon-Built-vX.X.X.zip` for manual installation.
+- `README.md` describes the v3 feature set and keeps public/development release wording accurate until publication.
+- All `docs/reference/` guides identify **ATTB 3.0.0 / Build Schema 4** as the current authoring baseline.
+- Help & Tools -> Scribing covers free current access, the Scholarium unlock path, Grimoires, all three Script types, Luminous Ink, acquisition sources, ATTB recipe interpretation, and troubleshooting.
+- AI Build JSON Authoring Guide teaches `progression_scope`, the three starting points, and the rule not to fabricate leveling content for established characters.
+- `BUILD_SCHEMA.json`, `BUILD_TEMPLATE.json`, Build Format, JSON Guide, Quick Start, Editor Guide, and Validation Guide agree on the optional field and its backwards-compatible default.
+- Theme Authoring documents Theme Schema 1 and the twenty built-in themes/current editor behavior.
+- Maintainer architecture/testing/patch guides mention progression scope where it affects their workflow.
+- Historical audits may retain old release numbers when they are explicitly historical; do not rewrite history just to remove old version strings.
+- No `node_modules`, generated installers, temp archives, databases, logs, or one-off release-note files are present in the source ZIP.
+- Desktop source archive contains exactly one top-level `ATTB/` folder.
 
 ## Final release handoff
 
-Before publishing the v2.2.0 release:
+Before publishing v3.0.0:
 
-1. Run the complete native suite twice.
-2. Run the renderer build and all-route boot test.
-3. Build and install the Windows package on a clean profile and over an existing beta profile.
-4. Perform the ESO `/reloadui` sync regression and Create/Adapt workflow once more.
-5. Validate all seven bundled builds and exported Schema 4 JSON.
-6. Resolve or explicitly disposition every item in [`DEPENDENCY_AUDIT.md`](DEPENDENCY_AUDIT.md), then review fresh dependency audit output and document any accepted advisory.
-7. Create the clean source ZIP and record its SHA-256.
-8. Freeze that artifact for final release review; do not rebuild it silently after testing.
+1. Run the complete native suite twice from a clean install.
+2. Run renderer/check/audit gates and the all-route smoke test.
+3. Build and install on a clean profile and over an existing 2.2.0 profile.
+4. Perform ESO `/reloadui`, discovery/linking, Create Build from Character, and Adapt Build to Character once more.
+5. Validate all seven bundled builds plus representative new-character and CP160+ custom builds.
+6. Exercise all twenty built-in themes plus one custom import/export round trip.
+7. Update the public website/README release status and screenshots only when v3.0.0 is actually being published.
+8. Create the clean source ZIP, record SHA-256, and freeze that tested artifact; do not silently rebuild it afterward.

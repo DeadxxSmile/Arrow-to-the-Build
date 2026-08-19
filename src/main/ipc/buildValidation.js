@@ -2,6 +2,8 @@
 const catalog = require('../catalog')
 const { mergeOverrides } = require('../../shared/variantLogic.cjs')
 const companionCatalog = require('../../../resources/data/eso-companions.json')
+const { assertSafeJsonStructure } = require('../../shared/jsonSafety.cjs')
+const { STARTING_POINTS } = require('../../shared/progressionScope.cjs')
 const COMPANION_IDS = new Set((companionCatalog.companions || []).map(row => row.id))
 
 const CURRENT_SCHEMA_VERSION = 4
@@ -340,6 +342,19 @@ function validateCompanions(data, errors) {
   }
 }
 
+
+function validateProgressionScope(data, errors) {
+  if (data.progression_scope === undefined) return
+  if (!isObj(data.progression_scope)) { errors.push('progression_scope must be an object when present.'); return }
+  const scope = data.progression_scope
+  if (!STARTING_POINTS.includes(scope.starting_point)) errors.push(`progression_scope.starting_point must be one of: ${STARTING_POINTS.join(', ')}.`)
+  if (typeof scope.leveling_content_required !== 'boolean') errors.push('progression_scope.leveling_content_required must be true or false.')
+  if (scope.description !== undefined) {
+    if (typeof scope.description !== 'string') errors.push('progression_scope.description must be a string when present.')
+    else if (scope.description.length > 1000) errors.push('progression_scope.description must be 1,000 characters or fewer.')
+  }
+}
+
 function validateBuild(data, options = {}) {
   const errors = []
   if (!isObj(data)) return ['Root must be a JSON object.']
@@ -348,6 +363,7 @@ function validateBuild(data, options = {}) {
   if (schema !== CURRENT_SCHEMA_VERSION) errors.push(`schema_version must be ${CURRENT_SCHEMA_VERSION}. Use normalizeBuild to migrate a supported older format first.`)
   if (badId(data.id)) errors.push('Missing id, or it is not a simple slug (letters, numbers, dot, dash, underscore).')
   validateMetadata(data, errors)
+  validateProgressionScope(data, errors)
   validateClassConfiguration(data, errors)
   if (typeof data.name !== 'string' || !data.name.trim()) errors.push('Missing or non-string name.')
   if (data.notes !== undefined) {
@@ -368,7 +384,7 @@ function validateBuild(data, options = {}) {
   if (!Array.isArray(data.gear_stages) || !data.gear_stages.length) errors.push('gear_stages must be a non-empty array.')
   // Phases drive the Skill Bars and Rotations page. A build with none renders an empty page, so
   // require at least one rather than letting it slip through as valid.
-  if (!Array.isArray(data.phases) || !data.phases.length) errors.push('phases must be a non-empty array. Every build needs at least one progression phase with hotbars and a rotation.')
+  if (!Array.isArray(data.phases) || !data.phases.length) errors.push('phases must be a non-empty array. Every build needs at least one build phase with hotbars and a rotation; existing-character builds may use only Level 50 / CP160+ phases.')
   for (const key of ['phases', 'tips', 'concepts', 'variants']) {
     if (data[key] !== undefined && !Array.isArray(data[key])) errors.push(`${key} must be an array when present.`)
   }
@@ -645,9 +661,11 @@ function findRequireCycles(items) {
 
 /** Schema 4 is the stable public format. Schema 3 is migrated in memory and on import. */
 function normalizeBuild(input) {
-  const data = JSON.parse(JSON.stringify(input))
   const errors = []
   let changed = false
+  try { assertSafeJsonStructure(input, { label: 'Build data' }) }
+  catch (error) { return { data: {}, changed, errors: [error.message] } }
+  const data = JSON.parse(JSON.stringify(input))
   const schema = Number(data.schema_version) || 0
   if (schema === 3) {
     data.schema_version = CURRENT_SCHEMA_VERSION

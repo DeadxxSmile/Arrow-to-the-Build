@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://deadxxsmile.github.io/Arrow-to-the-Build/reference/BUILD_SCHEMA.json",
   "title": "Arrow to the Build JSON (schema 4)",
-  "description": "Stable public ATTB build schema. Schema 4 adds build metadata, native/subclassed class-line configuration, Class Mastery, Scribing recipes, reusable loadouts, requirements, transformations, companions, quickslots, performance targets, research sources, and namespaced extension data while preserving the schema-3 progression, gear, Champion Point, and variant model.",
+  "description": "Stable public ATTB build schema. Schema 4 adds build metadata, native/subclassed class-line configuration, Class Mastery, Scribing recipes, reusable loadouts, requirements, transformations, companions, quickslots, performance targets, research sources, and namespaced extension data while preserving the schema-3 progression, gear, Champion Point, and variant model. ATTB 3.0.0 also documents an optional progression_scope that declares whether a build starts from a new character, Level 50, or CP160+ without breaking older Schema 4 files.",
   "type": "object",
   "required": [
     "schema_version",
@@ -43,7 +43,7 @@
     "notes": {
       "type": "string",
       "maxLength": 20000,
-      "description": "Optional long-form author notes shown on the Character Tracker Basic Setup page and edited in Build Editor."
+      "description": "Optional long-form author notes shown on the Character Tracker Basic Info page and edited in Build Editor."
     },
     "author": {
       "type": "string",
@@ -63,6 +63,10 @@
       "items": {
         "type": "string"
       }
+    },
+    "progression_scope": {
+      "$ref": "#/$defs/progression_scope",
+      "description": "Optional build starting-point intent. When omitted, ATTB preserves legacy Schema 4 behavior: new_character with leveling_content_required=true."
     },
     "metadata": {
       "$ref": "#/$defs/metadata"
@@ -158,7 +162,7 @@
       "items": {
         "$ref": "#/$defs/phase"
       },
-      "description": "At least one complete progression phase is required."
+      "description": "At least one build phase is required. A non-leveling build may use only a Level 50 / CP160+ transition or final phase."
     },
     "gear_stages": {
       "type": "array",
@@ -200,6 +204,35 @@
   },
   "additionalProperties": true,
   "$defs": {
+    "progression_scope": {
+      "type": "object",
+      "description": "Declares the progression starting point so validation and authoring guidance do not require irrelevant 1-50 content for an existing character.",
+      "required": [
+        "starting_point",
+        "leveling_content_required"
+      ],
+      "properties": {
+        "starting_point": {
+          "type": "string",
+          "enum": [
+            "new_character",
+            "level_50",
+            "cp160_plus"
+          ],
+          "description": "new_character expects traditional 1-50 progression; level_50 starts at character level 50; cp160_plus starts from an existing CP160+ character."
+        },
+        "leveling_content_required": {
+          "type": "boolean",
+          "description": "Whether traditional leveling content is required for this build. ATTB normally sets this true only for new_character."
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 1000,
+          "description": "Optional human-readable note explaining the intended starting point or omitted progression."
+        }
+      },
+      "additionalProperties": false
+    },
     "theme": {
       "type": "object",
       "properties": {

@@ -4,14 +4,15 @@ import { useApp } from '../App'
 import { useAppDialog } from '../components/AppDialogProvider'
 import BuildPreviewModal from '../components/BuildPreviewModal'
 import { compareBuildData, createBuildReview } from '../utils/buildReviewLogic'
+import BuildEditorEmptyState from '../components/BuildEditorEmptyState'
 
 function IssueGroup({ title, eyebrow, tone, items, onNavigate }) {
   return <section className={`panel review-issue-panel ${tone}`}>
     <div className="section-head"><div><span className="eyebrow">{eyebrow}</span><h2>{title}</h2></div><strong className="review-count">{items.length}</strong></div>
-    {items.length ? <div className="review-issue-list">{items.map(item => <article key={item.code}>
+    <div className="review-issue-list">{items.map(item => <article key={item.code}>
       <div><b>{item.message}</b>{item.detail && <p>{item.detail}</p>}<small>{item.section}</small></div>
       <button type="button" className="btn secondary compact" onClick={() => onNavigate(item.route)}>Go to section</button>
-    </article>)}</div> : <div className="quiet-box compact">Nothing in this category.</div>}
+    </article>)}</div>
   </section>
 }
 
@@ -65,7 +66,7 @@ export default function BuildReviewPage() {
     return () => { cancelled = true }
   }, [compareLeft, compareRight, data, getRevision])
 
-  if (!editor.draft) return <div className="page"><div className="page-title"><span className="eyebrow">Current build</span><h1>Review &amp; Save</h1><p>Open or create a draft before reviewing it.</p></div><section className="panel quiet-box">No editable build is currently open.</section></div>
+  if (!editor.draft) return <BuildEditorEmptyState title="Review & Save" description="Open or create a draft before reviewing it." />
 
   const validate = async () => {
     const result = await editor.validateDraft()
@@ -112,9 +113,10 @@ export default function BuildReviewPage() {
 
     <div className="review-summary-grid"><article className="error"><small>Errors</small><b>{review.errors.length}</b><span>Block Save Build</span></article><article className="warning"><small>Warnings</small><b>{review.warnings.length}</b><span>Likely mistakes or stale data</span></article><article className="suggestion"><small>Suggestions</small><b>{review.suggestions.length}</b><span>Quality improvements</span></article></div>
 
-    <IssueGroup title="Blocking errors" eyebrow="Must fix" tone="error" items={review.errors} onNavigate={navigate} />
-    <IssueGroup title="Warnings" eyebrow="Review carefully" tone="warning" items={review.warnings} onNavigate={navigate} />
-    <IssueGroup title="Quality suggestions" eyebrow="Optional improvements" tone="suggestion" items={review.suggestions} onNavigate={navigate} />
+    {review.errors.length > 0 && <IssueGroup title="Blocking errors" eyebrow="Must fix" tone="error" items={review.errors} onNavigate={navigate} />}
+    {review.warnings.length > 0 && <IssueGroup title="Warnings" eyebrow="Review carefully" tone="warning" items={review.warnings} onNavigate={navigate} />}
+    {review.suggestions.length > 0 && <IssueGroup title="Quality suggestions" eyebrow="Optional improvements" tone="suggestion" items={review.suggestions} onNavigate={navigate} />}
+    {!review.errors.length && !review.warnings.length && !review.suggestions.length && <div className="review-clean-state"><span aria-hidden="true">✓</span><div><b>No review issues found</b><p>The summary above is enough for this pass. Continue with patch compatibility or save a revision.</p></div></div>}
 
     <section className={`panel compatibility-panel ${review.compatibility.status}`}>
       <div className="section-head"><div><span className="eyebrow">Game-update compatibility</span><h2>{compatibilityTitle(review.compatibility.status)}</h2><p>ATTB compares the build metadata and stable catalog references with the exact ESO catalog bundled in this app.</p></div><span className="compatibility-badge">{review.compatibility.status}</span></div>

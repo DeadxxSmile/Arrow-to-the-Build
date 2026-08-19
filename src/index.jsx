@@ -17,6 +17,7 @@ import TipsPage from './renderer/pages/TipsPage'
 import ResourcesPage from './renderer/pages/ResourcesPage'
 import TraitReferencePage from './renderer/pages/TraitReferencePage'
 import HelpHomePage from './renderer/pages/HelpHomePage'
+import ThemeGuidePage from './renderer/pages/ThemeGuidePage'
 const BuildReferencePage = lazy(() => import('./renderer/pages/BuildReferencePage'))
 import SettingsPage from './renderer/pages/SettingsPage'
 import CharacterDataPage from './renderer/pages/CharacterDataPage'
@@ -37,8 +38,13 @@ const BuildClassConfigurationPage = lazy(() => import('./renderer/pages/BuildCla
 const BuildOverviewPage = lazy(() => import('./renderer/pages/BuildOverviewPage'))
 const BuildReviewPage = lazy(() => import('./renderer/pages/BuildReviewPage'))
 import './renderer/styles/themes.css'
+import './renderer/styles/tokens.css'
 import './renderer/styles/global.css'
 import './renderer/styles/App.css'
+import './renderer/styles/Workspace.css'
+import './renderer/styles/ThemeEditor.css'
+import './renderer/styles/Character.css'
+import './renderer/styles/Help.css'
 import './renderer/styles/BuildEditor.css'
 import './renderer/styles/Addon.css'
 
@@ -58,6 +64,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <Route path="help/topic/traits" element={<TraitReferencePage />} />
     <Route path="help/topic/:topic" element={<BuildReferencePage />} />
     <Route path="help/guides" element={<BuildSetupGuidePage />} />
+    <Route path="help/themes" element={<ThemeGuidePage />} />
     <Route path="help/resources" element={<ResourcesPage />} />
     <Route path="help/settings" element={<Navigate to="/settings?tab=general" replace />} />
     <Route path="help/reference" element={<Navigate to="/help" replace />} />

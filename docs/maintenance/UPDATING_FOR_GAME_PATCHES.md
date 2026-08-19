@@ -1,5 +1,7 @@
 # Updating ATTB for ESO game patches
 
+> **Current app release:** ATTB 3.0.0. Use this workflow for post-v3 game-patch maintenance.
+
 ATTB is built so a new ESO update does not require touching React or Electron. Almost everything a
 patch changes lives in three data layers:
 
@@ -143,7 +145,7 @@ If you truly must change an id, treat it as a migration:
 2. Make the catalog edits (renames via `display_name_overrides`, additions via `add_line`, passive point gates via `set_unlock_ranks`).
 3. `python tools/generate_skill_catalog.py` and confirm it prints the expected line/skill counts.
 4. Update `resources/data/eso-companions.json` when the roster/presets changed, then update bundled builds for new recommendations, CP changes, removed skills, or companion targets.
-5. Review Schema 4 systems affected by the patch: metadata, class lines, Class Mastery, Scribing, loadouts, phases, gear, CP, transformations, requirements, and sources.
+5. Review Schema 4 systems affected by the patch: metadata, `progression_scope`, class lines, Class Mastery, Scribing, loadouts, phases, gear, CP, transformations, requirements, and sources. Do not add fake 1-50 content to builds explicitly scoped for existing Level 50 / CP160+ characters.
 6. Update each edited build's own `game_version` and `verified_date`.
 7. Update `docs/maintenance/ESO_BUILD_SYSTEM_AUDIT.md` when the patch adds a new character or build system.
 8. `npm test` and `npm run build:renderer`.

@@ -1,5 +1,7 @@
 'use strict'
 
+const { inferStartingPoint, scopeForStartingPoint } = require('../../shared/progressionScope.cjs')
+
 // Pure-ish transformation layer for turning reconciled ESO character state into Schema 4 build data.
 // Persistence, drafts, revisions, and IPC stay in buildHandlers.js. Dependencies are injected to keep
 // this module independent of the database and the addon integration singleton.
@@ -315,16 +317,23 @@ function createCharacterBuildImport(deps) {
     const resource = String(options.resource || inferredResource(live.attributes))
     const targetBarCount = Number(options.bar_count || (Number(live.level) >= 15 ? 2 : 1)) === 1 ? 1 : 2
     const buildId = requestedBuildId(name, options.id)
+    const championPoints = Number(state.observed?.champion?.totalEarned) || (Number(live.cp_craft) || 0) + (Number(live.cp_warfare) || 0) + (Number(live.cp_fitness) || 0)
+    const startingPoint = String(options.starting_point || inferStartingPoint({ level: live.level, championPoints }))
     const weapons = currentWeaponLabels(state.observed)
     const data = createGuidedBuildData({
       id: buildId, name, short_name: shortName, class_name: className,
       race: state.race || live.race, alliance: state.alliance || live.alliance, resource,
-      primary_role: String(options.primary_role || 'damage'), leveling_scope: String(options.leveling_scope || 'full'),
+      primary_role: String(options.primary_role || 'damage'), starting_point: startingPoint,
       class_style: String(options.class_style || 'pure_class'), bar_count: targetBarCount,
       front_weapon: weapons.front, back_weapon: weapons.back,
       summary: `An editable build draft created from ${characterName}'s current ESO state. Current progression is imported truthfully; future planning is intentionally left for the Build Editor.`
     }, author)
     data.notes = ''
+    data.progression_scope = scopeForStartingPoint(startingPoint, startingPoint === 'cp160_plus'
+      ? `Designed for ${characterName} as an existing Level 50 / CP160+ character; 1-50 leveling content is intentionally not required.`
+      : startingPoint === 'level_50'
+        ? `Designed for ${characterName} as an existing Level 50 character transitioning toward CP160 and the authored target.`
+        : `Designed for ${characterName} as a character still progressing through levels 1-50.`)
     data.defaults = {
       ...(data.defaults || {}), class: className, race: state.race || live.race || data.defaults?.race, alliance: state.alliance || live.alliance || data.defaults?.alliance,
       attributes: { magicka: Number(live.attributes?.magicka) || 0, health: Number(live.attributes?.health) || 0, stamina: Number(live.attributes?.stamina) || 0 },
@@ -408,6 +417,13 @@ function createCharacterBuildImport(deps) {
     data.name = name
     data.short_name = name.length > 60 ? name.slice(0, 60).trim() : name
     data.author = String(author || '').trim() || 'NPC'
+    const championPoints = Number(state.observed?.champion?.totalEarned) || (Number(live.cp_craft) || 0) + (Number(live.cp_warfare) || 0) + (Number(live.cp_fitness) || 0)
+    const startingPoint = inferStartingPoint({ level: live.level, championPoints })
+    data.progression_scope = scopeForStartingPoint(startingPoint, startingPoint === 'cp160_plus'
+      ? `Adapted for ${state.character_name || live.name || 'this character'} as an existing Level 50 / CP160+ character; 1-50 leveling content is not required for this character-specific fork.`
+      : startingPoint === 'level_50'
+        ? `Adapted for ${state.character_name || live.name || 'this character'} as an existing Level 50 character transitioning toward CP160.`
+        : `Adapted for ${state.character_name || live.name || 'this character'} while still progressing through levels 1-50.`)
     data.relevant_lines = (() => {
       const used = new Set()
       return [...(data.relevant_lines || []), ...importedRelevantLines(live, sourceClass)].filter(line => line?.id && !used.has(line.id) && used.add(line.id))

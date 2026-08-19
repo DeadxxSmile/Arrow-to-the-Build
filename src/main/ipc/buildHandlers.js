@@ -6,6 +6,7 @@ const { dialog } = require('electron')
 const buildStorage = require('../buildStorage')
 const dbModule = require('../database/db')
 const catalog = require('../catalog')
+const { assertSafeJsonStructure } = require('../../shared/jsonSafety.cjs')
 
 const MAX_JSON_BYTES = 8 * 1024 * 1024
 
@@ -44,11 +45,11 @@ function readJsonFile(file, label) {
   const stat = fs.statSync(file)
   if (!stat.isFile()) throw new Error(`${label} is not a file.`)
   if (stat.size > MAX_JSON_BYTES) throw new Error(`${label} is larger than 8 MB, which no ATTB file should be.`)
-  try {
-    return JSON.parse(fs.readFileSync(file, 'utf8'))
-  } catch (err) {
-    throw new Error(`${label} is not valid JSON.\n${err.message}`)
-  }
+  let parsed
+  try { parsed = JSON.parse(fs.readFileSync(file, 'utf8')) }
+  catch (err) { throw new Error(`${label} is not valid JSON.\n${err.message}`) }
+  assertSafeJsonStructure(parsed, { label })
+  return parsed
 }
 
 const {
@@ -58,7 +59,7 @@ const {
 
 function upsertBuild(input, sourcePath = null, bundled = false, options = {}) {
   const { data, errors: normalizeErrors } = normalizeBuild(input)
-  const errors = [...normalizeErrors, ...validateBuild(data)]
+  const errors = normalizeErrors.length ? normalizeErrors : validateBuild(data)
   if (errors.length) throw new Error(`Invalid ATTB build file:\n${[...new Set(errors)].join('\n')}`)
   const db = dbModule.getDb()
   const existing = db.prepare('SELECT is_bundled,origin_type,forked_from_build_id,last_saved_revision FROM builds WHERE id=?').get(data.id)
@@ -346,6 +347,7 @@ function saveDraftData(draftId, input) {
   const build = getBuildRow(draft.build_id)
   if (build.is_bundled) throw new Error('Bundled ATTB builds cannot be edited.')
   if (String(input.id || '') !== build.id) throw new Error('A build ID cannot be changed after the draft is created. Duplicate or fork the build instead.')
+  assertSafeJsonStructure(input, { label: 'Build draft' })
   const json = JSON.stringify(input)
   if (Buffer.byteLength(json, 'utf8') > MAX_JSON_BYTES) throw new Error('Draft is larger than 8 MB.')
   db.prepare(`UPDATE build_editor_drafts SET data_json=?,updated_at=datetime('now') WHERE id=?`).run(json, draft.id)
@@ -359,7 +361,7 @@ function saveBuildRevision(draftId, note = '') {
   const build = getBuildRow(draft.build_id)
   if (build.is_bundled) throw new Error('Bundled ATTB builds cannot be edited.')
   const { data, errors: normalizeErrors } = normalizeBuild(JSON.parse(draft.data_json))
-  const errors = [...normalizeErrors, ...validateBuild(data)]
+  const errors = normalizeErrors.length ? normalizeErrors : validateBuild(data)
   if (errors.length) throw new Error(`Build cannot be saved until validation errors are fixed:\n${[...new Set(errors)].join('\n')}`)
   if (data.id !== build.id) throw new Error('A build ID cannot be changed after the draft is created.')
   const saved = db.transaction(() => {
@@ -476,13 +478,13 @@ function register(ipcMain) {
 
   ipcMain.handle('builds:validateData', (_e, input) => {
     const { data, errors: normalizeErrors, changed } = normalizeBuild(input)
-    const errors = [...normalizeErrors, ...validateBuild(data)]
+    const errors = normalizeErrors.length ? normalizeErrors : validateBuild(data)
     return { valid: errors.length === 0, errors, normalized: changed, data }
   })
 
   ipcMain.handle('builds:exportData', async (_e, data, defaultName = 'ATTB-build.json') => {
     const normalized = normalizeBuild(data)
-    const errors = [...normalized.errors, ...validateBuild(normalized.data)]
+    const errors = normalized.errors.length ? normalized.errors : validateBuild(normalized.data)
     if (errors.length) throw new Error(`Cannot export an invalid ATTB build:\n${errors.join('\n')}`)
     data = normalized.data
     const result = await dialog.showSaveDialog({
@@ -499,7 +501,7 @@ function register(ipcMain) {
     const draft = row.is_bundled ? null : getDraftRowByBuild(row.id)
     const raw = JSON.parse(draft?.data_json || row.data_json)
     const normalized = normalizeBuild(raw)
-    const errors = [...normalized.errors, ...validateBuild(normalized.data)]
+    const errors = normalized.errors.length ? normalized.errors : validateBuild(normalized.data)
     if (errors.length) throw new Error(`Cannot export this build until its recovery draft is valid:
 ${[...new Set(errors)].join('\n')}`)
     const data = normalized.data

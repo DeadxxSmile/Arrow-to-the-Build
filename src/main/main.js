@@ -120,6 +120,7 @@ if (gotLock) {
       require('./ipc/characterHandlers').register(ipcMain)
       require('./ipc/imageHandlers').register(ipcMain)
       require('./ipc/settingsHandlers').register(ipcMain)
+      require('./ipc/themeHandlers').register(ipcMain)
       const addonIntegration = require('./addon/integration')
       addonIntegration.register(ipcMain)
       addonIntegration.runPostUpdateAddonCleanup()

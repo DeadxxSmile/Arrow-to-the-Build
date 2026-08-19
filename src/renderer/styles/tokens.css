@@ -1,0 +1,26 @@
+/*
+ * ATTB stable design metrics.
+ *
+ * Theme-specific COLOR values live in themes.css. These layout and interaction
+ * metrics are intentionally theme-agnostic; the future JSON theme engine will
+ * provide the color-token contract without changing application geometry.
+ */
+:root{
+  --layout-titlebar-height:38px;
+  --layout-sidebar-width:260px;
+  --layout-workspace-header-height:84px;
+
+  --radius-sm:9px;
+  --radius-md:11px;
+  --radius-lg:14px;
+  --radius-pill:999px;
+
+  --font-weight-bold:800;
+  --font-weight-heavy:850;
+
+  --shadow-panel:0 20px 60px var(--color-shadow);
+
+  --transition-fast:.15s ease;
+  --transition-normal:.18s ease;
+  --disclosure-rail-height:20px;
+}

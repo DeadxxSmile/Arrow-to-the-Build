@@ -1,8 +1,17 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useApp } from '../App'
 import EmptyState from './EmptyState'
+import CachedImage from '../components/CachedImage'
 import companionCatalog from '../../../resources/data/eso-companions.json'
 import { buildCompanionTargets, selectedCompanionTarget, withCompanionTarget } from '../utils/companionLogic'
+
+
+function CompanionPortrait({ companion, large = false }) {
+  const initials = String(companion?.short_name || companion?.name || '?').split(/\s+/).slice(0, 2).map(part => part[0]).join('').toUpperCase()
+  return <div className={`companion-portrait ${large ? 'large' : ''}`}>
+    {companion?.image ? <CachedImage src={companion.image} alt={companion.name} fallback="none" /> : <div className="companion-portrait-fallback"><b>{initials}</b><span>{companion?.class || 'Companion'}</span></div>}
+  </div>
+}
 
 function RoleBadge({ role }) {
   return <span className={`companion-role role-${String(role || '').toLowerCase()}`}>{role || 'flex'}</span>
@@ -77,30 +86,35 @@ export default function CompanionsPage() {
       <p>Choose the companion you want to plan for, then pick one of its recommended setups or a setup authored in the current build. The full loadout stays visible below instead of being squeezed into selection cards.</p>
     </div>
 
-    <section className="panel companion-selector-panel">
+    <section className="panel companion-selector-panel v3-companion-selector">
+      <CompanionPortrait companion={companion} />
       <label>
         <span>Companion</span>
         <select value={companion.id} onChange={event => setCompanionId(event.target.value)}>
           {companionCatalog.companions.map(row => <option key={row.id} value={row.id}>{row.name}</option>)}
         </select>
-        <small>{companion.race} · {companion.class} · Strong fits: {companion.strengths.join(', ')}</small>
+        <small>{companion.race} · {companion.class}</small>
+        <div className="companion-strengths">{companion.strengths.map(strength => <span key={strength}>{strength}</span>)}</div>
       </label>
       <label>
-        <span>Build</span>
+        <span>Target setup</span>
         <select value={setup?.option_id || ''} onChange={event => chooseSetup(event.target.value)} disabled={!options.length}>
           {options.map(option => <option key={option.option_id} value={option.option_id}>{option.origin === 'build' ? 'Current build: ' : 'ATTB preset: '}{option.name}</option>)}
         </select>
-        <small>{isSaved ? `Saved as ${character.name}'s target for ${companion.short_name || companion.name}.` : 'Changing this build saves it as this character\'s target.'}</small>
+        <small>{isSaved ? `Saved as ${character.name}'s target for ${companion.short_name || companion.name}.` : 'Choosing a setup saves it as this character\'s companion target.'}</small>
       </label>
     </section>
 
     {setup ? <section className="panel companion-detail-panel">
-      <header className="companion-detail-header">
-        <div>
-          <span className="eyebrow">{setup.origin === 'build' ? 'Current build setup' : 'Recommended companion setup'}</span>
-          <h2>{companion.name}</h2>
-          <h3>{setup.name}</h3>
-          <p>{setup.summary || `A ${setup.role || 'flexible'} setup for ${companion.short_name || companion.name}.`}</p>
+      <header className="companion-detail-header v3-companion-detail-header">
+        <div className="companion-detail-identity">
+          <CompanionPortrait companion={companion} large />
+          <div>
+            <span className="eyebrow">{setup.origin === 'build' ? 'Current build setup' : 'Recommended companion setup'}</span>
+            <h2>{setup.name}</h2>
+            <h3>{companion.name} · {companion.class}</h3>
+            <p>{setup.summary || `A ${setup.role || 'flexible'} setup for ${companion.short_name || companion.name}.`}</p>
+          </div>
         </div>
         <div className="companion-detail-status">
           <RoleBadge role={setup.role} />
@@ -127,8 +141,8 @@ export default function CompanionsPage() {
 
         <article className="companion-detail-section">
           <span className="eyebrow">Combat bar</span>
-          <h3>Ability priority</h3>
-          <p>Companions work from left to right when abilities are ready, so slot order is part of the build.</p>
+          <h3>Ability order</h3>
+          <p>Companions evaluate abilities from left to right when they are ready, so the slot order shown here is part of the setup.</p>
           <ol className="companion-skill-priority">
             {(setup.skills || []).map((skill, index) => <li key={`${skill}-${index}`}><span>{index + 1}</span><strong>{skill}</strong></li>)}
           </ol>

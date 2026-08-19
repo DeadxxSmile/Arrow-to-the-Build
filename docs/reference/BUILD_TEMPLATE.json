@@ -12,7 +12,8 @@
     "This template intentionally uses real Arcanist catalog ids so it can be imported into ATTB as-is.",
     "For another class, replace relevant_lines, unlock_order catalog_skill_id values, and phase skill references with entries from resources/data/eso-skill-catalog.json.",
     "Keep relevant_lines, unlock_order, phases, and gear_stages populated. They are required to be non-empty, and this template includes working examples for each.",
-    "Schema 4 supports metadata, class-line configurations, Scribing recipes, multiple loadouts, variants, quickslots, transformations, companions, performance notes, and namespaced extensions."
+    "Schema 4 supports metadata, class-line configurations, Scribing recipes, multiple loadouts, variants, quickslots, transformations, companions, performance notes, and namespaced extensions.",
+    "progression_scope is optional for backwards compatibility. When omitted, ATTB treats the build as new_character with leveling_content_required=true."
   ],
   "theme": {
     "accent": "#69e891",
@@ -916,6 +917,11 @@
       ]
     }
   ],
+  "progression_scope": {
+    "starting_point": "new_character",
+    "leveling_content_required": true,
+    "description": "Designed to guide a character from initial leveling through the final target."
+  },
   "metadata": {
     "roles": [
       "damage",

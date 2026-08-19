@@ -2,10 +2,11 @@ import { useState } from 'react'
 import { useApp } from '../App'
 import { useAppDialog } from '../components/AppDialogProvider'
 import { slugifyEditorId } from '../utils/buildEditorSkillLogic'
+import BuildEditorEmptyState from '../components/BuildEditorEmptyState'
 
 const OVERRIDE_SECTIONS = [
   ['summary', 'Summary'], ['defaults', 'Character setup'], ['class_configuration', 'Class configuration'],
-  ['unlock_order', 'Skills & passives'], ['phases', 'Leveling plan'], ['gear_stages', 'Equipment'],
+  ['unlock_order', 'Skills & passives'], ['phases', 'Build phases'], ['gear_stages', 'Equipment'],
   ['cp_plans', 'Champion Points'], ['consumables', 'Consumables'], ['quickslots', 'Quickslots'],
   ['companions', 'Companions'], ['performance', 'Performance targets'], ['tips', 'Tips']
 ]
@@ -87,7 +88,7 @@ export default function BuildLoadoutsPage() {
   const { editor } = useApp()
   const dialog = useAppDialog()
   const draft = editor.draft
-  if (!draft) return <div className="page"><div className="page-title"><span className="eyebrow">Current build</span><h1>Loadouts &amp; Variants</h1><p>Open or create a draft before editing this section.</p></div><section className="panel quiet-box">No editable build is currently open.</section></div>
+  if (!draft) return <BuildEditorEmptyState title="Loadouts & Variants" description="Open or create a draft before editing this section." />
   const data = draft.data
   const loadouts = data.loadouts || []
   const variants = data.variants || []
@@ -99,7 +100,7 @@ export default function BuildLoadoutsPage() {
 
   return <div className="page build-editor-form-page build-loadouts-page">
     <div className="page-title"><span className="eyebrow">Current build</span><h1>Loadouts &amp; Variants</h1><p>Loadouts represent complete named configurations such as Solo, Group DPS, Boss, Tank, or One-Bar. Variants apply smaller alternatives after a loadout, such as PvP consumables, no-DLC gear, or a defensive bar swap.</p></div>
-    <section className="panel loadout-model-explainer"><div><span className="eyebrow">Schema 4 selection order</span><h2>Base Build → Loadout → Variant</h2><p>Each layer inherits everything before it. Capture only the sections that differ so future base-build updates continue flowing into the alternatives.</p></div><div className="loadout-model-steps"><span><b>1</b>Base progression</span><span><b>2</b>Complete loadout</span><span><b>3</b>Small variant</span></div></section>
+    <section className="panel loadout-model-explainer"><div><span className="eyebrow">Schema 4 selection order</span><h2>Base Build → Loadout → Variant</h2><p>Each layer inherits everything before it. Capture only the sections that differ so future base-build updates continue flowing into the alternatives.</p></div><div className="loadout-model-steps"><span><b>1</b>Base build</span><span><b>2</b>Complete loadout</span><span><b>3</b>Small variant</span></div></section>
 
     <section className="panel default-loadout-panel"><div><span className="eyebrow">Character default</span><h2>Default loadout</h2><p>This is selected automatically when a player creates a character from the build.</p></div><label><span>Default setup</span><select value={data.default_loadout_id || loadouts[0]?.id || ''} onChange={event => update(current => ({ ...current, default_loadout_id: event.target.value }))}>{loadouts.map(loadout => <option key={loadout.id} value={loadout.id} disabled={loadout.available === false}>{loadout.name}{loadout.available === false ? ' (unavailable)' : ''}</option>)}</select></label></section>
 

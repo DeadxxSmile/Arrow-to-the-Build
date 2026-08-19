@@ -50,14 +50,17 @@ test('runtime files and offline reference data exist and are included in app.asa
     'src/main/database/db.js',
     'src/main/ipc/buildHandlers.js', 'src/main/ipc/buildValidation.js', 'src/main/ipc/buildCharacterImport.js',
     'src/main/ipc/buildGuidedCreation.js', 'src/main/ipc/characterHandlers.js',
-    'src/main/ipc/imageHandlers.js', 'src/main/ipc/settingsHandlers.js',
+    'src/main/ipc/imageHandlers.js', 'src/main/ipc/settingsHandlers.js', 'src/main/ipc/themeHandlers.js',
+    'src/main/themeService.js',
     'src/shared/variantLogic.cjs', 'src/shared/variantLogic.mjs',
+    'src/shared/progressionScope.cjs', 'src/shared/progressionScope.mjs',
     'resources/data/eso-skill-catalog.json', 'resources/data/eso-companions.json',
-    'resources/data/build-editor-guidance.json', 'resources/art/ATTB.ico',
+    'resources/data/build-editor-guidance.json', 'resources/data/theme-schema.json', 'resources/art/ATTB.ico',
+    'resources/themes/builtin-themes.json', 'resources/themes/ATTB_THEME_TEMPLATE.json',
     'docs/reference/BUILD_QUICK_START.md', 'docs/reference/BUILD_EDITOR_GUIDE.md',
     'docs/reference/BUILD_JSON_GUIDE.md', 'docs/reference/ATTB_AI_BUILD_JSON_AUTHORING_GUIDE.md',
     'docs/reference/BUILD_FORMAT.md', 'docs/reference/BUILD_VALIDATION_GUIDE.md',
-    'docs/reference/ESO_ADDON_INTEGRATION.md', 'docs/reference/SKILL_CATALOG.md',
+    'docs/reference/ESO_ADDON_INTEGRATION.md', 'docs/reference/SKILL_CATALOG.md', 'docs/reference/THEME_AUTHORING.md',
     'docs/reference/BUILD_TEMPLATE.json'
   ]
   for (const file of needed) {

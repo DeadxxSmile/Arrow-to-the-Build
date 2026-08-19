@@ -4,8 +4,9 @@ import { useAppDialog } from '../components/AppDialogProvider'
 import AttributeAllocationEditor from '../components/AttributeAllocationEditor'
 import NumberStepper from '../components/NumberStepper'
 import SkillIcon from '../components/SkillIcon'
-import { catalogSkillMap } from '../utils/catalogLogic'
 import { phaseQualityWarnings, plannedBarChoices, slugifyEditorId } from '../utils/buildEditorSkillLogic'
+import BuildEditorEmptyState from '../components/BuildEditorEmptyState'
+import { resolveProgressionScope } from '../../shared/progressionScope.mjs'
 
 function uniquePhaseId(phases, seed) {
   const used = new Set((phases || []).map(phase => phase.id))
@@ -208,9 +209,16 @@ export default function BuildLevelingPage() {
   const { editor } = useApp()
   const dialog = useAppDialog()
   const draft = editor.draft
-  if (!draft) return <div className="page"><div className="page-title"><span className="eyebrow">Current build</span><h1>Leveling Plan</h1><p>Open or create a draft before editing this section.</p></div><section className="panel quiet-box">No editable build is currently open.</section></div>
+  if (!draft) return <BuildEditorEmptyState title="Build Phases" description="Open or create a draft before editing this section." />
   const data = draft.data
   const phases = data.phases || []
+  const progressionScope = resolveProgressionScope(data)
+  const phaseTitle = progressionScope.leveling_content_required ? 'Leveling Plan' : 'Build Phases'
+  const phaseDescription = progressionScope.starting_point === 'cp160_plus'
+    ? 'This build starts at CP160+. Author only the transition, bridge, or final phases the existing character actually needs; 1-50 phases are intentionally optional.'
+    : progressionScope.starting_point === 'level_50'
+      ? 'This build starts at Level 50. Author the CP160 transition and final setup without inventing levels 1-49 history.'
+      : 'Build the step-by-step journey instead of only the final loadout. Each phase owns its level range, milestones, attributes, gear targets, hotbars, ultimate slots, and combat instructions.'
   const choices = useMemo(() => plannedBarChoices(data), [data.unlock_order])
   const update = updater => editor.updateDraft(updater)
 
@@ -222,9 +230,9 @@ export default function BuildLevelingPage() {
   }
 
   return <div className="page build-editor-form-page build-leveling-page">
-    <div className="page-title"><span className="eyebrow">Current build</span><h1>Leveling Plan</h1><p>Build the step-by-step journey instead of only the final loadout. Each phase owns its level range, milestones, attributes, gear targets, hotbars, ultimate slots, and combat instructions.</p></div>
+    <div className="page-title"><span className="eyebrow">Current build</span><h1>{phaseTitle}</h1><p>{phaseDescription}</p></div>
 
-    <section className="panel leveling-plan-summary"><div><span className="eyebrow">Progression timeline</span><h2>{phases.length} phase{phases.length === 1 ? '' : 's'} · {choices.length} planned bar skills</h2><p>Duplicate a working phase before changing it so bars and rotations carry forward without being rebuilt from scratch.</p></div><div className="button-row"><button type="button" className="btn secondary" onClick={() => update(current => ({ ...current, phases: [...(current.phases || []), newPhase(current.phases || [], current)] }))}>+ Add Empty Phase</button><button type="button" className="btn primary" onClick={() => update(current => ({ ...current, phases: [...(current.phases || []), newPhase(current.phases || [], current, current.phases?.[current.phases.length - 1])] }))} disabled={!phases.length}>Copy Last Phase</button></div></section>
+    <section className="panel leveling-plan-summary"><div><span className="eyebrow">{progressionScope.leveling_content_required ? 'Progression timeline' : 'Build phase plan'}</span><h2>{phases.length} phase{phases.length === 1 ? '' : 's'} · {choices.length} planned bar skills</h2><p>Duplicate a working phase before changing it so bars and rotations carry forward without being rebuilt from scratch.</p></div><div className="button-row"><button type="button" className="btn secondary" onClick={() => update(current => ({ ...current, phases: [...(current.phases || []), newPhase(current.phases || [], current)] }))}>+ Add Empty Phase</button><button type="button" className="btn primary" onClick={() => update(current => ({ ...current, phases: [...(current.phases || []), newPhase(current.phases || [], current, current.phases?.[current.phases.length - 1])] }))} disabled={!phases.length}>Copy Last Phase</button></div></section>
 
     {!choices.length && <section className="panel warning-panel"><span className="eyebrow">Skills needed</span><h2>Add active skills before building bars</h2><p>Open Skills &amp; Passives and add abilities or ultimates to the Unlock Plan. Passive skills are intentionally excluded from hotbar choices.</p></section>}
 

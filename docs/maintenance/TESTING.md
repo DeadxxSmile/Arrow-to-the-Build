@@ -1,6 +1,6 @@
 # ATTB Testing Guide
 
-Use this checklist for the current 2.1 codebase. It replaces the historical per-milestone beta checklists.
+Use this checklist for the current **ATTB 3.0.0** codebase. It replaces the historical per-milestone and pre-v3 checklists.
 
 ## Automated test policy
 
@@ -13,7 +13,7 @@ ATTB keeps automated tests focused on contracts that can break data, behavior, p
 - Avoid testing the same release contract in multiple files. Version, schema, and packaging ownership should each have one authoritative check.
 - A regression test should explain the bug class it protects, not freeze unrelated implementation details.
 
-The v2.1.3 test-suite audit reduced the suite from 335 to 278 tests while retaining the behavioral and data-safety coverage. See `TEST_SUITE_AUDIT_2_1_3.md`.
+The historical v2.1.3 test-suite audit reduced the suite from 335 to 278 tests while retaining the behavioral and data-safety coverage. ATTB 3.0.0 has since expanded the suite as new systems and regressions were added. See `TEST_SUITE_AUDIT_2_1_3.md` only for that historical cleanup record.
 
 ## Automated checks
 
@@ -45,7 +45,7 @@ npm start 2>&1 | Tee-Object -FilePath ".\attb-dev.log"
 - Upgrade from a profile that previously stored `/help` as the last Character route and confirm Character opens a real Character Tracker page instead of bouncing back to Help & Tools.
 - Open Settings from each workspace, switch away, then return and confirm Settings did not replace that workspace's remembered content page.
 - Confirm the no-character screen keeps the Character Tracker sidebar and still offers the Build Editor.
-- Change Default/Dark/Light/Old Scrolls theme, startup workspace, sidebar collapse state, and Build Editor settings; restart and confirm persistence.
+- Change several built-in themes, a custom theme, startup workspace, and Build Editor settings; restart and confirm persistence.
 - Confirm a development database migrates without losing characters, builds, drafts, revisions, or settings.
 
 ## Ownership, drafts, and revisions
@@ -124,7 +124,7 @@ npm start 2>&1 | Tee-Object -FilePath ".\attb-dev.log"
 
 ### Upgrade from addon 1.0.0
 
-- Create the old `<profile>\AddOns\ArrowToTheBuildBridge` folder with the exact ATTB 1.0.0 Sync Bridge manifest and create both old addon SavedVariables files. On the first v2.1.3 launch, confirm ATTB removes the verified bridge folder, removes the managed main addon folder, deletes both old SavedVariables files, and immediately reinstalls the bundled single addon.
+- Create the old `<profile>\AddOns\ArrowToTheBuildBridge` folder with the exact ATTB 1.0.0 Sync Bridge manifest and create both old addon SavedVariables files. The cleanup originated in v2.1.3. On the first ATTB 3.0.0 launch, confirm it removes the verified bridge folder, removes the managed main addon folder, deletes both old SavedVariables files, and immediately reinstalls the bundled single addon.
 - After the cleanup marker is stored, create a fresh `ArrowToTheBuild.lua` and restart ATTB. Confirm the one-time cleanup does not run again and the fresh save remains intact.
 - Put an unrelated manifest in a folder named `ArrowToTheBuildBridge`; confirm ATTB refuses to delete it.
 - Confirm the main `ArrowToTheBuild.lua` archive and existing desktop character links survive the upgrade.
@@ -196,11 +196,21 @@ npm start 2>&1 | Tee-Object -FilePath ".\attb-dev.log"
 - Install on a clean Windows account and confirm the app can copy addon files out of its packaged resources.
 - Upgrade from a database at migration level 007/008 and confirm all characters, builds, drafts, revisions, settings, snapshots/links, overrides, companion data, and build JSON paths survive.
 
+### Schema 4 progression scope
+
+- Import an older Schema 4 build with no `progression_scope`; confirm it remains valid and behaves as `new_character` with `leveling_content_required: true`.
+- Create guided builds for **New character**, **Existing Level 50**, and **Existing CP160+**. Confirm their generated phases and equipment scaffolds match the selected starting point.
+- For a Level 50 / CP160+ build, confirm Review & Save does not suggest adding separate Level 1-49 leveling gear simply because those stages are absent.
+- For a new-character build, confirm normal leveling-stage guidance and validation remain unchanged.
+- Create Build from Character at Level 49, Level 50/CP159, and Level 50/CP160; confirm ATTB infers `new_character`, `level_50`, and `cp160_plus` respectively.
+- Adapt an existing build to a CP160+ character and confirm the fork keeps authored TARGET content while changing the build intent to CP160+ rather than inventing historical leveling progress.
+- Edit **Build Editor -> Overview -> Progression intent** and confirm starting point, leveling-required state, and description survive autosave, Save Build, export/import, revision restore, and reload.
+
 ### Create or adapt a build from a synced character
 
 - Link a character with a complete addon snapshot and choose **Create Build from Character**. Confirm ATTB opens a new editable Schema 4 draft in Build Editor and does not create a saved revision until **Save Build** is used.
 - Confirm class, race, alliance, current attributes, owned skills/passives/morphs, action bars, current equipment, and Champion data are populated where the snapshot supports them. Unknown future recommendations must remain intentionally unasserted.
-- Confirm the imported progression phase is labeled `Imported Character State - Level <current level>` and never fabricates the historical level at which an already-owned skill was acquired.
+- Confirm the imported progression phase is labeled `Imported Character State - Level <current level>` and never fabricates the historical level at which an already-owned skill was acquired. Confirm the build progression scope is inferred from current Level/CP.
 - Choose **Adapt Build to Character** with a bundled build. Confirm a fork is created, the bundled source remains unchanged, current equipment is inserted only as a CURRENT import stage, and all original TARGET gear/phases/defaults remain intact.
 - Confirm target unlock rows are marked **Owned at Import**, **Catch Up**, or **Future** from the live character state.
 - Save/reopen/export the generated draft and confirm it behaves exactly like any other user build after the first saved revision.

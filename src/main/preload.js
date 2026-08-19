@@ -82,12 +82,23 @@ contextBridge.exposeInMainWorld('api', {
   },
   images: {
     resolve: ref => ipcRenderer.invoke('images:resolve', ref),
-    clearCache: () => ipcRenderer.invoke('images:clearCache')
+    clearCache: () => ipcRenderer.invoke('images:clearCache'),
+    chooseCharacterImage: characterId => ipcRenderer.invoke('images:chooseCharacterImage', characterId),
+    removeCharacterImage: characterId => ipcRenderer.invoke('images:removeCharacterImage', characterId)
   },
   settings: {
     getAll: () => ipcRenderer.invoke('settings:getAll'),
     set: (k, v) => ipcRenderer.invoke('settings:set', k, v),
     resetApp: () => ipcRenderer.invoke('settings:resetApp')
+  },
+  themes: {
+    list: () => ipcRenderer.invoke('themes:list'),
+    save: (definition, originalId = null) => ipcRenderer.invoke('themes:save', definition, originalId),
+    delete: id => ipcRenderer.invoke('themes:delete', id),
+    import: overwrite => ipcRenderer.invoke('themes:import', !!overwrite),
+    export: id => ipcRenderer.invoke('themes:export', id),
+    exportTemplate: () => ipcRenderer.invoke('themes:exportTemplate'),
+    openFolder: () => ipcRenderer.invoke('themes:openFolder')
   },
   db: { getPath: () => ipcRenderer.invoke('db:getPath') },
   external: { open: url => ipcRenderer.invoke('external:open', url) }

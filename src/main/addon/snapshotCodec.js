@@ -19,6 +19,14 @@ function asArray(value) {
   return Object.entries(value).filter(([key]) => /^\d+$/.test(key)).sort((a, b) => Number(a[0]) - Number(b[0])).map(([, item]) => item)
 }
 function objectOrEmpty(value) { return value && typeof value === 'object' && !Array.isArray(value) ? value : {} }
+function normalizePower(value) {
+  const power = objectOrEmpty(value)
+  return {
+    current: clampInt(power.current, 0, 1000000, 0),
+    maximum: clampInt(power.maximum, 0, 1000000, 0),
+    effectiveMaximum: clampInt(power.effectiveMaximum, 0, 1000000, 0)
+  }
+}
 
 function catalogMaps() {
   const catalog = catalogModule.getCatalog()
@@ -78,14 +86,27 @@ function normalizeSnapshot(characterKey, raw, topLevel) {
       level: clampInt(identity.level, 1, 50, 1),
       championPoints: clampInt(identity.championPoints, 0, 10000, 0),
       championPointsEarned: clampInt(identity.championPointsEarned, 0, 10000, 0),
+      zone: {
+        name: cleanText(identity.zone?.name, 160),
+        index: clampInt(identity.zone?.index, 0, 99999, 0)
+      },
       progression: {
         availableAttributePoints: clampInt(progression.availableAttributePoints, 0, 64, 0),
         availableSkillPoints: clampInt(progression.availableSkillPoints, 0, 10000, 0)
       },
       attributes: {
-        magicka: { spentPoints: clampInt(attributes.magicka?.spentPoints, 0, 64, 0) },
-        health: { spentPoints: clampInt(attributes.health?.spentPoints, 0, 64, 0) },
-        stamina: { spentPoints: clampInt(attributes.stamina?.spentPoints, 0, 64, 0) }
+        magicka: {
+          spentPoints: clampInt(attributes.magicka?.spentPoints, 0, 64, 0),
+          power: normalizePower(attributes.magicka?.power)
+        },
+        health: {
+          spentPoints: clampInt(attributes.health?.spentPoints, 0, 64, 0),
+          power: normalizePower(attributes.health?.power)
+        },
+        stamina: {
+          spentPoints: clampInt(attributes.stamina?.spentPoints, 0, 64, 0),
+          power: normalizePower(attributes.stamina?.power)
+        }
       }
     },
     skills: {

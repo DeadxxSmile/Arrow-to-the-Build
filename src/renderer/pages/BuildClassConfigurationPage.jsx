@@ -5,16 +5,14 @@ import { FieldLabel } from '../components/GuidancePopover'
 import {
   buildEditorGuidance, classes, classGuidance, classLines, lineRecord, masteryLine, normalClassLines, rebaseBuildClass
 } from '../utils/buildEditorGuidance'
+import BuildEditorEmptyState from '../components/BuildEditorEmptyState'
 
-function emptyPage() {
-  return <div className="page"><div className="page-title"><span className="eyebrow">Current build</span><h1>Class Configuration</h1><p>Open or create a draft before editing this section.</p></div><section className="panel quiet-box">No editable build is currently open.</section></div>
-}
 
 export default function BuildClassConfigurationPage() {
   const { editor, appSettings } = useApp()
   const dialog = useAppDialog()
   const draft = editor.draft
-  if (!draft) return emptyPage()
+  if (!draft) return <BuildEditorEmptyState title="Class Configuration" description="Open or create a draft before editing this section." />
   const data = draft.data
   const cfg = data.class_configuration || {}
   const baseClass = cfg.base_class || data.defaults?.class || 'Arcanist'

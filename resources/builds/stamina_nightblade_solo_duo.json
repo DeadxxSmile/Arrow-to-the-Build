@@ -6,6 +6,11 @@
   "author": "DeadxxSmile / ATTB Community Launch Bundle",
   "game_version": "Update 50",
   "verified_date": "2026-08-07",
+  "progression_scope": {
+    "starting_point": "new_character",
+    "leveling_content_required": true,
+    "description": "Bundled ATTB progression build designed to guide a new character from leveling through the final target."
+  },
   "summary": "Pure-class melee assassin using Surprise Attack, Merciless Resolve, Soul Harvest, and a fast Killer’s Blade execute.",
   "theme": {
     "accent": "#d85174"

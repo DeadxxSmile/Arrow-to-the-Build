@@ -6,6 +6,11 @@
   "author": "DeadxxSmile / ATTB Community Launch Bundle",
   "game_version": "Update 50",
   "verified_date": "2026-08-07",
+  "progression_scope": {
+    "starting_point": "new_character",
+    "leveling_content_required": true,
+    "description": "Bundled ATTB progression build designed to guide a new character from leveling through the final target."
+  },
   "summary": "Pure-class frost-and-animal caster with Subterranean Assault timing, Blue Betty sustain, Arctic Blast safety, and the Wild Guardian bear.",
   "theme": {
     "accent": "#72c9aa"

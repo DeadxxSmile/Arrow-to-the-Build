@@ -3,16 +3,16 @@ import { useApp } from '../App'
 import { useAppDialog } from '../components/AppDialogProvider'
 import NumberStepper from '../components/NumberStepper'
 import SkillIcon from '../components/SkillIcon'
-import { catalogLines, catalogSkillMap } from '../utils/catalogLogic'
+import { catalogLines, catalogSkillMap, SKILL_LINE_GROUP_ORDER } from '../utils/catalogLogic'
 import {
   moveUnlockRow, patchPlannedSkillRows, plannedRowsForSkill, removeRelevantLine, setPlannedSkillCount
 } from '../utils/buildEditorSkillLogic'
+import BuildEditorEmptyState from '../components/BuildEditorEmptyState'
 
-const groupOrder = ['Class', 'Weapon', 'Armor', 'World', 'Guild', 'Alliance War', 'Racial', 'Craft', 'System']
 const skillTypeOrder = ['Ultimate', 'Active', 'Morph', 'Passive']
 
 function groupRank(group) {
-  const index = groupOrder.indexOf(group)
+  const index = SKILL_LINE_GROUP_ORDER.indexOf(group)
   return index < 0 ? 999 : index
 }
 
@@ -67,8 +67,8 @@ function SkillCatalogRow({ data, line, skill, onChange }) {
       <label><span>Use</span><select value={rows[0]?.status || 'final'} onChange={event => {
         const status = event.target.value
         patchRows(status === 'temporary' ? { status } : { status, retire_when: undefined })
-      }}><option value="final">Final build</option><option value="temporary">Temporary leveling</option><option value="optional">Optional alternative</option></select></label>
-      <label><span>Recommended phase</span><input value={rows[0]?.phase || ''} onChange={event => patchRows({ phase: event.target.value })} placeholder="Leveling, Endgame, CP160…" /></label>
+      }}><option value="final">Final build</option><option value="temporary">Temporary / bridge</option><option value="optional">Optional alternative</option></select></label>
+      <label><span>Recommended phase</span><input value={rows[0]?.phase || ''} onChange={event => patchRows({ phase: event.target.value })} placeholder="Leveling, transition, CP160, final…" /></label>
       <label className="skill-notes-field"><span>Author note</span><input value={rows[0]?.notes || ''} onChange={event => patchRows({ notes: event.target.value })} placeholder="Why or when the player should take this." /></label>
       {rows[0]?.status === 'temporary' && <>
         <label><span>Retire when</span><select value={retirementType} onChange={event => setRetirementType(event.target.value)}><option value="manual">Player decides</option><option value="character_level">Character reaches level</option><option value="skill_line_rank">Skill line reaches rank</option><option value="unlock_completed">Replacement unlock is complete</option></select></label>
@@ -98,7 +98,7 @@ export default function BuildSkillsPage() {
     setLineId(data.relevant_lines?.[0]?.id || sortedLines[0]?.id || '')
   }, [data, lineId, sortedLines])
 
-  if (!draft) return <div className="page"><div className="page-title"><span className="eyebrow">Current build</span><h1>Skills &amp; Passives</h1><p>Open or create a draft before editing this section.</p></div><section className="panel quiet-box">No editable build is currently open.</section></div>
+  if (!draft) return <BuildEditorEmptyState title="Skills & Passives" description="Open or create a draft before editing this section." />
 
   const selectedLine = catalogLines.find(line => line.id === lineId) || null
   const normalizedQuery = query.trim().toLowerCase()
@@ -120,7 +120,7 @@ export default function BuildSkillsPage() {
     const ok = await dialog.confirm({
       title: `Remove ${line.name}?`,
       message: affected
-        ? `This also removes ${affected} planned unlock row${affected === 1 ? '' : 's'} and clears those skills from leveling bars and rotations.`
+        ? `This also removes ${affected} planned unlock row${affected === 1 ? '' : 's'} and clears those skills from build-phase bars and rotations.`
         : 'This removes the line from the build reference. No planned skills currently use it.',
       confirmLabel: 'Remove Line', danger: affected > 0
     })
@@ -128,7 +128,7 @@ export default function BuildSkillsPage() {
   }
 
   return <div className="page build-editor-form-page build-skills-page">
-    <div className="page-title"><span className="eyebrow">Current build</span><h1>Skills &amp; Passives</h1><p>Choose the lines and purchases the build recommends. The same stable catalog IDs feed leveling bars, rotations, validation, and character progression tracking.</p></div>
+    <div className="page-title"><span className="eyebrow">Current build</span><h1>Skills &amp; Passives</h1><p>Choose the lines and purchases the build recommends. The same stable catalog IDs feed build-phase bars, rotations, validation, and character progression tracking.</p></div>
 
     <section className="panel build-skill-summary">
       <div><span className="eyebrow">Build plan</span><h2>{selectedLines.length} relevant lines · {plannedRows.length} unlock rows</h2><p>Adding a skill automatically adds its catalog line. Adding a morph also carries its base ability into the plan as a temporary prerequisite.</p></div>
@@ -142,7 +142,7 @@ export default function BuildSkillsPage() {
         return <button type="button" key={line.id} className={`relevant-line-chip ${line.id === lineId ? 'active' : ''}`} onClick={() => setLineId(line.id)}><span>{line.name}</span><small>{line.group}{active ? ' · active class line' : ''}</small>{!active && <em onClick={event => { event.stopPropagation(); removeLine(line) }} aria-label={`Remove ${line.name}`}>×</em>}</button>
       })}</div>
       <div className="skill-browser-controls">
-        <label><span>Category</span><select value={group} onChange={event => { setGroup(event.target.value); const next = sortedLines.find(line => event.target.value === 'All' || line.group === event.target.value); if (next) setLineId(next.id) }}><option>All</option>{groupOrder.map(value => <option key={value}>{value}</option>)}</select></label>
+        <label><span>Category</span><select value={group} onChange={event => { setGroup(event.target.value); const next = sortedLines.find(line => event.target.value === 'All' || line.group === event.target.value); if (next) setLineId(next.id) }}><option>All</option>{SKILL_LINE_GROUP_ORDER.map(value => <option key={value}>{value}</option>)}</select></label>
         <label><span>Browse skill line</span><select value={lineId} onChange={event => setLineId(event.target.value)}>{lineOptions.map(line => <option value={line.id} key={line.id}>{lineLabel(line)}{relevantIds.has(line.id) ? ' · in build' : ''}</option>)}</select></label>
         <label><span>Search this line</span><input value={query} onChange={event => setQuery(event.target.value)} placeholder="Skill or passive name…" /></label>
       </div>

@@ -6,6 +6,11 @@
   "author": "DeadxxSmile / ATTB",
   "game_version": "Update 50",
   "verified_date": "2026-08-07",
+  "progression_scope": {
+    "starting_point": "new_character",
+    "leveling_content_required": true,
+    "description": "Bundled ATTB progression build designed to guide a new character from leveling through the final target."
+  },
   "summary": "Medium-armored Crux builder with dual daggers, an Inferno Staff, strong self-healing, shielding, and a full-strength AoE beam.",
   "theme": {
     "accent": "#69e891",

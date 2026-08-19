@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { useApp } from '../App'
 import companionCatalog from '../../../resources/data/eso-companions.json'
 import { presetToBuildCompanion } from '../utils/companionLogic'
+import BuildEditorEmptyState from '../components/BuildEditorEmptyState'
 
 const ROLE_OPTIONS = ['tank', 'healer', 'damage', 'support', 'hybrid']
 const splitLines = value => String(value || '').split(/\r?\n/).map(row => row.trim()).filter(Boolean)
@@ -9,9 +10,6 @@ const joinLines = value => (Array.isArray(value) ? value : []).join('\n')
 const slug = value => String(value || 'companion-setup').toLowerCase().trim().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '') || 'companion_setup'
 function uniqueId(rows, seed) { const used = new Set(rows.map(row => row.id)); const base = slug(seed); let id = base; let n = 2; while (used.has(id)) id = `${base}_${n++}`; return id }
 
-function emptyPage() {
-  return <div className="page"><div className="page-title"><span className="eyebrow">Current build</span><h1>Companions</h1><p>Open or create a draft before editing this section.</p></div><section className="panel quiet-box">No editable build is currently open.</section></div>
-}
 
 function CompanionSetupEditor({ entry, index, count, onPatch, onDelete, onDuplicate }) {
   return <article className="panel companion-editor-card">
@@ -43,7 +41,7 @@ export default function BuildCompanionsPage() {
   const [filter, setFilter] = useState('all')
   const draft = editor.draft
   const visible = useMemo(() => companionCatalog.companions.filter(companion => filter === 'all' || companion.strengths.includes(filter)), [filter])
-  if (!draft) return emptyPage()
+  if (!draft) return <BuildEditorEmptyState title="Companions" description="Open or create a draft before editing this section." />
   const data = draft.data
   const entries = Array.isArray(data.companions) ? data.companions : []
   const update = updater => editor.updateDraft(updater)

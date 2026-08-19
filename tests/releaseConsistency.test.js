@@ -9,6 +9,7 @@ const root = path.resolve(__dirname, '..')
 const read = relative => fs.readFileSync(path.join(root, relative), 'utf8')
 const readJson = relative => JSON.parse(read(relative))
 
+
 function manifestField(text, field) {
   const match = text.match(new RegExp(`^## ${field}:\\s*(.+)$`, 'm'))
   assert.ok(match, `manifest is missing ${field}`)
@@ -21,16 +22,45 @@ function capturedVersion(text, pattern, label) {
   return match[1]
 }
 
-test('desktop release version stays synchronized across package metadata and published status text', () => {
+test('desktop release version stays synchronized across package metadata and README', () => {
   const pkg = readJson('package.json')
   const lock = readJson('package-lock.json')
   const readme = read('README.md')
-  const site = read('docs/index.html')
+  const publicRelease = capturedVersion(readme, /Current public release:\s*\*\*v([^*]+)\*\*/, 'README public release')
+  const development = capturedVersion(readme, /Current development version:\s*\*\*v([^*]+)\*\*/, 'README development release')
 
   assert.equal(lock.version, pkg.version, 'package-lock top-level version differs from package.json')
   assert.equal(lock.packages?.['']?.version, pkg.version, 'package-lock root package version differs from package.json')
-  assert.match(readme, new RegExp(`\\*\\*v${pkg.version.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&')}\\*\\*`), 'README current build version is stale')
-  assert.match(site, new RegExp(`<span class="meta-pill version">v${pkg.version.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&')}</span>`), 'GitHub Pages version pill is stale')
+  assert.equal(publicRelease, pkg.version, 'README public release differs from package.json')
+  assert.equal(development, pkg.version, 'README development release differs from package.json')
+})
+
+test('published GitHub Pages release version stays synchronized with the desktop release', () => {
+  const pkg = readJson('package.json')
+  const site = read('docs/index.html')
+  const version = capturedVersion(site, /<b>v([^<]+)<\/b>/, 'GitHub Pages title-bar version')
+
+  assert.equal(version, pkg.version, 'site title-bar version differs from package.json')
+  assert.ok(site.includes(`Download v${version}`), 'site download call-to-action differs from title-bar version')
+  assert.ok(site.includes(`ATTB-Setup-${version}.exe`), 'site installer filename differs from version pill')
+  assert.ok(site.includes(`styles.css?v=${version}-v3-site`), 'site stylesheet cache version differs from version pill')
+  assert.ok(site.includes(`app.js?v=${version}-v3-site`), 'site script cache version differs from version pill')
+  assert.match(site, /Current release/)
+  assert.doesNotMatch(site, /Release candidate/i)
+})
+
+test('current public and maintenance guides identify ATTB 3.0.0 as their release baseline', () => {
+  const pkg = readJson('package.json')
+  for (const relativeDir of ['docs/reference', 'docs/maintenance']) {
+    const dir = path.join(root, relativeDir)
+    const guides = fs.readdirSync(dir).filter(name => name.endsWith('.md')).sort()
+    assert.ok(guides.length > 0, `no Markdown guides found in ${relativeDir}`)
+    for (const guide of guides) {
+      const source = fs.readFileSync(path.join(dir, guide), 'utf8')
+      assert.ok(source.includes(`3.0.0`), `${relativeDir}/${guide} does not identify the ATTB 3.0.0 baseline`)
+    }
+  }
+  assert.equal(pkg.version, '3.0.0', 'this release gate is intentionally pinned to the v3.0.0 publication')
 })
 
 

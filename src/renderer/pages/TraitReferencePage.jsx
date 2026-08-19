@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
+import RelatedHelpTopics from '../components/RelatedHelpTopics'
 
 const traitGroups = [
   {
@@ -100,5 +101,6 @@ export default function TraitReferencePage() {
 
     <nav className="trait-jump-links" aria-label="Trait categories">{traitGroups.map(group => <button type="button" key={group.id} onClick={() => document.getElementById(`trait-${group.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>{group.label}</button>)}</nav>
     <div className="trait-reference-stack">{traitGroups.map(group => <TraitTable key={group.id} group={group} />)}</div>
+    <RelatedHelpTopics topicId="traits" />
   </div>
 }

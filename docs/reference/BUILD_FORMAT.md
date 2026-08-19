@@ -1,6 +1,6 @@
 # ATTB Schema 4 Format Reference
 
-Schema 4 is the stable public build contract for Arrow to the Build. It preserves the original progression model while adding enough structure for current ESO systems and future authoring tools.
+Schema 4 is the stable public build contract for Arrow to the Build. This reference is current for **ATTB 3.0.0**. It preserves the original progression model while adding enough structure for current ESO systems and future authoring tools.
 
 ## Compatibility policy
 
@@ -31,7 +31,25 @@ Schema 4 is the stable public build contract for Arrow to the Build. It preserve
 
 ## Optional root fields
 
-`short_name`, `author`, `game_version`, `verified_date`, `summary`, `notes`, `theme`, `images`, `requirements`, `transformations`, `scribed_skills`, `quickslots`, `companions`, `performance`, `sources`, `setup_help`, `concepts`, `consumables`, `tips`, `default_loadout_id`, `loadouts`, `variants`, `format_notes`, and `extensions`.
+`progression_scope`, `short_name`, `author`, `game_version`, `verified_date`, `summary`, `notes`, `theme`, `images`, `requirements`, `transformations`, `scribed_skills`, `quickslots`, `companions`, `performance`, `sources`, `setup_help`, `concepts`, `consumables`, `tips`, `default_loadout_id`, `loadouts`, `variants`, `format_notes`, and `extensions`.
+
+## Progression scope
+
+`progression_scope` is optional and additive in Schema 4:
+
+```json
+{
+  "progression_scope": {
+    "starting_point": "cp160_plus",
+    "leveling_content_required": false,
+    "description": "Existing CP160+ character rebuild."
+  }
+}
+```
+
+`starting_point` is one of `new_character`, `level_50`, or `cp160_plus`. Missing scope data resolves to the legacy default `new_character` + `leveling_content_required: true`, so older Schema 4 files do not need migration.
+
+The scope changes what ATTB expects, not what authors are allowed to include. All builds still keep at least one useful `phase` and `gear_stage`; Level 50 / CP160+ builds simply do not need artificial early-level phases or leveling gear.
 
 ### Build notes
 
@@ -102,7 +120,7 @@ Each phase includes:
 
 ## Companion setups
 
-`companions` remains an optional Schema 4 root array. ATTB 2.1 documents these additive companion fields:
+`companions` remains an optional Schema 4 root array. ATTB 3.0.0 documents these additive companion fields:
 
 - `id` - stable setup ID;
 - `companion_id` - stable ID from `resources/data/eso-companions.json`;
@@ -141,7 +159,16 @@ Use **variants** for smaller situational changes inside a compatible loadout: ea
 
 ## Scribing
 
-A specific recipe contains a Grimoire, Focus Script, Signature Script, and Affix Script. The recipe can also record resource, cost, notes, and the Grimoire's catalog ID.
+Scribing is a free base-game system in the current ATTB 3.0.0 / ESO Update 50 baseline. A character can begin the Scribing introduction at Level 30 or with access to the Champion System. The finished active skill is built from exactly four authored pieces:
+
+- one Grimoire, which defines the base skill and parent skill line;
+- one Focus Script, which defines the main function and usually the skill name, resource type, and cost;
+- one Signature Script, which adds a secondary mechanic or interaction;
+- one Affix Script, which adds the final buff or debuff layer.
+
+A specific Schema 4 recipe records those pieces under `scribed_skills` and can also record resource, cost, notes, and the Grimoire's catalog ID. Build bars, rotations, and unlock rows reference the finished recipe with `scribed_skill_id`. A generic Grimoire reference is only sufficient when the exact Script combination genuinely does not matter.
+
+The Scribing **Class Mastery Signature Script** is distinct from the separate Update 50 Class Mastery choice system stored in `class_configuration.class_mastery`; authors should never interchange the two because their names happen to overlap.
 
 ## Extension data
 

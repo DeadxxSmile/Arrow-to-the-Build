@@ -1,10 +1,3 @@
-export function companionPresets(catalog) {
-  return (catalog?.companions || []).flatMap(companion => (companion.builds || []).map(build => ({ ...build, companion })))
-}
-
-export function companionPresetMap(catalog) {
-  return new Map(companionPresets(catalog).map(entry => [entry.id, entry]))
-}
 
 export function presetToBuildCompanion(companion, preset) {
   return {

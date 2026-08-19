@@ -4,6 +4,27 @@ import { allocateCp, planSections } from '../utils/buildLogic'
 
 const TREE_LABELS = { craft: 'Craft', warfare: 'Warfare', fitness: 'Fitness' }
 
+function nextMilestone(entry) {
+  if (!entry?.node) return null
+  const current = Number(entry.points || 0)
+  const max = Number(entry.node.max_points || 0)
+  const jumps = (entry.node.jump_points || []).map(Number).filter(value => Number.isFinite(value) && value > current && value <= max).sort((a, b) => a - b)
+  const target = jumps[0] || (current < max ? max : null)
+  return target == null ? null : { target, add: Math.max(0, target - current) }
+}
+
+function SpendOrder({ allocation }) {
+  const route = [
+    ...allocation.core.map(entry => ({ ...entry, routeLabel: 'Required path' })),
+    ...allocation.groups.filter(group => !group.optional).flatMap(group => group.entries.map(entry => ({ ...entry, routeLabel: group.group.label || 'Recommended branch' })))
+  ].filter(entry => entry.points > 0)
+  if (!route.length) return null
+  return <section className="cp-spend-order">
+    <div className="section-head"><div><span className="eyebrow">Catch-up checklist</span><h2>Spend in this order</h2><p>If you banked Champion Points, work down this list and make each star match the target shown. Stop when you reach the end of the list.</p></div><span className="cp-order-budget">{allocation.total} point budget</span></div>
+    <ol>{route.map((entry, index) => <li key={`${entry.routeLabel}:${entry.node.id}`} className={entry.node.id === allocation.next?.node?.id ? 'next' : ''}><span>{index + 1}</span><div><b>{entry.node.name}</b><small>{entry.routeLabel}{entry.node.slottable ? ' · Slottable' : ' · Passive'}</small></div><strong>{entry.points}/{entry.node.max_points}</strong></li>)}</ol>
+  </section>
+}
+
 function nodeState(entry, nextId) {
   if (entry.full) return 'full'
   if (entry.node.id === nextId) return 'next'
@@ -55,6 +76,7 @@ export default function CPCard({ tree, plan, total, onChange, detailed = false, 
   const allocation = allocateCp(plan, total)
   const nextId = allocation.next?.node?.id || null
   const nextName = allocation.next?.node?.name || null
+  const milestone = nextMilestone(allocation.next)
 
   if (!detailed) return <article className={`cp-overview-card ${plan.color || tree}`}>
     <header>
@@ -67,7 +89,7 @@ export default function CPCard({ tree, plan, total, onChange, detailed = false, 
       <div><small>Recommended route</small><b>{allocation.total - allocation.unassigned}/{allocation.total}</b></div>
       <div><small>Free after route</small><b>{allocation.unassigned}</b></div>
     </div>
-    <div className={`cp-next-summary ${nextName ? '' : 'complete'}`}><small>{nextName ? 'Spend next' : 'Documented route complete'}</small><b>{nextName || 'Use optional branches or spend freely'}</b></div>
+    <div className={`cp-next-summary ${nextName ? '' : 'complete'}`}><small>{nextName ? 'Spend next' : 'Documented route complete'}</small><b>{nextName ? `${nextName}${milestone ? ` · +${milestone.add} to ${milestone.target}` : ''}` : 'Use optional branches or spend freely'}</b>{nextName && milestone && <span>Bring this star from {allocation.next.points} to {milestone.target} before moving on.</span>}</div>
     <div className="cp-mini-slots">{(plan.final_slots || []).slice(0, 4).map(id => <span key={id}>{allNodes.find(node => node.id === id)?.name || id}</span>)}</div>
     <Link className="btn secondary" to={`/champion-points/${tree}`}>Open {label} plan</Link>
   </article>
@@ -84,8 +106,10 @@ export default function CPCard({ tree, plan, total, onChange, detailed = false, 
       <div><small>Required path</small><b>{allocation.corePoints}/{allocation.coreCapacity}</b></div>
       <div><small>Recommended flex</small><b>{allocation.flexPoints - allocation.unassigned}</b></div>
       <div><small>Unassigned</small><b>{allocation.unassigned}</b></div>
-      <div><small>Next node</small><b>{nextName || 'Route complete'}</b></div>
+      <div><small>Next spend</small><b>{nextName ? `${nextName}${milestone ? ` +${milestone.add}` : ''}` : 'Route complete'}</b></div>
     </section>
+
+    <SpendOrder allocation={allocation} />
 
     {!!core.length && <section className="cp-path-section required">
       <div className="cp-path-section-head"><div><span className="eyebrow">Required connection path</span><h2>Open the route first</h2></div><strong>{allocation.corePoints}/{allocation.coreCapacity}</strong></div>

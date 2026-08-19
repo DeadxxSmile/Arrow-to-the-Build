@@ -23,7 +23,7 @@ const expected = new Map([
   ['zerith_var', 'Zerith-var']
 ])
 
-test('v2.1 companion catalog covers all eight combat companions with two usable presets each', () => {
+test('v3 companion catalog covers all eight combat companions with two usable presets each', () => {
   assert.equal(companionCatalog.schema_version, 1)
   assert.equal(companionCatalog.companions.length, 8)
   assert.deepEqual(new Set(companionCatalog.companions.map(row => row.id)), new Set(expected.keys()))
@@ -63,7 +63,7 @@ test('companion build data is wired through both workspaces, persistence, docs, 
   assert.match(characterPage, /companion-selector-panel/)
   assert.match(characterPage, /chooseSetup/)
   assert.match(characterPage, /companion-detail-panel/)
-  assert.match(characterPage, /Ability priority/)
+  assert.match(characterPage, /Ability order/)
   assert.match(editorPage, /Preset library/)
   assert.match(editorPage, /Companion skill names stay plain text by design/)
 
@@ -74,7 +74,7 @@ test('companion build data is wired through both workspaces, persistence, docs, 
   assert.equal(companion.properties.skills.uniqueItems, true)
 
   const guide = read('docs/reference/ATTB_AI_BUILD_JSON_AUTHORING_GUIDE.md')
-  assert.match(guide, /Guide revision:\*\* 2\.1/)
+  assert.match(guide, /Guide revision:\*\* 3\.0/)
   assert.match(guide, /eso-companions\.json/)
   assert.match(guide, /separate from player skill/i)
 })

@@ -1,14 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import ChoiceChips from './ChoiceChips'
-import { buildEditorGuidance } from '../utils/buildEditorGuidance'
+import { buildResourceOptions, buildRoleOptions } from '../utils/buildEditorGuidance'
+import { inferStartingPoint } from '../../shared/progressionScope.mjs'
 
-const roleOptions = ['damage', 'healer', 'tank', 'support', 'solo'].map(value => ({ value, label: buildEditorGuidance.roles[value]?.label || value }))
-const resourceOptions = [
-  { value: 'magicka', label: 'Magicka' },
-  { value: 'stamina', label: 'Stamina' },
-  { value: 'health', label: 'Health-focused' },
-  { value: 'hybrid', label: 'Hybrid' }
-]
 
 function slugify(value) {
   return String(value || 'build').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'build'
@@ -42,7 +36,7 @@ export default function CharacterBuildSetupModal({
       id: slugify(name),
       primary_role: 'damage',
       resource: inferred === 'health' ? 'health' : inferred,
-      leveling_scope: 'full',
+      starting_point: inferStartingPoint({ level: character?.level || character?.live?.level || 1, championPoints: character?.champion_points || character?.live?.champion_points || character?.observed?.champion?.totalEarned || 0 }),
       bar_count: Number(character?.level || character?.live?.level || 1) >= 15 ? 2 : 1,
       class_style: 'pure_class',
       author: defaultAuthor || 'NPC'
@@ -75,10 +69,10 @@ export default function CharacterBuildSetupModal({
         <label><span>Short name</span><input value={form.short_name} maxLength={60} onChange={event => patch({ short_name: event.target.value })} /></label>
         <label className="form-span-two"><span>Permanent build ID</span><input className="mono" value={form.id} maxLength={120} onChange={event => { setIdTouched(true); patch({ id: cleanId(event.target.value) }) }} /><small>This ID becomes permanent when the build is created. Choose it now; later renaming the build will not change it.</small></label>
       </div>
-      <div className="guided-question"><span>Primary role</span><ChoiceChips name="Imported build primary role" single values={[form.primary_role]} options={roleOptions} onChange={next => patch({ primary_role: next[0] })} /></div>
-      <div className="guided-question"><span>Primary resource</span><ChoiceChips name="Imported build primary resource" single values={[form.resource]} options={resourceOptions} onChange={next => patch({ resource: next[0] })} /></div>
+      <div className="guided-question"><span>Primary role</span><ChoiceChips name="Imported build primary role" single values={[form.primary_role]} options={buildRoleOptions} onChange={next => patch({ primary_role: next[0] })} /></div>
+      <div className="guided-question"><span>Primary resource</span><ChoiceChips name="Imported build primary resource" single values={[form.resource]} options={buildResourceOptions} onChange={next => patch({ resource: next[0] })} /></div>
       <div className="character-build-setup-grid">
-        <label><span>Progression coverage</span><select value={form.leveling_scope} onChange={event => patch({ leveling_scope: event.target.value })}><option value="full">Full leveling plan</option><option value="endgame">Endgame-focused</option></select></label>
+        <label><span>Build starting point</span><select value={form.starting_point} onChange={event => patch({ starting_point: event.target.value })}><option value="new_character">New character</option><option value="level_50">Existing Level 50</option><option value="cp160_plus">Existing CP160+</option></select></label>
         <label><span>Ability bars</span><select value={form.bar_count} onChange={event => patch({ bar_count: Number(event.target.value) })}><option value="2">Two bars</option><option value="1">One bar</option></select></label>
         <label><span>Class direction</span><select value={form.class_style} onChange={event => patch({ class_style: event.target.value })}><option value="pure_class">Pure class</option><option value="flexible">Flexible / subclass later</option></select></label>
       </div>

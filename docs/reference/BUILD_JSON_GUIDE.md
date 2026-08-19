@@ -1,6 +1,6 @@
 # Manual Schema 4 JSON Authoring
 
-This is the field-level guide for authors who want to **hand-make or directly edit ATTB build JSON**. The visual Build Editor and manual JSON use the same Schema 4 object, so a build can move between the two workflows without conversion.
+This **ATTB 3.0.0** field-level guide is for authors who want to **hand-make or directly edit ATTB build JSON**. The visual Build Editor and manual JSON use the same Schema 4 object, so a build can move between the two workflows without conversion.
 
 Read **Start Here** for the basic app model and **Visual Build Editor Guide** for normal in-app authoring. Use this document when you need exact fields, subclassing, Scribing, loadout overrides, merge behavior, extensions, or direct text-editor control.
 
@@ -49,12 +49,13 @@ The required progression arrays are not placeholders: `relevant_lines`, `unlock_
 
 | Field | Purpose |
 |---|---|
+| `progression_scope` | Optional starting-point intent (`new_character`, `level_50`, or `cp160_plus`) and whether traditional leveling content is required. |
 | `short_name` | Compact display name. |
 | `author` | Build author or team. |
 | `game_version` | ESO update or patch target. |
 | `verified_date` | Last manually checked date in `YYYY-MM-DD`. |
 | `summary` | Short description. |
-| `notes` | Optional long-form plain-text build notes shown in Basic Setup and edited in Build Editor. |
+| `notes` | Optional long-form plain-text build notes shown in Basic Info and edited in Build Editor. |
 | `theme` | Build-page accent colors. |
 | `images` | Hero and screenshot references. |
 | `requirements` | DLC, chapter, quest, level, system, or item requirements. |
@@ -65,7 +66,7 @@ The required progression arrays are not placeholders: `relevant_lines`, `unlock_
 | `performance` | Stats, duties, buffs, debuffs, and testing notes. |
 | `sources` | Research and attribution. |
 | `setup_help` | Human-readable explanations of default choices. |
-| `concepts` | Build concepts shown on Basic Setup. |
+| `concepts` | Build concepts shown on Basic Info / build reference surfaces. |
 | `consumables` | Food, drinks, potions, poisons, and alternatives. |
 | `tips` | Numbered or grouped gameplay tips. |
 | `default_loadout_id` | Loadout selected by default. |
@@ -73,6 +74,41 @@ The required progression arrays are not placeholders: `relevant_lines`, `unlock_
 | `variants` | Smaller situational overrides. |
 | `format_notes` | Notes for authors and maintainers. |
 | `extensions` | Namespaced data for other tools and future systems. |
+
+## Progression scope
+
+`progression_scope` is an optional Schema 4 object introduced to the documented contract in ATTB 3.0.0. It prevents an existing-character rebuild from being judged as though it were missing a traditional 1-50 guide.
+
+```json
+{
+  "progression_scope": {
+    "starting_point": "cp160_plus",
+    "leveling_content_required": false,
+    "description": "Designed for an existing Level 50 / CP160+ character changing into this build."
+  }
+}
+```
+
+Valid `starting_point` values are:
+
+| Value | Intended use |
+|---|---|
+| `new_character` | Full new-character progression. Traditional 1-50 phases and leveling gear are expected. |
+| `level_50` | Existing Level 50 character. Early 1-49 content is optional; a CP160 transition may be useful. |
+| `cp160_plus` | Existing CP160+ character. Author only the bridge/current/final phases and gear that actually matter. |
+
+`leveling_content_required` is normally `true` only for `new_character`. The field is explicit so specialized authors can override that default deliberately.
+
+For backwards compatibility, **omitting `progression_scope` is legal** and resolves to:
+
+```json
+{
+  "starting_point": "new_character",
+  "leveling_content_required": true
+}
+```
+
+The scope does not ban additional phases. A CP160+ build may still include a transition phase when useful; ATTB simply stops requiring irrelevant early-level content.
 
 # 2. IDs and display text
 
@@ -326,7 +362,20 @@ Temporary rows may omit `retire_when`, which leaves retirement entirely to the p
 
 # 8. Scribed Skills
 
-Use an ordinary Grimoire catalog ID when the guide only recommends the Grimoire in general. Use `scribed_skills` when the exact scripts matter.
+ATTB 3.0.0 treats a Scribed Skill as an exact recipe when the build depends on the specific result. In the current ESO baseline, Scribing is free base-game access; a character can begin at Level 30 or after gaining access to the Champion System. The player still has to unlock the Scholarium, acquire/learn the required Grimoire and Scripts on that character, and spend Luminous Ink at the Scribing Altar.
+
+A finished recipe is:
+
+1. a **Grimoire** for the base skill and parent skill line;
+2. a **Focus Script** for the main function, target behavior, resource type/cost, and much of the finished skill identity;
+3. a **Signature Script** for the secondary mechanic;
+4. an **Affix Script** for the final buff or debuff.
+
+Do not confuse the Scribing **Class Mastery Signature Script** with ATTB's separate Update 50 `class_configuration.class_mastery` choice system. The names overlap, but they are different mechanics and different build fields.
+
+Use an ordinary Grimoire catalog ID when the guide truly recommends the Grimoire in general. Use `scribed_skills` when the exact scripts matter. Do not replace a named Script with a merely similar effect, because a different Script can change the skill's resource, targeting, secondary mechanic, buff/debuff, or compatibility.
+
+When authoring for a real player, make the acquisition path actionable in `requirements`, `milestones`, `tips`, or notes when Scribing is not already complete. A useful build should tell the player what they are waiting on: the Grimoire, Focus Script, Signature Script, Affix Script, Luminous Ink, or the introductory quest. For an exact recipe, write this like a short shopping list rather than a generic "unlock Scribing" instruction.
 
 ```json
 {
@@ -419,7 +468,7 @@ A phase is a complete recommendation for a level or CP band.
 
 Normal slots max at five. An ultimate is separate. Use `locked` on the entire back bar before Level 15.
 
-A phase can also use `min_cp`, `max_cp`, `conditions`, and `loadout_ids`. Schema 4 additionally supports optional phase-specific planning fields:
+A phase can also use `min_cp`, `max_cp`, `conditions`, and `loadout_ids`. Schema 4 additionally supports optional phase-specific planning fields. At least one phase is still required, but `level_50` and `cp160_plus` builds can use only existing-character transition/final phases rather than inventing early leveling bands:
 
 - `attributes`: the Magicka, Health, and Stamina allocation target for that phase;
 - `recommended_gear_stage_ids`: references to one or more entries in `gear_stages`;
@@ -615,7 +664,7 @@ Allocation behavior:
 
 # 13. Companions and performance notes
 
-ATTB 2.1 has a dedicated companion directory in the Character Tracker and a Companion page in the Build Editor. Schema 4 remains the public format; richer companion fields are additive inside the existing root `companions` array.
+ATTB 3.0.0 has a dedicated companion directory in the Character Tracker and a Companion page in the Build Editor. Schema 4 remains the public format; richer companion fields are additive inside the existing root `companions` array.
 
 Use the bundled `resources/data/eso-companions.json` as the current roster/preset source. Companion ability names are plain text and **must not** be added to the player `relevant_lines` or `unlock_order`.
 

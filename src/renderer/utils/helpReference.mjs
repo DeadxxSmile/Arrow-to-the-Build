@@ -11,7 +11,7 @@ export const HELP_REFERENCE_TOPICS = [
   { id: 'consumables', title: 'Consumables', icon: '⚗', category: 'Combat', path: '/help/topic/consumables', blurb: 'Food, drinks, potions, poisons, buff uptime, and why Medicinal Use shows up in combat builds.' },
   { id: 'skills', title: 'Skills & Morphs', icon: '✦', category: 'Progression', path: '/help/topic/skills', blurb: 'Base abilities, ranks, morphs, passives, Ultimates, temporary unlocks, and Class Mastery.' },
   { id: 'champion-points', title: 'Champion Points', icon: '✥', category: 'Progression', path: '/help/topic/champion-points', blurb: 'Craft, Warfare, Fitness, path nodes, jump points, slottables, and the four-slot rule.' },
-  { id: 'scribing', title: 'Scribing', icon: '✎', category: 'Progression', path: '/help/topic/scribing', blurb: 'Grimoires, Focus, Signature, Affix, Class Mastery Scripts, and why the exact recipe matters.' },
+  { id: 'scribing', title: 'Scribing', icon: '✎', category: 'Progression', path: '/help/topic/scribing', blurb: 'Unlock Scribing, read an ATTB recipe, acquire Grimoires and Scripts, manage Luminous Ink, and craft the exact skill your build calls for.' },
   { id: 'companions', title: 'Companion Builds & Traits', icon: '♟', category: 'Companions', path: '/help/topic/companions', blurb: 'Companion roles, gear traits, cooldowns, skill priority, taunts, and why companion gear follows different rules.' },
   { id: 'glossary', title: 'Build Glossary', icon: '?', category: 'Reference', path: '/help/topic/glossary', blurb: 'Spammable, execute, DoT, AoE, proc, bridge, flex, stat stick, front bar, back bar, and more.' }
 ]
@@ -28,6 +28,7 @@ export const HELP_NAV_SECTIONS = [
   { label: 'Reference', items: [
     ...HELP_REFERENCE_TOPICS.filter(item => item.category === 'Reference').map(item => ({ to: item.path, label: item.title, icon: item.icon })),
     { to: '/help/guides', label: 'ATTB Guides', icon: '▤' },
+    { to: '/help/themes', label: 'Themes & Customization', icon: '◈' },
     { to: '/help/resources', label: 'Resources & Links', icon: '↗' }
   ] }
 ]

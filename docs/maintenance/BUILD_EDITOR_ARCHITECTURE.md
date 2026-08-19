@@ -1,11 +1,12 @@
 # Build Editor Architecture
 
-ATTB 2.1 uses one Electron window with two coordinated React workspaces:
+ATTB 3.0.0 uses one Electron window with three coordinated React workspaces:
 
 - **Character Tracker** follows a saved build and records what a player actually has in game.
 - **Build Editor** creates, forks, imports, reviews, and maintains Schema 4 builds.
+- **Help & Tools** provides the build-focused ESO reference library without mixing reference navigation into tracking or authoring.
 
-Both workspaces share SQLite, the ESO player-skill catalog, the companion preset catalog, Schema 4 validation, settings, dialogs, and file import/export. Separate sidebars and top bars keep authoring controls out of the character-tracking workflow.
+All three workspaces share the same local character/build data, settings, dialogs, catalogs, and semantic theme system. Character and Build share Schema 4 validation and import/export services. Their separate workspace sidebars keep authoring controls out of the character-tracking workflow while Settings remains global.
 
 ## Build ownership
 
@@ -33,6 +34,16 @@ Visual editor → Schema 4 object → shared validator → saved revision → Ch
 
 Manual JSON and visually authored builds remain interchangeable.
 
+## Progression scope (ATTB 3.0.0)
+
+Schema 4 now has an optional `progression_scope` block that tells ATTB where the authored plan begins:
+
+- `new_character`: normal leveling content is expected;
+- `level_50`: the player already reached Level 50, so 1-49 history is optional;
+- `cp160_plus`: the player already reached permanent-gear territory, so bridge/current/final content can stand on its own.
+
+`leveling_content_required` controls whether Review & Save should expect the traditional leveling roadmap. Missing `progression_scope` resolves to `new_character` + `true`, so existing Schema 4 files remain backward compatible. Guided creation, Create Build from Character, Adapt Build to Character, Build Phases, Equipment, and Review & Save all consume the same resolver in `src/shared/progressionScope.*`.
+
 ## Review workflow
 
 Review & Save combines:
@@ -52,7 +63,8 @@ ATTB can verify IDs, structure, version metadata, and missing references. It can
 - `src/main/ipc/buildHandlers.js`: build persistence, drafts/revisions, import/export, dialogs, and build IPC coordination.
 - `src/main/ipc/buildValidation.js`: Schema 4 normalization and validation.
 - `src/main/ipc/buildGuidedCreation.js`: pure guided-build scaffold generation.
-- `src/main/ipc/buildCharacterImport.js`: CURRENT ESO character state to editable Schema 4 build/adaptation transforms.
+- `src/main/ipc/buildCharacterImport.js`: CURRENT ESO character state to editable Schema 4 build/adaptation transforms, including automatic progression-scope inference.
+- `src/shared/progressionScope.cjs` / `.mjs`: shared Schema 4 progression-scope defaults, resolution, and character starting-point inference.
 - `src/main/buildStorage.js`: safe human-readable JSON mirroring.
 - `src/main/addon/integration.js`: single-archive SavedVariables watching/sync orchestration, snapshot persistence, status, and addon IPC.
 - `src/main/addon/characterSyncStore.js`: synced-character discovery/linking, live-state application, and per-field overrides.

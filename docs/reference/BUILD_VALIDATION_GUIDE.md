@@ -1,6 +1,6 @@
 # Validation & Troubleshooting
 
-This page covers the most common Build Editor, JSON, draft, revision, and file-sync problems.
+This **ATTB 3.0.0** page covers the most common Build Editor, JSON, draft, revision, and file-sync problems.
 
 ## Recovery autosave and permanent saves
 
@@ -33,6 +33,14 @@ Schema 4 requires usable `metadata`, `class_configuration`, `defaults`, `relevan
 
 A blank array may be structurally valid JSON but is not a complete ATTB build.
 
+### Progression scope does not match the build
+
+`progression_scope` is optional. If it is absent, ATTB intentionally preserves the legacy Schema 4 default: `new_character` with traditional leveling content required.
+
+For an existing-character build, declare either `level_50` or `cp160_plus` and normally set `leveling_content_required` to `false`. Review & Save then stops suggesting early leveling gear solely because the build has fewer than three equipment stages.
+
+A non-leveling build still requires at least one valid phase and one valid gear stage. The phase can represent a Level 50/CP160+ transition or final setup; the gear stage can be a bridge or final target. Do not add fake Levels 1-15 content just to silence validation.
+
 ### Duplicate or invalid IDs
 
 Persistent IDs must be unique in their scope and use only letters, numbers, dot, dash, and underscore.
@@ -63,7 +71,7 @@ A morph should point to its real base ability. The visual editor adds the base r
 
 ### Bar skill missing from the Unlock Plan
 
-Every bar ability and ultimate should exist in `unlock_order`. Add it in Skills & Passives before selecting it in Leveling Plan.
+Every bar ability and ultimate should exist in `unlock_order`. Add it in Skills & Passives before selecting it in Build Phases.
 
 ### Missing ultimate
 
@@ -92,7 +100,7 @@ A phase’s `recommended_gear_stage_ids` must refer to existing gear-stage IDs. 
 
 ### Invalid companion setup
 
-ATTB 2.1 validates companion rows independently from player skills. Check that the setup has a valid row ID, name, and role; that `companion_id` exists in the bundled companion catalog when present; and that a normal companion bar has no more than five unique non-empty skill names plus a separate ultimate.
+ATTB 3.0.0 validates companion rows independently from player skills. Check that the setup has a valid row ID, name, and role; that `companion_id` exists in the bundled companion catalog when present; and that a normal companion bar has no more than five unique non-empty skill names plus a separate ultimate.
 
 Never fix a companion validation issue by inventing player `catalog_skill_id` values. Companion abilities are plain companion skill names.
 

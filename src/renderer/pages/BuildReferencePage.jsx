@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { NavLink, useParams } from 'react-router-dom'
 import { helpTopicById } from '../utils/helpReference.mjs'
+import RelatedHelpTopics from '../components/RelatedHelpTopics'
 
 const sourceUrls = {
   'gear-sets': ['ESO-Hub Sets', 'https://eso-hub.com/en/sets/all'],
@@ -14,7 +15,7 @@ const sourceUrls = {
   mundus: ['ESO-Hub Mundus Stones', 'https://eso-hub.com/en/mundus-stones'],
   'champion-points': ['ESO-Hub Champion Points', 'https://eso-hub.com/en/champion-points'],
   skills: ['ESO-Hub Skills', 'https://eso-hub.com/en/skills'],
-  scribing: ['ESO-Hub Scribing', 'https://eso-hub.com/en/scribing'],
+  scribing: ['Official ESO Scribing Help', 'https://help.elderscrollsonline.com/app/answers/detail/a_id/65808/~/what-is-scribing%3F'],
   consumables: ['ESO-Hub Food & Drinks', 'https://eso-hub.com/en/food-drinks'],
   glossary: ['ESO-Hub Builds', 'https://eso-hub.com/en/builds'],
   companions: ['ESO-Hub Companion Traits', 'https://eso-hub.com/en/companion-traits']
@@ -284,15 +285,107 @@ function Skills() {
 
 function Scribing() {
   return <>
+    <section className="panel"><div className="section-head"><div><span className="eyebrow">Start from zero</span><h2>What Scribing actually is</h2></div></div><p>Scribing lets you create a customizable active skill from a <b>Grimoire</b> plus exactly three Scripts. The Grimoire supplies the skill framework, then Focus, Signature, and Affix Scripts decide what the finished skill actually does. The result lives in the Grimoire's parent skill line and can be placed on your normal ability bar like another active skill.</p><Note title="Current access">Scribing is a free base-game system as of July 10, 2025. Claim the free Scribing unlock if your account still needs it. A character can begin the system at Level 30 or after gaining access to the Champion System.</Note></section>
+
     <Cards items={[
-      ['Grimoire', 'The base framework of the Scribed Skill. Think of it as the ability shell you are customizing.', 'Base skill'],
-      ['Focus Script', 'Defines the main function and can determine damage type, target behavior, resource cost, or another central mechanic.', 'Main job'],
-      ['Signature Script', 'Adds a secondary mechanic or interaction. Class Mastery is a Signature Script.', 'Extra behavior'],
-      ['Affix Script', 'Adds a buff or debuff suited to the resulting skill and its target.', 'Buff / debuff'],
-      ['Luminous Ink', 'The resource consumed when you scribe or change scripts on a Scribed Skill.', 'Crafting cost'],
-      ['Compatibility', 'Not every Script works with every Grimoire, and not every otherwise-compatible combination works together.', 'Recipe validation']
+      ['Grimoire', 'The base framework and parent skill line of the Scribed Skill. The Grimoire is not the finished build target by itself.', 'Skill shell'],
+      ['Focus Script', 'Defines the main function. It can determine damage or support behavior, target type, the finished skill name, resource type, and resource cost.', 'Main job'],
+      ['Signature Script', 'Adds a second mechanic or interaction. Some signatures reinforce the parent skill line, and Class Mastery is a Signature Script option.', 'Extra behavior'],
+      ['Affix Script', 'Adds a final buff or debuff appropriate to the target and Grimoire. Single-target and area skills can expose different Major or Minor options.', 'Buff / debuff'],
+      ['Luminous Ink', 'The material spent when creating or changing the recipe. The first complete recipe normally costs three Ink because all three Script slots are being written.', 'Scribing cost'],
+      ['Compatibility', 'A Script may work with one Grimoire but not another, and two individually compatible Scripts can still be incompatible with each other in a particular recipe.', 'Recipe rules']
     ]} />
-    <section className="panel"><div className="section-head"><div><span className="eyebrow">Why ATTB stores the recipe</span><h2>Ulfsild's Contingency is not specific enough</h2></div></div><p>A build may want <b>Ulfsild's Contingency - Bleed / Lingering Torment / Resolve</b>. Another Ulfsild's recipe can play completely differently. That is why Schema 4 can reference a specific Scribed Skill recipe rather than treating the Grimoire name as the finished target.</p><Note title="Scribing order">Choose one Focus, one Signature, and one Affix Script at the Scribing Altar. The exact combination must be compatible before the skill can be created.</Note></section>
+
+    <section className="panel"><div className="section-head"><div><span className="eyebrow">Unlock checklist</span><h2>Get from "I have never used Scribing" to the Altar</h2></div></div>
+      <Table columns={['Step', 'What to do', 'Why it matters']} rows={[
+        ['1. Claim access', 'If Scribing is not already on the account, claim the free Scribing system from the Crown Store.', 'Scribing moved to the base game in July 2025; it is no longer a Gold Road-only system.'],
+        ['2. Meet the character gate', 'Reach Level 30, or have access to the Champion System.', 'A character below the access gate cannot start learning and using Scribing normally.'],
+        ['3. Start The Second Era of Scribing', 'Use the Scribing collectible/quest starter or speak to Adept Irnard Rirnil near a Mages Guild. Follow the quest into the Scholarium beneath Eyevea.', 'This tutorial opens the Scholarium and teaches the basic Grimoire + Script workflow.'],
+        ['4. Finish the Indrik wing', 'Continue through The Wing of the Indrik.', 'This provides full Scribing Altar access, opens the Grimoire vendor path, and enables Luminous Ink drops from defeated enemies.'],
+        ['5. Continue the questline once', 'Complete the remaining Scribing wing quests on one main character when practical.', 'The wing rewards unlock account-wide Scribing benefits. Later characters still need the short tutorial, but do not need the whole story just to use the system.'],
+        ['6. Learn what your build needs', 'Read the exact ATTB recipe before farming random Scripts.', 'You only need the Grimoire and the three Script effects named by the build.']
+      ]} />
+    </section>
+
+    <section className="panel"><div className="section-head"><div><span className="eyebrow">Quest wings</span><h2>What each Scholarium wing unlocks</h2></div></div>
+      <Table columns={['Quest wing', 'Main account-wide unlock', 'Why you care for a build']} rows={[
+        ['The Wing of the Indrik', 'Advances full Scribing access, establishes the normal Grimoire/vendor path, and allows Luminous Ink to drop rarely from defeated enemies.', 'Do this early. It is part of getting the system into a practical usable state.'],
+        ['The Wing of the Gryphon', 'Unlocks the normal Focus Script reward/vendor chase.', 'After this, Focus Scripts can come from daily Delves, daily Mages Guild quests, PvP Rewards for the Worthy, and rotating vendors.'],
+        ['The Wing of the Dragon', 'Unlocks the normal Signature Script reward/vendor chase, Mages Guild subsidized Scripts, the Class Mastery Signature Script chase, and rare Luminous Ink from treasure chests.', 'Do this when your recipe needs a Signature Script that is not already granted by the tutorial.'],
+        ['The Wing of the Netch', 'Unlocks the normal Affix Script reward/vendor chase and rare Luminous Ink from harvesting crafting materials.', 'Do this when your recipe needs an Affix Script that is not already granted by the questline.']
+      ]} />
+      <Note title="Account unlocks versus character access">Wing benefits are account-wide once earned, but another character still needs to complete <b>The Second Era of Scribing</b> before that character can enter the Scholarium and use the Scribing Altar.</Note>
+    </section>
+
+    <section className="panel"><div className="section-head"><div><span className="eyebrow">ATTB to ESO</span><h2>Turn a build recipe into the actual skill</h2></div></div>
+      <Table columns={['ATTB says', 'What that means in ESO', 'What you should do']} rows={[
+        ['Grimoire', 'The base Scribing skill and its parent skill line.', 'Check the parent skill-line requirement, buy or earn the Grimoire, then consume it on the character that will use the build.'],
+        ['Focus Script', 'The primary action and usually the skill resource/cost.', 'Learn the named Focus Script on that character. Do not substitute a similar damage type unless the build explicitly allows it.'],
+        ['Signature Script', 'The recipe-specific secondary mechanic.', 'Learn the exact Signature Script. This slot is often what makes two otherwise similar recipes play differently.'],
+        ['Affix Script', 'The recipe buff or debuff.', 'Learn the exact Affix Script and check whether the resulting Major/Minor effect is still useful in your group setup.'],
+        ['Exact recipe', 'One Grimoire + one Focus + one Signature + one Affix.', 'At the Scholarium Scribing Altar, select all four pieces, confirm the combination is compatible, review the resulting tooltip and cost, then Scribe.'],
+        ['Finished Scribed Skill', 'The customized active ability created from that recipe.', 'Open Skills, find it under its parent skill line, place it on the bar shown by the build, and test it before assuming the rotation is wrong.']
+      ]} />
+      <Note title="Use the Scribing tab away from the Altar">ESO's Scribing tab in the Skills menu shows known Grimoires and Scripts and lets you inspect possible combinations. Use the Usable filter when you only want ingredients this character already knows; turn it off when you are planning what to acquire next.</Note>
+      <Note title="Two different things are called Class Mastery">The Scribing <b>Class Mastery</b> item is a <b>Signature Script</b> used inside certain Scribed Skills. ATTB also tracks the separate Update 50 <b>Class Mastery</b> choice system for pure-class characters. They share a name, but they are different systems and are acquired and configured differently.</Note>
+    </section>
+
+    <section className="panel"><div className="section-head"><div><span className="eyebrow">Find the missing Script</span><h2>Where the three Script types commonly come from</h2></div></div>
+      <Table columns={['Script type', 'Common current sources', 'What it controls']} rows={[
+        ['Focus', 'Daily Delve quests, daily Mages Guild quests, PvP Rewards for the Worthy, and rotating Script vendors.', 'Main function, target behavior, resource type/cost, and much of the finished skill identity.'],
+        ['Signature', 'Daily World Boss quests, daily Cyrodiil quests, daily Fighters Guild quests, and rotating Script vendors.', 'Secondary mechanics, skill-line interactions, or special behavior such as Class Mastery.'],
+        ['Affix', 'Daily World Event quests, daily Imperial City quests, daily Undaunted quests, and rotating Script vendors.', 'The final Major/Minor buff or debuff layer.']
+      ]} />
+      <Cards items={[
+        ['Chronicler Firandil', 'The Scholarium merchant sells Grimoires and Script options. Grimoires can become cheaper on additional characters after the account has already acquired that Grimoire.', 'Scholarium'],
+        ['Other rotating vendors', 'Some Scripts can appear through vendors such as Filer Ool in the Infinite Archive and rotating Tel Var offerings. Availability changes, so check current stock rather than assuming a named Script is always there.', 'Alternative source'],
+        ['Learn the item', 'Looting or buying a Script item is not the final step. Use the item from inventory so that character permanently learns the Script for Scribing.', 'Character unlock'],
+        ['Farm with purpose', 'If ATTB names only one Focus, Signature, and Affix, chase those pieces first. Collecting every Script can wait until you actually want the full Scribing library.', 'Build-first'],
+        ['Class Mastery Signature', 'This special Signature Script uses a separate acquisition path: after the Dragon wing, collect 50 Class Script Scraps from eligible PvE, PvP, Infinite Archive, Master Writ, and other endgame rewards, combine them, then acquire/use the Script.', 'Special case']
+      ]} />
+    </section>
+
+    <section className="panel"><div className="section-head"><div><span className="eyebrow">Ink and rescribing</span><h2>Changing a recipe is flexible, but not free</h2></div></div>
+      <Cards items={[
+        ['First recipe', 'Writing all three Script slots normally consumes three Luminous Ink.', '3 changed slots'],
+        ['Later changes', 'ESO consumes Luminous Ink for each Script slot you add or change, so replacing one Script is cheaper than rewriting all three.', 'Pay per changed Script'],
+        ['Enemy drops', 'The Indrik wing unlocks rare Luminous Ink drops from defeated enemies.', 'Quest unlock'],
+        ['Resource nodes', 'The Netch wing unlocks rare Luminous Ink drops while harvesting crafting materials.', 'Quest unlock'],
+        ['Do not experiment blindly', 'Preview the finished tooltip and compatibility before spending Ink, especially when ATTB already gives you the exact recipe.', 'Save materials']
+      ]} />
+    </section>
+
+    <section className="panel"><div className="section-head"><div><span className="eyebrow">Why ATTB stores the whole recipe</span><h2>Ulfsild's Contingency is not specific enough</h2></div></div><p>A build may want <b>Ulfsild's Contingency - Bleed / Lingering Torment / Resolve</b>. Another Ulfsild's recipe can have a different job, resource behavior, secondary effect, or buff/debuff package. Schema 4 therefore stores exact recipes with a <code>scribed_skill_id</code> instead of pretending the Grimoire name alone defines the finished skill.</p>
+      <Table columns={['If ATTB shows...', 'Read it as...']} rows={[
+        ["Ulfsild's Contingency", 'The generic Grimoire. Useful when the build does not care which compatible Scripts you choose.'],
+        ["Ulfsild's Contingency - Bleed / Lingering Torment / Resolve", 'An exact target recipe. Match all three Scripts before you mark the Scribed Skill complete.'],
+        ['A temporary non-Scribing skill', 'A bridge. Use it until the required Grimoire, Scripts, and Ink are ready, then make the authored swap.']
+      ]} />
+    </section>
+
+    <section className="panel"><div className="section-head"><div><span className="eyebrow">Worked build example</span><h2>Make the Ulfsild recipe ATTB asks for</h2></div></div><p>This is the exact kind of recipe ATTB may show in a finished build. Instead of trying to unlock all of Scribing first, work the recipe one requirement at a time.</p>
+      <Table columns={['Piece', 'For this recipe', 'How to get ready']} rows={[
+        ['Grimoire', "Ulfsild's Contingency", 'Unlock Scribing and the Scholarium vendor path. Ulfsild belongs to Mages Guild in the current ATTB catalog and requires Mages Guild rank 5 before its Grimoire is usable.'],
+        ['Focus', 'Bleed Damage', 'This is a Focus Script. Its common current source family is daily Delve quests, daily Mages Guild quests, and PvP Rewards for the Worthy. Rotating Script vendors can also offer it.'],
+        ['Signature', 'Lingering Torment', 'This is a Signature Script and is awarded through The Second Era of Scribing tutorial path, so check whether the character already learned it before farming anything.'],
+        ['Affix', 'Resolve', 'This is an Affix Script awarded through The Wing of the Indrik. Completing that wing is already part of the normal route to full Scribing access.'],
+        ['Ink', 'Three Script slots on the first write', 'Bring enough Luminous Ink for the slots being written. Once all four recipe pieces are available, preview the finished tooltip at the Altar and Scribe it.'],
+        ['Bar', 'Use the finished Scribed Skill, not the generic Grimoire name', 'Find the completed skill under Mages Guild, put it in the bar slot shown by ATTB, then test the rotation and effects.']
+      ]} />
+      <Note title="The build is your shopping list">For a recipe like this, your practical checklist is Mages Guild rank 5, the Ulfsild Grimoire, Bleed Damage, Lingering Torment, Resolve, and enough Luminous Ink. Anything else in the Scribing library can wait.</Note>
+    </section>
+
+    <section className="panel"><div className="section-head"><div><span className="eyebrow">Troubleshooting</span><h2>If the build recipe will not Scribe</h2></div></div>
+      <Table columns={['Problem', 'Likely cause', 'Check']} rows={[
+        ['The Grimoire is unavailable', 'The character has not met the parent skill-line requirement, has not unlocked the vendor path, or has not consumed that Grimoire yet.', 'Check the Grimoire requirement and the character, not just the account.'],
+        ['A Script is missing from Usable', 'That character has not learned the Script.', 'Check inventory/bank for the Script item, vendor stock, or the correct daily-source category.'],
+        ['The Script is visible but cannot be selected', 'It is not compatible with that Grimoire or with another Script already chosen.', 'Clear the recipe and add the exact ATTB pieces in Focus -> Signature -> Affix order.'],
+        ['The game says you cannot afford it', 'You do not have enough Luminous Ink for the number of Script slots being written or changed.', 'Check the Ink count and the cost shown in the Scribing interface.'],
+        ['The skill exists but is not on the bar', 'Scribing creates/unlocks the active skill; it does not guarantee your final bar layout is correct.', 'Find the Scribed Skill under its parent skill line and slot it where ATTB shows it.'],
+        ['The skill behaves differently from the build description', 'One Script differs, the build is for a different patch, or the game has rebalanced the recipe.', "Compare all three Script names and ATTB's Update 50 Inc. 2 reference baseline before changing the build."]
+      ]} />
+      <Note title="Fastest path for an ATTB build">Read the exact recipe first, unlock only the required Grimoire and three Scripts, bring enough Luminous Ink, Scribe at the Scholarium, then slot and test the finished skill. You do not need to master the entire Scribing collection before using one build-required recipe.</Note>
+    </section>
   </>
 }
 
@@ -389,9 +482,10 @@ export default function BuildReferencePage() {
   }
 
   return <div className="page build-reference-page">
-    <div className="reference-topic-header"><div><NavLink to="/help" className="reference-back">‹ Help &amp; Tools</NavLink><span className="eyebrow">{category} reference</span><h1>{title}</h1><p>{blurb}</p></div>{source && <button type="button" className="btn secondary compact" onClick={openSource}>Open {source[0]} ↗</button>}</div>
+    <div className="reference-topic-header"><div><NavLink to="/help" className="reference-back">‹ Help &amp; Tools</NavLink><span className="eyebrow">{category === 'Reference' ? 'Build reference' : `${category} reference`}</span><h1>{title}</h1><p>{blurb}</p></div>{source && <button type="button" className="btn secondary compact" onClick={openSource}>Open {source[0]} ↗</button>}</div>
     {notice && <div className="error-box" role="alert">{notice}</div>}
     <Renderer />
+    <RelatedHelpTopics topicId={id} />
     <div className="reference-baseline"><b>ATTB reference baseline:</b> ESO Update 50 Inc. 2. Build advice stays contextual; when your authored build names a specific target, the build target takes priority over generic reference guidance.</div>
   </div>
 }

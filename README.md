@@ -2,7 +2,8 @@
 
 > **I Used To Be Meta Like You, Then I Took An Arrow To The Build**
 
-Current release: **v2.2.0**
+Current public release: **v3.0.0**  
+Current development version: **v3.0.0**
 
 **Arrow to the Build** is an offline-first Windows companion for **The Elder Scrolls Online**. It combines a character progression tracker with a full visual build editor so a static build guide becomes an actual plan for a specific character: what to unlock next, which skill-line ranks matter, how to spend Champion Points, what gear to chase, what belongs on each bar, and how the finished build fits together.
 
@@ -23,7 +24,7 @@ ATTB keeps character and build data on your PC. There is no account system or cl
 
 ## What ATTB does
 
-ATTB is split into two remembered workspaces that share the same local character and build data.
+ATTB is split into three remembered workspaces that share the same local character and build data.
 
 ### Character Tracker
 
@@ -37,12 +38,13 @@ It can track:
 - build-required versus personal Skill Point spending
 - build-specific next-purchase recommendations based on prerequisites, current line ranks, and available Skill Points
 - temporary leveling unlocks that retire when their job is done, with per-character keep/retire choices and reclaimable Skill Point cleanup
-- leveling, starter, intermediate, and final equipment stages
+- scope-aware equipment planning: full leveling stages for new characters, or transition/bridge/final targets for existing Level 50 and CP160+ characters
 - front and back action bars plus rotations or priority systems
 - Champion Point paths, optional branches, and final slottables
 - combat-companion targets, equipment direction, traits, abilities, Ultimate, and playstyle notes
 - build variants and loadouts
 - character backups and restore
+- optional per-character Basic Info screenshots, copied into local app data and safely re-encoded before display
 - a dedicated Help & Tools workspace with grouped Gear, Combat, Progression, Companion, and Reference sections for the ESO concepts that sit around a build
 
 Synced ESO values remain separate from the authored build target, so live character data never silently rewrites the build you are following.
@@ -54,6 +56,7 @@ The Build Editor is the authoring workspace. It can create, fork, import, edit, 
 Highlights include:
 
 - guided build creation and blank-build authoring
+- explicit build starting points for **New character**, **Existing Level 50**, and **Existing CP160+** plans, so ATTB does not require fictional leveling content for an established character
 - protected forks of bundled builds
 - autosave and recovery drafts
 - undo and redo
@@ -64,7 +67,7 @@ Highlights include:
 - automatic human-readable JSON mirrors for saved user builds
 - configurable user-build storage, defaulting to `Documents\Arrow to the Build\Builds`
 
-The visual editor and imported files use the same public **Schema 4** build format.
+The visual editor and imported files use the same public **Schema 4** build format. ATTB 3.0.0 extends Schema 4 additively with optional `progression_scope` metadata; older Schema 4 files that omit it retain the historical new-character/leveling behavior.
 
 ---
 
@@ -158,7 +161,7 @@ Companion targets can be selected per character in the Character Tracker or auth
 
 ## Help & Tools workspace
 
-ATTB 2.2.0 turns Help & Tools into a full third workspace beside Character Tracker and Build Editor. Its sidebar separates Gear, Combat, Progression, Companions, and general Reference material so the useful answer is one click away instead of buried under one giant reference page.
+Help & Tools is a full third workspace beside Character Tracker and Build Editor. Its sidebar separates Gear, Combat, Progression, Companions, and general Reference material so the useful answer is one click away instead of buried under one giant reference page.
 
 A compact Character / Build / Help tab strip fills the top of the sidebar in every workspace, while Settings remains pinned on its own at the bottom.
 
@@ -186,16 +189,34 @@ These pages are intentionally build-focused rather than exhaustive wiki replacem
 
 ## Themes and interface
 
-ATTB includes six themes:
+ATTB includes twenty built-in themes:
 
 - **ATTB Default** - dark navy/charcoal with bronze and muted cyan accents
 - **Deep Dark** - near-black with restrained green/cyan accents
-- **Light** - clean light surfaces using the same semantic layout system
+- **Light** - comfortable off-white and blue-gray surfaces with stronger panel/navigation contrast
 - **Old Scrolls** - ESO-site-inspired charcoal, black, and gold
 - **SkyTrim** - Skyrim-menu-inspired monochrome black, white, and layered gray
 - **Woodland** - muted hunter green, sage, tan, and cream built around `#3B6255`
+- **Watermelon** - dark rind greens with muted watermelon coral, cream, and seed-dark surfaces
+- **Rainbow Light** - soft neutral light surfaces with restrained rose, amber, green, blue, and violet accents
+- **Rainbow Dark** - deep neutral surfaces with the same restrained spectrum for a colorful dark option
+- **Deadx_xSmile** - near-black creator palette with electric `#ED2490` pink, `#2078E2` blue, cyan highlights, and restrained violet neon accents
+- **Midnight Blurple** - charcoal-blue with vivid blurple, cyan, and violet highlights
+- **Tokyo Dusk** - deep navy/indigo with crisp blue, cyan, violet, and amber accents
+- **Velvet Plum** - aubergine with violet, mauve, mint, and soft peach accents
+- **Emberbox** - warm charcoal-brown with burnt orange, mustard, muted aqua, and olive
+- **Polar Night** - cool slate with icy cyan, glacier blue, pale gold, and lavender
+- **OLED Aurora** - true black with electric cyan, teal, violet, and high-contrast states
+- **Carbon Crimson** - graphite with crimson actions, steel blue, and warm amber
+- **Paper Azure** - cool light surfaces with azure blue, teal, and neutral layering
+- **Latte Rose** - warm cream/blush with rose, dusty lavender, coffee brown, and sage
+- **Sage Fog** - medium sage-gray with forest, slate blue, and terracotta accents
 
-Themes change palette and surface treatment while keeping the same typography and layout metrics, so switching themes does not move labels, alter text wrapping, or change control geometry.
+Version 3 adds **Theme Schema 1**, so those built-in palettes and user-created palettes run through the same semantic color engine. Under **Settings -> General -> Theme**, you can create a custom theme from any existing theme, edit the major colors in Simple mode or the full semantic palette in Advanced mode, preview changes live, enter colors with the graphical picker or exact HEX/RGB values, reset inherited values, and save the result without editing CSS.
+
+Custom themes are ordinary JSON files stored in ATTB's user theme folder. Settings can import/export them, open or reload that folder, and export `ATTB_THEME_TEMPLATE.json` for manual authoring and sharing. Imported themes are validated as declarative color data; arbitrary CSS and executable content are not part of the theme format. See [Theme Authoring](docs/reference/THEME_AUTHORING.md) for the schema and token reference.
+
+Themes change palette and approved surface treatment while keeping the same typography and layout metrics, so switching themes does not move labels, alter text wrapping, or change control geometry.
 
 ---
 
@@ -321,7 +342,7 @@ The build folder can be changed from the app. ATTB copies managed builds before 
 
 Remote build images are disabled by default. If enabled, ATTB restricts downloads to HTTPS, public network addresses, real image formats, and a five-megabyte size limit.
 
-Character backups are human-readable JSON and can be imported or exported from **Character Tracker -> Character Data -> Backups & Import**.
+Character backups are human-readable JSON and can be imported or exported from **Character Tracker -> Character Data -> Backups & Import**. Custom Basic Info screenshots are local visual preferences and are intentionally not embedded in backup JSON.
 
 ---
 

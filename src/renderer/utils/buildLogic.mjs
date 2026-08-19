@@ -353,7 +353,7 @@ export function currentPhase(build, level, championPoints = 0, loadoutId = '') {
 
 // Stable piece IDs keep equipment progress attached to the same physical slot across display-text changes.
 export function pieceKey(piece, index) { return piece?.id ? `id:${piece.id}` : legacyPieceKey(piece, index) }
-export function legacyPieceKey(piece, index) { return `${index}:${piece?.slot}:${piece?.set}` }
+function legacyPieceKey(piece, index) { return `${index}:${piece?.slot}:${piece?.set}` }
 export function isPieceChecked(gear, stageId, piece, index) {
   const stage = gear?.[stageId]
   if (!stage) return false
@@ -378,24 +378,10 @@ function withDependents(build, id, out = new Set([id])) {
   return out
 }
 
-// Public build rows carry catalog_skill_id. The name fallback only supports in-memory test fixtures.
-const skillIdCache = new WeakMap()
-export function catalogSkillIdFor(build, lineId, item) {
-  if (item?.catalog_skill_id) return item.catalog_skill_id
-  let cache = skillIdCache.get(build)
-  if (!cache) { cache = new Map(); skillIdCache.set(build, cache) }
-  const target = normalizeSkillName(item?.name)
-  const key = `${lineId}::${target}`
-  if (cache.has(key)) return cache.get(key)
-  const hits = (catalogLineMap.get(lineId)?.skills || []).filter(skill => normalizeSkillName(skill.name) === target)
-  const value = hits.length === 1 ? hits[0].id : null
-  cache.set(key, value)
-  return value
-}
 
 // Keep skill_allocations in step with completed. Without this, unchecking a skill left its points on
 // the Status page ledger forever.
-export function reconcileAllocations(build, character, completedInput, overrides = {}) {
+function reconcileAllocations(build, character, completedInput, overrides = {}) {
   const completed = completedInput instanceof Set ? new Set(completedInput) : new Set(completedInput || [])
   const allocations = { ...(character?.skill_allocations || {}) }
   const pinned = new Set()

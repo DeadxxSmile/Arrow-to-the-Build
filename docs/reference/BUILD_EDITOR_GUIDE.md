@@ -1,12 +1,12 @@
 # Visual Build Editor Guide
 
-This guide explains the complete in-app authoring workflow. It assumes you are using the visual Build Editor rather than typing the Schema 4 JSON directly.
+This **ATTB 3.0.0** guide explains the complete in-app authoring workflow. It assumes you are using the visual Build Editor rather than typing the Schema 4 JSON directly.
 
 For a quick orientation, read **Start Here** first. For exact field names and merge rules, use **Manual JSON Authoring** and **Format & Skill IDs**.
 
 ## 1. Entering and leaving the Build Editor
 
-Select **Build Creator** at the bottom of the Character Tracker sidebar. ATTB swaps the sidebar and top bar into the Build Editor workspace.
+Select the **Build** workspace tab at the top of the sidebar. ATTB swaps the navigation and header into the Build Editor workspace while remembering your last Character page.
 
 The app remembers the last page in each workspace. Returning to the Character Tracker restores the character page you were using, and returning to the Build Editor restores the open draft and editor page.
 
@@ -71,10 +71,15 @@ Choose Magicka, Stamina, Health-focused, or Hybrid. This seeds the Level 50 attr
 
 These are recommendations, not restrictions. The generated build can be changed immediately on Character Setup.
 
-#### Progression coverage
+#### Build starting point
 
-- **Full leveling plan** creates early and later phases.
-- **Endgame-focused** creates a smaller progression scaffold for authors who do not need a complete leveling path.
+Choose who the build is meant for:
+
+- **New character** creates the traditional early and Level 15+ progression scaffold and expects leveling content.
+- **Existing Level 50** starts at Level 50 and is intended for a CP160 transition/final target.
+- **Existing CP160+** starts from an established character and makes 1-50 content optional.
+
+The choice writes the optional Schema 4 `progression_scope`. Older Schema 4 files without it continue to behave as New character builds.
 
 #### Class direction
 
@@ -116,7 +121,7 @@ Save Build:
 
 ## 5. Overview
 
-Overview defines how the build is identified, discovered, and described.
+Overview defines how the build is identified, discovered, and described. It also exposes **Progression intent**, where you can change the build starting point, whether traditional leveling content is required, and the optional starting-point note after creation/import/forking.
 
 ### Identity
 
@@ -227,13 +232,19 @@ The phase field indicates when the purchase becomes relevant. Notes can explain 
 
 Reorder rows to create a practical purchase sequence. This order drives progression guidance in the Character Tracker.
 
+### Scribed Skills
+
+When the target uses Scribing, do not treat the Grimoire name as the whole ability if the exact recipe matters. Record the finished Grimoire + Focus + Signature + Affix recipe and use the resulting `scribed_skill_id` on bars and rotations. The in-app **Help & Tools -> Progression -> Scribing** guide explains the player acquisition path, Script source families, Luminous Ink, compatibility, and how to turn an ATTB recipe into the finished ESO skill.
+
+The Scribing **Class Mastery Signature Script** and ATTB's separate Update 50 **Class Mastery choices** are different systems despite the shared name.
+
 ### Removing lines
 
 The active class lines are managed through Class Configuration. Removing another relevant line also cleans its bar and rotation references.
 
-## 9. Leveling Plan
+## 9. Build Phases / Leveling Plan
 
-The Leveling Plan is the progression heart of ATTB.
+This page is the progression heart of ATTB. For a new-character build the sidebar calls it **Leveling Plan**; for Level 50 / CP160+ scopes it becomes **Build Phases** so established-character rebuilds are not presented as leveling guides.
 
 ### Phase management
 
@@ -353,7 +364,7 @@ Deleting or making a node non-slottable automatically removes invalid final-slot
 
 ## 12. Companions
 
-The Companion editor is a first-class Schema 4 authoring page in ATTB 2.1. It shows every companion in the bundled companion catalog with two researched starter identities and lets you copy either setup into the current build.
+The Companion editor is a first-class Schema 4 authoring page in ATTB 3.0.0. It shows every companion in the bundled companion catalog with two researched starter identities and lets you copy either setup into the current build.
 
 Adding a preset copies ordinary JSON into the build. It is then fully editable and does not require the preset library to exist at runtime. You can also create a custom companion setup.
 
@@ -472,7 +483,7 @@ For a new build, this sequence minimizes rework:
 2. Finish Overview and Character Setup.
 3. Lock the class configuration.
 4. Build the Unlock Plan.
-5. Build leveling phases and hotbars.
+5. Build the appropriate phase plan and hotbars for the declared starting point.
 6. Add gear progression.
 7. Add all three CP plans.
 8. Add loadouts and variants.

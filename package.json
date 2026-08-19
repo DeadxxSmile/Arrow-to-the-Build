@@ -1,6 +1,6 @@
 {
   "name": "arrow-to-the-build",
-  "version": "2.2.0",
+  "version": "3.0.0",
   "description": "Offline-first ESO build and progression companion with optional local addon synchronization",
   "main": "src/main/main.js",
   "imports": {
@@ -58,7 +58,9 @@
       "docs/reference/BUILD_VALIDATION_GUIDE.md",
       "docs/reference/ESO_ADDON_INTEGRATION.md",
       "docs/reference/BUILD_TEMPLATE.json",
-      "package.json"
+      "package.json",
+      "resources/themes/**/*",
+      "docs/reference/THEME_AUTHORING.md"
     ],
     "win": {
       "target": "nsis",

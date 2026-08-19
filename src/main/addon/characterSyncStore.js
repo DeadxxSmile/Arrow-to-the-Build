@@ -199,7 +199,7 @@ function createCharacterSyncStore(deps) {
           world_name: row.world_name || snapshot.identity?.worldName || '',
           captured_at: Number(row.captured_at || snapshot.capturedAt || 0) || 0,
           live,
-          observed: { skills: snapshot.skills, equipment: snapshot.equipment, champion: snapshot.champion, metadata: snapshot.metadata, captureReason: snapshot.captureReason }
+          observed: { identity: snapshot.identity, skills: snapshot.skills, equipment: snapshot.equipment, champion: snapshot.champion, metadata: snapshot.metadata, captureReason: snapshot.captureReason }
         }
         const createOptions = { ...options.create_build }
         const author = cleanText(createOptions.author || 'NPC', 80) || 'NPC'
@@ -280,7 +280,7 @@ function createCharacterSyncStore(deps) {
       linked_at: row.linked_at,
       last_applied_at: row.last_applied_at,
       live,
-      observed: snapshot ? { skills: snapshot.skills, equipment: snapshot.equipment, champion: snapshot.champion, metadata: snapshot.metadata, captureReason: snapshot.captureReason } : null,
+      observed: snapshot ? { identity: snapshot.identity, skills: snapshot.skills, equipment: snapshot.equipment, champion: snapshot.champion, metadata: snapshot.metadata, captureReason: snapshot.captureReason } : null,
       overrides: overrideRows(characterId)
     }
   }

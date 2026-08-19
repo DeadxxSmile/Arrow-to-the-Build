@@ -3,411 +3,325 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Arrow to the Build: ESO character tracker, build editor, companions, and local sync</title>
-  <meta name="description" content="A free, offline Windows app for The Elder Scrolls Online that turns a build guide into a step-by-step plan for your actual character. Sync from ESO or track by hand, with a full Build Editor, audited Update 50 unlocks, companions, and readable Schema 4 JSON.">
-  <meta name="theme-color" content="#18110d">
+  <title>Arrow to the Build: ESO character tracker, build editor, and local sync</title>
+  <meta name="description" content="A free, offline Windows app for The Elder Scrolls Online that turns a build guide into a step-by-step plan for the character you actually play. Sync from ESO or track by hand, with a full Build Editor, exact unlock timing, companions, and readable Schema 4 JSON.">
+  <meta name="theme-color" content="#071018">
   <link rel="canonical" href="https://arrowtothebuild.com/">
   <meta property="og:title" content="Arrow to the Build">
-  <meta property="og:description" content="Turn an ESO build guide into a step-by-step plan for the character you actually play. Local sync, audited unlock timing, companions, a full Build Editor, and readable Schema 4 JSON.">
+  <meta property="og:description" content="Your build guide, turned into a plan for the character you actually play. Track by hand or sync from ESO, then follow the exact unlocks, gear, Champion Points, bars, and companions that get you there.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://arrowtothebuild.com/">
   <meta property="og:image" content="https://arrowtothebuild.com/assets/social/attb-og.webp">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Arrow to the Build">
-  <meta name="twitter:description" content="An offline-first ESO character tracker and Build Editor with local addon synchronization, exact progression gates, combat companions, gear roadmaps, Champion Points, and structured hotbars.">
+  <meta name="twitter:description" content="An offline-first ESO character tracker and Build Editor with local addon sync, exact progression gates, combat companions, gear roadmaps, Champion Points, and structured hotbars.">
   <meta name="twitter:image" content="https://arrowtothebuild.com/assets/social/attb-og.webp">
   <link rel="icon" href="assets/logo/attb-logo.png">
-  <link rel="stylesheet" href="styles.css?v=2.2.0-old-scrolls-web">
+  <link rel="stylesheet" href="styles.css?v=3.0.0-v3-site8">
 </head>
-<body class="old-scrolls-web">
-  <div class="ambient ambient-one" aria-hidden="true"></div>
-  <div class="ambient ambient-two" aria-hidden="true"></div>
+<body>
+  <header class="window-bar">
+    <button class="nav-toggle" id="nav-toggle" aria-label="Open navigation" aria-controls="site-sidebar" aria-expanded="false" type="button">
+      <span></span><span></span><span></span>
+    </button>
+    <a class="window-brand" href="#overview" aria-label="Arrow to the Build home">
+      <img src="assets/logo/attb-logo.png" alt="">
+      <strong>ATTB</strong>
+      <span aria-hidden="true">|</span>
+      <b>v3.0.0</b>
+    </a>
+    <div class="window-status"><span class="status-dot"></span> Current release</div>
+  </header>
 
-  <div class="site-shell">
-    <header class="hero" id="top">
-      <nav class="topbar" aria-label="Primary navigation">
-        <a class="brand" href="#top" aria-label="Arrow to the Build home">
-          <img src="assets/logo/attb-logo.png" alt="">
-          <span>Arrow to the Build</span>
-          <small>v2.2.0</small>
-        </a>
-        <div class="topbar-links">
-          <a href="#features">Features</a>
-          <a href="#workflow">How it works</a>
-          <a href="#addon">ESO Addon</a>
-          <a href="#screenshots">Screenshots</a>
-          <a href="#build-json">Build JSON</a>
-          <a href="#install">Install</a>
-          <a class="button compact" href="https://github.com/DeadxxSmile/Arrow-to-the-Build" target="_blank" rel="noreferrer">GitHub</a>
+  <div class="nav-scrim" id="nav-scrim" hidden></div>
+
+  <aside class="site-sidebar" id="site-sidebar" aria-label="Website navigation">
+    <div class="sidebar-cta">
+      <a class="sidebar-download" href="https://github.com/DeadxxSmile/Arrow-to-the-Build/releases/latest" target="_blank" rel="noreferrer">
+        <span class="dl-icon" aria-hidden="true">&#8615;</span>
+        <span class="dl-text"><b>Download v3.0.0</b><small>Latest release · Windows 10/11</small></span>
+      </a>
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Sections">
+      <span class="nav-group">START HERE</span>
+      <a href="#overview">Overview</a>
+      <a href="#whats-new">What's new in v3</a>
+
+      <span class="nav-group">WORKSPACES</span>
+      <a href="#character">Character Tracker</a>
+      <a href="#build">Build Editor</a>
+      <a href="#help">Help &amp; Tools</a>
+
+      <span class="nav-group">CONNECTED</span>
+      <a href="#sync">ESO Addon &amp; Sync</a>
+      <a href="#themes">Themes &amp; Customization</a>
+      <a href="#json">Build &amp; Theme JSON</a>
+
+      <span class="nav-group">GET ATTB</span>
+      <a href="#gallery">Screenshots</a>
+      <a href="#install">Download &amp; Install</a>
+    </nav>
+
+    <a class="sidebar-settings" href="https://github.com/DeadxxSmile/Arrow-to-the-Build" target="_blank" rel="noreferrer"><span aria-hidden="true">&#9881;</span> <span>GitHub</span></a>
+  </aside>
+
+  <main class="site-main">
+    <section class="hero section-pad" id="overview">
+      <div class="hero-copy">
+        <span class="eyebrow">OFFLINE-FIRST ESO CHARACTER TRACKER + BUILD EDITOR</span>
+        <h1>I Used To Be Meta Like You,<br>Then I Took An <em>Arrow To The Build</em></h1>
+        <p class="hero-lead">Your build guide, turned into a plan for <em>your</em> character. You have a guide open on one monitor and a half-leveled character on the other, trying to work out what to actually do next. ATTB closes that gap. Track by hand or sync straight from ESO, then follow the exact unlocks, gear stages, Champion Point paths, bars, and companion setups that get you there. The guide is the plan. Your character is the progress bar.</p>
+        <div class="hero-actions">
+          <a class="btn primary" href="https://github.com/DeadxxSmile/Arrow-to-the-Build/releases/latest" target="_blank" rel="noreferrer">Download latest release</a>
+          <a class="btn" href="https://github.com/DeadxxSmile/Arrow-to-the-Build" target="_blank" rel="noreferrer">View source on GitHub</a>
         </div>
-      </nav>
-
-      <div class="hero-grid">
-        <div class="hero-copy">
-          <span class="eyebrow">Offline-first ESO character tracker + build editor</span>
-          <h1>I Used To Be Meta Like You,<br>Then I Took An <em>Arrow To The Build</em></h1>
-          <p class="hero-subhead">Your build guide, turned into a plan for <em>your</em> character.</p>
-          <p class="hero-text">You've got a build guide open on one monitor and your half-leveled character on the other, trying to work out what to actually do next. ATTB closes that gap. Track your character by hand or sync it straight from ESO, then follow the exact unlocks, gear stages, Champion Point paths, hotbars, and companion setups that get you there. The guide is the plan. Your character is the progress bar.</p>
-          <div class="cta-row">
-            <a class="button primary" href="https://github.com/DeadxxSmile/Arrow-to-the-Build/releases/latest" target="_blank" rel="noreferrer">Download latest release</a>
-            <a class="button secondary" href="https://github.com/DeadxxSmile/Arrow-to-the-Build" target="_blank" rel="noreferrer">View source on GitHub</a>
-            <a class="button ghost" href="https://github.com/DeadxxSmile/Arrow-to-the-Build#build-from-source" target="_blank" rel="noreferrer">Build from source</a>
-          </div>
-          <p class="cta-note">Free and open source. No account. No cloud sync. Character and build data stay on your PC.</p>
-          <div class="meta-row" aria-label="Project details">
-            <span class="meta-pill version">v2.2.0</span>
-            <span class="meta-pill">Windows 10 / 11</span>
-            <span class="meta-pill">ESO Addon 1.1.1</span>
-            <span class="meta-pill">Update 50 audited</span>
-            <span class="meta-pill">Schema 4 JSON</span>
-          </div>
-        </div>
-
-        <button class="hero-shot elevated" type="button" data-lightbox="assets/screenshots/synced-basic-setup.webp" data-title="Character Tracker with synchronized ESO state and build planning">
-          <img src="assets/screenshots/synced-basic-setup.webp" alt="ATTB Character Tracker showing Talia Tempest, synchronized character information, and build planning tools">
-          <span class="shot-badge">Your character now, next to the plan</span>
-        </button>
+        <p class="quiet">Free and open source · No account · No cloud sync · Character and build data stay on your PC</p>
       </div>
-    </header>
 
-    <main>
-      <section class="section" id="features">
-        <div class="section-heading">
-          <span class="eyebrow">What ATTB does</span>
-          <h2>Everything for the build, in one place that runs offline.</h2>
-          <p>Tracking your character and authoring a build share the same underlying data. What ESO says you have now and what the build wants you to aim for are kept firmly apart, so syncing never scribbles over your plan.</p>
-        </div>
+      <button class="app-shot hero-shot" data-lightbox="assets/v3/hero-basic-info.webp" data-title="Your character now, next to the plan" type="button">
+        <img src="assets/v3/hero-basic-info.webp" alt="ATTB Character Tracker showing Talia Tempest next to the build plan">
+        <span class="shot-label">Your character now, next to the plan</span>
+      </button>
+    </section>
 
-        <div class="feature-grid">
-          <article class="feature-card card"><span class="feature-icon">01</span><h3>Character-specific progression</h3><p>Track the real name, level, race, alliance, attributes, skill-line ranks, purchases, gear, Champion Points, build, and variant for each character.</p></article>
-          <article class="feature-card card"><span class="feature-icon">02</span><h3>Exact unlock roadmap</h3><p>Recommendations use audited Update 50 line ranks, exact passive-point gates, prerequisites, morph readiness, Skill Points, and build priority before calling a purchase available. Temporary leveling skills also know when their job is done, so yesterday's filler stops shouting from the top of the list.</p></article>
-          <article class="feature-card card"><span class="feature-icon">03</span><h3>Complete skill tracking</h3><p>Every skill line counts: class, weapon, armor, World, Guild, Alliance War, racial, crafting, Scribing, and Class Mastery. Not just the two bars you fight with.</p></article>
-          <article class="feature-card card"><span class="feature-icon">04</span><h3>Gear roadmaps</h3><p>Leveling, starter, intermediate, and final stages can track every individual armor slot, jewelry piece, and weapon with traits, enchants, sources, and alternatives.</p></article>
-          <article class="feature-card card"><span class="feature-icon">05</span><h3>Action bars &amp; rotations</h3><p>Put what you're actually slotting next to what the build wants: front and back bars, ultimates, when each skill comes online, and a rotation to run for every stage of leveling.</p></article>
-          <article class="feature-card card"><span class="feature-icon">06</span><h3>Champion Point planning</h3><p>Track earned and spent points, current slottables, required connection paths, recommended branches, optional alternatives, and final Craft, Warfare, and Fitness bars.</p></article>
-          <article class="feature-card card"><span class="feature-icon">07</span><h3>Combat companions</h3><p>All eight current combat companions are included with two curated starter setups each, plus build-authored companion targets, gear traits, weapons, skills, and priority order.</p></article>
-          <article class="feature-card card"><span class="feature-icon">08</span><h3>Local ESO synchronization</h3><p>The bundled single-purpose addon exports observed character state through ESO SavedVariables. New characters are discovered locally and only linked when you approve them.</p></article>
-          <article class="feature-card card"><span class="feature-icon">09</span><h3>Full visual Build Editor</h3><p>Create guided builds, start from the advanced template, fork protected bundled builds, import community JSON, edit every major section, and review before saving.</p></article>
-          <article class="feature-card card"><span class="feature-icon">10</span><h3>Safe drafts &amp; revisions</h3><p>Recovery autosave, undo/redo, immutable saved revisions, protected bundled originals, readable JSON mirrors, and external-change protection keep authoring recoverable.</p></article>
-          <article class="feature-card card"><span class="feature-icon">11</span><h3>Portable Schema 4 builds</h3><p>Bundled, imported, manually edited, and visually authored builds share the same human-readable JSON format with stable catalog IDs and runtime validation.</p></article>
-          <article class="feature-card card"><span class="feature-icon">12</span><h3>Six coherent themes</h3><p>ATTB Default, Deep Dark, Light, Old Scrolls, SkyTrim, and Woodland share the same layout and typography while changing the palette and surface treatment through one semantic theme system.</p></article>
-          <article class="feature-card card"><span class="feature-icon">13</span><h3>Help &amp; Tools workspace</h3><p>Help &amp; Tools is now its own workspace, with Gear, Combat, Progression, Companions, and Reference sections instead of one giant drawer. Traits, sets, glyphs, stats, buffs, Mundus Stones, Champion Points, Scribing, build jargon, and more stay close to the plan and answer the question “why does this matter to my build?”</p></article>
-        </div>
-      </section>
+    <section class="stat-strip" aria-label="Arrow to the Build facts">
+      <article><strong>3</strong><span>remembered workspaces</span></article>
+      <article><strong>20</strong><span>built-in themes</span></article>
+      <article><strong>57</strong><span>Theme Schema color tokens</span></article>
+      <article><strong>7</strong><span>bundled class builds</span></article>
+      <article><strong>1</strong><span>local ESO addon</span></article>
+      <article><strong>0</strong><span>cloud accounts required</span></article>
+    </section>
 
-      <section class="section workflow-section" id="workflow">
-        <div class="section-heading centered">
-          <span class="eyebrow">How it works</span>
-          <h2>Three steps, then go play.</h2>
-          <p>The whole thing hangs on one idea: what you own right now and what the build wants next are two different lists, and ATTB always knows which is which.</p>
-        </div>
-        <div class="workflow-grid">
-          <article class="workflow-step"><span class="step-number">1</span><div><h3>Add or discover the character</h3><p>Create a profile manually, restore a backup, or let the optional ESO addon discover the character you are actually playing.</p></div></article>
-          <article class="workflow-step"><span class="step-number">2</span><div><h3>Pick the build you're chasing</h3><p>Grab one of the Mighty Seven, attach a saved build, spin up a guided draft, or build a fresh one straight from the character you just synced.</p></div></article>
-          <article class="workflow-step"><span class="step-number">3</span><div><h3>Do the next thing it tells you</h3><p>Unlock roadmap, hotbars for the stage you're at, gear stages, Champion Point paths, companion setup. The next useful move, not a level-50 screenshot you can't use yet.</p></div></article>
-        </div>
-      </section>
+    <section class="content-section" id="whats-new">
+      <div class="section-heading">
+        <span class="eyebrow">VERSION 3.0.0</span>
+        <h2>The app grew up.</h2>
+        <p>v3 is not a pile of new features. It is the same app, finally laid out the way it should have been from the start: clearer hierarchy, fewer walls of numbers, and a lot less squinting.</p>
+      </div>
+      <div class="feature-cards four">
+        <article class="panel"><span class="card-kicker">UI / UX</span><h3>Every workspace, reworked</h3><p>Character progression, gear, skills, Champion Points, the Build Editor, Help, and settings were rebuilt around what you actually look at, instead of stacking every number in one place and wishing you luck.</p></article>
+        <article class="panel"><span class="card-kicker">THEMES</span><h3>One theme engine</h3><p>Built-in and custom themes now run on the same 57 tokens. Pick colors in a friendly editor, type exact HEX or RGB, watch it change live, and hand the result off as plain JSON.</p></article>
+        <article class="panel"><span class="card-kicker">CHARACTERS</span><h3>Give it a face</h3><p>Drop in a screenshot of your character as Basic Info artwork. ATTB decodes, resizes, and re-encodes it locally before showing it, so the file cannot smuggle anything in.</p></article>
+        <article class="panel"><span class="card-kicker">HARDENING</span><h3>Data stays data</h3><p>Every build, character, and theme import gets checked for size, depth, and nasty keys before ATTB touches it. Imported JSON is read as data, never run as code.</p></article>
+      </div>
+    </section>
 
-      <section class="section addon-section" id="addon">
-        <div class="section-heading centered">
-          <span class="eyebrow">ATTB ESO Addon 1.1.1</span>
-          <h2>The addon reads your character. That's all it does.</h2>
-          <p>The desktop app ships with one small addon that does exactly one job: it watches the character you're playing and writes a snapshot to a local file through ESO's normal SavedVariables system. No accounts, no network, no reaching back into the game.</p>
-        </div>
+    <section class="content-section workspace-section" id="character">
+      <div class="section-heading split-heading">
+        <div><span class="eyebrow">CHARACTER WORKSPACE</span><h2>Follow the build without losing the character.</h2></div>
+        <p>What ESO says you own right now and what the build wants next are two different lists, and ATTB always knows which is which. Syncing updates the first one. It never scribbles over the second.</p>
+      </div>
 
-        <div class="addon-component-grid single">
-          <article class="addon-component card">
-            <span class="component-label">Single local exporter</span>
-            <h3>ArrowToTheBuild</h3>
-            <p>It grabs identity, level, attributes, spare points, skill lines, purchased skills and morphs, passive ranks, both action bars, equipped gear, and Champion Points. It doesn't press buttons for you and it doesn't talk to the desktop app. It writes a file; that's the whole relationship.</p>
-            <code>SavedVariables\ArrowToTheBuild.lua</code>
-          </article>
+      <div class="feature-layout">
+        <div class="feature-copy">
+          <article class="feature-row"><span>01</span><div><h3>Basic Info that reads like a profile</h3><p>Identity, combat direction, attributes, the latest addon snapshot, and an optional character portrait, all in one glance instead of five tabs.</p></div></article>
+          <article class="feature-row"><span>02</span><div><h3>An unlock roadmap in the right order</h3><p>Line ranks, prerequisites, morph readiness, passive gates, spare Skill Points, and your own manual picks feed one ordered queue. When a leveling skill has done its job, it stops shouting from the top of the list.</p></div></article>
+          <article class="feature-row"><span>03</span><div><h3>Gear that answers "what am I chasing?"</h3><p>Current equipment, live set coverage, acquisition stages, sources, traits, enchants, and quality targets, slot by slot, so you always know the next piece to hunt.</p></div></article>
+          <article class="feature-row"><span>04</span><div><h3>Champion Points with a spend order</h3><p>Observed investment, current slottables, required connectors, recommended branches, optional detours, and exactly where the next banked points go.</p></div></article>
         </div>
-
-        <div class="sync-note elevated">
-          <div class="sync-note-icon">/reloadui</div>
-          <div>
-            <h3>ESO controls when SavedVariables reach disk.</h3>
-            <p>The addon can capture changes in ESO memory, but ESO decides when the physical Lua file is written. Loading screens, logout, exit, and other save opportunities may refresh it naturally. If the desktop looks stale, <strong>/reloadui is the reliable refresh-now path</strong>.</p>
-          </div>
+        <div class="shot-stack">
+          <button class="app-shot" data-lightbox="assets/v3/skills-passives.webp" data-title="Skills &amp; Passives" type="button"><img src="assets/v3/skills-passives-crop.webp" alt="Skills and Passives unlock roadmap" loading="lazy"><span class="shot-label">Skills &amp; Passives</span></button>
+          <button class="app-shot" data-lightbox="assets/v3/equipment-roadmap.webp" data-title="Equipment Roadmap" type="button"><img src="assets/v3/equipment-roadmap-crop.webp" alt="Equipment roadmap with current set coverage" loading="lazy"><span class="shot-label">Equipment Roadmap</span></button>
         </div>
+      </div>
 
-        <div class="addon-benefits-grid">
-          <article class="card"><b>Synced data is just game state</b><p>What comes in from ESO stays labeled as what you actually own. It never quietly turns itself into build advice.</p></article>
-          <article class="card"><b>Your plan is yours</b><p>Syncing won't touch your Build Notes, future unlocks, variants, gear roadmap, or companion planning. That side of the wall is off limits.</p></article>
-          <article class="card"><b>Nothing happens without a yes</b><p>A newly spotted character isn't added or merged on its own. You decide: ignore it, link it, track it, or build from it.</p></article>
-          <article class="card"><b>One file, one job</b><p>The desktop app watches a single SavedVariables file, and the addon only collects the handful of things ATTB needs. Nothing more.</p></article>
+      <div class="mini-grid">
+        <article class="panel"><h3>Current Levels</h3><p>The broad-strokes view of where the character sits, without duplicating the detailed purchase tracking that lives under Skills and Passives.</p></article>
+        <article class="panel"><h3>Skill Bars &amp; Rotations</h3><p>Your current front and back bars stay pinned up top, then open the leveling band you are in for hotbars, role notes, and a rotation to actually run.</p></article>
+        <article class="panel"><h3>Companions</h3><p>Pick a companion target with weapon, armor, traits, ability priority, and Ultimate. Room to read it, not sixteen presets crammed into tiny cards.</p></article>
+        <article class="panel"><h3>Backups &amp; Import</h3><p>Character backups are plain, readable JSON. Your local portrait stays local, deliberately kept out of the backup file.</p></article>
+      </div>
+    </section>
+
+    <section class="content-section workspace-section alt" id="build">
+      <div class="section-heading split-heading">
+        <div><span class="eyebrow">BUILD WORKSPACE</span><h2>Create, fork, import, and revise without hand-editing JSON.</h2></div>
+        <p>The Build Editor is a whole second workspace. Rough one out with guided creation, fork a protected bundled build, import community JSON, or author every section by hand. Autosave, undo, redo, validation, immutable revisions, and a review pass all come along for the ride.</p>
+      </div>
+
+      <div class="two-up feature-showcase">
+        <button class="app-shot" data-lightbox="assets/v3/build-library.webp" data-title="Build Library" type="button"><img src="assets/v3/build-library-crop.webp" alt="Build Library showing bundled and editable builds" loading="lazy"><span class="shot-label">Build Library</span></button>
+        <div class="feature-copy compact">
+          <article class="feature-row"><span>01</span><div><h3>Start however you want</h3><p>Guided build, blank advanced draft, a safe fork of a bundled one, or a Schema 4 import from the community.</p></div></article>
+          <article class="feature-row"><span>02</span><div><h3>Author the whole plan</h3><p>Setup, class lines, skills, leveling phases, gear, Champion Points, companions, loadouts, variants, bars, and rotations all live in the editor.</p></div></article>
+          <article class="feature-row"><span>03</span><div><h3>Review before you commit</h3><p>Blocking errors, warnings, quality nudges, patch compatibility, and recovery state all surface before a permanent revision is saved.</p></div></article>
         </div>
+      </div>
+    </section>
 
-        <div class="addon-gallery">
-          <button class="addon-shot elevated" type="button" data-lightbox="assets/screenshots/addon-onboarding.webp" data-title="Optional ESO addon onboarding">
-            <img src="assets/screenshots/addon-onboarding.webp" loading="lazy" alt="ATTB onboarding dialog explaining optional ESO synchronization and SavedVariables timing">
-            <span>Optional integration is explained before installation</span>
+    <section class="content-section workspace-section" id="help">
+      <div class="section-heading split-heading">
+        <div><span class="eyebrow">HELP &amp; TOOLS WORKSPACE</span><h2>Look up the ESO concept without leaving your build behind.</h2></div>
+        <p>ATTB is not trying to be a wiki. Its reference pages explain the mechanic, then explain why that mechanic matters while you are following or authoring a build, which is the part the wikis leave out.</p>
+      </div>
+      <div class="two-up feature-showcase reverse">
+        <div class="feature-copy compact">
+          <article class="feature-row"><span>GEAR</span><div><h3>Sets, traits, glyphs, weights, weapons</h3><p>Set math, trader shopping, trait targets, enchants, armor mix, front and back bar behavior, and where the gear actually drops.</p></div></article>
+          <article class="feature-row"><span>COMBAT</span><div><h3>Stats, caps, buffs, status effects</h3><p>Plain-English penetration, crit, sustain, Major and Minor effects, damage-type status effects, and the numbers guides assume you already memorized.</p></div></article>
+          <article class="feature-row"><span>PROG</span><div><h3>Skills, Champion Points, Scribing</h3><p>Morphs, passives, Class Mastery, slottables, path connectors, Scripts, Grimoires, and the rest of the progression vocabulary.</p></div></article>
+        </div>
+        <button class="app-shot" data-lightbox="assets/v3/help-home.webp" data-title="Help &amp; Tools" type="button"><img src="assets/v3/help-home-crop.webp" alt="Help and Tools workspace home" loading="lazy"><span class="shot-label">Help &amp; Tools</span></button>
+      </div>
+    </section>
+
+    <section class="content-section" id="sync">
+      <div class="section-heading">
+        <span class="eyebrow">OPTIONAL ESO INTEGRATION</span>
+        <h2>The addon reads your character. That is the whole job.</h2>
+        <p>One small bundled addon watches the character you are playing and writes a snapshot to a local file through ESO's own SavedVariables. No accounts, no network, no reaching back into the game. It writes a file, and that is the entire relationship.</p>
+      </div>
+      <div class="sync-grid">
+        <div class="timeline">
+          <article><span>1</span><div><h3>Install it or stay manual</h3><p>ATTB can install or repair the single-purpose addon for you, or you can skip it entirely and track everything by hand.</p></div></article>
+          <article><span>2</span><div><h3>ESO writes a snapshot</h3><p>Identity, level, attributes, line ranks, purchases, both bars, gear, and Champion Points all go out through SavedVariables.</p></div></article>
+          <article><span>3</span><div><h3>You approve the link</h3><p>A newly spotted character is never silently merged. You decide whether to ignore it, link it, track it, or build from it.</p></div></article>
+          <article><span>4</span><div><h3>Need fresh data? <code>/reloadui</code></h3><p>ESO decides when SavedVariables actually hit disk. When the snapshot looks stale, <code>/reloadui</code> is the reliable refresh-now button.</p></div></article>
+        </div>
+        <button class="app-shot" data-lightbox="assets/v3/addon-sync.webp" data-title="ESO Addon &amp; Sync settings" type="button"><img src="assets/v3/addon-sync-crop.webp" alt="ESO Addon and Sync settings" loading="lazy"><span class="shot-label">Settings · ESO Addon &amp; Sync</span></button>
+      </div>
+    </section>
+
+    <section class="content-section alt" id="themes">
+      <div class="section-heading split-heading">
+        <div><span class="eyebrow">THEME SCHEMA 1</span><h2>Use ours, remix one, or make your own.</h2></div>
+        <p>Twenty built-in themes share the same 57 semantic tokens. Click one to see the main page wearing it. The in-app editor stays friendly for people who do not write CSS, and the exported JSON stays the portable source of truth.</p>
+      </div>
+
+      <div class="theme-preview">
+        <div class="theme-rail" role="tablist" aria-label="Built-in themes"></div>
+
+        <figure class="theme-stage">
+          <button class="theme-stage-btn" id="theme-stage-btn" type="button" aria-label="Open theme preview full size">
+            <img id="theme-shot" src="assets/themes/theme-default.webp" alt="ATTB main page shown in the ATTB Default theme">
+            <span class="theme-expand" aria-hidden="true">Click to expand</span>
           </button>
-          <button class="addon-shot elevated" type="button" data-lightbox="assets/screenshots/new-eso-character.webp" data-title="New ESO character discovered by ATTB">
-            <img src="assets/screenshots/new-eso-character.webp" loading="lazy" alt="ATTB dialog asking whether to add and sync a newly discovered ESO character">
-            <span>Character discovery always waits for approval</span>
-          </button>
-          <button class="addon-shot elevated" type="button" data-lightbox="assets/screenshots/first-run.webp" data-title="ATTB before a character has been added">
-            <img src="assets/screenshots/first-run.webp" loading="lazy" alt="ATTB Character Tracker on a fresh profile with manual character creation and Build Editor options">
-            <span>Addon sync stays optional; the manual Character Tracker and Build Editor remain available</span>
-          </button>
+          <figcaption id="theme-caption"><b>ATTB Default</b> <span>Navy · bronze · cyan</span></figcaption>
+        </figure>
+      </div>
+
+      <div class="two-up feature-showcase theme-editor-showcase">
+        <button class="app-shot" data-lightbox="assets/v3/theme-editor.webp" data-title="Visual Theme Editor" type="button"><img src="assets/v3/theme-editor.webp" alt="ATTB visual theme editor with color fields and a live preview" loading="lazy"><span class="shot-label">Settings · Create Custom Theme</span></button>
+        <div class="feature-copy compact">
+          <span class="eyebrow">THE CUSTOMIZATION TOOL</span>
+          <article class="feature-row"><span>SIMPLE</span><div><h3>Start with the 28 that matter</h3><p>The simple editor shows the colors that define the app: backgrounds, text, accents, navigation, controls, and buttons. Enough to make it yours without opening a spreadsheet.</p></div></article>
+          <article class="feature-row"><span>ADVANCED</span><div><h3>All 57 tokens when you want them</h3><p>Advanced mode opens the full contract. Pick colors by eye or type exact HEX and RGB, and the whole app recolors live while the editor is open.</p></div></article>
+          <article class="feature-row"><span>PORTABLE</span><div><h3>Save it as ordinary JSON</h3><p>Your theme exports to the same Theme Schema 1 file the built-ins use. Share it, import someone else's, or hand-edit it in any text editor.</p></div></article>
         </div>
+      </div>
+    </section>
 
-        <div class="addon-actions">
-          <a class="button primary" href="https://github.com/DeadxxSmile/Arrow-to-the-Build-ESO-Addon" target="_blank" rel="noreferrer">ESO addon source</a>
-          <a class="button secondary" href="https://github.com/DeadxxSmile/Arrow-to-the-Build/blob/main/docs/reference/ESO_ADDON_INTEGRATION.md" target="_blank" rel="noreferrer">Integration guide</a>
-          <a class="button ghost" href="https://www.esoui.com/forums/showthread.php?t=8957" target="_blank" rel="noreferrer">SavedVariables timing reference</a>
-        </div>
-      </section>
-
-      <section class="section mighty-section">
-        <div class="mighty-copy">
-          <span class="eyebrow">The Mighty Seven</span>
-          <h2>One solid build per class, ready to level.</h2>
-          <p>Every class gets a flexible, pure-class PvE build to start from. Each one comes fully loaded: setup help, catalog-linked unlocks, leveling bands, hotbars, gear stages, Champion Point paths, consumables, warnings, Scribing guidance, Class Mastery picks, and companion recommendations. Temporary leveling purchases now come with real handoff points too, so the build knows when it is time to stop asking for the skill that got you there.</p>
-          <p class="muted">They're starting points that carry you from early levels to a working endgame setup. They're not a promise that one loadout wins every trial, arena, and PvP campaign. Nothing does.</p>
-        </div>
-        <div class="class-orbit" aria-label="Bundled classes">
-          <span>Arcanist</span><span>Dragonknight</span><span>Necromancer</span><span>Nightblade</span><span>Sorcerer</span><span>Templar</span><span>Warden</span>
-        </div>
-      </section>
-
-      <section class="section showcase-section">
-        <article class="showcase-row">
-          <div class="showcase-copy">
-            <span class="eyebrow">Audited progression data</span>
-            <h2>It won't tell you to buy something you can't buy yet.</h2>
-            <p>The Update 50 catalog knows the exact rank each active skill unlocks at and the exact point each passive opens up. It also knows a morph isn't the same as the rank that unlocks the skill, so it won't confuse the two and send you shopping early. And when a leveling skill has finally done its job, ATTB can retire it from the roadmap instead of nagging you to buy it forever. You keep the final say: mark one done early when you know you're finished with it, or keep one past its cutoff if it's still pulling weight.</p>
-            <ul class="check-list">
-              <li>967 player skill rows in the audited catalog</li>
-              <li>Every ordinary passive point has a verified unlock rank</li>
-              <li>Morphs require the base ability to reach Rank IV</li>
-              <li>Recommendations also respect prerequisites and available Skill Points</li>
-              <li>Temporary unlocks can retire by level, skill-line rank, or a replacement unlock</li>
-              <li>Owned retired skills show reclaimable Skill Points without rewriting the ESO snapshot</li>
-            </ul>
-          </div>
-          <button class="showcase-shot elevated" type="button" data-lightbox="assets/screenshots/skills-passives.webp" data-title="Skills and Passives unlock roadmap">
-            <img src="assets/screenshots/skills-passives.webp" loading="lazy" alt="ATTB Skills and Passives overview showing exact available recommendations from the current character state">
-          </button>
-        </article>
-
-        <article class="showcase-row reverse">
-          <div class="showcase-copy">
-            <span class="eyebrow">Combat companions</span>
-            <h2>Sort out your companion while you're at it.</h2>
-            <p>Pick the companion, pick a ready-made or build-authored setup, and get real detail on gear direction and ability priority. Room to actually read it, not sixteen presets crammed into tiny cards.</p>
-            <ul class="check-list">
-              <li>All eight current combat companions</li>
-              <li>Two curated starter presets per companion</li>
-              <li>Weapon, armor weight, and trait guidance</li>
-              <li>Five ordered abilities, Ultimate, notes, and source guidance</li>
-            </ul>
-          </div>
-          <button class="showcase-shot elevated" type="button" data-lightbox="assets/screenshots/companions.webp" data-title="Combat Companion planner">
-            <img src="assets/screenshots/companions.webp" loading="lazy" alt="ATTB Companion page showing Isobel Veloise Shield Saint tank equipment and ability priority">
-          </button>
-        </article>
-
-        <article class="showcase-row">
-          <div class="showcase-copy">
-            <span class="eyebrow">Visual build authoring</span>
-            <h2>Create, import, fork, revise, and save without hand-editing JSON.</h2>
-            <p>The Build Editor is a whole second workspace. Let guided creation rough out a class-specific starting point for you, or if you know what you want, edit the Schema 4 data directly through pages built for exactly that.</p>
-            <ul class="check-list">
-              <li>Guided Build and Blank Advanced Build starting points</li>
-              <li>Protected forks of bundled builds and community JSON import</li>
-              <li>Recovery autosave, undo/redo, immutable revisions, and JSON mirrors</li>
-              <li>Visual editing for skills, phases, gear, CP, companions, loadouts, variants, and review</li>
-            </ul>
-          </div>
-          <button class="showcase-shot elevated" type="button" data-lightbox="assets/screenshots/build-editor-skills-passives.webp" data-title="Build Editor Skills and Passives authoring">
-            <img src="assets/screenshots/build-editor-skills-passives.webp" loading="lazy" alt="ATTB Build Editor Skills and Passives page showing relevant lines and catalog-backed unlock authoring">
-          </button>
-        </article>
-
-        <article class="showcase-row reverse">
-          <div class="showcase-copy">
-            <span class="eyebrow">Help where you need it</span>
-            <h2>Look up the ESO concept without leaving your build behind.</h2>
-            <p>Help &amp; Tools is now a full third workspace instead of a loose collection of utility pages. The reference library is organized around the questions that actually come up while following, shopping for, or authoring a build.</p>
-            <ul class="check-list">
-              <li>Gear, Combat, Progression, Companion, and general Reference sections</li>
-              <li>Character-aware Gameplay Tips available from both Character Tracker and Help &amp; Tools</li>
-              <li>Practical trait, enchantment, armor-weight, weapon-role, CP, Scribing, and build-term explanations</li>
-              <li>Trusted external resources stay one click away when the in-app answer needs a deeper source</li>
-            </ul>
-          </div>
-          <button class="showcase-shot elevated" type="button" data-lightbox="assets/screenshots/help-home.webp" data-title="Help and Tools workspace">
-            <img src="assets/screenshots/help-home.webp" loading="lazy" alt="ATTB Help and Tools home showing Gear, Combat, Progression, and Companion reference categories">
-          </button>
-        </article>
-      </section>
-
-      <section class="section" id="screenshots">
-        <div class="section-heading">
-          <span class="eyebrow">Current app tour</span>
-          <h2>Here's what it actually looks like.</h2>
-          <p>Current ATTB screenshots. Click any of them to blow it up to full size.</p>
-        </div>
-
-        <div class="carousel elevated" aria-roledescription="carousel">
-          <div class="carousel-stage">
-            <button class="carousel-main" type="button" aria-label="Open current screenshot">
-              <img id="carousel-image" src="assets/screenshots/first-run.webp" alt="First-run Character Tracker screenshot">
-            </button>
-            <button class="carousel-arrow previous" type="button" aria-label="Previous screenshot">‹</button>
-            <button class="carousel-arrow next" type="button" aria-label="Next screenshot">›</button>
-          </div>
-          <div class="carousel-caption">
-            <div><span class="eyebrow" id="carousel-kicker">Start clean</span><h3 id="carousel-title">First Run</h3></div>
-            <p id="carousel-description">ATTB remains useful before any character exists, with direct paths to manual creation, addon discovery, backups, and the standalone Build Editor.</p>
-          </div>
-          <div class="carousel-thumbs" id="carousel-thumbs" aria-label="Choose screenshot"></div>
-        </div>
-      </section>
-
-      <section class="section build-json-section" id="build-json">
-        <div class="json-panel elevated">
-          <div class="json-copy">
-            <span class="eyebrow">Build authors</span>
-            <h2>Every build is just a JSON file you can read.</h2>
-            <p>Bundled, imported, hand-edited, or made in the visual editor, they all share the same human-readable Schema 4 format. Everything the build knows lives in that one file: defaults, class setup, unlocks, phases, hotbars, rotations, gear stages, Champion Point plans, Scribing recipes, companions, and the rest. Change the build without touching the app.</p>
-            <div class="json-actions">
-              <a class="button primary" href="https://github.com/DeadxxSmile/Arrow-to-the-Build/blob/main/docs/reference/BUILD_QUICK_START.md" target="_blank" rel="noreferrer">Start Here</a>
-              <a class="button secondary" href="https://github.com/DeadxxSmile/Arrow-to-the-Build/blob/main/docs/reference/BUILD_EDITOR_GUIDE.md" target="_blank" rel="noreferrer">Visual Editor guide</a>
-              <a class="button secondary" href="https://github.com/DeadxxSmile/Arrow-to-the-Build/blob/main/docs/reference/BUILD_JSON_GUIDE.md" target="_blank" rel="noreferrer">Manual JSON guide</a>
-              <a class="button secondary" href="https://github.com/DeadxxSmile/Arrow-to-the-Build/blob/main/docs/reference/ATTB_AI_BUILD_JSON_AUTHORING_GUIDE.md" target="_blank" rel="noreferrer">AI authoring guide</a>
-              <a class="button ghost" href="reference/BUILD_TEMPLATE.json" download>Download template</a>
-            </div>
-          </div>
-          <div class="code-card" aria-label="ATTB Schema 4 structure preview"><p class="code-note">Structure preview only. Export the complete blank template from ATTB for a valid importable starting file.</p>
+    <section class="content-section" id="json">
+      <div class="section-heading">
+        <span class="eyebrow">PORTABLE FORMATS</span>
+        <h2>Every build is just a file you can read.</h2>
+        <p>Bundled, imported, hand-edited, or made in the visual editor, they all share the same readable Schema 4 format. Themes get Theme Schema 1. Everything the build knows lives in that one file, and you can change it without opening the app.</p>
+      </div>
+      <div class="two-up schema-pair">
+        <div class="code-card">
+          <div class="code-head"><span>BUILD SCHEMA 4</span><b>Readable by people, ATTB, and AI tools</b></div>
 <pre><code>{
   "schema_version": 4,
-  "id": "my_arcanist_build",
-  "name": "My Arcanist Build",
-  "metadata": {
-    "roles": ["damage", "solo"],
-    "resource": "stamina",
-    "bar_count": 2,
-    "class_style": "pure_class"
-  },
-  "class_configuration": {
-    "base_class": "Arcanist",
-    "active_class_lines": []
-  },
-  "defaults": {
-    "class": "Arcanist",
-    "attributes": {
-      "magicka": 0,
-      "health": 0,
-      "stamina": 64
-    }
-  },
-  "relevant_lines": [],
-  "unlock_order": [],
-  "phases": [],
-  "gear_stages": [],
-  "cp_plans": {
-    "craft": {},
-    "warfare": {},
-    "fitness": {}
-  },
-  "companions": []
+  "id": "stamina_arcanist_flexible_pve",
+  "name": "Stamina Arcanist Flexible PvE",
+  "class": "Arcanist",
+  "setup": { ... },
+  "skills": { ... },
+  "leveling": { ... },
+  "equipment": { ... },
+  "cp_plans": { ... },
+  "companions": { ... },
+  "variants": [ ... ]
 }</code></pre>
-          </div>
         </div>
-
-        <div class="author-grid">
-          <article class="card"><b>Use the visual editor first</b><p>Guided creation, searchable skill data, validation, drafts, revisions, and Build Review cover the common workflow without requiring hand-authored JSON.</p></article>
-          <article class="card"><b>Use stable catalog IDs</b><p>Skill lines and purchases resolve against the audited bundled catalog so display-name changes do not destroy saved progression or imported builds.</p></article>
-          <article class="card"><b>Hand it to your AI of choice</b><p>If you'd rather have an AI draft a build, the included authoring guide gets it up to speed: what ATTB is, which questions to ask, how to pick passives that matter, and how to check the Schema 4 file before you import it.</p></article>
+        <div class="code-card theme-code">
+          <div class="code-head"><span>THEME SCHEMA 1</span><b>Same engine as the visual editor</b></div>
+<pre><code>{
+  "theme_schema_version": 1,
+  "id": "my-theme",
+  "name": "My Theme",
+  "based_on": "woodland",
+  "colors": {
+    "mainBg": "#071018",
+    "accentPrimary": "#ED2490",
+    "accentSecondary": "#2078E2"
+  }
+}</code></pre>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <section class="section install-section" id="install">
-        <div class="section-heading centered">
-          <span class="eyebrow">Windows installation</span>
+    <section class="content-section trust-section">
+      <div class="section-heading centered">
+        <span class="eyebrow">LOCAL-FIRST BY DESIGN</span>
+        <h2>Your characters and builds live on your PC.</h2>
+        <p>No ATTB account. No cloud database. No character service phoning home. It is your data, on your machine.</p>
+      </div>
+      <div class="feature-cards four">
+        <article class="panel"><span class="trust-icon" aria-hidden="true">&#8962;</span><h3>Local application data</h3><p>Characters, settings, links, snapshots, overrides, and progress all sit in a local SQLite database in your Windows app-data folder.</p></article>
+        <article class="panel"><span class="trust-icon" aria-hidden="true">{ }</span><h3>Human-readable builds</h3><p>User builds mirror to readable Schema 4 JSON. Backups and themes are portable JSON too, each checked for structure before ATTB accepts it.</p></article>
+        <article class="panel"><span class="trust-icon" aria-hidden="true">&#10003;</span><h3>Imports are data-only</h3><p>ATTB never runs build, character, or theme JSON as code or arbitrary CSS. Prototype keys and pathological structures get turned away at the door.</p></article>
+        <article class="panel"><span class="trust-icon" aria-hidden="true">&#9635;</span><h3>Careful with images</h3><p>Optional remote build images are HTTPS-only and size and format checked. Character portraits are decoded, measured, resized, and re-encoded locally before display.</p></article>
+      </div>
+    </section>
+
+    <section class="content-section gallery-section" id="gallery">
+      <div class="section-heading split-heading">
+        <div><span class="eyebrow">CURRENT APP TOUR</span><h2>Here is what it actually looks like.</h2></div>
+        <p>Current v3 screenshots, not mockups. Click any of them to blow it up to full size.</p>
+      </div>
+      <div class="carousel" id="carousel">
+        <button class="carousel-arrow prev" id="carousel-prev" type="button" aria-label="Previous screenshot">&#8249;</button>
+        <div class="carousel-viewport">
+          <button class="carousel-frame" id="carousel-frame" type="button" aria-label="Open this screenshot full size">
+            <img id="carousel-img" src="assets/v3/hero-basic-info.webp" alt="">
+            <div class="carousel-caption"><span id="carousel-title">Character Tracker · Basic Info</span><span id="carousel-count"></span></div>
+          </button>
+        </div>
+        <button class="carousel-arrow next" id="carousel-next" type="button" aria-label="Next screenshot">&#8250;</button>
+      </div>
+    </section>
+
+    <section class="content-section install-section" id="install">
+      <div class="install-card">
+        <div>
+          <span class="eyebrow">WINDOWS INSTALL</span>
           <h2>Download it, run it, done.</h2>
-          <p>ATTB is a normal Windows installer. No runtime to install first, no account to make, no database to set up, no Minion. Just the app.</p>
-        </div>
-        <div class="install-grid">
-          <article class="card install-card"><span class="step-number">1</span><h3>Download the installer</h3><p>Grab <code>ATTB-Setup-2.2.0.exe</code> from GitHub Releases and run it. Existing ATTB desktop data is preserved when upgrading.</p></article>
-          <article class="card install-card"><span class="step-number">2</span><h3>Choose addon sync or stay manual</h3><p>On first run, ATTB can detect your ESO profile and install the bundled ArrowToTheBuild addon. You can skip this and use manual tracking at any time.</p></article>
-          <article class="card install-card"><span class="step-number">3</span><h3>Use /reloadui when you want fresh data</h3><p>ESO owns SavedVariables timing. If the desktop snapshot is stale, run <code>/reloadui</code> in ESO and ATTB can read the newly written local snapshot.</p></article>
-        </div>
-        <div class="install-actions">
-          <a class="button primary" href="https://github.com/DeadxxSmile/Arrow-to-the-Build/releases/latest" target="_blank" rel="noreferrer">Download latest release</a>
-          <a class="button secondary" href="https://github.com/DeadxxSmile/Arrow-to-the-Build#build-from-source" target="_blank" rel="noreferrer">Build from source</a>
-        </div>
-        <p class="install-note"><strong>Unsigned installer:</strong> ATTB is free and open source and is not currently code-signed, so Windows may show Unknown Publisher, SmartScreen, or Smart App Control warnings. Only bypass a warning when the installer came from this project or another source you trust.</p>
-      </section>
-
-      <section class="section resources-section">
-        <div class="section-heading">
-          <span class="eyebrow">Help &amp; Tools</span>
-          <h2>Help where you'd expect it, plus the good ESO sites.</h2>
-          <p>Help &amp; Tools is now its own workspace for gameplay guidance, Gear, Combat, Progression, Companion, and reference topics. Character backups live directly in Character Tracker under Character Data, while build authoring docs and JSON tools stay with the Build Editor. External references still open in your normal browser.</p>
-        </div>
-        <div class="resources-grid">
-          <div class="resources-copy card">
-            <span class="eyebrow">Inside ATTB</span>
-            <h3>What you get once it's open.</h3>
-            <ul class="check-list">
-              <li>Dedicated Help &amp; Tools workspace with build-specific gameplay tips and grouped ESO reference sections</li>
-              <li>Character backup import and export under Character Tracker &gt; Character Data</li>
-              <li>Create Build from Character and Adapt Build to Character</li>
-              <li>Configurable user build folder with saved JSON mirrors</li>
-              <li>Combat companion planning and build authoring</li>
-              <li>ATTB Default, Deep Dark, Light, Old Scrolls, SkyTrim, and Woodland themes</li>
-              <li>Guided visual build authoring and advanced Schema 4 tools</li>
-              <li>Errors, warnings, suggestions, preview, and revision comparison</li>
-              <li>Offline documentation including the AI Build JSON Authoring Guide</li>
-            </ul>
-          </div>
-          <div class="resource-links">
-            <a href="https://www.elderscrollsonline.com/" target="_blank" rel="noreferrer"><b>Official ESO</b><small>News, patch notes, account help, and community information.</small></a>
-            <a href="https://en.uesp.net/wiki/Online:Online" target="_blank" rel="noreferrer"><b>UESP</b><small>Quests, maps, skills, systems, items, and mechanics reference.</small></a>
-            <a href="https://eso-hub.com/" target="_blank" rel="noreferrer"><b>ESO-Hub</b><small>Current skills, sets, maps, antiquities, and database tools.</small></a>
-            <a href="https://www.skinnycheeks.gg/" target="_blank" rel="noreferrer"><b>Skinny Cheeks</b><small>PvE damage-dealer explanations and current class options.</small></a>
-            <a href="https://hyperioxes.com/eso" target="_blank" rel="noreferrer"><b>Hyperioxes</b><small>Detailed solo and role-focused build guidance.</small></a>
-            <a href="https://github.com/DeadxxSmile/Arrow-to-the-Build-ESO-Addon" target="_blank" rel="noreferrer"><b>ESO Addon Source</b><small>The streamlined local exporter bundled with the desktop application.</small></a>
-            <a href="https://buymeacoffee.com/deadx_xsmile" target="_blank" rel="noreferrer"><b>Buy Me a Coffee</b><small>Support continued development of Arrow to the Build.</small></a>
-            <a href="https://linktr.ee/deadx_xsmile" target="_blank" rel="noreferrer"><b>Deadx_xSmile Linktree</b><small>Twitch, YouTube, TikTok, X, and other creator links.</small></a>
+          <p>A normal Windows installer. No runtime to install first, no account to make, no database to set up, no Minion. Just the app. Add your first character by hand or connect the optional addon, pick a build to chase, and let ATTB tell you the next useful move.</p>
+          <div class="hero-actions">
+            <a class="btn primary" href="https://github.com/DeadxxSmile/Arrow-to-the-Build/releases/latest" target="_blank" rel="noreferrer">Download release</a>
+            <a class="btn" href="https://github.com/DeadxxSmile/Arrow-to-the-Build#build-from-source" target="_blank" rel="noreferrer">Build from source</a>
           </div>
         </div>
-      </section>
-    </main>
+        <div class="install-facts">
+          <span><small>Installer</small><b>ATTB-Setup-3.0.0.exe</b></span>
+          <span><small>Platform</small><b>Windows 10 / 11</b></span>
+          <span><small>ESO Addon</small><b>1.1.1</b></span>
+          <span><small>Build format</small><b>Schema 4</b></span>
+          <span><small>Theme format</small><b>Theme Schema 1</b></span>
+          <span><small>License</small><b>GPL-3.0-only</b></span>
+        </div>
+      </div>
+    </section>
 
     <footer>
-      <div class="footer-brand">
-        <img class="footer-wordmark" src="assets/logo/attb-words.webp" alt="Arrow to the Build">
-        <span><b>Arrow to the Build</b><small>I Used To Be Meta Like You, Then I Took An Arrow To The Build</small></span>
-      </div>
-      <div class="footer-links">
+      <div><img src="assets/logo/attb-logo.png" alt=""><strong>Arrow to the Build</strong><span>I Used To Be Meta Like You, Then I Took An Arrow To The Build</span></div>
+      <nav aria-label="Footer links">
         <a href="https://github.com/DeadxxSmile/Arrow-to-the-Build" target="_blank" rel="noreferrer">GitHub</a>
-        <a href="https://github.com/DeadxxSmile/Arrow-to-the-Build/releases/latest" target="_blank" rel="noreferrer">Latest Release</a>
-        <a href="https://github.com/DeadxxSmile/Arrow-to-the-Build-ESO-Addon" target="_blank" rel="noreferrer">ESO Addon</a>
-        <a href="https://github.com/DeadxxSmile/Arrow-to-the-Build/blob/main/docs/reference/BUILD_QUICK_START.md" target="_blank" rel="noreferrer">Build Quick Start</a>
-        <a href="https://github.com/DeadxxSmile/Arrow-to-the-Build/blob/main/docs/reference/ATTB_AI_BUILD_JSON_AUTHORING_GUIDE.md" target="_blank" rel="noreferrer">AI Authoring Guide</a>
+        <a href="https://github.com/DeadxxSmile/Arrow-to-the-Build/issues" target="_blank" rel="noreferrer">Issues</a>
+        <a href="https://github.com/DeadxxSmile/Arrow-to-the-Build-ESO-Addon" target="_blank" rel="noreferrer">Addon source</a>
         <a href="https://buymeacoffee.com/deadx_xsmile" target="_blank" rel="noreferrer">Buy Me a Coffee</a>
-        <a href="https://linktr.ee/deadx_xsmile" target="_blank" rel="noreferrer">Linktree</a>
-        <a href="#top">Back to top</a>
-      </div>
-      <p class="disclaimer">Unofficial community project. Not affiliated with ZeniMax Media, Bethesda Softworks, or The Elder Scrolls Online. Game names, marks, artwork, and skill icons belong to their respective owners.</p>
-      <p class="copyright">GPL-3.0-only · Copyright © 2026 DeadxxSmile</p>
+      </nav>
+      <p>Unofficial community project. Not affiliated with ZeniMax Media, Bethesda Softworks, or The Elder Scrolls Online. Game names, marks, artwork, and skill icons belong to their respective owners. GPL-3.0-only · Copyright 2026 DeadxxSmile.</p>
     </footer>
-  </div>
+  </main>
 
-  <dialog id="lightbox" class="lightbox">
-    <button type="button" aria-label="Close screenshot">×</button>
-    <div class="lightbox-body">
-      <h3 id="lightbox-title"></h3>
-      <div class="lightbox-image-wrap"><img src="" alt=""></div>
-    </div>
+  <dialog class="lightbox" id="lightbox">
+    <button type="button" aria-label="Close screenshot">&times;</button>
+    <figure><img src="" alt=""><figcaption id="lightbox-title"></figcaption></figure>
   </dialog>
 
-  <script src="app.js?v=2.2.0-release"></script>
+  <script src="app.js?v=3.0.0-v3-site8"></script>
 </body>
 </html>

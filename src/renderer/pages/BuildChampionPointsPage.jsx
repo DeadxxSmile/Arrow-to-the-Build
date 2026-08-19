@@ -3,10 +3,15 @@ import { useApp } from '../App'
 import { useAppDialog } from '../components/AppDialogProvider'
 import NumberStepper from '../components/NumberStepper'
 import { slugifyEditorId } from '../utils/buildEditorSkillLogic'
+import BuildEditorEmptyState from '../components/BuildEditorEmptyState'
 
 const TREES = ['warfare', 'fitness', 'craft']
 const LABELS = { warfare: 'Warfare', fitness: 'Fitness', craft: 'Craft' }
 const COLORS = { warfare: 'blue', fitness: 'red', craft: 'green' }
+
+function starCountLabel(count) {
+  return `${count} ${count === 1 ? 'star' : 'stars'}`
+}
 
 function uniqueId(plan, seed) {
   const used = new Set([...(plan?.core || []), ...(plan?.flex || []).flatMap(group => group.nodes || [])].map(node => node?.id).filter(Boolean))
@@ -94,7 +99,7 @@ export default function BuildChampionPointsPage() {
   const dialog = useAppDialog()
   const [tree, setTree] = useState('warfare')
   const draft = editor.draft
-  if (!draft) return <div className="page"><div className="page-title"><span className="eyebrow">Current build</span><h1>Champion Points</h1><p>Open or create a draft before editing this section.</p></div><section className="panel quiet-box">No editable build is currently open.</section></div>
+  if (!draft) return <BuildEditorEmptyState title="Champion Points" description="Open or create a draft before editing this section." />
   const data = draft.data
   const imported = data.extensions?.attb?.imported_character_state || null
   const plan = data.cp_plans?.[tree] || blankPlan(tree)
@@ -130,7 +135,7 @@ export default function BuildChampionPointsPage() {
     <div className="page-title"><span className="eyebrow">Current build</span><h1>Champion Points</h1><p>Author the required path, recommended branches, optional alternatives, and final four slottables for all three constellations. ATTB will later turn a character’s available points into the exact route defined here.</p></div>
     {imported && <section className="panel imported-cp-reference"><div><span className="eyebrow">CURRENT at import</span><h2>{imported.character_name} Champion Points</h2><p>{imported.mode === 'adapt' ? 'These are the character totals from ESO. The editable constellation plan below remains the TARGET from the selected build.' : 'These totals and any detailed stars available in the snapshot seeded this new draft.'}</p></div><div className="imported-cp-totals"><span className="craft"><small>Craft</small><b>{imported.champion_totals?.craft ?? 0}</b></span><span className="warfare"><small>Warfare</small><b>{imported.champion_totals?.warfare ?? 0}</b></span><span className="fitness"><small>Fitness</small><b>{imported.champion_totals?.fitness ?? 0}</b></span></div></section>}
 
-    <section className="panel cp-editor-overview"><div className="cp-editor-tree-tabs">{TREES.map(key => <button key={key} className={`cp-tree-tab ${key} ${tree === key ? 'active' : ''}`} onClick={() => setTree(key)}><span>{LABELS[key]}</span><b>{[...(data.cp_plans?.[key]?.core || []), ...(data.cp_plans?.[key]?.flex || []).flatMap(group => group.nodes || [])].length} stars</b></button>)}</div><div className="cp-editor-totals"><span><small>Required path</small><b>{coreCapacity}</b></span><span><small>Documented total</small><b>{capacity}</b></span><span><small>Champion Bar</small><b>{plan.final_slots?.length || 0}/4</b></span></div></section>
+    <section className="panel cp-editor-overview"><div className="cp-editor-tree-tabs">{TREES.map(key => <button key={key} className={`cp-tree-tab ${key} ${tree === key ? 'active' : ''}`} onClick={() => setTree(key)}><span>{LABELS[key]}</span><b>{starCountLabel([...(data.cp_plans?.[key]?.core || []), ...(data.cp_plans?.[key]?.flex || []).flatMap(group => group.nodes || [])].length)}</b></button>)}</div><div className="cp-editor-totals"><span><small>Required path</small><b>{coreCapacity}</b></span><span><small>Documented total</small><b>{capacity}</b></span><span><small>Champion Bar</small><b>{plan.final_slots?.length || 0}/4</b></span></div></section>
 
     <section className="panel cp-plan-settings"><div className="section-head"><div><span className="eyebrow">{LABELS[tree]} plan</span><h2>Constellation identity</h2></div></div><div className="form-grid four">
       <label><span>Display label</span><input value={plan.label || ''} onChange={event => updatePlan({ label: event.target.value })} /></label>

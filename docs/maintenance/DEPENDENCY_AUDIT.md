@@ -1,10 +1,12 @@
 # Dependency Audit Notes
 
+> **Current app release:** ATTB 3.0.0. Older version numbers below identify when a dependency decision was originally made and are retained as historical provenance.
+
 This file records dependency findings and their release disposition. It is developer documentation and is not packaged into the installed app.
 
-## React Router advisory - resolved for 2.0.0
+## Historical React Router advisory - resolved before 2.0.0
 
-The final 2.0.0 source pins `react-router-dom` **7.18.2**. GitHub Advisory **GHSA-jjmj-jmhj-qwj2 / CVE-2026-53668** affected `react-router-dom >=6.30.2 <=6.30.4`; the v7 line is patched beginning at 7.13.0.
+The dependency decision recorded before the 2.0.0 release pins `react-router-dom` **7.18.2**, which remains the reviewed ATTB 3.0.0 release dependency. GitHub Advisory **GHSA-jjmj-jmhj-qwj2 / CVE-2026-53668** affected `react-router-dom >=6.30.2 <=6.30.4`; the v7 line is patched beginning at 7.13.0.
 
 - https://github.com/advisories/GHSA-jjmj-jmhj-qwj2
 - https://nvd.nist.gov/vuln/detail/CVE-2026-53668

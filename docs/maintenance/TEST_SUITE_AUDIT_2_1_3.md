@@ -1,5 +1,7 @@
 # ATTB v2.1.3 Test Suite Audit
 
+> **Historical record:** This audit describes the v2.1.3 suite cleanup. The current application release is ATTB 3.0.0 and the current test count is defined by the live repository, not this archived report.
+
 Date: 2026-08-09
 
 This audit followed the addon v1.1.0 cleanup with the same goal: keep the codebase easy to reason about without removing protections that actually matter.

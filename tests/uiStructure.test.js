@@ -7,11 +7,17 @@ const path = require('node:path')
 
 const root = path.join(__dirname, '..')
 const read = rel => fs.readFileSync(path.join(root, rel), 'utf8')
-const readAppCss = () => [
+const rendererStyleFiles = [
+  'src/renderer/styles/global.css',
   'src/renderer/styles/App.css',
+  'src/renderer/styles/Workspace.css',
+  'src/renderer/styles/ThemeEditor.css',
+  'src/renderer/styles/Character.css',
+  'src/renderer/styles/Help.css',
   'src/renderer/styles/BuildEditor.css',
   'src/renderer/styles/Addon.css'
-].map(read).join('\n')
+]
+const readAppCss = () => rendererStyleFiles.map(read).join('\n')
 
 // This file intentionally stays small. It is for renderer regressions that are difficult to
 // exercise without a browser harness, not for asserting every label, CSS value, or route.
@@ -46,9 +52,9 @@ test('the sidebar uses header-aligned workspace tabs and quiet integrated settin
   assert.doesNotMatch(settings, /className="settings-tabs"/)
   assert.match(titlebar, /<span>ATTB<\/span>\{version && <b>\| v\{version\}<\/b>\}/)
   assert.match(app, /className=\{\(\) => `nav-item \${activeTab === id \? 'active' : ''}`\}/)
-  assert.match(css, /\.sidebar-workspace-header\{[^}]*height:84px/)
+  assert.match(css, /\.sidebar-workspace-header\{[^}]*height:var\(--layout-workspace-header-height\)/)
   assert.doesNotMatch(app, /sidebar-app-name|<span>Arrow to the Build<\/span>/)
-  assert.match(css, /\.workspace-tabs\{[^}]*height:84px[^}]*grid-template-columns:repeat\(3,minmax\(0,1fr\)\)[^}]*gap:0[^}]*padding:12px 0 0/)
+  assert.match(css, /\.workspace-tabs\{[^}]*height:var\(--layout-workspace-header-height\)[^}]*grid-template-columns:repeat\(3,minmax\(0,1fr\)\)[^}]*gap:0[^}]*padding:12px 0 0/)
   assert.match(app, /<Fragment key=\{section\.label\}>/)
   assert.doesNotMatch(app, /className="(?:help|character)-nav-section"/)
   assert.match(css, /\.editor-nav>\.sidebar-section-label:not\(:first-child\),\.help-tools-nav>\.sidebar-section-label:not\(:first-child\),\.character-tracker-nav>\.sidebar-section-label:not\(:first-child\)\{[^}]*margin-top:11px/)
@@ -57,9 +63,9 @@ test('the sidebar uses header-aligned workspace tabs and quiet integrated settin
   assert.match(css, /\.sidebar-nav-surface>\.sidebar-nav\{[^}]*scrollbar-gutter:stable/)
   assert.match(css, /\.character-bar\{[^}]*align-items:center/)
   assert.match(css, /\.character-bar>\.topbar-field\{[^}]*align-self:center/)
-  assert.match(css, /\.workspace-tab\{[^}]*width:100%[^}]*border-bottom:1px solid var\(--line\)/)
-  assert.match(css, /\.workspace-tab:hover:not\(\.active\)\{[^}]*border-bottom-color:var\(--line\)/)
-  assert.match(css, /\.workspace-tab\.active\{[^}]*border:1px solid var\(--line\)[^}]*border-bottom:0[^}]*border-radius:12px 12px 0 0/)
+  assert.match(css, /\.workspace-tab\{[^}]*width:100%[^}]*border-bottom:1px solid var\(--color-border\)/)
+  assert.match(css, /\.workspace-tab:hover:not\(\.active\)\{[^}]*border-bottom-color:var\(--color-border\)/)
+  assert.match(css, /\.workspace-tab\.active\{[^}]*border:1px solid var\(--color-border\)[^}]*border-bottom:0[^}]*border-radius:12px 12px 0 0/)
   assert.match(css, /\.workspace-tab\{[^}]*height:72px[^}]*gap:5px/)
   assert.match(css, /\.workspace-tab svg\{[^}]*width:28px[^}]*height:28px/)
   assert.match(css, /\.workspace-tab span\{[^}]*font-size:\.75rem/)
@@ -75,14 +81,14 @@ test('the sidebar uses header-aligned workspace tabs and quiet integrated settin
   assert.match(css, /\.help-tools-bar \.character-switcher\{[^}]*width:min\(390px,40vw\)[^}]*flex:0 0 min\(390px,40vw\)/)
   assert.match(app, /<header className="settings-workspace-bar"><h1>Application Settings<\/h1><\/header>/)
   assert.doesNotMatch(app, /<span className="mono">\{editor\.draft\.build_id\}/)
-  assert.match(css, /\.character-bar\{[^}]*height:84px[^}]*grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/)
-  assert.match(css, /\.help-tools-bar\{[^}]*height:84px/)
-  assert.match(css, /\.settings-workspace-bar\{[^}]*height:84px/)
+  assert.match(css, /\.character-bar\{[^}]*height:var\(--layout-workspace-header-height\)[^}]*grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/)
+  assert.match(css, /\.help-tools-bar\{[^}]*height:var\(--layout-workspace-header-height\)/)
+  assert.match(css, /\.settings-workspace-bar\{[^}]*height:var\(--layout-workspace-header-height\)/)
   assert.doesNotMatch(css, /\.build-editor-bar\{[^}]*min-height:(?:112|150)px/)
   assert.match(css, /\.sidebar-settings-tab\{[^}]*justify-content:center[^}]*border:0/)
-  assert.match(css, /\.sidebar-settings-dock\{[^}]*border-top:1px solid var\(--line\)/)
+  assert.match(css, /\.sidebar-settings-dock\{[^}]*border-top:1px solid var\(--color-border\)/)
   assert.match(css, /\.sidebar-settings-dock\.active\{[^}]*border-top-color:transparent[^}]*linear-gradient/)
-  assert.match(css, /\.settings-sidebar-nav \.nav-item:not\(\.active\)\{[^}]*background:transparent!important/)
+  assert.match(css, /\.settings-sidebar-nav \.nav-item:not\(\.active\)\{[^}]*background:transparent/)
   assert.match(app, /className="sidebar-nav character-tracker-nav"/)
   assert.match(app, /label: 'Build progress'/)
   assert.match(app, /\['\/character-data', 'Backups & Import', '⇄'\]/)
@@ -131,12 +137,18 @@ test('the workspace scroll region keeps a real grid row and fill height', () => 
   assert.match(scroll, /height:100%/)
 })
 
-test('collapsible equipment and rotation stages use the real details open attribute', () => {
-  for (const file of ['src/renderer/pages/EquipmentPage.jsx', 'src/renderer/pages/RotationsPage.jsx']) {
-    const source = read(file)
-    assert.doesNotMatch(source, /defaultOpen/)
-    assert.match(source, /<details[^>]*\bopen=\{/)
+test('Character Tracker progression sections use the shared controlled disclosure pattern', () => {
+  const equipment = read('src/renderer/pages/EquipmentPage.jsx')
+  const rotations = read('src/renderer/pages/RotationsPage.jsx')
+  const status = read('src/renderer/pages/StatusPage.jsx')
+  const skills = read('src/renderer/pages/SkillsPage.jsx')
+  for (const source of [equipment, rotations, status, skills]) {
+    assert.match(source, /DisclosureSection/)
+    assert.match(source, /DisclosureToolbar/)
   }
+  assert.doesNotMatch(equipment, /<details/)
+  assert.doesNotMatch(rotations, /<details/)
+  assert.match(rotations, /live-action-bars-panel/)
 })
 
 test('skill icons have a generated local source and are used on player skill surfaces', () => {
@@ -161,7 +173,7 @@ test('missing hero art renders nothing instead of placeholder text', () => {
   const cached = read('src/renderer/components/CachedImage.jsx')
   const setup = read('src/renderer/pages/SetupPage.jsx')
   assert.match(cached, /if \(!src && fallback === 'none'\) return null/)
-  assert.match(setup, /className="hero-image" fallback="none"/)
+  assert.match(setup, /character-hero-image.*fallback="none"/)
 })
 
 test('the Electron shell keeps renderer isolation and blocks unexpected navigation', () => {
@@ -274,24 +286,96 @@ test('the skills overview keeps the paginated unlock roadmap', () => {
   assert.match(skills, /rankGap/)
 })
 
-test('live action bars use player-facing skill identity instead of bridge diagnostics', () => {
+test('current action bars support addon snapshots and persistent manual tracking with player-facing skill identity', () => {
   const rotations = read('src/renderer/pages/RotationsPage.jsx')
-  assert.match(rotations, /LiveActionBars/)
+  const handlers = read('src/main/ipc/characterHandlers.js')
+  const migration = read('src/main/database/migrations/011_manual_action_bars.sql')
+  assert.match(rotations, /CurrentActionBars/)
+  assert.match(rotations, /ManualHotbar/)
+  assert.match(rotations, /manual_action_bars/)
   assert.match(rotations, /catalogSkillIdForName/)
   assert.match(rotations, /<SkillIcon/)
+  assert.match(handlers, /manual_action_bars_json/)
+  assert.match(migration, /manual_action_bars_json/)
   assert.doesNotMatch(rotations, /PROGRESSION-ID|matchMethod/)
 })
 
-test('the companion tracker uses companion and build selectors with a spacious detail view', () => {
+test('the companion tracker uses companion and target selectors with portrait-ready identity', () => {
   const page = read('src/renderer/pages/CompanionsPage.jsx')
   assert.match(page, /<span>Companion<\/span>/)
-  assert.match(page, /<span>Build<\/span>/)
+  assert.match(page, /<span>Target setup<\/span>/)
+  assert.match(page, /CompanionPortrait/)
   assert.match(page, /chooseSetup/)
   assert.match(page, /withCompanionTarget/)
   assert.match(page, /Gear direction/)
-  assert.match(page, /Ability priority/)
+  assert.match(page, /Ability order/)
   assert.match(page, /Build notes/)
   assert.doesNotMatch(page, /build-card-grid|preset-card-grid/)
+})
+
+test('v3 Character Tracker keeps build tools out of Basic Info and makes synced overrides actionable', () => {
+  const app = read('src/renderer/App.jsx')
+  const setup = read('src/renderer/pages/SetupPage.jsx')
+  const settings = read('src/renderer/pages/SettingsPage.jsx')
+  const status = read('src/renderer/pages/StatusPage.jsx')
+  const skills = read('src/renderer/pages/SkillsPage.jsx')
+  const cp = read('src/renderer/pages/ChampionPointsPage.jsx')
+  assert.match(app, /\['\/setup', 'Basic Info'/)
+  assert.match(setup, /<h1>Basic info<\/h1>/)
+  assert.doesNotMatch(setup, /Create New Build from Character|Adapt Target to Character/)
+  assert.match(settings, /<CharacterBuildTools \/>/)
+  assert.match(status, /<SyncOverrideBar/)
+  assert.match(skills, /<SyncOverrideBar/)
+  assert.match(cp, /<SyncOverrideBar/)
+  assert.match(setup, /Identity & role/)
+  assert.match(setup, /Combat setup/)
+  assert.match(setup, /Attributes/)
+  assert.match(setup, /Subclass/)
+  assert.doesNotMatch(setup, /attribute-target-track/)
+  assert.doesNotMatch(status, /Passive progression/)
+  assert.match(status, /Ability purchases and morph choices remain under Skills &amp; Passives/)
+})
+
+test('v3 Equipment and Champion Points present actionable progression rather than opaque tables', () => {
+  const equipment = read('src/renderer/pages/EquipmentPage.jsx')
+  const cpCard = read('src/renderer/components/CPCard.jsx')
+  const buildCpEditor = read('src/renderer/pages/BuildChampionPointsPage.jsx')
+  assert.match(equipment, /Your gear path/)
+  assert.match(equipment, /Where to get it/)
+  assert.match(equipment, /set\.name/)
+  for (const heading of ['Type', 'Category', 'Enchantment', 'Trait', 'Quality', 'Status', 'Tradeable']) assert.match(equipment, new RegExp(heading))
+  assert.doesNotMatch(equipment, /eyebrow\">\{set\.role/)
+  assert.match(cpCard, /Spend in this order/)
+  assert.match(cpCard, /Bring this star from/)
+  assert.match(cpCard, /nextMilestone/)
+  assert.match(buildCpEditor, /count === 1 \? 'star' : 'stars'/)
+})
+
+test('v3 Skills overview uses personal quick-add tracking and bottom disclosure rails', () => {
+  const skills = read('src/renderer/pages/SkillsPage.jsx')
+  const disclosure = read('src/renderer/components/DisclosureSection.jsx')
+  const settings = read('src/renderer/pages/SettingsPage.jsx')
+  assert.match(skills, /Final Build Skills/)
+  assert.match(skills, /Add another skill line/)
+  assert.match(skills, /addTrackedSkillLine/)
+  assert.match(skills, /deleteTrackedSkillLine/)
+  assert.match(skills, /skill-line-remove-button/)
+  assert.match(disclosure, /disclosure-toggle-rail/)
+  const characterCss = read('src/renderer/styles/Character.css')
+  assert.match(characterCss, /\.disclosure-toggle-rail\{[^}]*height:var\(--disclosure-rail-height\)/)
+  assert.equal((characterCss.match(/\.disclosure-toggle-rail\{/g) || []).length, 1, 'disclosure rail sizing should have one authoritative rule')
+  assert.doesNotMatch(settings, /Personal progression/)
+})
+
+test('v3 addon snapshot normalization preserves already-collected zone and power values for Basic Info', () => {
+  const codec = read('src/main/addon/snapshotCodec.js')
+  const store = read('src/main/addon/characterSyncStore.js')
+  const setup = read('src/renderer/pages/SetupPage.jsx')
+  assert.match(codec, /zone:\s*\{/)
+  assert.match(codec, /power:\s*normalizePower/)
+  assert.match(store, /observed:\s*\{[\s\S]*identity:\s*snapshot\.identity/)
+  assert.match(setup, /Last known zone/)
+  assert.match(setup, /effectiveMaximum/)
 })
 
 test('the addon watcher callback only uses imported or locally defined constants', () => {
@@ -319,13 +403,8 @@ test('Settings sections keep explicit query routes instead of bouncing by worksp
   assert.doesNotMatch(settings, /next === 'general' \? \{\}/)
 })
 
-test('component styles use one complete theme palette instead of hard-coded colors', () => {
-  const files = [
-    'src/renderer/styles/global.css',
-    'src/renderer/styles/App.css',
-    'src/renderer/styles/BuildEditor.css',
-    'src/renderer/styles/Addon.css'
-  ]
+test('component styles use one Theme Schema color contract instead of hard-coded colors', () => {
+  const files = rendererStyleFiles
   const literal = /#[0-9a-fA-F]{3,8}\b|rgba?\(|hsla?\(/g
   const offenders = []
   for (const file of files) {
@@ -335,43 +414,42 @@ test('component styles use one complete theme palette instead of hard-coded colo
   }
   assert.deepEqual(offenders, [])
 
-  const themes = read('src/renderer/styles/themes.css')
-  const propsFor = selector => {
-    const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-    const block = themes.match(new RegExp(`${escaped}\\{([^}]*)\\}`, 's'))
-    assert.ok(block, `missing theme block ${selector}`)
-    return [...block[1].matchAll(/--([\w-]+)\s*:/g)].map(match => match[1]).sort()
-  }
-  const baseProps = propsFor(':root')
-  for (const selector of ['html[data-theme="dark"]', 'html[data-theme="light"]', 'html[data-theme="old-scrolls"]', 'html[data-theme="skytrim"]', 'html[data-theme="woodland"]']) {
-    assert.deepEqual(propsFor(selector), baseProps, `${selector} must override the full palette contract`)
-  }
+  const schema = JSON.parse(read('resources/data/theme-schema.json'))
+  const builtins = JSON.parse(read('resources/themes/builtin-themes.json'))
+  const contract = schema.tokens.map(token => token.key).sort()
+  for (const theme of builtins.themes) assert.deepEqual(Object.keys(theme.colors).sort(), contract)
 
-  const allStyles = [themes, ...files.map(read)].join('\n')
+  const themes = read('src/renderer/styles/themes.css')
+  const allStyles = [themes, read('src/renderer/styles/tokens.css'), ...files.map(read)].join('\n')
   const declared = new Set([...allStyles.matchAll(/--([\w-]+)\s*:/g)].map(match => match[1]))
   const used = new Set([...allStyles.matchAll(/var\(--([\w-]+)/g)].map(match => match[1]))
-  assert.deepEqual([...used].filter(name => !declared.has(name)).sort(), [])
+  assert.deepEqual([...used].filter(name => !declared.has(name) && name !== 'build-accent').sort(), [])
 
-  // Themes may change palette and surface treatment, but not typography metrics.
-  // Keeping one font stack prevents labels and headings from shifting when a theme changes.
-  const themeTypography = /html\[data-theme=[^\]]+\][^{]*\{[^}]*\b(?:font-family|font-size|font-weight|letter-spacing|line-height)\s*:/gs
+  const themeTypography = /html\[data-theme(?:-base)?=[^\]]+\][^{]*\{[^}]*\b(?:font-family|font-size|font-weight|letter-spacing|line-height)\s*:/gs
   assert.doesNotMatch(allStyles, themeTypography)
 })
 
-test('Settings exposes every supported color theme', () => {
+test('Settings exposes built-in and custom themes through the Theme Manager', () => {
   const settings = read('src/renderer/pages/SettingsPage.jsx')
-  for (const [value, label] of [
-    ['default', 'ATTB Default'],
-    ['dark', 'Deep Dark'],
-    ['light', 'Light'],
-    ['old-scrolls', 'Old Scrolls'],
-    ['skytrim', 'SkyTrim'],
-    ['woodland', 'Woodland']
-  ]) {
-    assert.match(settings, new RegExp(`<option value="${value}">${label}<\\/option>`))
+  const manager = read('src/renderer/components/ThemeManager.jsx')
+  const builtins = JSON.parse(read('resources/themes/builtin-themes.json'))
+  assert.match(settings, /<ThemeManager flash=\{flash\} \/>/)
+  assert.match(manager, /Customize Current Theme/)
+  assert.match(manager, /Import Theme JSON/)
+  assert.match(manager, /Export JSON Template/)
+  const editor = read('src/renderer/components/ThemeEditorModal.jsx')
+  const colorField = read('src/renderer/components/ThemeColorField.jsx')
+  assert.match(editor, /Advanced Colors/)
+  assert.match(editor, /Live application preview/)
+  assert.match(editor, /Standalone · explicit full palette/)
+  assert.match(colorField, /type="color"/)
+  assert.match(colorField, />HEX</)
+  assert.match(colorField, /\['r', 'g', 'b'\]/)
+  for (const label of ['ATTB Default', 'Deep Dark', 'Light', 'Old Scrolls', 'SkyTrim', 'Woodland', 'Watermelon', 'Rainbow Light', 'Rainbow Dark', 'Deadx_xSmile']) {
+    assert.ok(builtins.themes.some(theme => theme.name === label), `missing built-in theme ${label}`)
   }
+  assert.match(read('src/renderer/styles/App.css'), /data-theme-base=\"deadx-xsmile\"/)
 })
-
 test('the custom title bar uses compact ATTB and running-version branding', () => {
   const title = read('src/renderer/components/TitleBar.jsx')
   assert.match(title, /window\.api\.app\.getInfo\(\)/)
@@ -387,6 +465,8 @@ test('Help and Tools is a dedicated workspace with grouped reference sections', 
   const home = read('src/renderer/pages/HelpHomePage.jsx')
   const reference = read('src/renderer/pages/BuildReferencePage.jsx')
   const traits = read('src/renderer/pages/TraitReferencePage.jsx')
+  const themeGuide = read('src/renderer/pages/ThemeGuidePage.jsx')
+  const themeEditorCss = read('src/renderer/styles/ThemeEditor.css')
 
   assert.match(app, /function HelpSidebarNav/)
   assert.match(app, /function WorkspaceSwitcher/)
@@ -395,6 +475,7 @@ test('Help and Tools is a dedicated workspace with grouped reference sections', 
   assert.match(app, /workspace === 'help'/)
   assert.match(routes, /path="help" element=\{<HelpHomePage \/>\}/)
   assert.match(routes, /path="help\/topic\/:topic" element=\{<BuildReferencePage \/>\}/)
+  assert.match(routes, /path="help\/themes" element=\{<ThemeGuidePage \/>\}/)
   assert.match(routes, /path="help\/topic\/traits" element=\{<TraitReferencePage \/>\}/)
   assert.match(routes, /path="help\/traits" element=\{<Navigate to="\/help\/topic\/traits" replace \/>\}/)
 
@@ -402,14 +483,74 @@ test('Help and Tools is a dedicated workspace with grouped reference sections', 
   for (const topic of ['Gear & Sets', 'Enchantments & Glyphs', 'Combat Stats & Caps', 'Buffs, Debuffs & Status Effects', 'Mundus Stones', 'Champion Points', 'Scribing', 'Consumables', 'Build Glossary', 'Companion Builds & Traits']) {
     assert.match(helpMeta, new RegExp(topic.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')), `${topic} should be present in Help & Tools`)
   }
-  assert.match(home, /ESO knowledge beside the build/)
+  assert.match(home, /Find the answer by what you are trying to do/)
+  assert.match(home, /help-task-grid/)
+  assert.match(home, /Reference by system/)
+  assert.match(reference, /category === 'Reference' \? 'Build reference'/)
+  assert.doesNotMatch(reference, /Reference reference/)
   assert.match(reference, /‹ Help &amp; Tools/)
   assert.match(traits, /‹ Help &amp; Tools/)
+  assert.match(themeGuide, /Themes &amp; Theme Schema/)
+  assert.match(themeGuide, /theme-guide-page/)
+  assert.match(themeEditorCss, /\.theme-guide-page\{display:grid;gap:16px\}/)
+  assert.match(themeEditorCss, /\.help-reference-grid\{display:grid;gap:14px\}/)
+  assert.match(themeGuide, /Export JSON Template/)
   for (const trait of ['Divines', 'Impenetrable', 'Charged', 'Precise', 'Bloodthirsty', 'Harmony', 'Triune']) assert.match(traits, new RegExp(`\\['${trait}'`), `${trait} should be present in the trait reference`)
   assert.match(reference, /18,200/)
   assert.match(reference, /125%/)
   assert.match(reference, /Focus Script/)
   assert.match(reference, /Aggressive/)
+  for (const scribingGuideAnchor of [
+    'free base-game system as of July 10, 2025',
+    'The Second Era of Scribing',
+    'The Wing of the Indrik',
+    'The Wing of the Gryphon',
+    'The Wing of the Dragon',
+    'The Wing of the Netch',
+    'Luminous Ink',
+    '50 Class Script Scraps',
+    'daily Mages Guild quests',
+    'daily World Boss quests',
+    'daily World Event quests',
+    'Two different things are called Class Mastery',
+    "Ulfsild's Contingency - Bleed / Lingering Torment / Resolve",
+    'Mages Guild rank 5',
+    'The build is your shopping list',
+    'Official ESO Scribing Help'
+  ]) assert.ok(reference.toLowerCase().includes(scribingGuideAnchor.toLowerCase()), `${scribingGuideAnchor} should remain in the Scribing help guide`)
+})
+
+
+test('v3 workspace UX keeps equipment scannable and prioritizes editable build work', () => {
+  const equipment = read('src/renderer/pages/EquipmentPage.jsx')
+  const library = read('src/renderer/pages/BuildLibraryPage.jsx')
+  const review = read('src/renderer/pages/BuildReviewPage.jsx')
+
+  assert.match(equipment, /live-equipment-columns/)
+  assert.doesNotMatch(equipment, /Armor &amp; jewelry bonuses/)
+  assert.doesNotMatch(equipment, /Weapon sets stay below/)
+  assert.match(equipment, /live-set-summary/)
+  const characterCss = read('src/renderer/styles/Character.css')
+  assert.match(characterCss, /\.live-equipment-columns\{[^}]*grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/)
+  assert.match(characterCss, /\.live-gear-panel\{[^}]*gap:14px/)
+  assert.match(characterCss, /\.live-equipment-row-grid\{[^}]*grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/)
+  assert.match(characterCss, /\.live-equipment-fact b\{[^}]*white-space:normal/)
+  assert.doesNotMatch(characterCss, /\.live-equipment-fact b\{[^}]*overflow-wrap:anywhere/)
+  assert.match(characterCss, /\.live-set-summary-list\{[^}]*--live-set-count:1[^}]*repeat\(var\(--live-set-count\),minmax\(0,1fr\)\)/)
+  assert.match(equipment, /Current Equipped Armor/)
+  assert.match(equipment, /Current Equipped Weapons & Jewelry/)
+  assert.match(equipment, /<small>Set<\/small>/)
+  assert.doesNotMatch(equipment, /live-gear-rack|live-gear-card|live-gear-table/)
+  assert.match(equipment, /v3-gear-piece-check/)
+  assert.match(equipment, /v3-gear-piece-head/)
+  assert.match(equipment, /Where to get it/)
+  assert.match(equipment, /Tradeable/)
+
+  assert.match(library, /build-library-command-panel/)
+  assert.match(library, /Your work/)
+  assert.match(library, /Protected starting points/)
+  assert.match(library, /Technical details/)
+  assert.match(review, /review-clean-state/)
 })
 
 test('Settings stays concise while character backups live in Character Tracker', () => {

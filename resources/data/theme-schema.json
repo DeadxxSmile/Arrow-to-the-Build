@@ -1,0 +1,653 @@
+{
+  "theme_schema_version": 1,
+  "id_pattern": "^[a-z0-9][a-z0-9_-]{1,63}$",
+  "max_name_length": 80,
+  "max_author_length": 80,
+  "max_description_length": 240,
+  "groups": [
+    {
+      "name": "Surfaces",
+      "tokens": [
+        "appBg",
+        "surface",
+        "surfaceRaised",
+        "surfaceHigh",
+        "panelDeep",
+        "panelRaised",
+        "panelHeaderStart",
+        "panelHeaderEnd",
+        "codeBg"
+      ]
+    },
+    {
+      "name": "Text",
+      "tokens": [
+        "textPrimary",
+        "textSecondary",
+        "textMuted",
+        "textOnAccent"
+      ]
+    },
+    {
+      "name": "Borders",
+      "tokens": [
+        "border",
+        "borderStrong"
+      ]
+    },
+    {
+      "name": "Accents & states",
+      "tokens": [
+        "accentPrimary",
+        "accentSecondary",
+        "accentWarm",
+        "danger",
+        "warning",
+        "success",
+        "info",
+        "optional",
+        "selectedBg",
+        "selectedBorder",
+        "selectedStrong",
+        "selectedStrongBorder"
+      ]
+    },
+    {
+      "name": "Application chrome",
+      "tokens": [
+        "titlebarBg",
+        "sidebarStart",
+        "sidebarEnd",
+        "controlBg",
+        "scrollThumb",
+        "chromeBg",
+        "editorSidebarStart",
+        "editorSidebarEnd",
+        "sectionRailStart",
+        "sectionRailEnd",
+        "navActiveStart",
+        "navActiveEnd",
+        "navActiveBorder",
+        "navHover"
+      ]
+    },
+    {
+      "name": "Primary actions",
+      "tokens": [
+        "actionPrimaryStart",
+        "actionPrimaryEnd",
+        "actionPrimaryBorder",
+        "actionPrimaryText",
+        "actionPrimaryHoverStart",
+        "actionPrimaryHoverEnd",
+        "actionPrimaryHoverBorder"
+      ]
+    },
+    {
+      "name": "Modals & focus",
+      "tokens": [
+        "modalStart",
+        "modalEnd",
+        "modalBorder",
+        "focusRing"
+      ]
+    },
+    {
+      "name": "Effects & overlays",
+      "tokens": [
+        "shadow",
+        "backdrop",
+        "imageShadow",
+        "mainGlow",
+        "workspaceGlow"
+      ]
+    }
+  ],
+  "tokens": [
+    {
+      "key": "appBg",
+      "css_variable": "--color-app-bg",
+      "label": "Main Background",
+      "group": "Surfaces",
+      "description": "Controls the main background color.",
+      "simple": true,
+      "alpha": false
+    },
+    {
+      "key": "surface",
+      "css_variable": "--color-surface",
+      "label": "Panel Background",
+      "group": "Surfaces",
+      "description": "Controls the panel background color.",
+      "simple": true,
+      "alpha": false
+    },
+    {
+      "key": "surfaceRaised",
+      "css_variable": "--color-surface-raised",
+      "label": "Raised Surface",
+      "group": "Surfaces",
+      "description": "Controls the raised surface color.",
+      "simple": true,
+      "alpha": false
+    },
+    {
+      "key": "surfaceHigh",
+      "css_variable": "--color-surface-high",
+      "label": "High Surface",
+      "group": "Surfaces",
+      "description": "Controls the high surface color.",
+      "simple": false,
+      "alpha": false
+    },
+    {
+      "key": "panelDeep",
+      "css_variable": "--color-panel-deep",
+      "label": "Deep Panel",
+      "group": "Surfaces",
+      "description": "Controls the deep panel color.",
+      "simple": false,
+      "alpha": false
+    },
+    {
+      "key": "panelRaised",
+      "css_variable": "--color-panel-raised",
+      "label": "Raised Panel",
+      "group": "Surfaces",
+      "description": "Controls the raised panel color.",
+      "simple": false,
+      "alpha": false
+    },
+    {
+      "key": "panelHeaderStart",
+      "css_variable": "--color-panel-header-start",
+      "label": "Panel Header Start",
+      "group": "Surfaces",
+      "description": "Controls the panel header start color.",
+      "simple": false,
+      "alpha": false
+    },
+    {
+      "key": "panelHeaderEnd",
+      "css_variable": "--color-panel-header-end",
+      "label": "Panel Header End",
+      "group": "Surfaces",
+      "description": "Controls the panel header end color.",
+      "simple": false,
+      "alpha": false
+    },
+    {
+      "key": "codeBg",
+      "css_variable": "--color-code-bg",
+      "label": "Code Background",
+      "group": "Surfaces",
+      "description": "Controls the code background color.",
+      "simple": false,
+      "alpha": false
+    },
+    {
+      "key": "textPrimary",
+      "css_variable": "--color-text-primary",
+      "label": "Primary Text",
+      "group": "Text",
+      "description": "Controls the primary text color.",
+      "simple": true,
+      "alpha": false
+    },
+    {
+      "key": "textSecondary",
+      "css_variable": "--color-text-secondary",
+      "label": "Secondary Text",
+      "group": "Text",
+      "description": "Controls the secondary text color.",
+      "simple": true,
+      "alpha": false
+    },
+    {
+      "key": "textMuted",
+      "css_variable": "--color-text-muted",
+      "label": "Muted Text",
+      "group": "Text",
+      "description": "Controls the muted text color.",
+      "simple": true,
+      "alpha": false
+    },
+    {
+      "key": "textOnAccent",
+      "css_variable": "--color-text-on-accent",
+      "label": "Text on Accent",
+      "group": "Text",
+      "description": "Controls the text on accent color.",
+      "simple": false,
+      "alpha": false
+    },
+    {
+      "key": "border",
+      "css_variable": "--color-border",
+      "label": "Default Border",
+      "group": "Borders",
+      "description": "Controls the default border color.",
+      "simple": true,
+      "alpha": false
+    },
+    {
+      "key": "borderStrong",
+      "css_variable": "--color-border-strong",
+      "label": "Strong Border",
+      "group": "Borders",
+      "description": "Controls the strong border color.",
+      "simple": true,
+      "alpha": false
+    },
+    {
+      "key": "accentPrimary",
+      "css_variable": "--color-accent-primary",
+      "label": "Primary Accent",
+      "group": "Accents & states",
+      "description": "Controls the primary accent color.",
+      "simple": true,
+      "alpha": false
+    },
+    {
+      "key": "accentSecondary",
+      "css_variable": "--color-accent-secondary",
+      "label": "Secondary Accent",
+      "group": "Accents & states",
+      "description": "Controls the secondary accent color.",
+      "simple": true,
+      "alpha": false
+    },
+    {
+      "key": "accentWarm",
+      "css_variable": "--color-accent-warm",
+      "label": "Warm Accent",
+      "group": "Accents & states",
+      "description": "Controls the warm accent color.",
+      "simple": true,
+      "alpha": false
+    },
+    {
+      "key": "danger",
+      "css_variable": "--color-danger",
+      "label": "Error / Danger",
+      "group": "Accents & states",
+      "description": "Controls the error / danger color.",
+      "simple": true,
+      "alpha": false
+    },
+    {
+      "key": "warning",
+      "css_variable": "--color-warning",
+      "label": "Warning",
+      "group": "Accents & states",
+      "description": "Controls the warning color.",
+      "simple": true,
+      "alpha": false
+    },
+    {
+      "key": "success",
+      "css_variable": "--color-success",
+      "label": "Success",
+      "group": "Accents & states",
+      "description": "Controls the success color.",
+      "simple": true,
+      "alpha": false
+    },
+    {
+      "key": "info",
+      "css_variable": "--color-info",
+      "label": "Information",
+      "group": "Accents & states",
+      "description": "Controls the information color.",
+      "simple": true,
+      "alpha": false
+    },
+    {
+      "key": "optional",
+      "css_variable": "--color-optional",
+      "label": "Optional",
+      "group": "Accents & states",
+      "description": "Controls the optional color.",
+      "simple": false,
+      "alpha": false
+    },
+    {
+      "key": "selectedBg",
+      "css_variable": "--color-selected-bg",
+      "label": "Selected Background",
+      "group": "Accents & states",
+      "description": "Controls the selected background color.",
+      "simple": true,
+      "alpha": false
+    },
+    {
+      "key": "selectedBorder",
+      "css_variable": "--color-selected-border",
+      "label": "Selected Border",
+      "group": "Accents & states",
+      "description": "Controls the selected border color.",
+      "simple": true,
+      "alpha": false
+    },
+    {
+      "key": "selectedStrong",
+      "css_variable": "--color-selected-strong",
+      "label": "Strong Selection",
+      "group": "Accents & states",
+      "description": "Controls the strong selection color.",
+      "simple": false,
+      "alpha": false
+    },
+    {
+      "key": "selectedStrongBorder",
+      "css_variable": "--color-selected-strong-border",
+      "label": "Strong Selection Border",
+      "group": "Accents & states",
+      "description": "Controls the strong selection border color.",
+      "simple": false,
+      "alpha": false
+    },
+    {
+      "key": "titlebarBg",
+      "css_variable": "--color-titlebar-bg",
+      "label": "Title Bar Background",
+      "group": "Application chrome",
+      "description": "Controls the title bar background color.",
+      "simple": true,
+      "alpha": false
+    },
+    {
+      "key": "sidebarStart",
+      "css_variable": "--color-sidebar-start",
+      "label": "Navigation Background Start",
+      "group": "Application chrome",
+      "description": "Controls the navigation background start color.",
+      "simple": true,
+      "alpha": false
+    },
+    {
+      "key": "sidebarEnd",
+      "css_variable": "--color-sidebar-end",
+      "label": "Navigation Background End",
+      "group": "Application chrome",
+      "description": "Controls the navigation background end color.",
+      "simple": true,
+      "alpha": false
+    },
+    {
+      "key": "controlBg",
+      "css_variable": "--color-control-bg",
+      "label": "Input & Control Background",
+      "group": "Application chrome",
+      "description": "Controls the input & control background color.",
+      "simple": true,
+      "alpha": false
+    },
+    {
+      "key": "scrollThumb",
+      "css_variable": "--color-scroll-thumb",
+      "label": "Scrollbar Thumb",
+      "group": "Application chrome",
+      "description": "Controls the scrollbar thumb color.",
+      "simple": false,
+      "alpha": false
+    },
+    {
+      "key": "chromeBg",
+      "css_variable": "--color-chrome-bg",
+      "label": "Translucent Chrome",
+      "group": "Application chrome",
+      "description": "Controls the translucent chrome color.",
+      "simple": false,
+      "alpha": true
+    },
+    {
+      "key": "editorSidebarStart",
+      "css_variable": "--color-editor-sidebar-start",
+      "label": "Build Navigation Start",
+      "group": "Application chrome",
+      "description": "Controls the build navigation start color.",
+      "simple": false,
+      "alpha": false
+    },
+    {
+      "key": "editorSidebarEnd",
+      "css_variable": "--color-editor-sidebar-end",
+      "label": "Build Navigation End",
+      "group": "Application chrome",
+      "description": "Controls the build navigation end color.",
+      "simple": false,
+      "alpha": false
+    },
+    {
+      "key": "sectionRailStart",
+      "css_variable": "--color-section-rail-start",
+      "label": "Secondary Rail Start",
+      "group": "Application chrome",
+      "description": "Controls the secondary rail start color.",
+      "simple": false,
+      "alpha": false
+    },
+    {
+      "key": "sectionRailEnd",
+      "css_variable": "--color-section-rail-end",
+      "label": "Secondary Rail End",
+      "group": "Application chrome",
+      "description": "Controls the secondary rail end color.",
+      "simple": false,
+      "alpha": false
+    },
+    {
+      "key": "navActiveStart",
+      "css_variable": "--color-nav-active-start",
+      "label": "Active Navigation Start",
+      "group": "Application chrome",
+      "description": "Controls the active navigation start color.",
+      "simple": true,
+      "alpha": false
+    },
+    {
+      "key": "navActiveEnd",
+      "css_variable": "--color-nav-active-end",
+      "label": "Active Navigation End",
+      "group": "Application chrome",
+      "description": "Controls the active navigation end color.",
+      "simple": true,
+      "alpha": false
+    },
+    {
+      "key": "navActiveBorder",
+      "css_variable": "--color-nav-active-border",
+      "label": "Active Navigation Border",
+      "group": "Application chrome",
+      "description": "Controls the active navigation border color.",
+      "simple": false,
+      "alpha": false
+    },
+    {
+      "key": "navHover",
+      "css_variable": "--color-nav-hover",
+      "label": "Navigation Hover",
+      "group": "Application chrome",
+      "description": "Controls the navigation hover color.",
+      "simple": true,
+      "alpha": false
+    },
+    {
+      "key": "actionPrimaryStart",
+      "css_variable": "--color-action-primary-start",
+      "label": "Primary Button Start",
+      "group": "Primary actions",
+      "description": "Controls the primary button start color.",
+      "simple": true,
+      "alpha": false
+    },
+    {
+      "key": "actionPrimaryEnd",
+      "css_variable": "--color-action-primary-end",
+      "label": "Primary Button End",
+      "group": "Primary actions",
+      "description": "Controls the primary button end color.",
+      "simple": true,
+      "alpha": false
+    },
+    {
+      "key": "actionPrimaryBorder",
+      "css_variable": "--color-action-primary-border",
+      "label": "Primary Button Border",
+      "group": "Primary actions",
+      "description": "Controls the primary button border color.",
+      "simple": true,
+      "alpha": false
+    },
+    {
+      "key": "actionPrimaryText",
+      "css_variable": "--color-action-primary-text",
+      "label": "Primary Button Text",
+      "group": "Primary actions",
+      "description": "Controls the primary button text color.",
+      "simple": true,
+      "alpha": false
+    },
+    {
+      "key": "actionPrimaryHoverStart",
+      "css_variable": "--color-action-primary-hover-start",
+      "label": "Primary Button Hover Start",
+      "group": "Primary actions",
+      "description": "Controls the primary button hover start color.",
+      "simple": false,
+      "alpha": false
+    },
+    {
+      "key": "actionPrimaryHoverEnd",
+      "css_variable": "--color-action-primary-hover-end",
+      "label": "Primary Button Hover End",
+      "group": "Primary actions",
+      "description": "Controls the primary button hover end color.",
+      "simple": false,
+      "alpha": false
+    },
+    {
+      "key": "actionPrimaryHoverBorder",
+      "css_variable": "--color-action-primary-hover-border",
+      "label": "Primary Button Hover Border",
+      "group": "Primary actions",
+      "description": "Controls the primary button hover border color.",
+      "simple": false,
+      "alpha": false
+    },
+    {
+      "key": "modalStart",
+      "css_variable": "--color-modal-start",
+      "label": "Modal Background Start",
+      "group": "Modals & focus",
+      "description": "Controls the modal background start color.",
+      "simple": false,
+      "alpha": false
+    },
+    {
+      "key": "modalEnd",
+      "css_variable": "--color-modal-end",
+      "label": "Modal Background End",
+      "group": "Modals & focus",
+      "description": "Controls the modal background end color.",
+      "simple": false,
+      "alpha": false
+    },
+    {
+      "key": "modalBorder",
+      "css_variable": "--color-modal-border",
+      "label": "Modal Border",
+      "group": "Modals & focus",
+      "description": "Controls the modal border color.",
+      "simple": false,
+      "alpha": false
+    },
+    {
+      "key": "focusRing",
+      "css_variable": "--color-focus-ring",
+      "label": "Focus Ring",
+      "group": "Modals & focus",
+      "description": "Controls the focus ring color.",
+      "simple": false,
+      "alpha": true
+    },
+    {
+      "key": "shadow",
+      "css_variable": "--color-shadow",
+      "label": "Shadow",
+      "group": "Effects & overlays",
+      "description": "Controls the shadow color.",
+      "simple": false,
+      "alpha": true
+    },
+    {
+      "key": "backdrop",
+      "css_variable": "--color-backdrop",
+      "label": "Modal Backdrop",
+      "group": "Effects & overlays",
+      "description": "Controls the modal backdrop color.",
+      "simple": false,
+      "alpha": true
+    },
+    {
+      "key": "imageShadow",
+      "css_variable": "--color-image-shadow",
+      "label": "Image Shadow",
+      "group": "Effects & overlays",
+      "description": "Controls the image shadow color.",
+      "simple": false,
+      "alpha": true
+    },
+    {
+      "key": "mainGlow",
+      "css_variable": "--color-main-glow",
+      "label": "Main Background Glow",
+      "group": "Effects & overlays",
+      "description": "Controls the main background glow color.",
+      "simple": false,
+      "alpha": false
+    },
+    {
+      "key": "workspaceGlow",
+      "css_variable": "--color-workspace-glow",
+      "label": "Workspace Glow",
+      "group": "Effects & overlays",
+      "description": "Controls the workspace glow color.",
+      "simple": false,
+      "alpha": false
+    }
+  ],
+  "contrast_checks": [
+    {
+      "foreground": "textPrimary",
+      "background": "appBg",
+      "minimum": 4.5,
+      "label": "Primary text on the main background"
+    },
+    {
+      "foreground": "textPrimary",
+      "background": "surface",
+      "minimum": 4.5,
+      "label": "Primary text on standard panels"
+    },
+    {
+      "foreground": "textSecondary",
+      "background": "appBg",
+      "minimum": 3,
+      "label": "Secondary text on the main background"
+    },
+    {
+      "foreground": "textPrimary",
+      "background": "controlBg",
+      "minimum": 4.5,
+      "label": "Text inside controls"
+    },
+    {
+      "foreground": "actionPrimaryText",
+      "background": "actionPrimaryEnd",
+      "minimum": 4.5,
+      "label": "Primary button text"
+    }
+  ]
+}

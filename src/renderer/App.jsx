@@ -8,11 +8,13 @@ import AddonImportModal from './components/AddonImportModal'
 import ErrorBoundary from './components/ErrorBoundary'
 import { useAppDialog } from './components/AppDialogProvider'
 import useBuildEditor from './hooks/useBuildEditor'
-import { displayLine, esoCatalog } from './utils/catalogLogic'
+import { displayLine, esoCatalog, SKILL_LINE_GROUP_ORDER } from './utils/catalogLogic'
 import { applyCompletionChange } from './utils/buildLogic'
 import { APP_TAGLINE } from './utils/branding'
 import { HELP_NAV_SECTIONS } from './utils/helpReference.mjs'
 import { fallbackForWorkspace, isWorkspaceContentPath, workspaceForPath } from './utils/workspaceLogic.mjs'
+import { applyThemeToDocument } from './utils/themeEngine.mjs'
+import { resolveProgressionScope } from '../shared/progressionScope.mjs'
 import {
   applyLoadout, applyVariant, availableLoadouts, availableVariants,
   listLoadouts, listVariants, displayVariantName
@@ -23,7 +25,7 @@ export const useApp = () => useContext(AppContext)
 
 const characterNavSections = [
   { label: 'Start here', items: [
-    ['/setup', 'Basic Setup', '⌁'], ['/status', 'Current Levels', '◈']
+    ['/setup', 'Basic Info', '⌁'], ['/status', 'Current Levels', '◈']
   ] },
   { label: 'Build progress', items: [
     ['/skills', 'Skills & Passives', '✦'], ['/equipment', 'Equipment', '◫'],
@@ -57,7 +59,6 @@ const cpNav = [
   ['/champion-points', 'Overview', '✧', null], ['/champion-points/craft', 'Craft', '◇', 'cp_craft'],
   ['/champion-points/warfare', 'Warfare', '◇', 'cp_warfare'], ['/champion-points/fitness', 'Fitness', '◇', 'cp_fitness']
 ]
-const groupOrder = ['Class', 'Weapon', 'Armor', 'World', 'Guild', 'Alliance War', 'Racial', 'Craft', 'System']
 const DEFAULT_SETTINGS = {
   theme: 'default',
   eso_plus: 'false',
@@ -152,13 +153,17 @@ function CharacterSidebarNav({ location }) {
 }
 
 function BuildEditorSidebarNav({ draft }) {
+  const levelingRequired = draft ? resolveProgressionScope(draft.data || {}).leveling_content_required : true
   return <nav className="sidebar-nav editor-nav" aria-label="Build Editor">
     <span className="sidebar-section-label">Library</span>
     {buildLibraryNav.map(([to, label, icon]) => <NavLink key={to} to={to} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}><span aria-hidden="true">{icon}</span><b>{label}</b></NavLink>)}
     <span className="sidebar-section-label current-build-label">Current build</span>
-    {buildCurrentNav.map(([to, label, icon]) => draft
-      ? <NavLink key={to} to={to} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}><span aria-hidden="true">{icon}</span><b>{label}</b></NavLink>
-      : <button type="button" key={to} className="nav-item editor-disabled" disabled title="Open or create a build first"><span aria-hidden="true">{icon}</span><b>{label}</b></button>)}
+    {buildCurrentNav.map(([to, label, icon]) => {
+      const displayLabel = to === '/build-editor/leveling' && !levelingRequired ? 'Build Phases' : label
+      return draft
+        ? <NavLink key={to} to={to} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}><span aria-hidden="true">{icon}</span><b>{displayLabel}</b></NavLink>
+        : <button type="button" key={to} className="nav-item editor-disabled" disabled title="Open or create a build first"><span aria-hidden="true">{icon}</span><b>{displayLabel}</b></button>
+    })}
     <span className="sidebar-section-label">Authoring</span>
     {buildAuthoringNav.map(([to, label, icon]) => <NavLink key={to} to={to} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}><span aria-hidden="true">{icon}</span><b>{label}</b></NavLink>)}
   </nav>
@@ -226,6 +231,8 @@ export default function App() {
   const [addonImportOpen, setAddonImportOpen] = useState(false)
   const [loading, setLoading] = useState(true)
   const [appSettings, setAppSettings] = useState(DEFAULT_SETTINGS)
+  const [themeRegistry, setThemeRegistry] = useState({ themes: [], errors: [], schema: null, directory: '' })
+  const [themePreview, setThemePreview] = useState(null)
   const contentRef = useRef(null)
   const activeIdRef = useRef(null)
   const queue = useRef(Promise.resolve())
@@ -239,6 +246,8 @@ export default function App() {
   const variants = useMemo(() => listVariants(loadoutBuild), [loadoutBuild])
   const selectableVariants = useMemo(() => availableVariants(loadoutBuild, activeLoadoutId), [loadoutBuild, activeLoadoutId])
   const theme = appSettings.theme || 'default'
+  const themeCatalog = themeRegistry.themes || []
+  const activeTheme = themeCatalog.find(item => item.id === theme) || themeCatalog.find(item => item.id === 'default') || null
   const esoPlus = appSettings.eso_plus === 'true'
   useEffect(() => { activeIdRef.current = activeId }, [activeId])
 
@@ -255,7 +264,7 @@ export default function App() {
     const groups = {}
     for (const line of skillLines) (groups[line.group || 'System'] ||= []).push(line)
     return Object.entries(groups).sort(([a], [b]) => {
-      const ai = groupOrder.indexOf(a), bi = groupOrder.indexOf(b)
+      const ai = SKILL_LINE_GROUP_ORDER.indexOf(a), bi = SKILL_LINE_GROUP_ORDER.indexOf(b)
       return (ai < 0 ? 99 : ai) - (bi < 0 ? 99 : bi) || a.localeCompare(b)
     }).map(([group, lines]) => [group, lines.slice().sort((a, b) => a.name.localeCompare(b.name))])
   }, [skillLines])
@@ -277,6 +286,11 @@ export default function App() {
     }
     setAppSettings(raw)
     return raw
+  }, [])
+  const reloadThemes = useCallback(async provided => {
+    const registry = provided || await window.api.themes.list()
+    setThemeRegistry(registry)
+    return registry
   }, [])
   const reloadAddonStatus = useCallback(async () => {
     const status = await window.api.addon.getStatus()
@@ -308,11 +322,12 @@ export default function App() {
       await reloadBuilds()
       await reloadCharacters()
       await reloadSettings()
+      await reloadThemes()
       const status = await reloadAddonStatus()
       if (!status.onboarding_complete) setAddonSetupOpen(true)
       else if (status.enabled) await reloadAddonDiscoveries(true)
     } finally { setLoading(false) }
-  })() }, [reloadBuilds, reloadCharacters, reloadSettings, reloadAddonStatus, reloadAddonDiscoveries])
+  })() }, [reloadBuilds, reloadCharacters, reloadSettings, reloadThemes, reloadAddonStatus, reloadAddonDiscoveries])
   useEffect(() => { refreshActive() }, [activeId, refreshActive])
   useEffect(() => {
     const handle = async payload => {
@@ -335,7 +350,14 @@ export default function App() {
     window.api.addon.onSyncUpdated(handle)
     return () => window.api.addon.offSyncUpdated()
   }, [reloadCharacters, refreshActive, addonSetupOpen, modal])
-  useEffect(() => { document.documentElement.dataset.theme = theme }, [theme])
+  useEffect(() => {
+    const selected = themePreview || activeTheme
+    if (selected) applyThemeToDocument(selected, themePreview ? 'theme-preview' : selected.id)
+  }, [activeTheme, themePreview])
+  useEffect(() => {
+    if (!themeCatalog.length || themePreview || themeCatalog.some(item => item.id === theme)) return
+    window.api.settings.set('theme', 'default').then(() => setAppSettings(current => ({ ...current, theme: 'default' }))).catch(() => {})
+  }, [theme, themeCatalog, themePreview])
   useEffect(() => { if (contentRef.current) contentRef.current.scrollTop = 0 }, [location.pathname, location.search, activeId, workspace])
 
   useEffect(() => {
@@ -392,6 +414,23 @@ export default function App() {
     await window.api.addon.clearOverride(activeIdRef.current, fieldPath)
     await refreshActive(); await reloadCharacters(activeIdRef.current)
   }), [run, refreshActive, reloadCharacters])
+  const setAddonOverrideMode = useCallback(async enabled => {
+    if (!enabled) {
+      const approved = await dialog.confirm({
+        title: 'Disable synced-data overrides?',
+        message: 'All overrides across every synced character will be deleted. ATTB will restore the latest values reported by ESO.',
+        confirmLabel: 'Disable and Restore Synced Data',
+        danger: true
+      })
+      if (!approved) return false
+    }
+    await window.api.addon.setOverrideMode(enabled)
+    await reloadSettings()
+    await reloadCharacters(activeIdRef.current)
+    await refreshActive()
+    await reloadAddonStatus()
+    return true
+  }, [dialog, reloadSettings, reloadCharacters, refreshActive, reloadAddonStatus])
   const openAddonSetup = useCallback(() => setAddonSetupOpen(true), [])
   const openAddonImport = useCallback(async () => {
     try {
@@ -406,16 +445,19 @@ export default function App() {
 
   const ctx = useMemo(() => ({
     builds, characters, activeId, setActiveId, character, build, baseBuild, loadoutBuild, buildRecord, skillLines, skillGroups, loading,
-    loadouts, selectableLoadouts, variants, selectableVariants, catalog: esoCatalog, appSettings, theme, esoPlus, setAppSetting, reloadSettings,
+    loadouts, selectableLoadouts, variants, selectableVariants, catalog: esoCatalog, appSettings, theme, activeTheme, themeCatalog,
+    themeErrors: themeRegistry.errors || [], themeSchema: themeRegistry.schema, themesDirectory: themeRegistry.directory,
+    setThemePreview, reloadThemes, esoPlus, setAppSetting, reloadSettings,
     reloadBuilds, reloadCharacters, refreshActive, updateCharacter, toggleUnlock, setTemporaryUnlockState, setSkillRank,
     setSkillTracking, setGearPiece, addTrackedSkillLine, deleteTrackedSkillLine, openCharacterModal: () => setModal(true),
     workspace, switchWorkspace, editor, characterBuilds,
-    addonStatus, reloadAddonStatus, reloadAddonDiscoveries, openAddonSetup, openAddonImport, clearAddonOverride
+    addonStatus, reloadAddonStatus, reloadAddonDiscoveries, openAddonSetup, openAddonImport, clearAddonOverride, setAddonOverrideMode
   }), [builds, characters, activeId, character, build, baseBuild, loadoutBuild, buildRecord, skillLines, skillGroups, loading,
-    loadouts, selectableLoadouts, variants, selectableVariants, appSettings, theme, esoPlus, setAppSetting, reloadSettings, reloadBuilds, reloadCharacters,
+    loadouts, selectableLoadouts, variants, selectableVariants, appSettings, theme, activeTheme, themeCatalog, themeRegistry,
+    setThemePreview, reloadThemes, esoPlus, setAppSetting, reloadSettings, reloadBuilds, reloadCharacters,
     refreshActive, updateCharacter, toggleUnlock, setTemporaryUnlockState, setSkillRank, setSkillTracking, setGearPiece,
     addTrackedSkillLine, deleteTrackedSkillLine, workspace, switchWorkspace, editor, characterBuilds,
-    addonStatus, reloadAddonStatus, reloadAddonDiscoveries, openAddonSetup, openAddonImport, clearAddonOverride])
+    addonStatus, reloadAddonStatus, reloadAddonDiscoveries, openAddonSetup, openAddonImport, clearAddonOverride, setAddonOverrideMode])
 
   const changeHeaderBuild = useCallback(async buildId => {
     if (!character || !buildId || buildId === character.build_id) return

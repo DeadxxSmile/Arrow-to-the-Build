@@ -19,6 +19,12 @@ Builds commonly describe base class, race options, alliance relevance, role, pri
 
 Schema 4 covers these through `metadata`, `defaults`, `transformations`, `consumables`, `requirements`, and `setup_help`. Recommended defaults remain separate from the character's recorded values inside ATTB.
 
+### Build starting point and progression intent
+
+ATTB builds are not always written for a fresh Level 1 character. A player may be rebuilding an existing Level 50 character or changing an established CP160+ character into a new role. Requiring artificial 1-49 phases in those files makes validation less accurate rather than more complete.
+
+ATTB 3.0.0 therefore extends Schema 4 additively with optional `progression_scope`. `starting_point` is `new_character`, `level_50`, or `cp160_plus`, while `leveling_content_required` tells ATTB whether traditional leveling stages are expected. If the block is absent, ATTB preserves the original Schema 4 behavior (`new_character` + leveling required). This is intentionally backward-compatible and does not justify a Schema 5 bump.
+
 ### One-bar and two-bar setups
 
 ESO unlocks the second weapon set at Level 15. Builds may intentionally use one bar, two bars, or different bars in different progression phases and loadouts. [Official weapon-slot support article](https://help.elderscrollsonline.com/app/answers/detail/a_id/41320/)
@@ -105,6 +111,6 @@ The format optionally includes responsibilities, important buffs and debuffs, st
 
 Schema 3 was strong for progression but assumed one primarily pure-class setup with a smaller variant layer. It did not explicitly model subclassing, Class Mastery availability, exact Scribing recipes, complete reusable loadouts, transformations, quickslots, companions, performance targets, source records, or safe namespaced future data.
 
-Schema 4 closes those gaps while retaining the tested progression, gear, Champion Point, and variant foundations. Valid Schema 3 files are migrated during import. New public builds should use Schema 4. After public release, new fields should remain optional and backward-compatible whenever possible; a future schema number should be reserved for a genuinely breaking semantic change.
+Schema 4 closes those gaps while retaining the tested progression, gear, Champion Point, and variant foundations. ATTB 3.0.0 also demonstrates the intended additive-extension model with optional `progression_scope`, allowing established-character builds to omit irrelevant leveling history without changing the public schema number. Valid Schema 3 files are migrated during import. New public builds should use Schema 4. After public release, new fields should remain optional and backward-compatible whenever possible; a future schema number should be reserved for a genuinely breaking semantic change.
 
 No static format can guarantee that ESO will never introduce an entirely new kind of build data. Schema 4 is designed so most additions can be represented through optional properties, loadout overrides, descriptive metadata, and namespaced extensions before a breaking change is considered.

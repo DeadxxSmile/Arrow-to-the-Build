@@ -1,18 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
 import { useApp } from '../App'
+import useFlashNotice from '../hooks/useFlashNotice'
 
 export default function CharacterDataPage() {
   const { character, activeId, setActiveId, reloadBuilds, reloadCharacters, refreshActive } = useApp()
-  const [notice, setNotice] = useState('')
-  const flashTimer = useRef(null)
-
-  useEffect(() => () => clearTimeout(flashTimer.current), [])
-
-  const flash = message => {
-    setNotice(message)
-    clearTimeout(flashTimer.current)
-    flashTimer.current = setTimeout(() => setNotice(''), 4000)
-  }
+  const { notice, flash } = useFlashNotice()
 
   const exportCharacterBackup = async () => {
     if (!activeId || !character) return

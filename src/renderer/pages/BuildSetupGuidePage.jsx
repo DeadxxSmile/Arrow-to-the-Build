@@ -1,22 +1,18 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { NavLink, useLocation } from 'react-router-dom'
 import BuildSetupGuide from '../components/BuildSetupGuide'
+import useFlashNotice from '../hooks/useFlashNotice'
 
 export default function BuildSetupGuidePage() {
-  const [notice, setNotice] = useState('')
-  const flashTimer = useRef(null)
-
-  useEffect(() => () => window.clearTimeout(flashTimer.current), [])
-  const flash = useCallback(message => {
-    setNotice(message)
-    window.clearTimeout(flashTimer.current)
-    flashTimer.current = window.setTimeout(() => setNotice(''), 4000)
-  }, [])
+  const { notice, flash } = useFlashNotice()
+  const location = useLocation()
+  const helpContext = location.pathname.startsWith('/help')
 
   return <div className="page build-setup-page">
     <div className="page-title">
-      <span className="eyebrow">Helpful stuff</span>
-      <h1>ATTB Guides</h1>
-      <p>Learn the app and Build Editor, hand-author Schema 4 JSON, give the bundled AI guide to an assistant, troubleshoot validation, and understand ESO addon synchronization.</p>
+      {helpContext && <NavLink to="/help" className="reference-back">‹ Help &amp; Tools</NavLink>}
+      <span className="eyebrow">{helpContext ? 'Help & Tools guides' : 'Build Editor guide'}</span>
+      <h1>{helpContext ? 'ATTB Guides' : 'Build Setup Guide'}</h1>
+      <p>{helpContext ? 'Learn ATTB, author or troubleshoot build JSON, and understand how the ESO addon and desktop app work together.' : 'Use the guided authoring reference while creating, validating, importing, or hand-editing a Schema 4 build.'}</p>
     </div>
     {notice && <div className="notice-banner" role="status">{notice}</div>}
     <BuildSetupGuide flash={flash} />

@@ -2,6 +2,7 @@ import catalog from '#catalog' with { type: 'json' }
 
 export const esoCatalog = catalog
 export const catalogLines = catalog.lines || []
+export const SKILL_LINE_GROUP_ORDER = ['Class', 'Weapon', 'Armor', 'World', 'Guild', 'Alliance War', 'Racial', 'Craft', 'System']
 export const catalogLineMap = new Map(catalogLines.map(line => [line.id, line]))
 export const catalogSkillMap = new Map(catalogLines.flatMap(line => (line.skills || []).map(skill => [skill.id, { line, skill }])))
 

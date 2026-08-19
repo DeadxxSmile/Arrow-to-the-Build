@@ -71,8 +71,13 @@ test('a complete archive snapshot normalizes into live character state without b
     identity: {
       characterKey: key, accountName: '@Player', worldName: 'NA Megaserver', characterId: '123', name: 'Talia Tempest', level: 24,
       class: { id: 117, name: 'Arcanist' }, race: { id: 4, name: 'Dark Elf' }, alliance: { id: 2, name: 'Ebonheart Pact' },
+      zone: { name: 'Necrom', index: 42 },
       progression: { availableSkillPoints: 7, availableAttributePoints: 0 },
-      attributes: { magicka: { spentPoints: 0 }, health: { spentPoints: 0 }, stamina: { spentPoints: 28 } }
+      attributes: {
+        magicka: { spentPoints: 0, power: { current: 18000, maximum: 19000, effectiveMaximum: 19250 } },
+        health: { spentPoints: 0, power: { current: 21000, maximum: 22000, effectiveMaximum: 22300 } },
+        stamina: { spentPoints: 28, power: { current: 26000, maximum: 27000, effectiveMaximum: 27500 } }
+      }
     },
     skills: { lines: [{ skillType: 1, skillTypeName: 'Class', skillLineId: 218, name: 'Herald of the Tome', rank: 31, abilities: [] }], actionBars: [], activeWeaponPair: {} },
     equipment: { items: [] }, champion: { totalEarned: 209, disciplines: [], slotted: { supported: true, slots: [] } },
@@ -82,6 +87,8 @@ test('a complete archive snapshot normalizes into live character state without b
   assert.equal(live.level, 24)
   assert.equal(live.actual_unspent_skill_points, 7)
   assert.equal(live.skill_ranks.herald, 31)
+  assert.equal(snapshot.identity.zone.name, 'Necrom')
+  assert.equal(snapshot.identity.attributes.stamina.power.effectiveMaximum, 27500)
 })
 
 

@@ -4,19 +4,11 @@ export function slugifyEditorId(value = '') {
   return String(value).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'item'
 }
 
-export function skillRecord(skillId) {
-  return catalogSkillMap.get(skillId) || null
-}
-
 export function plannedRowsForSkill(data, skillId) {
   return (data?.unlock_order || []).filter(row => row?.catalog_skill_id === skillId)
 }
 
-export function selectedSkillIds(data) {
-  return new Set((data?.unlock_order || []).map(row => row?.catalog_skill_id).filter(Boolean))
-}
-
-export function nextPriority(data) {
+function nextPriority(data) {
   return Math.max(0, ...(data?.unlock_order || []).map(row => Number(row?.priority) || 0)) + 10
 }
 
@@ -38,7 +30,7 @@ function lineRecord(line) {
   return { id: line.id, name: line.name, max: Number(line.max_rank) || 50, group: line.group || 'Other' }
 }
 
-export function ensureRelevantLine(data, lineId) {
+function ensureRelevantLine(data, lineId) {
   const line = catalogLineMap.get(lineId)
   if (!line) return data
   const current = Array.isArray(data.relevant_lines) ? data.relevant_lines : []

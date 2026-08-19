@@ -3,6 +3,8 @@ import { useApp } from '../App'
 import { useAppDialog } from '../components/AppDialogProvider'
 import NumberStepper from '../components/NumberStepper'
 import { slugifyEditorId } from '../utils/buildEditorSkillLogic'
+import BuildEditorEmptyState from '../components/BuildEditorEmptyState'
+import { resolveProgressionScope } from '../../shared/progressionScope.mjs'
 
 const ARMOR_SLOTS = ['Head', 'Shoulders', 'Chest', 'Hands', 'Waist', 'Legs', 'Feet', 'Necklace', 'Ring 1', 'Ring 2', 'Front Weapon 1', 'Front Weapon 2', 'Back Weapon']
 const WEIGHTS = ['', 'Light', 'Medium', 'Heavy']
@@ -179,9 +181,15 @@ export default function BuildEquipmentPage() {
   const { editor } = useApp()
   const dialog = useAppDialog()
   const draft = editor.draft
-  if (!draft) return <div className="page"><div className="page-title"><span className="eyebrow">Current build</span><h1>Equipment</h1><p>Open or create a draft before editing this section.</p></div><section className="panel quiet-box">No editable build is currently open.</section></div>
+  if (!draft) return <BuildEditorEmptyState title="Equipment" description="Open or create a draft before editing this section." />
   const data = draft.data
   const stages = data.gear_stages || []
+  const progressionScope = resolveProgressionScope(data)
+  const roadmapCopy = progressionScope.starting_point === 'cp160_plus'
+    ? 'Define the immediate bridge and/or final CP160+ target. Traditional leveling gear is optional for this build scope. Every set retains its source and every item retains its slot, trait, enchantment, quality, and alternatives.'
+    : progressionScope.starting_point === 'level_50'
+      ? 'Create the transition from an existing Level 50 character through CP160 and the final target. Levels 1-49 gear is intentionally optional.'
+      : 'Create the complete gear roadmap from disposable leveling pieces through starter, bridge, and final setups. Every set retains its source and every item retains its slot, trait, enchantment, quality, and alternatives.'
   const totals = stages.reduce((result, stage) => {
     result.sets += stage.sets?.length || 0
     result.pieces += (stage.sets || []).reduce((sum, set) => sum + (set.pieces?.length || 0), 0)
@@ -203,7 +211,7 @@ export default function BuildEquipmentPage() {
 
   return <div className="page build-editor-form-page build-equipment-page">
     <datalist id="attb-quality-options">{QUALITIES.filter(Boolean).map(value => <option key={value} value={value} />)}</datalist>
-    <div className="page-title"><span className="eyebrow">Current build</span><h1>Equipment</h1><p>Create the complete gear roadmap from disposable leveling pieces through starter, bridge, and final setups. Every set retains its source and every item retains its slot, trait, enchantment, quality, and alternatives.</p></div>
+    <div className="page-title"><span className="eyebrow">Current build</span><h1>Equipment</h1><p>{roadmapCopy}</p></div>
     <section className="panel build-equipment-summary"><div><span className="eyebrow">Gear roadmap</span><h2>{stages.length} stage{stages.length === 1 ? '' : 's'} · {totals.sets} set group{totals.sets === 1 ? '' : 's'} · {totals.pieces} pieces</h2><p>Stage IDs, set IDs, and piece IDs are generated once and remain stable so characters, variants, and future revisions can keep reliable references.</p></div><button className="btn primary" onClick={() => update(current => ({ ...current, gear_stages: [...(current.gear_stages || []), blankStage(current.gear_stages || [])] }))}>+ Add Gear Stage</button></section>
     <div className="equipment-stage-list-editor">{stages.map((stage, index) => <StageEditor key={stage.id} stage={stage} index={index} count={stages.length} onPatch={patch => patchStage(index, patch)} onMove={direction => update(current => ({ ...current, gear_stages: move(current.gear_stages || [], index, direction) }))} onDuplicate={() => update(current => { const next = [...(current.gear_stages || [])]; next.splice(index + 1, 0, cloneStage(stage, next)); return { ...current, gear_stages: next } })} onDelete={() => deleteStage(index)} />)}</div>
   </div>

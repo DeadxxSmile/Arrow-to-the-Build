@@ -4,9 +4,9 @@
 
 **Audience:** AI assistants and humans authoring ATTB builds. No prior ATTB knowledge should be assumed.
 
-**Guide revision:** 2.1 - updated for ATTB 2.1 companion authoring, preset data, and stricter actionable-progression guidance.
+**Guide revision:** 3.0 - updated for ATTB 3.0.0, Schema 4 progression scope, current companion authoring, retirement behavior, and stricter actionable-progression guidance.
 
-**Current baseline when this guide was revised:** ATTB 2.2.0, public Build Schema 4. Player-skill IDs still follow the game version named by the current bundled `eso-skill-catalog.json`; companion presets use the separately maintained current companion catalog.
+**Current baseline when this guide was revised:** ATTB 3.0.0, public Build Schema 4. Player-skill IDs still follow the game version named by the current bundled `eso-skill-catalog.json`; companion presets use the separately maintained current companion catalog.
 
 **Document goal:** By the time an unfamiliar AI finishes the **START HERE** section, it should understand what ATTB is, how a build file relates to a character, what Schema 4 is trying to represent, which questions it must ask, where exact IDs come from, how sections cross-reference each other, and what must be validated before a JSON file is delivered.
 
@@ -45,6 +45,28 @@ Do not "correct" a target build merely because an attached character backup does
 
 ---
 
+## Build starting point is part of the target
+
+ATTB 3.0.0 can distinguish a full leveling guide from a rebuild for an existing character. Before authoring progression, decide the intended starting point and write the optional Schema 4 `progression_scope`:
+
+```json
+"progression_scope": {
+  "starting_point": "cp160_plus",
+  "leveling_content_required": false,
+  "description": "Designed for an existing CP160+ character changing into this build."
+}
+```
+
+Allowed `starting_point` values:
+
+- `new_character`: the build is expected to guide early leveling through the final target;
+- `level_50`: the user already has a Level 50 character and may need a CP160 transition;
+- `cp160_plus`: the user already has an established CP160+ character and needs a respec/rebuild/finalization plan.
+
+If the field is absent, ATTB preserves old Schema 4 behavior: `new_character` + `leveling_content_required: true`.
+
+**Do not invent leveling content merely because older ATTB builds usually had it.** Completeness is judged against the declared scope. A CP160+ build may be completely correct with a current/bridge phase and final target, while a new-character build should still explain the leveling journey.
+
 ## What an ATTB build file is
 
 An ATTB build JSON is not just a list of endgame skills.
@@ -58,17 +80,17 @@ A complete build can describe:
 - **ordered skill, morph, passive, and ultimate purchases**;
 - progression phases with action bars;
 - rotations or priority systems;
-- gear progression from leveling to final;
+- gear stages appropriate to the declared starting point, from leveling when needed through bridge/final targets;
 - all three Champion Point trees;
 - requirements and access limitations;
 - consumables;
 - Scribing recipes;
 - loadouts and variants;
-- structured companion setup recommendations, including ATTB 2.1 companion preset identities;
+- structured companion setup recommendations, including ATTB 3.0.0 companion preset identities;
 - performance/responsibility notes;
 - human-readable build notes.
 
-For ATTB 2.1, new builds still use the stable **Schema 4** public build format.
+For ATTB 3.0.0, new builds still use the stable **Schema 4** public build format.
 
 Think of Schema 4 as a structured build guide plus a dependency graph. Many fields reference IDs defined elsewhere in the same build or in ATTB's bundled ESO skill catalog. A file can therefore be valid JSON and still be a bad or warning-filled ATTB build if those references do not line up.
 
@@ -80,14 +102,14 @@ Do not treat an ATTB build as:
 
 - a raw export of every skill in ESO;
 - a list of every passive the character could ever buy;
-- a one-page endgame parse setup with no progression;
+- a one-page endgame parse setup with no actionable transition, target phase, or gear plan;
 - an exact copy of the character's current state;
 - free-form prose disguised as JSON;
 - a place to invent skill IDs;
 - a generic MMO talent tree with no ESO-specific acquisition rules;
 - a license to use every new ESO system merely because the schema supports it.
 
-The purpose is to create a **usable progression plan for a specific player goal**.
+The purpose is to create a **usable progression or rebuild plan for a specific player goal**.
 
 ---
 
@@ -141,13 +163,13 @@ That is why incomplete cross-references are harmful: they break the progression 
 | **Schema 4** | Current public ATTB build-file contract for the baseline covered by this guide. |
 | **Build `id`** | Permanent identifier for the build itself. Stable across normal revisions. |
 | **Display `name`** | Human-readable build name. Can change without changing identity. |
-| **Catalog** | ATTB's canonical player-skill list: ESO skill lines, skills, morphs, passives, ultimates, and stable IDs. ATTB 2.1 also ships a separate companion preset catalog. |
+| **Catalog** | ATTB's canonical player-skill list: ESO skill lines, skills, morphs, passives, ultimates, and stable IDs. ATTB 3.0.0 also ships a separate companion preset catalog. |
 | **`catalog_skill_id`** | Stable ATTB ID for an ordinary ESO player skill/passive/ultimate/Grimoire. Never guess it. |
 | **Unlock row ID** | `unlock_order[].id`, a build-local persistent row ID. This is what `requires[]` references. |
 | **Relevant line** | A skill line that this build tracks and uses. |
 | **Unlock Plan / `unlock_order`** | Ordered purchases and prerequisites for skills, morphs, passives, ultimates, etc. |
 | **Phase** | A level/CP band describing usable bars, rotation, milestones, and optionally attributes/gear. |
-| **Gear stage** | A progression step such as Leveling, CP160 Starter, Intermediate, Final. |
+| **Gear stage** | An equipment step appropriate to the scope, such as Leveling, CP160 Transition, Bridge, or Final. |
 | **CURRENT** | What the actual character owns/uses now. |
 | **TARGET** | What the build recommends. |
 | **Loadout** | A substantially different complete setup inside one build. |
@@ -333,7 +355,7 @@ When I ask you to create an ATTB build, do **not** merely produce JSON that pars
 Your job is to produce a build that is:
 
 1. a coherent, current ESO build for the requested purpose;
-2. complete enough to guide progression rather than only show an endgame snapshot;
+2. complete enough to guide the declared progression/rebuild scope rather than only show an unexplained endgame snapshot;
 3. valid against the current ATTB build format;
 4. internally cross-referenced correctly;
 5. based on exact ATTB catalog IDs rather than guessed skill IDs;
@@ -363,7 +385,7 @@ Use this order of authority:
 3. Current exported ATTB template/build files I provide.
 4. Only after those, prior conversation context or memory.
 
-For ATTB 2.1 / Schema 4, inspect the current versions of these files when available:
+For ATTB 3.0.0 / Schema 4, inspect the current versions of these files when available:
 
 - `docs/reference/BUILD_QUICK_START.md`
 - `docs/reference/BUILD_JSON_GUIDE.md`
@@ -488,11 +510,11 @@ Ask or determine:
     - dungeon/trial gear;
     - crafted/guild-trader gear.
 
-12. **Progression scope**
-    - full Level 1 → 50 → CP160 → endgame roadmap;
-    - leveling only;
-    - CP160+ only;
-    - current-character catch-up path.
+12. **Build starting point / progression scope**
+    - `new_character`: guide a new character through traditional leveling;
+    - `level_50`: start with an existing Level 50 character and transition toward CP160/final;
+    - `cp160_plus`: start with an established CP160+ character and author only the rebuild/bridge/final plan;
+    - set `leveling_content_required` deliberately. It is normally `true` only for `new_character`.
 
 13. **Gear tolerance**
     - easiest practical gear;
@@ -636,7 +658,7 @@ This separation is mandatory.
 
 # 8. Required Schema 4 foundation
 
-For the current ATTB 2.1 Schema 4 baseline, a complete build contains usable versions of:
+For the current ATTB 3.0.0 Schema 4 baseline, a complete build contains usable versions of:
 
 - `schema_version`
 - `id`
@@ -662,8 +684,11 @@ Current metadata requires at least:
 - `bar_count`
 - `class_style`
 
+`progression_scope` is optional for backwards compatibility, but **new ATTB 3.0.0 authoring should set it deliberately** when the build is for an existing Level 50 / CP160+ character.
+
 Use optional sections when they materially improve the build:
 
+- `progression_scope`
 - `short_name`
 - `author`
 - `game_version`
@@ -1114,7 +1139,7 @@ Do not make a beautifully written final bar that requires skills the progression
 
 ### Catalog unlock gates: use them, do not re-research them by hand
 
-ATTB 2.1.1's Update 50 player catalog carries a complete audited unlock model:
+ATTB 3.0.0's bundled Update 50 player catalog carries a complete audited unlock model:
 
 - every ordinary Skill Point passive has one exact per-purchase line-rank gate in `unlock_ranks`;
 - `required_rank` is the first passive point's gate or the base skill family's line-rank gate;
@@ -1304,9 +1329,9 @@ In the delivery summary, report the approximate/core Skill Point burden if it is
 
 # 15. Progression phases must be playable
 
-A phase is a usable plan for a level/CP band, not flavor text.
+A phase is a usable plan for a level/CP band, not flavor text. Every build still needs at least one phase because bars and rotation guidance live there. **The number and ranges of phases must follow `progression_scope`.**
 
-When creating a full progression build, use sensible bands such as:
+For `new_character`, use sensible bands such as:
 
 - early leveling before weapon swap;
 - Level 15+ two-bar introduction;
@@ -1315,6 +1340,10 @@ When creating a full progression build, use sensible bands such as:
 - Level 50 / pre-CP160 transition where useful;
 - CP160 starter;
 - later/final progression.
+
+For `level_50`, omit 1-49 history and start with the Level 50 / pre-CP160 transition or later.
+
+For `cp160_plus`, do not fabricate leveling bands. Use only the bridge/current/final phase or phases needed to explain the target.
 
 Use the current working ATTB examples as the structural pattern.
 
@@ -1439,23 +1468,72 @@ For Craft, include combat/adventure utility sensibly; do not pretend Craft CP is
 
 # 19. Scribing
 
-If the build uses a generic Grimoire only, follow the current catalog/schema rules.
+Scribing must be researched as a **recipe**, not merely recognized as a Grimoire name. In the ATTB 3.0.0 / ESO Update 50 baseline, Scribing is a free base-game system. A character can begin the Scribing introduction at Level 30 or after gaining access to the Champion System. Access and ownership are still character-specific enough that a build should not assume the target character already knows the required Grimoire or Scripts.
+
+## Understand the four recipe pieces
+
+A finished Scribed Skill requires exactly:
+
+1. **Grimoire** - base skill framework and parent skill line;
+2. **Focus Script** - main function and commonly the finished name, target behavior, resource type, and resource cost;
+3. **Signature Script** - secondary mechanic or special interaction;
+4. **Affix Script** - final buff or debuff layer.
+
+Not every Script works with every Grimoire, and a combination can be invalid even when the individual Scripts are each compatible with that Grimoire. Never infer compatibility from the names alone. Verify the exact current combination.
+
+**Name collision warning:** ESO also has a Scribing **Class Mastery Signature Script**. That is not the same system as the separate Update 50 **Class Mastery choices** ATTB stores under `class_configuration.class_mastery`. Do not substitute one for the other just because both are called Class Mastery.
+
+## Author generic versus exact Scribing correctly
+
+If the build truly uses a generic Grimoire only, follow the current catalog/schema rules and use the Grimoire `catalog_skill_id`.
 
 If the exact Scribed Skill matters, define the actual recipe under `scribed_skills`, including the current schema's required:
 
 - Grimoire;
+- Grimoire catalog ID;
 - Focus Script;
 - Signature Script;
 - Affix Script;
-- recipe ID/name.
+- stable recipe ID/name.
 
-Then reference that recipe with `scribed_skill_id`.
+Then reference that finished recipe with `scribed_skill_id` from bars, rotations, and the relevant unlock/progression rows. Do not set both `catalog_skill_id` and `scribed_skill_id` on the same row.
 
-Do not set both `catalog_skill_id` and `scribed_skill_id` on the same unlock row.
+## Research the player's acquisition path
 
-Verify current script names rather than inventing them from memory.
+When Scribing is part of the final target, verify what the player must actually obtain. Current common Script-source families are:
 
-Always provide a non-Scribing alternative when I request broad accessibility or when Scribing access is uncertain.
+- **Focus Scripts:** daily Delve quests, daily Mages Guild quests, PvP Rewards for the Worthy, and rotating Script vendors;
+- **Signature Scripts:** daily World Boss quests, daily Cyrodiil quests, daily Fighters Guild quests, and rotating Script vendors;
+- **Affix Scripts:** daily World Event quests, daily Imperial City quests, daily Undaunted quests, and rotating Script vendors.
+
+The Scholarium merchant Chronicler Firandil is a major Grimoire/Script source. Other rotating sources can include Filer Ool in the Infinite Archive and Tel Var offerings. Vendor stock changes, so do not promise that a rotating vendor has a specific Script unless you verified the current rotation.
+
+Luminous Ink is consumed when the player writes or changes Scripts. The first complete recipe normally writes all three Script slots and therefore costs three Ink; later changes consume Ink per Script slot changed. The Scribing questline unlocks additional Ink-drop paths, including enemy drops and harvesting-node drops.
+
+## Make the ATTB progression actionable
+
+If the target character does not already have Scribing ready, add useful milestones or requirement notes such as:
+
+- complete **The Second Era of Scribing**;
+- continue through **The Wing of the Indrik** for full Altar/vendor progression;
+- acquire and consume the named Grimoire;
+- learn the exact Focus, Signature, and Affix Scripts;
+- bring enough Luminous Ink;
+- Scribe the recipe at the Scholarium;
+- slot the finished Scribed Skill in the bar position used by the build.
+
+Do not tell a user to farm the entire Scribing library when the build only needs one recipe. Target the exact missing pieces first.
+
+Verify current Script names and compatibility rather than inventing them from memory. If an external build guide says only "Ulfsild's Contingency" but the actual rotation depends on a specific recipe, research the current intended three Scripts before writing the ATTB file.
+
+A useful acquisition note should read like a shopping list. For example, if the target is `Ulfsild's Contingency - Bleed / Lingering Torment / Resolve`, current research should identify the Ulfsild Grimoire requirement, Bleed Damage as the Focus Script, Lingering Torment as the Signature Script, Resolve as the Affix Script, and the Luminous Ink needed to write the recipe. ATTB's current catalog places Ulfsild's Contingency under Mages Guild at rank 5. Do not tell the player merely to "unlock Scribing" and leave the rest implicit.
+
+Always provide a non-Scribing alternative when the user requests broad accessibility, when Scribing access is uncertain, or when the exact recipe is a late acquisition rather than a hard prerequisite for the build to function.
+
+Primary current references for this workflow:
+
+- Official ESO Support: `https://help.elderscrollsonline.com/app/answers/detail/a_id/65808/~/what-is-scribing%3F`
+- Current Scribing database and compatibility reference: `https://eso-hub.com/en/scribing`
 
 ---
 
@@ -1497,11 +1575,11 @@ An override that looks reasonable by itself can still break the effective build.
 
 ---
 
-# 21. Companion section - ATTB 2.1
+# 21. Companion section - ATTB 3.0.0
 
-ATTB 2.1 promotes companions from a small recommendation field into a first-class authoring surface. The app ships a current companion directory and **two editable starter presets per current combat companion**. A build can use one of those presets as a starting point or store a completely custom companion setup.
+ATTB 3.0.0 treats companions as a first-class authoring surface rather than a small recommendation field. The app ships a current companion directory and **two editable starter presets per current combat companion**. A build can use one of those presets as a starting point or store a completely custom companion setup.
 
-Companion data still lives in the root Schema 4 `companions` array. **Schema 4 is not being replaced merely because the UI got richer.** ATTB 2.1 extends the documented companion object additively.
+Companion data still lives in the root Schema 4 `companions` array. **Schema 4 is not being replaced merely because the UI got richer.** ATTB 3.0.0 keeps the documented companion object additive.
 
 ## Companion source of truth
 
@@ -1515,7 +1593,7 @@ Use it to determine the supported companion IDs, current roster, ATTB starter pr
 
 The companion catalog is **not** the player skill catalog. Do not look for companion abilities in `eso-skill-catalog.json`, and do not invent `catalog_skill_id` values for them.
 
-## Recommended ATTB 2.1 companion object
+## Recommended ATTB 3.0.0 companion object
 
 A current companion setup may look like:
 
@@ -1574,7 +1652,7 @@ The example above teaches the shape only. **Use the actual current companion pre
 
 ## Character Tracker target vs build JSON
 
-ATTB 2.1 also lets the Character Tracker remember which preset the player intends to use beside a particular character. That selection is **character progression/preferences data**, not a reason to mutate the target build JSON automatically.
+ATTB 3.0.0 also lets the Character Tracker remember which preset the player intends to use beside a particular character. That selection is **character progression/preferences data**, not a reason to mutate the target build JSON automatically.
 
 Keep the same CURRENT-vs-TARGET mental model:
 
@@ -1670,16 +1748,19 @@ Run this entire checklist **before** giving me the file.
 - [ ] Display name is correct.
 - [ ] No protected bundled ID collision.
 - [ ] `game_version` and `verified_date` are current/accurate.
+- [ ] Starting point is known: `new_character`, `level_50`, or `cp160_plus`.
+- [ ] `leveling_content_required` matches the intended audience.
 
 ## B. Required sections
 
 - [ ] `metadata` is complete.
+- [ ] `progression_scope` is intentionally chosen for new ATTB 3.0.0 builds; if omitted, the legacy new-character default is truly intended.
 - [ ] `class_configuration` is complete.
 - [ ] `defaults` is complete.
 - [ ] `relevant_lines` is non-empty.
 - [ ] `unlock_order` is non-empty.
 - [ ] `phases` is non-empty.
-- [ ] `gear_stages` is non-empty.
+- [ ] `gear_stages` is non-empty and appropriate to the declared starting point; CP160+ builds do not need fake leveling stages.
 - [ ] all three CP trees exist.
 
 ## C. Catalog and skill IDs
@@ -2296,7 +2377,7 @@ When I request a new build and have not supplied enough detail, ask me something
 > - Rotation: easy, moderate, or max-performance:
 > - Gear restrictions: no trials/no DLC/easy farm/full endgame:
 > - ESO Plus / DLC / Scribing / mythic access:
-> - Progression: Level 1+, current character catch-up, or CP160+:
+> - Starting point: new character, existing Level 50, or existing CP160+:
 > - Companion: none, recommend one, or specific companion/role:
 > - Priority: damage, survival, sustain, group utility, or balanced:
 >
@@ -2349,7 +2430,7 @@ Unknown and potentially material:
 > - Rotation: easy, moderate, or max-performance?
 > - Gear limits: no trials, no DLC, easy-farm only, or full endgame options?
 > - Do you have ESO Plus, Scribing, and access to mythics?
-> - Full leveling roadmap or CP160+?
+> - Starting point: new character, existing Level 50, or existing CP160+?
 > - Prioritize maximum damage, extra solo safety, or balanced?
 >
 > Say "choose for me" on anything you don't care about.

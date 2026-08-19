@@ -2,6 +2,7 @@ import { Navigate, useParams } from 'react-router-dom'
 import { useApp } from '../App'
 import EmptyState from './EmptyState'
 import CPCard from '../components/CPCard'
+import SyncOverrideBar from '../components/SyncOverrideBar'
 import { CP_ACCOUNT_MAX } from '../utils/buildLogic'
 
 const TREES = ['craft', 'warfare', 'fitness']
@@ -35,12 +36,14 @@ export default function ChampionPointsPage() {
   const total = TREES.reduce((sum, key) => sum + Number(character[FIELD[key]] || 0), 0)
   const setTree = key => value => updateCharacter({ [FIELD[key]]: value })
 
-  if (tree) return <div className="page champion-points-page">
+  if (tree) return <div className="page champion-points-page v3-champion-points-page">
+    <SyncOverrideBar compact title="ESO Champion Point totals connected" description="The tree budget comes from the latest ESO snapshot. Turn overrides on only if you want to test a different total locally." />
     <CPCard tree={tree} plan={plans[tree]} total={character[FIELD[tree]] || 0} onChange={setTree(tree)} detailed disabled={syncedLocked} />
   </div>
 
   return <div className="page champion-points-page">
-    <div className="page-title"><span className="eyebrow">Character-specific allocation</span><h1>Champion Points</h1><p>{character.addon_sync?.linked ? 'Constellation totals are synced from ESO. Enable override mode in Settings > ESO Addon & Sync to test another budget.' : 'Enter the total Champion Points earned in each constellation. ATTB turns those three budgets into an ordered path through required connections, recommended branches, optional alternatives, and final slottables.'}</p></div>
+    <div className="page-title"><span className="eyebrow">Character-specific allocation</span><h1>Champion Points</h1><p>Enter or sync the total earned in each constellation. ATTB turns those budgets into an exact spend order, including how many points to put into the next star.</p></div>
+    <SyncOverrideBar title="ESO Champion Point totals connected" description="Synced totals stay protected. The spend plan remains readable either way, so you can bank points and catch up later without guessing the order." />
     <LiveChampionState character={character} />
     <section className="cp-account-summary panel">
       <div><span className="eyebrow">Tracked across all constellations</span><h2>{total.toLocaleString()} earned Champion Points</h2><p>These values stay with this ATTB character profile. Account-wide tracking can be added later without changing the build plans.</p></div>

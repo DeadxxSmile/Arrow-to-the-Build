@@ -6,6 +6,11 @@
   "author": "DeadxxSmile / ATTB",
   "game_version": "Update 50",
   "verified_date": "2026-08-07",
+  "progression_scope": {
+    "starting_point": "new_character",
+    "leveling_content_required": true,
+    "description": "Bundled ATTB progression build designed to guide a new character from leveling through the final target."
+  },
   "summary": "Lightning-and-Ice holy battlemage with self-healing Sweeps, strong execute pressure, group resource synergy, and optional off-healing.",
   "theme": {
     "accent": "#ffd76a",

@@ -7,6 +7,7 @@ import NumberStepper from '../components/NumberStepper'
 import { applyAllocationChange, reclaimablePointsFor, temporaryRetirementState } from '../utils/buildLogic'
 import { buildItemsForCatalogSkill, effectiveAllocation, effectiveSkillMaxPoints, itemBuildMeta } from '../utils/catalogLogic'
 import OverrideResetButton from '../components/OverrideResetButton'
+import SyncOverrideBar from '../components/SyncOverrideBar'
 
 function stateFor(skill, rank, allocation, meta) {
   if (allocation > 0) return 'selected'
@@ -74,9 +75,9 @@ export default function SkillLinePage() {
   const TemporaryControl = ({ meta, owned }) => {
     const entry = retirementForMeta(meta)
     if (!entry) return null
-    if (entry.state.source === 'manual-active') return <button type="button" className="btn ghost compact" onClick={() => setTemporaryUnlockState(entry.item.id, null)}>Use build cutoff</button>
-    if (entry.state.retired) return <button type="button" className="btn ghost compact" onClick={() => setTemporaryUnlockState(entry.item.id, entry.state.source === 'manual' ? null : 'active')}>{entry.state.source === 'manual' ? 'Use build cutoff' : 'Keep active'}</button>
-    return <button type="button" className="btn ghost compact" onClick={() => retireTemporary(entry.item, owned)}>Retire</button>
+    if (entry.state.source === 'manual-active') return <button type="button" className="btn secondary compact temporary-state-button" onClick={() => setTemporaryUnlockState(entry.item.id, null)}>Follow build cutoff</button>
+    if (entry.state.retired) return <button type="button" className="btn secondary compact temporary-state-button" onClick={() => setTemporaryUnlockState(entry.item.id, entry.state.source === 'manual' ? null : 'active')}>{entry.state.source === 'manual' ? 'Follow build cutoff' : 'Keep active'}</button>
+    return <button type="button" className="btn secondary compact temporary-state-button" onClick={() => retireTemporary(entry.item, owned)}>Retire</button>
   }
 
   const SkillBadges = ({ skill }) => {
@@ -161,7 +162,7 @@ export default function SkillLinePage() {
       <div><span className="eyebrow">{line.group} · {line.build_relevant ? 'build and full-line tracking' : 'personal full-line tracking'}</span><h1>{line.name}</h1><p>Modeled after ESO&rsquo;s skill window: base abilities branch into two morphs, passives track individual ranks, and build badges stay visible without hiding optional purchases.</p></div>
       <Link to="/skills" className="btn secondary">← Skills overview</Link>
     </div>
-    {character.addon_sync?.linked && <div className="sync-status-banner"><span className="sync-dot" /><div><b>ESO skill snapshot</b><small>{syncedLocked ? 'Enable override mode in Settings > ESO Addon & Sync to test another setup.' : 'Changes create local overrides; use ↶ to restore the ESO value.'}</small></div></div>}
+    <SyncOverrideBar compact title="ESO skill snapshot connected" description="Turn overrides on to test local ranks and purchases. Temporary build-step retirement remains available without overriding ESO ownership." />
     <section className="panel line-rank-panel">
       <div><span className="eyebrow">Current line rank</span><h2>{rank}/{line.max || 50}</h2></div>
       <div className="synced-control"><NumberStepper value={rank} min={0} max={line.max || 50} onChange={value => setSkillRank(line.id, value)} label={`${line.name} rank`} disabled={syncedLocked} /><OverrideResetButton fieldPath={`skill_ranks.${line.id}`} compact /></div>

@@ -1,0 +1,91 @@
+/* Shared application shell, workspace tabs, side navigation, and settings chrome. */
+/* Unified workspace + settings sidebar navigation */
+.sidebar{background:linear-gradient(180deg,var(--color-sidebar-start),var(--color-sidebar-end));border-right:1px solid var(--color-border);display:flex;flex-direction:column;overflow:hidden;--sidebar-nav-surface:color-mix(in srgb,var(--color-sidebar-start) 96%,var(--color-sidebar-end) 4%)}
+.sidebar-mode-character{--sidebar-nav-surface:color-mix(in srgb,var(--color-sidebar-start) 96%,var(--color-sidebar-end) 4%)}
+.sidebar-mode-build-editor{--sidebar-nav-surface:color-mix(in srgb,var(--color-sidebar-start) 94%,var(--color-sidebar-end) 6%)}
+.sidebar-mode-help{--sidebar-nav-surface:color-mix(in srgb,var(--color-sidebar-start) 92%,var(--color-sidebar-end) 8%)}
+.sidebar-mode-settings{--sidebar-nav-surface:color-mix(in srgb,var(--color-sidebar-start) 90%,var(--color-sidebar-end) 10%)}
+
+/* Compact browser-style workspace tabs align directly with the reduced main header. */
+.sidebar-workspace-header{height:var(--layout-workspace-header-height);min-height:var(--layout-workspace-header-height);display:flex;background:linear-gradient(180deg,color-mix(in srgb,var(--color-sidebar-start) 96%,transparent),color-mix(in srgb,var(--color-sidebar-end) 96%,transparent))}
+.workspace-tabs{position:relative;z-index:2;width:100%;height:var(--layout-workspace-header-height);min-height:var(--layout-workspace-header-height);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:end;gap:0;padding:12px 0 0;border:0;background:transparent}
+.workspace-tab{position:relative;z-index:1;width:100%;min-width:0;height:72px;margin:0;border:0;border-bottom:1px solid var(--color-border);border-radius:0;background:transparent;color:var(--color-text-secondary);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:5px 4px 6px;cursor:pointer;box-shadow:none;transition:color var(--transition-fast),background var(--transition-fast)}
+.workspace-tab:hover:not(.active){background:color-mix(in srgb,var(--sidebar-nav-surface) 58%,transparent);color:var(--color-text-primary);border-bottom-color:var(--color-border)}
+.workspace-tab.active{z-index:3;background:var(--sidebar-nav-surface);border:1px solid var(--color-border);border-bottom:0;border-radius:12px 12px 0 0;color:var(--color-text-primary);box-shadow:none}
+/* Outward lower shoulders let the inactive baseline roll smoothly up into the active tab. */
+.workspace-tab.active::before,.workspace-tab.active::after{content:"";position:absolute;z-index:4;bottom:-1px;width:13px;height:13px;pointer-events:none}
+.workspace-tab.active::before{left:-12px;background:radial-gradient(circle at 0 0,transparent 11px,var(--color-border) 11px 12px,var(--sidebar-nav-surface) 12px)}
+.workspace-tab.active::after{right:-12px;background:radial-gradient(circle at 100% 0,transparent 11px,var(--color-border) 11px 12px,var(--sidebar-nav-surface) 12px)}
+.workspace-tab:first-child.active::before,.workspace-tab:last-child.active::after{display:none}
+.workspace-tab:first-child.active{border-left:0;border-top-left-radius:0}
+.workspace-tab:last-child.active{border-right:0;border-top-right-radius:0}
+.workspace-tab.active svg{color:var(--color-accent-warm)}
+.workspace-tab svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.workspace-tab span{font-size:.75rem;font-weight:var(--font-weight-bold);line-height:1;letter-spacing:.01em;white-space:nowrap}
+
+.character-bar{height:var(--layout-workspace-header-height);min-height:var(--layout-workspace-header-height);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:center;gap:28px;padding:9px 22px;border-bottom:1px solid var(--color-border);background:color-mix(in srgb,var(--color-app-bg) 92%,transparent);backdrop-filter:blur(10px);z-index:5}
+.character-bar>.topbar-field{align-self:center;width:100%;justify-self:stretch}
+.topbar-field{display:grid;grid-template-rows:13px 44px;gap:5px;min-width:0;align-self:center}
+.topbar-label{text-transform:uppercase;letter-spacing:.11em;font-size:.72rem;line-height:13px;color:var(--color-accent-secondary);font-weight:var(--font-weight-heavy)}
+.character-switcher{position:relative;width:100%;justify-self:stretch}
+.character-switcher-trigger{width:100%;height:44px;display:flex;align-items:center;justify-content:space-between;gap:16px;text-align:left;background:var(--color-panel-raised);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:6px 13px;cursor:pointer}
+.character-switcher-trigger b{font-size:1rem;line-height:1.05}
+.character-switcher-trigger:hover{border-color:var(--color-border-strong);background:var(--color-surface-high)}
+.character-switcher-trigger span{min-width:0}
+.character-switcher-trigger b{display:block}
+.character-switcher-trigger em{display:none}
+.character-switcher-trigger i{font-style:normal;color:var(--color-accent-secondary)}
+.character-switcher-menu{position:absolute;left:0;top:calc(100% + 7px);z-index:30;width:max(100%,320px);background:var(--color-surface);border:1px solid var(--color-border-strong);border-radius:12px;padding:7px;box-shadow:0 20px 55px var(--color-image-shadow)}
+.character-switcher-menu button{width:100%;border:0;background:transparent;color:var(--color-text-primary);display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;border-radius:8px;padding:9px 10px;cursor:pointer}
+.character-switcher-menu button:hover,.character-switcher-menu button.active{background:var(--color-nav-hover)}
+.character-switcher-menu button.active{box-shadow:inset 3px 0 var(--color-accent-primary)}
+.character-switcher-menu button b,.character-switcher-menu button small{display:block}
+.character-switcher-menu button small{font-size:.75rem}
+.character-switcher-menu i{font-style:normal;color:var(--color-accent-primary)}
+.character-switcher-divider{height:1px;background:var(--color-border);margin:6px 3px}
+.character-switcher-menu .character-add-option{justify-content:flex-start;color:var(--color-accent-primary);font-weight:var(--font-weight-heavy)}
+.build-control,.variant-control{width:100%;justify-self:stretch}
+.build-control select,.variant-control select{width:100%;height:44px;padding:7px 13px;font-size:.95rem}
+.empty-character-bar{height:var(--layout-workspace-header-height);min-height:var(--layout-workspace-header-height);display:flex;align-items:center;justify-content:space-between;padding:9px 22px}
+.empty-character-bar h2{margin:0;font-size:1.2rem}
+
+.sidebar-nav-surface{flex:1;min-height:0;display:flex;flex-direction:column;background:var(--sidebar-nav-surface);border-bottom:0;overflow:hidden}
+.sidebar-nav-surface>.sidebar-nav{flex:1;min-height:0;display:flex;flex-direction:column;gap:0;margin:0;padding:16px 12px;overflow-y:auto;overflow-x:hidden;scrollbar-gutter:stable}
+.sidebar-nav-surface .nav-item{border:1px solid transparent;background:transparent;box-shadow:none}
+
+/* All three workspaces begin their navigation content on the same baseline. */
+.sidebar-nav-surface .sidebar-section-label{padding:0 12px 6px;color:var(--color-accent-secondary)}
+html[data-theme-base="old-scrolls"] .sidebar-nav-surface .sidebar-section-label{color:var(--color-accent-warm)}
+.editor-nav>.sidebar-section-label:not(:first-child),.help-tools-nav>.sidebar-section-label:not(:first-child),.character-tracker-nav>.sidebar-section-label:not(:first-child){margin-top:11px}
+.editor-nav .nav-item,.help-tools-nav .nav-item,.character-tracker-nav .nav-item{min-height:48px;padding:11px 13px;flex:none}
+.editor-nav .nav-item b,.help-tools-nav .nav-item b,.character-tracker-nav .nav-item b{font-size:.82rem}
+
+/* Settings fades into its dock only while Settings is open; inactive workspaces keep the hard footer divider. */
+.sidebar-mode-settings .sidebar-nav-surface{background:linear-gradient(180deg,var(--sidebar-nav-surface) 0%,var(--sidebar-nav-surface) 52%,color-mix(in srgb,var(--color-sidebar-end) 38%,var(--sidebar-nav-surface) 62%) 76%,color-mix(in srgb,var(--color-sidebar-end) 72%,var(--sidebar-nav-surface) 28%) 100%)}
+.sidebar-nav-surface .nav-item:hover{background:color-mix(in srgb,var(--color-surface-high) 42%,transparent)}
+.sidebar-nav-surface .nav-item.active{background:linear-gradient(135deg,var(--color-nav-active-start),var(--color-nav-active-end));border-color:var(--color-nav-active-border);box-shadow:inset 3px 0 var(--color-accent-primary)}
+.sidebar-mode-build-editor .sidebar-nav-surface .nav-item.active{box-shadow:inset 3px 0 color-mix(in srgb,var(--color-accent-warm) 72%,var(--color-accent-primary))}
+.sidebar-mode-settings .sidebar-nav-surface .nav-item.active{box-shadow:inset 3px 0 var(--color-accent-warm)}
+
+.settings-sidebar-nav{gap:7px;padding-top:18px}
+.settings-sidebar-nav .nav-item{min-height:50px}
+.settings-sidebar-nav .nav-item b{font-size:.84rem}
+.settings-sidebar-nav .nav-item:not(.active){background:transparent;border-color:transparent;box-shadow:none;color:var(--color-text-secondary)}
+
+/* Inactive Settings keeps the old footer divider. Active Settings removes it and blends the nav into the darker footer. */
+.sidebar-settings-dock{flex:none;min-height:80px;padding:9px 12px 11px;background:var(--color-sidebar-end);border-top:1px solid var(--color-border);display:flex;align-items:center;justify-content:center}
+.sidebar-settings-tab{width:100%;min-height:58px;display:flex;align-items:center;justify-content:center;gap:7px;padding:12px 13px;color:var(--color-text-secondary);text-decoration:none;border:0;border-radius:0;background:transparent;box-shadow:none}
+.sidebar-settings-tab>span{width:28px;text-align:center;font-size:1.6rem;line-height:1;flex:none}
+.sidebar-settings-tab b{font-size:1.06rem}
+.sidebar-settings-tab:hover{color:var(--color-text-primary);background:transparent}
+.sidebar-settings-dock.active{border-top-color:transparent;background:linear-gradient(180deg,color-mix(in srgb,var(--color-sidebar-end) 72%,var(--sidebar-nav-surface) 28%) 0%,var(--color-sidebar-end) 100%)}
+.sidebar-settings-tab.active{margin:0;background:transparent;border:0;color:var(--color-text-primary);box-shadow:none}
+.sidebar-settings-tab.active>span{color:var(--color-accent-warm)}
+
+.settings-workspace-bar{height:var(--layout-workspace-header-height);min-height:var(--layout-workspace-header-height);border-bottom:1px solid var(--color-border);background:color-mix(in srgb,var(--color-app-bg) 92%,transparent);backdrop-filter:blur(10px);display:flex;align-items:center;padding:9px 22px;z-index:5}
+.settings-workspace-bar h1{margin:0;font-size:1.38rem;line-height:1.15}
+.settings-page{padding-top:0}
+.settings-notice{margin-bottom:16px}
+
+html[data-theme-base="old-scrolls"] .workspace-tab.active svg{color:var(--color-accent-warm)}
+html[data-theme-base="old-scrolls"] .sidebar-nav-surface .nav-item.active{box-shadow:inset 3px 0 var(--color-accent-warm)}

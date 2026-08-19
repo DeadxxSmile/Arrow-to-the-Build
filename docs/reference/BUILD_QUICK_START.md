@@ -1,6 +1,6 @@
 # Start Here: Builds, JSON, and the ATTB Build Editor
 
-Every build in Arrow to the Build is a **Schema 4 JSON** file. Bundled builds, builds you make in the visual editor, community files you import, and files you edit by hand all use the same structure.
+Every build in Arrow to the Build is a **Schema 4 JSON** file. Bundled builds, builds you make in the visual editor, community files you import, and files you edit by hand all use the same structure. This reference is current for **ATTB 3.0.0**.
 
 You do **not** need to know JSON to create a build in ATTB. The Build Editor writes and validates the JSON for you. The JSON format matters because it keeps builds portable, human-readable, easy to back up, and usable outside the app.
 
@@ -21,13 +21,39 @@ A complete build can include:
 - class, active class lines, subclassing, and Class Mastery;
 - race, alliance, attributes, Mundus, weapons, armor direction, and transformations;
 - skills, morphs, passives, ultimates, and their recommended purchase order;
-- leveling phases with front and back bars, rotations, milestones, and attribute targets;
+- build phases with front and back bars, rotations, milestones, and attribute targets; a new-character build can cover 1-50 while an existing-character build can start at Level 50 or CP160+;
 - equipment stages with individual pieces, traits, enchantments, sources, and alternatives;
 - Craft, Warfare, and Fitness Champion Point plans;
 - complete named loadouts and smaller situational variants;
 - consumables, quickslots, structured companion setups, requirements, performance notes, and research sources.
 
 The Character Tracker reads this information and turns it into a character-specific progression plan.
+
+### If your build uses Scribing
+
+ATTB 3.0.0 stores an exact Scribed Skill recipe when the final ability depends on a specific Grimoire + Focus + Signature + Affix combination. The in-app **Help & Tools -> Progression -> Scribing** page walks from first unlock through acquiring the required ingredients, spending Luminous Ink, crafting the skill, and putting it on the build bar.
+
+## Build starting point: `progression_scope`
+
+ATTB 3.0.0 adds an **optional, backwards-compatible Schema 4** object that tells the app what kind of progression the build is meant to cover:
+
+```json
+"progression_scope": {
+  "starting_point": "cp160_plus",
+  "leveling_content_required": false,
+  "description": "Designed for an existing CP160+ character changing into this build."
+}
+```
+
+`starting_point` supports:
+
+- `new_character`: traditional ATTB progression from early leveling toward the final build;
+- `level_50`: an existing Level 50 character that may still need a CP160 transition;
+- `cp160_plus`: an established CP160+ character being rebuilt, respecced, or finished out.
+
+When `progression_scope` is missing, ATTB preserves older Schema 4 behavior and treats the build as `new_character` with `leveling_content_required: true`. Existing Schema 4 files therefore remain valid.
+
+A non-leveling build still needs at least one useful phase and one gear stage because ATTB needs somewhere to describe its bars/rotation and equipment target. It simply does **not** need fake Levels 1-15, 15-30, or disposable leveling gear solely to satisfy authoring suggestions.
 
 ## The four ways to begin
 
@@ -40,11 +66,11 @@ This is the recommended starting point. Choose the important foundation:
 1. Build name and base class.
 2. Primary role and resource.
 3. Suggested race, alliance, and Mundus.
-4. Full leveling plan or endgame-focused structure.
+4. Who the build is for: a new character, an existing Level 50 character, or an existing CP160+ character.
 5. Pure class or a build that may add subclassing later.
 6. One-bar or two-bar setup.
 
-ATTB creates a valid class-specific scaffold with real catalog IDs, starter skills, an attainable ultimate, leveling phases, bars, rotation structure, equipment, Champion Points, and a default loadout.
+ATTB creates a valid class-specific scaffold with real catalog IDs, starter skills, an attainable ultimate, build phases, bars, rotation structure, equipment, Champion Points, and a default loadout. The scaffold changes with the chosen starting point instead of fabricating 1-50 content for a build meant only for an established character.
 
 Everything remains editable after creation.
 
@@ -82,7 +108,8 @@ Set the public identity and purpose:
 - name, short name, author, and permanent ID;
 - summary and game version;
 - verification date;
-- roles, content, difficulty, platforms, language, and tags.
+- roles, content, difficulty, platforms, language, and tags;
+- the build starting point and whether traditional leveling content is required.
 
 The permanent ID is generated when the build is created and remains locked so characters, drafts, revisions, and exported files keep a stable reference.
 
@@ -116,9 +143,9 @@ Browse the bundled skill catalog, add abilities and passives, choose morphs, set
 
 A skill must be in the Unlock Plan before it can be selected on a leveling hotbar.
 
-### 5. Leveling Plan
+### 5. Leveling Plan / Build Phases
 
-Create the build’s progression timeline. Each phase can contain:
+Create the build’s phase timeline. For a normal `new_character` build this is the 1-50 progression plan. For `level_50` or `cp160_plus`, ATTB treats early leveling content as optional and the page becomes a place to author only the transition/target phases the build actually needs. Each phase can contain:
 
 - level and CP range;
 - phase overview and milestones;
@@ -138,7 +165,7 @@ Edit the Craft, Warfare, and Fitness plans. Add ordered core stars, recommended 
 
 ### 8. Companions
 
-ATTB 2.1 includes every current combat companion in a dedicated directory plus two starter setups per companion. In the Build Editor you can add a preset, reset an edited setup back to its preset, or author a custom companion target.
+ATTB 3.0.0 includes every current combat companion in a dedicated directory plus two starter setups per companion. In the Build Editor you can add a preset, reset an edited setup back to its preset, or author a custom companion target.
 
 Companion skills are stored separately from player skill IDs and Unlock Plan data.
 

@@ -1,3 +1,4 @@
+import { NavLink } from 'react-router-dom'
 import { useState } from 'react'
 
 const groups = [
@@ -29,7 +30,7 @@ export default function ResourcesPage() {
     catch (error) { setNotice(error.message || 'That link could not be opened.') }
   }
   return <div className="page">
-    <div className="page-title"><span className="eyebrow">Trusted starting points</span><h1>Resources &amp; project links</h1><p>Useful sites for ESO research, builds, mechanics, add-ons, trading, ATTB development, and the creator. Links open in your normal browser.</p></div>
+    <div className="page-title"><NavLink to="/help" className="reference-back">‹ Help &amp; Tools</NavLink><span className="eyebrow">Trusted starting points</span><h1>Resources &amp; project links</h1><p>Useful sites for ESO research, builds, mechanics, add-ons, trading, ATTB development, and the creator. Links open in your normal browser.</p></div>
     {notice && <div className="error-box" role="alert">{notice}</div>}
     <div className="resource-groups">{groups.map(group => <section className="panel" key={group.title}><div className="section-head"><div><span className="eyebrow">External links</span><h2>{group.title}</h2></div></div><div className="resource-list">{group.items.map(([name, description, url]) => <button type="button" key={name} onClick={() => open(url)}><span><b>{name}</b><small>{description}</small></span><i aria-hidden="true">↗</i></button>)}</div></section>)}</div>
     <div className="quiet-box resource-disclaimer">ATTB is not affiliated with the external ESO resources listed above. Opening any link does not send character data or download anything into ATTB.</div>

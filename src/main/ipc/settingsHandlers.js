@@ -32,6 +32,7 @@ function register(ipcMain) {
       db.prepare('DELETE FROM addon_character_snapshots').run()
       db.prepare('DELETE FROM settings').run()
     })()
+    try { require('./imageHandlers').clearCharacterImages() } catch { }
     require('./buildHandlers').seedBundled()
     return true
   })

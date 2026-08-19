@@ -1,7 +1,9 @@
 # Arrow to the Build - ESO Skill Catalog Audit (Update 50)
 
+> **Current app release:** ATTB 3.0.0. This file is a historical Update 50 catalog audit; older ATTB version numbers below are intentionally preserved as audit history.
+
 Audit date: 2026-08-08  
-ATTB target: 2.0.0  
+Original audited app version: 2.0.0  
 ESO live target: Update 50 / API 101050
 
 > Historical audit note: this file records the 2.0-era Update 50 catalog audit. ATTB 2.1.0 adds a follow-up safety layer described below; the original audit results are intentionally preserved as release history.
@@ -125,7 +127,7 @@ Targeted automated checks completed successfully:
 
 ### Environment limitation
 
-The complete repository `npm test` / Electron renderer suite could not be executed in this sandbox because the Electron test runtime is not installed. Attempting `npm ci --include=dev` fails on the sandbox's internal npm mirror with a 404 for `yocto-queue-0.1.0`. This is an environment/package-mirror failure, not a test failure. The full Electron/Vite suite should still be run on the normal Windows release machine before replacing the frozen 2.0.0 package.
+At the time of this historical audit, the complete repository `npm test` / Electron renderer suite could not be executed in the sandbox because the Electron test runtime was not installed. The sandbox package mirror also failed to provide `yocto-queue-0.1.0`. Those limitations describe the original audit environment only. For the current ATTB 3.0.0 release gate, follow [`RELEASE_CHECKLIST.md`](RELEASE_CHECKLIST.md) and run the full Electron/Vite/installer checks on the normal Windows release machine.
 
 ## Main files changed
 
