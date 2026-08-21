@@ -1,0 +1,14 @@
+{
+  "name": "Arrow to the Build",
+  "short_name": "ATTB",
+  "description": "A free, offline Windows companion for The Elder Scrolls Online that turns a build guide into a step-by-step plan for the character you actually play.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "browser",
+  "background_color": "#071018",
+  "theme_color": "#071018",
+  "icons": [
+    { "src": "/assets/logo/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/logo/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

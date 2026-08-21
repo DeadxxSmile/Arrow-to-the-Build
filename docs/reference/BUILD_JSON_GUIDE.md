@@ -584,7 +584,7 @@ The root `quickslots` array describes the recommended wheel. `consumables.quicks
 
 # 12. Champion Point plans
 
-Every build needs all three trees.
+Every build needs all three trees. In ATTB 3.0.1, the build JSON authors **priorities and targets** while `resources/data/eso-cp-catalog.json` owns the ESO facts. Do not copy star names, max values, stage thresholds, or slottable flags into new builds.
 
 ```json
 {
@@ -595,47 +595,35 @@ Every build needs all three trees.
       "minimum_points": 0,
       "core": [
         {
-          "id": "precision",
-          "name": "Precision",
-          "max_points": 20,
-          "slottable": false,
-          "jump_points": [10, 20],
-          "note": "Required connection.",
-          "requires": [],
-          "cluster": "damage",
-          "position": { "x": 0, "y": 0 }
+          "id": "master_at_arms",
+          "first_pass_points": 50,
+          "target_points": 50,
+          "note": "Primary direct-damage target."
         },
         {
-          "id": "piercing",
-          "name": "Piercing",
-          "max_points": 20,
-          "slottable": false,
-          "jump_points": [10, 20],
-          "requires": ["precision"],
-          "cluster": "damage",
-          "position": { "x": 1, "y": 0 }
+          "id": "biting_aura",
+          "first_pass_points": 50,
+          "target_points": 50,
+          "note": "Primary area-damage target."
         }
       ],
       "flex": [
         {
-          "id": "direct_damage",
-          "label": "Direct damage",
-          "purpose": "General damage",
-          "optional": false,
-          "note": "Fill after the required path.",
+          "id": "alternate_damage",
+          "label": "Alternate damage",
+          "purpose": "Situational damage swap",
+          "optional": true,
           "nodes": [
             {
-              "id": "master_at_arms",
-              "name": "Master-at-Arms",
-              "max_points": 50,
-              "slottable": true,
-              "jump_points": [10, 20, 30, 40, 50],
-              "requires": ["piercing"]
+              "id": "thaumaturge",
+              "first_pass_points": 50,
+              "target_points": 50,
+              "note": "Only when the build genuinely wants a DoT-focused alternative."
             }
           ]
         }
       ],
-      "final_slots": ["master_at_arms"],
+      "final_slots": ["master_at_arms", "biting_aura"],
       "notes": []
     }
   }
@@ -644,23 +632,44 @@ Every build needs all three trees.
 
 The full object must also contain valid `craft` and `fitness` plans.
 
-Validation rules:
+### CP strategy fields
 
-- node IDs are unique inside a tree;
-- `max_points` is a positive whole number;
-- jump points are positive and do not exceed the node max;
-- `requires` points to real nodes and cannot form cycles;
+- `id` is the canonical ATTB CP star ID from `eso-cp-catalog.json`.
+- `first_pass_points` is how far ATTB should invest before moving to the next authored priority. Use the route-opening milestone for connector stars instead of lying about the star's true maximum.
+- `target_points` is the eventual amount the build wants in that star. It cannot exceed the catalog maximum and cannot be lower than `first_pass_points`.
+- `note` explains why/when the build wants the star.
+- `requires` is an optional manual route override. Omit it for normal authoring; the catalog/live addon graph should determine required connector nodes.
+
+For example, a build may want Bloody Renewal at 50. ATTB can expand that authored target through the verified Fitness graph as:
+
+```text
+Sprinter 10/20 -> Hasty 8/16 -> Hero's Vigor 10/20 -> Bloody Renewal 50/50
+```
+
+The first three numbers are **first-pass unlock investments**, not fake maximums. Later, if the build's strategy calls for it, ATTB can return to those stars and finish their `target_points`.
+
+### Validation rules
+
+- every authored `id` must exist in the current CP catalog and belong to the correct tree;
+- `first_pass_points` and `target_points` are positive whole numbers within the star's canonical maximum;
+- when the catalog verifies discrete jump-point stages, both values must land on a real ESO stage threshold (ATTB rejects between-stage targets that provide no completed stage);
+- `first_pass_points <= target_points`;
+- manual `requires` IDs, when supplied, must be canonical stars in the same constellation and cannot create cycles;
 - flex groups have unique IDs, readable labels, and at least one node;
 - final slots contain no more than four unique IDs;
-- final-slot IDs exist and identify slottable nodes.
+- each final-slot ID must be an authored target in that tree and the catalog must mark it slottable.
 
-Allocation behavior:
+### Allocation behavior
 
-1. core nodes fill in array order;
-2. non-optional flex groups fill in array order;
-3. optional groups remain visible but receive no automatic recommendation;
-4. points beyond documented nodes are shown as unassigned/free;
-5. `requires` is used for path validation and visual connections.
+1. ATTB takes the authored non-optional priorities in order.
+2. It expands each priority through the verified constellation graph and automatically inserts connector stars.
+3. The first pass spends only the amount needed to reach each priority's `first_pass_points`.
+4. Once the first-pass route is reached, ATTB returns to authored stars that have higher `target_points`.
+5. Optional groups stay visible but receive no automatic allocation.
+6. If addon 1.1.3+ supplies a live ESO graph, that graph overrides bundled fallback pathing and map geometry.
+7. If an offline path is not verified and no live graph is available, ATTB warns instead of inventing a route.
+
+Legacy Schema 4 files may still contain `name`, `max_points`, `slottable`, and `jump_points`. Import normalization strips those duplicated facts and converts an older lower `max_points` into a first-pass milestone when it can do so safely. New authoring should use the catalog-backed strategy format above.
 
 # 13. Companions and performance notes
 

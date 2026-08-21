@@ -142,36 +142,19 @@
       "color": "blue",
       "core": [
         {
-          "id": "precision",
-          "name": "Precision",
-          "max_points": 20,
-          "slottable": false,
-          "jump_points": [
-            10,
-            20
-          ],
-          "note": "Example required connector/passive."
+          "id": "master_at_arms",
+          "first_pass_points": 50,
+          "target_points": 50,
+          "note": "Primary direct-damage target. ATTB inserts any verified prerequisite route automatically."
+        },
+        {
+          "id": "biting_aura",
+          "first_pass_points": 50,
+          "target_points": 50,
+          "note": "Primary area-damage target."
         }
       ],
       "flex": [
-        {
-          "id": "damage",
-          "label": "Damage",
-          "purpose": "damage",
-          "nodes": [
-            {
-              "id": "master_at_arms",
-              "name": "Master-at-Arms",
-              "max_points": 50,
-              "slottable": true,
-              "jump_points": [
-                25,
-                50
-              ],
-              "note": "Example direct-damage slottable."
-            }
-          ]
-        },
         {
           "id": "alternate_damage",
           "label": "Alternate damage",
@@ -180,26 +163,29 @@
           "nodes": [
             {
               "id": "thaumaturge",
-              "name": "Thaumaturge",
-              "max_points": 50,
-              "slottable": true,
-              "jump_points": [
-                25,
-                50
-              ],
-              "note": "Optional damage-over-time alternative."
+              "first_pass_points": 50,
+              "target_points": 50,
+              "note": "Example situational alternative."
             }
           ]
         }
       ],
       "final_slots": [
-        "master_at_arms"
+        "master_at_arms",
+        "biting_aura"
       ]
     },
     "fitness": {
       "label": "Fitness",
       "color": "red",
-      "core": [],
+      "core": [
+        {
+          "id": "bloody_renewal",
+          "first_pass_points": 50,
+          "target_points": 50,
+          "note": "ATTB routes through Sprinter, Hasty, and Hero's Vigor at the required milestones before reaching this star."
+        }
+      ],
       "flex": [
         {
           "id": "survival",
@@ -208,29 +194,35 @@
           "nodes": [
             {
               "id": "boundless_vitality",
-              "name": "Boundless Vitality",
-              "max_points": 50,
-              "slottable": true,
-              "jump_points": [
-                10,
-                20,
-                30,
-                40,
-                50
-              ],
-              "note": "Example Health slottable."
+              "first_pass_points": 50,
+              "target_points": 50,
+              "note": "General Health slottable."
             }
           ]
         }
       ],
       "final_slots": [
+        "bloody_renewal",
         "boundless_vitality"
       ]
     },
     "craft": {
       "label": "Craft",
       "color": "green",
-      "core": [],
+      "core": [
+        {
+          "id": "gilded_fingers",
+          "first_pass_points": 50,
+          "target_points": 50,
+          "note": "Example economy-first passive priority."
+        },
+        {
+          "id": "inspiration_boost",
+          "first_pass_points": 45,
+          "target_points": 45,
+          "note": "ATTB inserts Fortune's Favor when needed to reach this node."
+        }
+      ],
       "flex": [
         {
           "id": "quality_of_life",
@@ -239,16 +231,8 @@
           "nodes": [
             {
               "id": "steeds_blessing",
-              "name": "Steed's Blessing",
-              "max_points": 50,
-              "slottable": true,
-              "jump_points": [
-                10,
-                20,
-                30,
-                40,
-                50
-              ],
+              "first_pass_points": 50,
+              "target_points": 50,
               "note": "Example movement-speed slottable."
             }
           ]

@@ -1440,31 +1440,34 @@ If I request low-friction gear, do not bury the build behind trial sets.
 
 # 18. Champion Points
 
-Every complete current Schema 4 build needs:
+Every complete current Schema 4 build needs `craft`, `warfare`, and `fitness`.
 
-- `craft`;
-- `warfare`;
-- `fitness`.
+ATTB 3.0.1 separates **ESO facts** from **build strategy**. Do not author a CP star's name, true maximum, stage thresholds, tree, map position, or passive/slottable state from memory or a guide. Those belong to the current bundled `resources/data/eso-cp-catalog.json`.
+
+For each authored target, use:
+
+- canonical `id`;
+- `first_pass_points`: the amount to invest before continuing to the next priority;
+- `target_points`: the eventual amount the completed build wants;
+- optional `note`;
+- optional `requires` only when deliberately overriding catalog/live routing.
+
+The important distinction is **route investment versus star maximum**. If Hero's Vigor truly maxes at 20 but only 10 points are needed to open the next connection, author a 10-point first pass and a 20-point eventual target when appropriate. Never redefine `max_points` as 10.
+
+ATTB expands non-optional priorities through the verified CP graph, inserts required connectors, spends their unlock milestones first, then returns for later target completion. Optional branches stay visible and receive no automatic spend. Addon 1.1.3+ can supply ESO's current live graph and coordinates; when a fallback route is not verified, ATTB warns instead of inventing prerequisites.
 
 For each tree:
 
-- use valid node IDs/names according to the current ATTB structure;
-- keep node IDs unique within the tree;
-- use positive whole-number max values;
-- keep jump points within the node max;
-- make `requires` resolve within that tree;
-- avoid cycles;
+- use only canonical node IDs in the correct constellation;
+- keep authored target IDs unique within the tree;
+- keep `first_pass_points` and `target_points` positive whole numbers within the catalog maximum;
+- when a canonical star has verified discrete stages, choose real stage thresholds for both values rather than spending to a between-stage number;
+- require `first_pass_points <= target_points`;
 - make flex groups readable and coherent;
 - use at most four unique final slots;
-- every final-slot ID must exist and be `slottable: true`.
+- every final-slot ID must be an authored target that the canonical catalog marks slottable.
 
-Do not spend every imaginable CP point just because the user has high CP.
-
-Build the required path and useful flex choices for the role.
-
-For Craft, include combat/adventure utility sensibly; do not pretend Craft CP is a damage rotation.
-
----
+Do not spend every imaginable CP point merely because the user has high CP. Build the route to the useful targets first, then document later upgrades and situational alternatives. For Craft, prioritize the user's actual economy/adventure needs rather than pretending Craft CP is combat DPS.
 
 # 19. Scribing
 

@@ -335,32 +335,35 @@ Deleting a gear stage cleans phase references to that stage.
 
 ## 11. Champion Points
 
-Every build contains Craft, Warfare, and Fitness plans.
+ATTB 3.0.1 rebuilds this editor around the canonical Champion Point catalog. You author **what the build wants**; ATTB supplies the current ESO facts and required route.
 
-### Core path
+### Primary priorities
 
-Use the ordered core list for the build’s primary route.
+Use the ordered primary list for the build's important first targets. Each row selects a canonical star and records:
 
-### Flex groups
+- **First-pass points** - how far to invest before continuing. Verified staged stars use a stage picker so the editor cannot stop between real ESO effect thresholds;
+- **Eventual target** - how far the finished build wants that star;
+- an author note explaining why or when it matters.
 
-Recommended and optional groups organize alternative stars without pretending every account must spend points identically.
+The editor shows the catalog maximum, passive/slottable state, stage information, and verified prerequisite route as read-only ESO facts. Those values are not authored into the build.
 
-### Node fields
+### Recommended and optional branches
 
-Each node can record:
+Recommended branches join the normal first-pass route. Optional branches stay visible as situational alternatives and are never silently auto-spent.
 
-- stable ID and display name;
-- maximum points;
-- jump-point thresholds;
-- prerequisite IDs;
-- slottable status;
-- explanation.
+### Unlock-aware routing
+
+The character view expands authored priorities through the constellation graph. Required connector stars are inserted automatically and ATTB spends only the milestone needed to open the next connection before moving on. A separate **Later upgrades** section shows points that should be finished after the first-pass route is reachable.
+
+### Constellation map
+
+Each tree has a full schematic map. In the character view every CP bubble also has a map button: hover/focus for a quick preview, click to pin it. The map can show authored targets, required route nodes, actual invested points from ESO, and the next recommended spend. Addon 1.1.3+ provides ESO's live links and coordinates and overrides fallback geometry when available.
 
 ### Final Champion Bar
 
-Each constellation can recommend up to four unique stars. A final slot must refer to a node marked slottable.
+Each constellation can recommend up to four unique slottable authored targets. The canonical catalog controls which stars are actually slottable, so passive stars cannot be added to the final bar.
 
-Deleting or making a node non-slottable automatically removes invalid final-slot references.
+Deleting a target removes any final-slot reference to that target.
 
 ## 12. Companions
 

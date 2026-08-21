@@ -1086,42 +1086,61 @@
     "cp_node": {
       "type": "object",
       "required": [
-        "id",
-        "name",
-        "max_points"
+        "id"
       ],
       "properties": {
         "id": {
           "type": "string",
           "pattern": "^[a-z0-9][a-z0-9_.-]*$"
         },
-        "name": {
-          "type": "string",
-          "minLength": 1
-        },
-        "max_points": {
+        "first_pass_points": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 1200
+          "maximum": 1200,
+          "description": "Build-strategy milestone to reach before continuing. Must be within the canonical ESO maximum; when the catalog verifies discrete jump-point stages, use one of those real stage thresholds."
         },
-        "slottable": {
-          "type": "boolean"
-        },
-        "jump_points": {
-          "type": "array",
-          "items": {
-            "type": "integer",
-            "minimum": 1
-          }
+        "target_points": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1200,
+          "description": "Eventual authored target for this star. Must not exceed the canonical ESO maximum, must be at least first_pass_points, and must use a real stage threshold when the catalog verifies discrete jump points."
         },
         "note": {
           "type": "string"
         },
         "requires": {
           "type": "array",
+          "description": "Optional manual prerequisite route override using canonical CP star ids. Normally omit this and let ATTB route from the CP catalog or live addon graph.",
           "items": {
             "type": "string",
             "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+          }
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "deprecated": true,
+          "description": "Legacy compatibility only. New builds must not duplicate the canonical star name."
+        },
+        "max_points": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1200,
+          "deprecated": true,
+          "description": "Legacy compatibility only. ESO maximum comes from the canonical CP catalog; use first_pass_points/target_points for strategy."
+        },
+        "slottable": {
+          "type": "boolean",
+          "deprecated": true,
+          "description": "Legacy compatibility only. Slottable state comes from the canonical CP catalog."
+        },
+        "jump_points": {
+          "type": "array",
+          "deprecated": true,
+          "description": "Legacy compatibility only. Stage thresholds come from the canonical CP catalog.",
+          "items": {
+            "type": "integer",
+            "minimum": 1
           }
         },
         "cluster": {
@@ -1140,7 +1159,8 @@
           "additionalProperties": false
         }
       },
-      "additionalProperties": true
+      "additionalProperties": true,
+      "description": "Champion Point build strategy row. ESO facts (name, constellation, max points, stages, slottable state, graph links, and map position) come from the bundled eso-cp-catalog.json. New builds should author only the star id plus strategy fields."
     },
     "cp_group": {
       "type": "object",

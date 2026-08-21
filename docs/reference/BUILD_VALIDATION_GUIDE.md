@@ -85,14 +85,18 @@ Weapon swap unlocks at character Level 15. Early phases should omit or visibly l
 
 The Level 50 target and phase targets cannot allocate more than 64 total points across Magicka, Health, and Stamina.
 
-### Invalid CP final slot
+### Invalid CP plan or final slot
+
+ATTB 3.0.1 validates CP rows against the canonical `eso-cp-catalog.json`. A CP target must use a real canonical ID in the correct constellation, and its `first_pass_points` / `target_points` must fit the catalog maximum. When the catalog has verified discrete effect stages, those targets must also land on real ESO stage thresholds; ATTB rejects between-stage values.
 
 A final Champion Bar ID must:
 
-- exist in the same tree’s plan;
+- exist as an authored target in the same tree's plan;
 - be unique in the final bar;
-- explicitly set `slottable: true`;
+- be marked slottable by the canonical catalog;
 - fit within the four-slot limit.
+
+Do not fix a CP error by editing `max_points`, `jump_points`, or `slottable` in the build. Those are ESO facts owned by the CP catalog.
 
 ### Broken gear-stage reference
 

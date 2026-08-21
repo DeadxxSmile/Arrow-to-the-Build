@@ -1,0 +1,5 @@
+# Arrow to the Build
+User-agent: *
+Allow: /
+
+Sitemap: https://arrowtothebuild.com/sitemap.xml

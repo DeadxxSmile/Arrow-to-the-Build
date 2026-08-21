@@ -6,18 +6,79 @@
   <title>Arrow to the Build: ESO character tracker, build editor, and local sync</title>
   <meta name="description" content="A free, offline Windows app for The Elder Scrolls Online that turns a build guide into a step-by-step plan for the character you actually play. Sync from ESO or track by hand, with a full Build Editor, exact unlock timing, companions, and readable Schema 4 JSON.">
   <meta name="theme-color" content="#071018">
+  <meta name="author" content="DeadxxSmile">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
   <link rel="canonical" href="https://arrowtothebuild.com/">
-  <meta property="og:title" content="Arrow to the Build">
-  <meta property="og:description" content="Your build guide, turned into a plan for the character you actually play. Track by hand or sync from ESO, then follow the exact unlocks, gear, Champion Points, bars, and companions that get you there.">
+
+  <meta property="og:site_name" content="Arrow to the Build">
+  <meta property="og:title" content="Arrow to the Build: your ESO build guide, turned into a plan">
+  <meta property="og:description" content="A free, offline Windows companion for The Elder Scrolls Online. Track by hand or sync from ESO, then follow the exact unlocks, gear, Champion Points, bars, and companions that get you there.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://arrowtothebuild.com/">
-  <meta property="og:image" content="https://arrowtothebuild.com/assets/social/attb-og.webp">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://arrowtothebuild.com/assets/social/attb-og.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Arrow to the Build, an offline ESO character tracker and build editor">
+
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Arrow to the Build">
   <meta name="twitter:description" content="An offline-first ESO character tracker and Build Editor with local addon sync, exact progression gates, combat companions, gear roadmaps, Champion Points, and structured hotbars.">
-  <meta name="twitter:image" content="https://arrowtothebuild.com/assets/social/attb-og.webp">
-  <link rel="icon" href="assets/logo/attb-logo.png">
-  <link rel="stylesheet" href="styles.css?v=3.0.0-v3-site8">
+  <meta name="twitter:image" content="https://arrowtothebuild.com/assets/social/attb-og.jpg">
+  <meta name="twitter:image:alt" content="Arrow to the Build, an offline ESO character tracker and build editor">
+
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/logo/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/logo/favicon-16x16.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <link rel="preload" as="image" href="assets/v3/hero-basic-info.webp">
+  <link rel="stylesheet" href="styles.css?v=3.0.1-seo">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Arrow to the Build",
+    "alternateName": "ATTB",
+    "applicationCategory": "GameApplication",
+    "operatingSystem": "Windows 10, Windows 11",
+    "softwareVersion": "3.0.1",
+    "description": "A free, offline Windows companion for The Elder Scrolls Online that turns a build guide into a step-by-step plan for the character you actually play. Track by hand or sync locally from ESO, then follow the exact unlocks, gear, Champion Points, bars, and companions that get you there.",
+    "url": "https://arrowtothebuild.com/",
+    "downloadUrl": "https://github.com/DeadxxSmile/Arrow-to-the-Build/releases/latest",
+    "installUrl": "https://github.com/DeadxxSmile/Arrow-to-the-Build/releases/latest",
+    "softwareHelp": "https://github.com/DeadxxSmile/Arrow-to-the-Build",
+    "license": "https://www.gnu.org/licenses/gpl-3.0.html",
+    "isAccessibleForFree": true,
+    "keywords": "ESO, The Elder Scrolls Online, character tracker, build editor, build guide, Champion Points, addon, progression, gear sets, companions, offline",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Person", "name": "DeadxxSmile", "url": "https://github.com/DeadxxSmile" },
+    "image": "https://arrowtothebuild.com/assets/social/attb-og.jpg",
+    "screenshot": "https://arrowtothebuild.com/assets/v3/hero-basic-info.webp",
+    "featureList": [
+      "Character progression tracking",
+      "Exact skill and Champion Point unlock timing",
+      "Full visual Build Editor with readable Schema 4 JSON",
+      "Local ESO addon sync through SavedVariables",
+      "Gear roadmaps and live set coverage",
+      "Combat companion setups",
+      "Twenty built-in themes with a custom theme editor"
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Arrow to the Build",
+    "alternateName": "ATTB",
+    "url": "https://arrowtothebuild.com/",
+    "inLanguage": "en"
+  }
+  </script>
 </head>
 <body>
   <header class="window-bar">
@@ -28,7 +89,7 @@
       <img src="assets/logo/attb-logo.png" alt="">
       <strong>ATTB</strong>
       <span aria-hidden="true">|</span>
-      <b>v3.0.0</b>
+      <b>v3.0.1</b>
     </a>
     <div class="window-status"><span class="status-dot"></span> Current release</div>
   </header>
@@ -39,7 +100,7 @@
     <div class="sidebar-cta">
       <a class="sidebar-download" href="https://github.com/DeadxxSmile/Arrow-to-the-Build/releases/latest" target="_blank" rel="noreferrer">
         <span class="dl-icon" aria-hidden="true">&#8615;</span>
-        <span class="dl-text"><b>Download v3.0.0</b><small>Latest release · Windows 10/11</small></span>
+        <span class="dl-text"><b>Download v3.0.1</b><small>Latest release · Windows 10/11</small></span>
       </a>
     </div>
 
@@ -96,7 +157,7 @@
 
     <section class="content-section" id="whats-new">
       <div class="section-heading">
-        <span class="eyebrow">VERSION 3.0.0</span>
+        <span class="eyebrow">VERSION 3.0.1</span>
         <h2>The app grew up.</h2>
         <p>v3 is not a pile of new features. It is the same app, finally laid out the way it should have been from the start: clearer hierarchy, fewer walls of numbers, and a lot less squinting.</p>
       </div>
@@ -295,9 +356,9 @@
           </div>
         </div>
         <div class="install-facts">
-          <span><small>Installer</small><b>ATTB-Setup-3.0.0.exe</b></span>
+          <span><small>Installer</small><b>ATTB-Setup-3.0.1.exe</b></span>
           <span><small>Platform</small><b>Windows 10 / 11</b></span>
-          <span><small>ESO Addon</small><b>1.1.1</b></span>
+          <span><small>ESO Addon</small><b>1.1.3</b></span>
           <span><small>Build format</small><b>Schema 4</b></span>
           <span><small>Theme format</small><b>Theme Schema 1</b></span>
           <span><small>License</small><b>GPL-3.0-only</b></span>
@@ -322,6 +383,6 @@
     <figure><img src="" alt=""><figcaption id="lightbox-title"></figcaption></figure>
   </dialog>
 
-  <script src="app.js?v=3.0.0-v3-site8"></script>
+  <script src="app.js?v=3.0.1-seo"></script>
 </body>
 </html>

@@ -111,21 +111,36 @@ The combat-companion roster and curated presets live in `resources/data/eso-comp
 
 ## Scenario: CP nodes or paths changed
 
-CP plans live entirely in each build's `cp_plans`, not in the catalog, so a CP rework is a build-data
-edit, not a code change. For each affected build in `resources/builds/`:
+ATTB 3.0.1 has a canonical Champion Point catalog at `resources/data/eso-cp-catalog.json`. CP facts no longer live independently inside every build. A game-patch CP audit should update the catalog first, then review affected build **strategy**.
 
-- `core` is the required path, filled first. Non-optional `flex` groups are recommended branches filled in order; groups with `optional: true` are shown as alternatives and are not auto-allocated.
-- `max_points` per node caps at the 1,200 per-constellation limit; the validator enforces this.
-- `jump_points` are stage thresholds and must not exceed the node's own `max_points`.
-- `final_slots` may only list slottable stars that exist in the plan.
+Audit the catalog for:
 
-Edit the JSON directly, then `npm test`. The build validator checks node ids, duplicate nodes, stage
-thresholds, the tree cap, and slottable-only final slots, so most mistakes fail the suite.
+- ESO skill ID and canonical name;
+- constellation (`craft`, `warfare`, `fitness`);
+- true `max_points`;
+- stage/jump thresholds and the first route-opening milestone;
+- passive/slottable state;
+- root/cluster-root status;
+- graph links and verified prerequisite paths;
+- schematic map position.
 
-## Scenario: node-level number changes (max points, ranks, thresholds)
+Addon 1.1.3+ exports all Champion stars with live max values, stages, slottable state, links, roots, and coordinates. Use a current ESO snapshot as a regression/source-of-truth check. Do not silently promote unverified fallback data to authoritative status.
 
-- Per-skill `max_points` (passive ranks) live in the catalog: edit the generator and regenerate.
-- Per-CP-node `max_points`, `jump_points`, and `slottable` live in the build: edit the build JSON.
+For affected builds in `resources/builds/`:
+
+- `core` and non-optional flex nodes are authored priorities; optional groups remain alternatives;
+- `first_pass_points` says how far to invest before continuing;
+- `target_points` says the eventual intended investment;
+- omit duplicated `name`, `max_points`, `jump_points`, `slottable`, tree, and map-position facts;
+- `final_slots` may only list canonical slottable authored targets.
+
+Run `node tests/cpCatalog.test.mjs`, `node tests/cp.test.mjs`, the full suite, and a renderer build. The CP tests should prove that every bundled target exists, every bundled final slot is really slottable, and every recommended offline route is verified.
+
+## Scenario: node-level number changes (max points, stages, or slottable state)
+
+- Player-skill passive `max_points` still live in the skill catalog/generator.
+- Champion Point `max_points`, stage thresholds, slottable state, tree identity, graph links, and map coordinates live in `eso-cp-catalog.json`.
+- Build `first_pass_points` / `target_points` are strategy and should be changed only when the recommended route itself changes.
 
 ## Removing or renaming an id (the breaking case)
 

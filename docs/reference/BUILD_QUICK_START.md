@@ -161,7 +161,7 @@ Create progression stages such as Training Gear, CP160 Starter, Dungeon Upgrade,
 
 ### 7. Champion Points
 
-Edit the Craft, Warfare, and Fitness plans. Add ordered core stars, recommended or optional branches, and up to four final slottables per constellation.
+Edit the Craft, Warfare, and Fitness **strategy** plans. Pick canonical stars, set the first-pass investment and eventual target, organize recommended/optional branches, and choose up to four final slottables. ATTB 3.0.1 supplies true max values, stages, passive/slottable state, prerequisite routing, and constellation-map placement from the canonical CP catalog; addon 1.1.3+ can override that fallback with ESO's live graph.
 
 ### 8. Companions
 

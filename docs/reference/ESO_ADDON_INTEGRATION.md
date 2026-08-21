@@ -1,6 +1,6 @@
 # ESO Addon Integration
 
-This reference is current for **ATTB 3.0.0**. Arrow to the Build can read character state from its optional ESO addon. The integration is deliberately one-way and local:
+This reference covers the **ATTB 3.0.1 development** addon integration built from the public 3.0.0 baseline. Arrow to the Build can read character state from its optional ESO addon. The integration is deliberately one-way and local:
 
 ```text
 ESO character
@@ -16,7 +16,7 @@ The addon does not receive commands from the desktop app, automate gameplay, spe
 The current ATTB source bundles one ESO addon:
 
 ```text
-ArrowToTheBuild 1.1.1
+ArrowToTheBuild 1.1.3
 ESO API: 101050
 SavedVariables: ArrowToTheBuildSavedVariables
 SavedVariables file: ArrowToTheBuild.lua
@@ -37,6 +37,19 @@ Addon 1.1.1 fixes and hardens several parts of the single-exporter rewrite:
 - normal-play SavedVariables autosaving is disabled for this multi-character archive. The archive is expected to exceed ESO's small-file autosave limits, while `/reloadui`, loading screens, logout, and exit remain the persistence path.
 
 Static regression tests protect these source-level contracts so the enum-prefix bug and removed manifest setting cannot silently return during a later cleanup.
+
+### 1.1.3 Champion graph export
+
+Addon 1.1.3 extends the Champion snapshot so the desktop app can validate and route CP against ESO itself instead of relying only on bundled fallback data. It now exports **every Champion star**, including zero-point stars, with:
+
+- ESO Champion skill ID and current invested points;
+- true maximum points and current skill type/slottable state;
+- jump/stage thresholds;
+- linked Champion skill IDs;
+- root and cluster-root flags;
+- ESO raw node coordinates, outer-constellation coordinates, cluster-root offsets, and nested cluster membership.
+
+The desktop still imports only actually invested stars when it creates a build from a character. The full zero-point star list exists solely as a live graph/data overlay for routing, validation, and constellation-map placement. Graph schema 2 keeps ESO's outer constellation and nested cluster coordinate spaces separate so the locator can mirror the in-game tree shape rather than flatten every star into one synthetic graph.
 
 ## Installation
 
@@ -67,7 +80,7 @@ The current snapshot contains the observed ESO state that Character Tracker need
 - skill-line ranks and purchased actives, morphs, passives, and ultimates;
 - current action bars and active weapon pair;
 - equipped gear, item IDs, traits, sets, and enchantments;
-- Champion Point disciplines, purchased stars, and slotted Champion Bar nodes.
+- Champion Point disciplines, all constellation stars/links for live graph verification, purchased-point state, and slotted Champion Bar nodes.
 
 This is **CURRENT** state. Builds remain **TARGET** plans owned by the desktop app. Syncing cannot rewrite a build definition.
 
@@ -101,7 +114,7 @@ and also polls at a low frequency to cover ordinary Windows file-watcher edge ca
 
 ## ESO API policy
 
-Addon 1.1.1 targets Update 50 / API 101050 and uses known ESO APIs and event constants directly.
+Addon 1.1.3 targets Update 50 / API 101050 and uses known ESO APIs and event constants directly.
 
 The addon intentionally does **not** wrap documented APIs in generic `pcall` helpers, probe `_G` for guessed function names, or register events from strings. If a supported ESO API changes, that should become a visible development error instead of silently turning real character data into a fallback value.
 

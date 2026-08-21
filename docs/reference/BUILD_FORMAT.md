@@ -142,14 +142,18 @@ Sources can record type, location, zone, access, DLC/chapter, ESO Plus relevance
 
 ## Champion Points
 
-Every build supplies `craft`, `warfare`, and `fitness` plans. A plan contains:
+ATTB 3.0.1 keeps Champion Point **ESO facts** in the bundled `resources/data/eso-cp-catalog.json` instead of duplicating them inside every build. The catalog owns each star's canonical ID/name, constellation, ESO skill ID, true maximum, stage thresholds, slottable/passive state, verified graph links, and schematic map position.
 
-- ordered `core` nodes;
-- ordered flex groups;
-- optional flex groups;
-- node connections through `requires`;
-- jump-point thresholds;
-- up to four unique slottable IDs in `final_slots`.
+Every build still supplies `craft`, `warfare`, and `fitness` plans, but those plans now describe **strategy**:
+
+- ordered `core` priorities;
+- ordered recommended flex groups and explicitly optional alternatives;
+- `first_pass_points` for the amount to invest before continuing along the route. For a catalog star with verified discrete effect stages, use an actual stage threshold rather than a between-stage value;
+- `target_points` for the eventual amount the build wants in that star;
+- optional manual `requires` overrides only when the author intentionally overrides catalog/live routing;
+- up to four unique canonical slottable IDs in `final_slots`.
+
+ATTB expands those authored priorities through the verified constellation graph, inserts required connector nodes automatically, and can replace the bundled fallback graph with the exact live graph exported by addon 1.1.3+. Legacy Schema 4 CP rows that duplicated `name`, `max_points`, `slottable`, or `jump_points` remain importable through normalization, but new files should not author those ESO-owned facts.
 
 ## Loadouts and variants
 

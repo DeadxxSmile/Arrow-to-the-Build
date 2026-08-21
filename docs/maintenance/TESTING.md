@@ -142,7 +142,7 @@ npm start 2>&1 | Tee-Object -FilePath ".\attb-dev.log"
 
 ### ESO-controlled save timing
 
-- Fresh-install `ArrowToTheBuild` 1.1.1, enable it in ESO, and log into one character.
+- Fresh-install the current bundled `ArrowToTheBuild` addon (1.1.3 in the 3.0.1 CP-overhaul development build), enable it in ESO, and log into one character.
 - Confirm ESO creates `<profile>\SavedVariables\ArrowToTheBuild.lua` after a save opportunity or `/reloadui`.
 - Confirm Settings reports one addon path and one SavedVariables path; there must be no live bridge budget/status UI.
 - Change level/progression, equipment, action bars, attributes, and Champion Points. Confirm the in-memory addon revision advances through the relevant event capture.
@@ -150,6 +150,18 @@ npm start 2>&1 | Tee-Object -FilePath ".\attb-dev.log"
 - Treat ordinary background/loading/logout/exit saves as ESO-controlled opportunities, not as a guaranteed fixed cadence.
 - Confirm `/attbexport` refreshes the in-memory snapshot and clearly tells the user to use `/reloadui` for immediate desktop disk refresh.
 - Confirm `/attbstatus` reports the archive/memory revisions, latest capture, pending sections, and the `/reloadui` reminder without bridge/priority/budget diagnostics.
+
+### Champion Point catalog, routing, and map regression (3.0.1 development)
+
+- Open a character/build with Champion Points and confirm **Do this next** identifies the first incomplete prerequisite or target rather than simply maxing each authored row in order.
+- Confirm a Bloody Renewal-only Fitness target expands through **Sprinter 10/20 -> Hasty 8/16 -> Hero's Vigor 10/20 -> Bloody Renewal** and does not demand the connector stars be maxed first.
+- Confirm a Craft route targeting Inspiration Boost after Gilded Fingers inserts **Fortune's Favor 10/50** as the route-opening milestone.
+- Hover the map icon on a CP bubble and confirm the compact constellation popover appears; click to pin it, press Escape/click outside to close it, and confirm the highlighted star/path match the bubble.
+- Open the full constellation map in Craft, Warfare, and Fitness. Confirm target, required-route, invested, and next-action states remain visually distinct and the map stays usable at reduced window sizes.
+- With addon 1.1.3+, `/reloadui`, then confirm the desktop snapshot contains all Champion stars (including zero-point stars), exact max points, jump points, slottable type, root/link data, and coordinates; CURRENT invested points must overlay the TARGET route without rewriting it.
+- Temporarily test an older Schema 4 build carrying stale `max_points`, `slottable`, and `jump_points`; import normalization should preserve its intended strategy while canonical catalog facts win.
+- In Build Editor, confirm passive stars cannot be selected for the final Champion Bar and verified staged stars offer only real effect thresholds for first-pass/eventual targets.
+- Author a CP star in the wrong tree, an unknown star, a passive final slot, and a between-stage target; Review & Save must reject each case with a useful CP-specific validation error.
 
 ### Addon source-quality regression
 
