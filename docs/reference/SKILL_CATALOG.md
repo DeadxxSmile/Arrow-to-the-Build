@@ -1,6 +1,6 @@
 # Bundled ESO Skill Catalog
 
-This reference is current for **ATTB 3.0.0**. ATTB includes one canonical player-skill catalog at `resources/data/eso-skill-catalog.json`.
+This reference is current for **ATTB 3.1.0**. ATTB includes one canonical player-skill catalog at `resources/data/eso-skill-catalog.json`.
 
 The renderer reaches it through the `#catalog` subpath declared in `package.json`, so there is one file rather than a main-process copy and a renderer copy that can drift apart. Regenerate it with:
 

@@ -73,11 +73,15 @@ test('every bundled build carries current research sources when exported', () =>
   const dir = path.dirname(BUILD_FILE)
   for (const file of fs.readdirSync(dir).filter(name => name.endsWith('.json'))) {
     const build = JSON.parse(fs.readFileSync(path.join(dir, file), 'utf8'))
-    assert.equal(build.verified_date, '2026-08-07', `${file} should state the current review date`)
-    assert.ok(Array.isArray(build.sources) && build.sources.length >= 3, `${file} needs class and official research sources`)
-    assert.ok(build.sources.some(source => /hyperioxes/i.test(source.author || source.title)), `${file} needs a class-specific current build reference`)
-    assert.ok(build.sources.some(source => /Update 50 Live Patch Notes/.test(source.title)), `${file} needs the official patch reference`)
-    assert.ok(build.sources.every(source => /^https:\/\//.test(source.url) && source.accessed === '2026-08-07'), `${file} source URLs and access dates must be complete`)
+    assert.equal(build.verified_date, '2026-08-20', `${file} should state the current review date`)
+    assert.ok(Array.isArray(build.sources) && build.sources.length >= 4, `${file} needs class, official, and CP research sources`)
+    const hyperioxes = build.sources.find(source => /hyperioxes/i.test(source.author || source.title))
+    const patch = build.sources.find(source => /Update 50 Live Patch Notes/.test(source.title))
+    const cp = build.sources.find(source => /ESO Decoded.*Champion Points/i.test(source.title))
+    assert.ok(hyperioxes && hyperioxes.accessed === '2026-08-20', `${file} needs a freshly reviewed class-specific build reference`)
+    assert.ok(patch && patch.accessed === '2026-08-20', `${file} needs the freshly reviewed official patch reference`)
+    assert.ok(cp && cp.accessed === '2026-08-20', `${file} needs the current CP catalog cross-check`)
+    assert.ok(build.sources.every(source => /^https:\/\//.test(source.url) && /^2026-\d{2}-\d{2}$/.test(source.accessed || '')), `${file} source URLs and access dates must be complete`)
   }
 })
 
@@ -231,7 +235,7 @@ test('bad data inside a variant override is rejected before the character can se
   const badCp = errorsFor(b => {
     b.variants[0].overrides = { cp_plans: { warfare: { core: [{ id: 'broken_star', max_points: 0 }] } } }
   })
-  assert.ok(matches(badCp, /variant "solo-duo" with loadout "flexible-pve" effective build: CP node "broken_star" needs a positive whole max_points/))
+  assert.ok(matches(badCp, /variant "solo-duo" with loadout "flexible-pve" effective build: CP node "broken_star" is not in the bundled Update 50 Champion Point catalog/))
 
   const badSkill = errorsFor(b => {
     b.variants[0].overrides = {
@@ -279,18 +283,18 @@ test('display-critical build rows have readable names and all three CP plans', (
   assert.ok(matches(errorsFor(b => { delete b.cp_plans.warfare.flex[0].label }), /needs a label/))
 })
 
-test('CP plans need usable node points and no more than four unique real final slots', () => {
-  assert.ok(matches(errorsFor(b => { delete b.cp_plans.warfare.core[0].max_points }), /needs a positive whole max_points/))
-  assert.ok(matches(errorsFor(b => { delete b.cp_plans.warfare.core[0].name }), /CP node .* needs a name/))
-  assert.ok(matches(errorsFor(b => { b.cp_plans.warfare.final_slots = ['nowhere'] }), /which is not one of its nodes/))
+test('CP plans use canonical star ids, valid strategy points, and no more than four unique real final slots', () => {
+  assert.ok(matches(errorsFor(b => { b.cp_plans.warfare.core[0].id = 'not_a_real_cp_star' }), /not in the bundled Update 50 Champion Point catalog/))
+  assert.ok(matches(errorsFor(b => { b.cp_plans.warfare.core[0].first_pass_points = 999 }), /first_pass_points must be a whole number from 1 to/))
+  assert.ok(matches(errorsFor(b => { b.cp_plans.warfare.core[0].first_pass_points = 50; b.cp_plans.warfare.core[0].target_points = 25 }), /first_pass_points cannot exceed target_points/))
+  assert.ok(matches(errorsFor(b => { b.cp_plans.warfare.final_slots = ['nowhere'] }), /which is not one of its authored build targets/))
   assert.ok(matches(errorsFor(b => { b.cp_plans.warfare.final_slots = 'not-an-array' }), /final_slots must be an array/))
   assert.ok(matches(errorsFor(b => { const id = b.cp_plans.warfare.final_slots[0]; b.cp_plans.warfare.final_slots = [id, id] }), /must not contain duplicate stars/))
   assert.ok(matches(errorsFor(b => { b.cp_plans.warfare.final_slots = b.cp_plans.warfare.final_slots.concat(['a', 'b', 'c', 'd']) }), /no more than four stars/))
   assert.ok(matches(errorsFor(b => {
-    const id = b.cp_plans.warfare.final_slots[0]
-    const node = [...b.cp_plans.warfare.core, ...b.cp_plans.warfare.flex.flatMap(group => group.nodes)].find(item => item.id === id)
-    delete node.slottable
-  }), /must explicitly set slottable to true/))
+    b.cp_plans.warfare.core.push({ id: 'precision', first_pass_points: 10, target_points: 20 })
+    b.cp_plans.warfare.final_slots = ['precision']
+  }), /canonical ESO catalog marks it passive/))
 })
 
 test('bundled image refs cannot escape the builds folder', () => {

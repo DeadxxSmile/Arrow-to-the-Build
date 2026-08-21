@@ -1,0 +1,3337 @@
+{
+  "catalog_version": 1,
+  "game_version": "Update 50",
+  "verified_date": "2026-08-20",
+  "source_notes": [
+    "Star identity, ESO skill ID, discipline, maximum points, and passive/slottable classification are Update 50 game-data values cross-checked against ESO Decoded / UESP-derived CP2 data.",
+    "jump_points_verified marks stage arrays individually. Unverified stage arrays are retained only as a bundled fallback display hint and are not used as validator authority.",
+    "prerequisite_path/path_verified identify offline routes that were explicitly checked. ATTB never treats an unverified empty path as proof that a star is directly purchasable.",
+    "Addon 1.1.3+ exports the live ESO Champion graph, root flags, jump points, outer-constellation coordinates, nested-cluster membership, and cluster-local coordinates; live game data takes precedence for routing and locator geometry whenever a current character snapshot is available.",
+    "map coordinates are an ATTB schematic fallback for orientation, not copied ESO UI pixels."
+  ],
+  "trees": {
+    "craft": {
+      "id": "craft",
+      "label": "Craft",
+      "star_count": 29,
+      "slottable_count": 10
+    },
+    "warfare": {
+      "id": "warfare",
+      "label": "Warfare",
+      "star_count": 48,
+      "slottable_count": 35
+    },
+    "fitness": {
+      "id": "fitness",
+      "label": "Fitness",
+      "star_count": 41,
+      "slottable_count": 28
+    }
+  },
+  "stars": [
+    {
+      "id": "anglers_instincts",
+      "eso_skill_id": 89,
+      "name": "Angler's Instincts",
+      "tree": "craft",
+      "max_points": 25,
+      "slottable": true,
+      "jump_points": [
+        25
+      ],
+      "unlock_points": 25,
+      "links": [
+        "liquid_efficiency",
+        "reel_technique"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 360.0,
+        "y": 800.0,
+        "lane": 3
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "breakfall",
+      "eso_skill_id": 69,
+      "name": "Breakfall",
+      "tree": "craft",
+      "max_points": 50,
+      "slottable": false,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "links": [
+        "soul_reservoir",
+        "wanderer"
+      ],
+      "links_verified": true,
+      "prerequisite_path": [
+        "steeds_blessing"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 290.0,
+        "y": 100.0,
+        "lane": 0
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "cutpurses_art",
+      "eso_skill_id": 90,
+      "name": "Cutpurse's Art",
+      "tree": "craft",
+      "max_points": 25,
+      "slottable": false,
+      "jump_points": [
+        25
+      ],
+      "unlock_points": 25,
+      "links": [
+        "fade_away",
+        "shadowstrike"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 815.0,
+        "y": 333.3,
+        "lane": 1
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "discipline_artisan",
+      "eso_skill_id": 279,
+      "name": "Discipline Artisan",
+      "tree": "craft",
+      "max_points": 50,
+      "slottable": false,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "links": [],
+      "links_verified": true,
+      "prerequisite_path": [],
+      "path_verified": true,
+      "map": {
+        "x": 80.0,
+        "y": 566.7,
+        "lane": 2
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "fade_away",
+      "eso_skill_id": 84,
+      "name": "Fade Away",
+      "tree": "craft",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        50
+      ],
+      "unlock_points": 50,
+      "links": [
+        "cutpurses_art",
+        "friends_in_low_places",
+        "meticulous_disassembly"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 710.0,
+        "y": 333.3,
+        "lane": 1
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "fleet_phantom",
+      "eso_skill_id": 67,
+      "name": "Fleet Phantom",
+      "tree": "craft",
+      "max_points": 40,
+      "slottable": false,
+      "jump_points": [
+        8,
+        16,
+        24,
+        32,
+        40
+      ],
+      "unlock_points": 8,
+      "links": [
+        "out_of_sight"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 395.0,
+        "y": 333.3,
+        "lane": 1
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "fortunes_favor",
+      "eso_skill_id": 71,
+      "name": "Fortune's Favor",
+      "tree": "craft",
+      "max_points": 50,
+      "slottable": false,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "links": [
+        "friends_in_low_places",
+        "gilded_fingers",
+        "inspiration_boost",
+        "wanderer"
+      ],
+      "links_verified": true,
+      "prerequisite_path": [
+        "gilded_fingers"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 710.0,
+        "y": 100.0,
+        "lane": 0
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "friends_in_low_places",
+      "eso_skill_id": 76,
+      "name": "Friends in Low Places",
+      "tree": "craft",
+      "max_points": 25,
+      "slottable": true,
+      "jump_points": [
+        25
+      ],
+      "unlock_points": 25,
+      "links": [
+        "fade_away",
+        "fortunes_favor",
+        "infamous",
+        "out_of_sight"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 500.0,
+        "y": 333.3,
+        "lane": 1
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "gifted_rider",
+      "eso_skill_id": 92,
+      "name": "Gifted Rider",
+      "tree": "craft",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "links": [
+        "master_gatherer",
+        "war_mount"
+      ],
+      "links_verified": true,
+      "prerequisite_path": [
+        "gilded_fingers",
+        "fortunes_favor",
+        "inspiration_boost",
+        "meticulous_disassembly",
+        "master_gatherer"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 680.0,
+        "y": 566.7,
+        "lane": 2
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "gilded_fingers",
+      "eso_skill_id": 74,
+      "name": "Gilded Fingers",
+      "tree": "craft",
+      "max_points": 50,
+      "slottable": false,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "links": [
+        "fortunes_favor"
+      ],
+      "links_verified": true,
+      "prerequisite_path": [],
+      "path_verified": true,
+      "map": {
+        "x": 920.0,
+        "y": 100.0,
+        "lane": 0
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "homemaker",
+      "eso_skill_id": 91,
+      "name": "Homemaker",
+      "tree": "craft",
+      "max_points": 25,
+      "slottable": false,
+      "jump_points": [
+        25
+      ],
+      "unlock_points": 25,
+      "links": [
+        "plentiful_harvest",
+        "reel_technique"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 640.0,
+        "y": 800.0,
+        "lane": 3
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "infamous",
+      "eso_skill_id": 77,
+      "name": "Infamous",
+      "tree": "craft",
+      "max_points": 25,
+      "slottable": false,
+      "jump_points": [
+        25
+      ],
+      "unlock_points": 25,
+      "links": [
+        "friends_in_low_places"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 605.0,
+        "y": 333.3,
+        "lane": 1
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "inspiration_boost",
+      "eso_skill_id": 72,
+      "name": "Inspiration Boost",
+      "tree": "craft",
+      "max_points": 45,
+      "slottable": false,
+      "jump_points": [
+        15,
+        30,
+        45
+      ],
+      "unlock_points": 15,
+      "links": [
+        "fortunes_favor",
+        "meticulous_disassembly"
+      ],
+      "links_verified": true,
+      "prerequisite_path": [
+        "gilded_fingers",
+        "fortunes_favor"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 200.0,
+        "y": 566.7,
+        "lane": 2
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "liquid_efficiency",
+      "eso_skill_id": 86,
+      "name": "Liquid Efficiency",
+      "tree": "craft",
+      "max_points": 50,
+      "slottable": false,
+      "jump_points": [
+        50
+      ],
+      "unlock_points": 50,
+      "links": [
+        "anglers_instincts",
+        "rationer"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 220.0,
+        "y": 800.0,
+        "lane": 3
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "master_gatherer",
+      "eso_skill_id": 78,
+      "name": "Master Gatherer",
+      "tree": "craft",
+      "max_points": 75,
+      "slottable": true,
+      "jump_points": [
+        15,
+        30,
+        45,
+        60,
+        75
+      ],
+      "unlock_points": 15,
+      "links": [
+        "gifted_rider",
+        "meticulous_disassembly"
+      ],
+      "links_verified": true,
+      "prerequisite_path": [
+        "gilded_fingers",
+        "fortunes_favor",
+        "inspiration_boost",
+        "meticulous_disassembly"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 440.0,
+        "y": 566.7,
+        "lane": 2
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "meticulous_disassembly",
+      "eso_skill_id": 83,
+      "name": "Meticulous Disassembly",
+      "tree": "craft",
+      "max_points": 50,
+      "slottable": false,
+      "jump_points": [
+        50
+      ],
+      "unlock_points": 50,
+      "links": [
+        "fade_away",
+        "inspiration_boost",
+        "master_gatherer",
+        "treasure_hunter"
+      ],
+      "links_verified": true,
+      "prerequisite_path": [
+        "gilded_fingers",
+        "fortunes_favor",
+        "inspiration_boost"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 320.0,
+        "y": 566.7,
+        "lane": 2
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "out_of_sight",
+      "eso_skill_id": 68,
+      "name": "Out of Sight",
+      "tree": "craft",
+      "max_points": 30,
+      "slottable": false,
+      "jump_points": [
+        10,
+        20,
+        30
+      ],
+      "unlock_points": 10,
+      "links": [
+        "fleet_phantom",
+        "friends_in_low_places"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 290.0,
+        "y": 333.3,
+        "lane": 1
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "plentiful_harvest",
+      "eso_skill_id": 81,
+      "name": "Plentiful Harvest",
+      "tree": "craft",
+      "max_points": 50,
+      "slottable": false,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "links": [
+        "homemaker",
+        "war_mount"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 920.0,
+        "y": 566.7,
+        "lane": 2
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "professional_upkeep",
+      "eso_skill_id": 1,
+      "name": "Professional Upkeep",
+      "tree": "craft",
+      "max_points": 50,
+      "slottable": false,
+      "jump_points": [],
+      "unlock_points": 0,
+      "links": [],
+      "links_verified": true,
+      "prerequisite_path": [],
+      "path_verified": true,
+      "map": {
+        "x": 80.0,
+        "y": 333.3,
+        "lane": 1
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "rationer",
+      "eso_skill_id": 85,
+      "name": "Rationer",
+      "tree": "craft",
+      "max_points": 30,
+      "slottable": false,
+      "jump_points": [
+        10,
+        20,
+        30
+      ],
+      "unlock_points": 10,
+      "links": [
+        "liquid_efficiency",
+        "steadfast_enchantment"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 80.0,
+        "y": 800.0,
+        "lane": 3
+      },
+      "prerequisite_path": [
+        "steadfast_enchantment"
+      ],
+      "path_verified": true,
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "reel_technique",
+      "eso_skill_id": 88,
+      "name": "Reel Technique",
+      "tree": "craft",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        50
+      ],
+      "unlock_points": 50,
+      "links": [
+        "anglers_instincts",
+        "homemaker"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 500.0,
+        "y": 800.0,
+        "lane": 3
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "shadowstrike",
+      "eso_skill_id": 80,
+      "name": "Shadowstrike",
+      "tree": "craft",
+      "max_points": 75,
+      "slottable": true,
+      "jump_points": [
+        75
+      ],
+      "unlock_points": 75,
+      "links": [
+        "cutpurses_art"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 920.0,
+        "y": 333.3,
+        "lane": 1
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "soul_reservoir",
+      "eso_skill_id": 87,
+      "name": "Soul Reservoir",
+      "tree": "craft",
+      "max_points": 30,
+      "slottable": false,
+      "jump_points": [
+        30
+      ],
+      "unlock_points": 30,
+      "links": [
+        "breakfall"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 920.0,
+        "y": 800.0,
+        "lane": 3
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "steadfast_enchantment",
+      "eso_skill_id": 75,
+      "name": "Steadfast Enchantment",
+      "tree": "craft",
+      "max_points": 50,
+      "slottable": false,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "links": [
+        "rationer",
+        "wanderer"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 780.0,
+        "y": 800.0,
+        "lane": 3
+      },
+      "prerequisite_path": [],
+      "path_verified": true,
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "steeds_blessing",
+      "eso_skill_id": 66,
+      "name": "Steed's Blessing",
+      "tree": "craft",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [],
+      "unlock_points": 0,
+      "links": [],
+      "links_verified": true,
+      "prerequisite_path": [],
+      "path_verified": true,
+      "map": {
+        "x": 80.0,
+        "y": 100.0,
+        "lane": 0
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "sustaining_shadows",
+      "eso_skill_id": 65,
+      "name": "Sustaining Shadows",
+      "tree": "craft",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [],
+      "unlock_points": 0,
+      "links": [],
+      "links_verified": true,
+      "prerequisite_path": [],
+      "path_verified": true,
+      "map": {
+        "x": 185.0,
+        "y": 333.3,
+        "lane": 1
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "treasure_hunter",
+      "eso_skill_id": 79,
+      "name": "Treasure Hunter",
+      "tree": "craft",
+      "max_points": 50,
+      "slottable": false,
+      "jump_points": [
+        50
+      ],
+      "unlock_points": 50,
+      "links": [
+        "meticulous_disassembly"
+      ],
+      "links_verified": true,
+      "prerequisite_path": [
+        "gilded_fingers",
+        "fortunes_favor",
+        "inspiration_boost",
+        "meticulous_disassembly"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 560.0,
+        "y": 566.7,
+        "lane": 2
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "wanderer",
+      "eso_skill_id": 70,
+      "name": "Wanderer",
+      "tree": "craft",
+      "max_points": 50,
+      "slottable": false,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "links": [
+        "breakfall",
+        "fortunes_favor",
+        "steadfast_enchantment"
+      ],
+      "links_verified": true,
+      "prerequisite_path": [
+        "steeds_blessing",
+        "breakfall"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 500.0,
+        "y": 100.0,
+        "lane": 0
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "war_mount",
+      "eso_skill_id": 82,
+      "name": "War Mount",
+      "tree": "craft",
+      "max_points": 75,
+      "slottable": true,
+      "jump_points": [
+        75
+      ],
+      "unlock_points": 75,
+      "links": [
+        "gifted_rider",
+        "plentiful_harvest"
+      ],
+      "links_verified": true,
+      "prerequisite_path": [
+        "gilded_fingers",
+        "fortunes_favor",
+        "inspiration_boost",
+        "meticulous_disassembly",
+        "master_gatherer",
+        "gifted_rider"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 800.0,
+        "y": 566.7,
+        "lane": 2
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "arcane_supremacy",
+      "eso_skill_id": 3,
+      "name": "Arcane Supremacy",
+      "tree": "warfare",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "links": [],
+      "links_verified": false,
+      "map": {
+        "x": 80.0,
+        "y": 800.0,
+        "lane": 4
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "backstabber",
+      "eso_skill_id": 31,
+      "name": "Backstabber",
+      "tree": "warfare",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "links": [
+        "precision"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 780.0,
+        "y": 100.0,
+        "lane": 0
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "battle_mastery",
+      "eso_skill_id": 18,
+      "name": "Battle Mastery",
+      "tree": "warfare",
+      "max_points": 40,
+      "slottable": false,
+      "jump_points": [
+        20,
+        40
+      ],
+      "unlock_points": 20,
+      "cluster": "extended_might",
+      "links": [
+        "piercing"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 836.0,
+        "y": 275.0,
+        "lane": 1
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "biting_aura",
+      "eso_skill_id": 23,
+      "name": "Biting Aura",
+      "tree": "warfare",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        25,
+        50
+      ],
+      "unlock_points": 25,
+      "links": [
+        "piercing"
+      ],
+      "links_verified": true,
+      "prerequisite_path": [
+        "tireless_discipline",
+        "piercing"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 332.0,
+        "y": 275.0,
+        "lane": 1
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "blessed",
+      "eso_skill_id": 108,
+      "name": "Blessed",
+      "tree": "warfare",
+      "max_points": 20,
+      "slottable": false,
+      "jump_points": [
+        10,
+        20
+      ],
+      "unlock_points": 10,
+      "cluster": "mastered_curation",
+      "links": [
+        "eldritch_insight",
+        "enlivening_overflow",
+        "focused_mending",
+        "from_the_brink",
+        "hope_infusion",
+        "precision",
+        "salve_of_renewal",
+        "soothing_tide",
+        "swift_renewal"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 920.0,
+        "y": 100.0,
+        "lane": 0
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "bulwark",
+      "eso_skill_id": 159,
+      "name": "Bulwark",
+      "tree": "warfare",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "cluster": "staving_death",
+      "links": [
+        "reinforced"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 740.0,
+        "y": 450.0,
+        "lane": 2
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "cleansing_revival",
+      "eso_skill_id": 29,
+      "name": "Cleansing Revival",
+      "tree": "warfare",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "cluster": "mastered_curation",
+      "links": [],
+      "links_verified": false,
+      "map": {
+        "x": 614.5,
+        "y": 625.0,
+        "lane": 3
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "cutting_defense",
+      "eso_skill_id": 33,
+      "name": "Cutting Defense",
+      "tree": "warfare",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "cluster": "staving_death",
+      "links": [
+        "last_stand",
+        "reinforced"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 800.0,
+        "y": 450.0,
+        "lane": 2
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "deadly_aim",
+      "eso_skill_id": 25,
+      "name": "Deadly Aim",
+      "tree": "warfare",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        25,
+        50
+      ],
+      "unlock_points": 25,
+      "links": [
+        "piercing"
+      ],
+      "links_verified": true,
+      "prerequisite_path": [
+        "tireless_discipline",
+        "piercing"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 416.0,
+        "y": 275.0,
+        "lane": 1
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "duelists_rebuff",
+      "eso_skill_id": 134,
+      "name": "Duelist's Rebuff",
+      "tree": "warfare",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        25,
+        50
+      ],
+      "unlock_points": 25,
+      "cluster": "staving_death",
+      "links": [
+        "quick_recovery"
+      ],
+      "links_verified": true,
+      "prerequisite_path": [
+        "tireless_discipline",
+        "quick_recovery"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 440.0,
+        "y": 450.0,
+        "lane": 2
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "eldritch_insight",
+      "eso_skill_id": 99,
+      "name": "Eldritch Insight",
+      "tree": "warfare",
+      "max_points": 20,
+      "slottable": false,
+      "jump_points": [
+        10,
+        20
+      ],
+      "unlock_points": 10,
+      "links": [
+        "blessed",
+        "piercing",
+        "quick_recovery"
+      ],
+      "links_verified": true,
+      "prerequisite_path": [],
+      "path_verified": true,
+      "map": {
+        "x": 80.0,
+        "y": 450.0,
+        "lane": 2
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "elemental_aegis",
+      "eso_skill_id": 15,
+      "name": "Elemental Aegis",
+      "tree": "warfare",
+      "max_points": 20,
+      "slottable": false,
+      "jump_points": [
+        10,
+        20
+      ],
+      "unlock_points": 10,
+      "cluster": "staving_death",
+      "links": [
+        "quick_recovery"
+      ],
+      "links_verified": true,
+      "prerequisite_path": [
+        "tireless_discipline",
+        "quick_recovery"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 320.0,
+        "y": 450.0,
+        "lane": 2
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "endless_endurance",
+      "eso_skill_id": 5,
+      "name": "Endless Endurance",
+      "tree": "warfare",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "links": [],
+      "links_verified": false,
+      "map": {
+        "x": 500.0,
+        "y": 800.0,
+        "lane": 4
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "enduring_resolve",
+      "eso_skill_id": 136,
+      "name": "Enduring Resolve",
+      "tree": "warfare",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        25,
+        50
+      ],
+      "unlock_points": 25,
+      "cluster": "staving_death",
+      "links": [
+        "quick_recovery",
+        "reinforced"
+      ],
+      "links_verified": true,
+      "prerequisite_path": [
+        "tireless_discipline",
+        "quick_recovery"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 560.0,
+        "y": 450.0,
+        "lane": 2
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "enlivening_overflow",
+      "eso_skill_id": 263,
+      "name": "Enlivening Overflow",
+      "tree": "warfare",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "cluster": "mastered_curation",
+      "links": [
+        "blessed"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 920.0,
+        "y": 625.0,
+        "lane": 3
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "exploiter",
+      "eso_skill_id": 277,
+      "name": "Exploiter",
+      "tree": "warfare",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "cluster": "extended_might",
+      "links": [
+        "piercing"
+      ],
+      "links_verified": true,
+      "prerequisite_path": [
+        "tireless_discipline",
+        "piercing"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 668.0,
+        "y": 275.0,
+        "lane": 1
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "fighting_finesse",
+      "eso_skill_id": 12,
+      "name": "Fighting Finesse",
+      "tree": "warfare",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        25,
+        50
+      ],
+      "unlock_points": 25,
+      "links": [
+        "precision"
+      ],
+      "links_verified": true,
+      "prerequisite_path": [
+        "precision"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 220.0,
+        "y": 100.0,
+        "lane": 0
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "flawless_ritual",
+      "eso_skill_id": 17,
+      "name": "Flawless Ritual",
+      "tree": "warfare",
+      "max_points": 40,
+      "slottable": false,
+      "jump_points": [
+        20,
+        40
+      ],
+      "unlock_points": 20,
+      "cluster": "extended_might",
+      "links": [
+        "piercing"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 80.0,
+        "y": 625.0,
+        "lane": 3
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "focused_mending",
+      "eso_skill_id": 26,
+      "name": "Focused Mending",
+      "tree": "warfare",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "cluster": "mastered_curation",
+      "links": [
+        "blessed"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 232.7,
+        "y": 625.0,
+        "lane": 3
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "force_of_nature",
+      "eso_skill_id": 276,
+      "name": "Force of Nature",
+      "tree": "warfare",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "cluster": "extended_might",
+      "links": [
+        "piercing"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 752.0,
+        "y": 275.0,
+        "lane": 1
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "foresight",
+      "eso_skill_id": 163,
+      "name": "Foresight",
+      "tree": "warfare",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "cluster": "mastered_curation",
+      "links": [],
+      "links_verified": false,
+      "map": {
+        "x": 538.2,
+        "y": 625.0,
+        "lane": 3
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "from_the_brink",
+      "eso_skill_id": 262,
+      "name": "From the Brink",
+      "tree": "warfare",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "cluster": "mastered_curation",
+      "links": [
+        "blessed"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 843.6,
+        "y": 625.0,
+        "lane": 3
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "hardy",
+      "eso_skill_id": 16,
+      "name": "Hardy",
+      "tree": "warfare",
+      "max_points": 20,
+      "slottable": false,
+      "jump_points": [
+        10,
+        20
+      ],
+      "unlock_points": 10,
+      "cluster": "staving_death",
+      "links": [
+        "quick_recovery"
+      ],
+      "links_verified": true,
+      "prerequisite_path": [
+        "tireless_discipline",
+        "quick_recovery"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 260.0,
+        "y": 450.0,
+        "lane": 2
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "hope_infusion",
+      "eso_skill_id": 261,
+      "name": "Hope Infusion",
+      "tree": "warfare",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "cluster": "mastered_curation",
+      "links": [
+        "blessed"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 767.3,
+        "y": 625.0,
+        "lane": 3
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "ironclad",
+      "eso_skill_id": 265,
+      "name": "Ironclad",
+      "tree": "warfare",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        25,
+        50
+      ],
+      "unlock_points": 25,
+      "cluster": "staving_death",
+      "links": [
+        "quick_recovery"
+      ],
+      "links_verified": true,
+      "prerequisite_path": [
+        "tireless_discipline",
+        "quick_recovery"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 380.0,
+        "y": 450.0,
+        "lane": 2
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "last_stand",
+      "eso_skill_id": 161,
+      "name": "Last Stand",
+      "tree": "warfare",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "cluster": "staving_death",
+      "links": [
+        "cutting_defense",
+        "reinforced",
+        "riposte"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 860.0,
+        "y": 450.0,
+        "lane": 2
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "master_at_arms",
+      "eso_skill_id": 264,
+      "name": "Master-at-Arms",
+      "tree": "warfare",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        25,
+        50
+      ],
+      "unlock_points": 25,
+      "cluster": "extended_might",
+      "links": [
+        "piercing"
+      ],
+      "links_verified": true,
+      "prerequisite_path": [
+        "tireless_discipline",
+        "piercing"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 248.0,
+        "y": 275.0,
+        "lane": 1
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "mighty",
+      "eso_skill_id": 22,
+      "name": "Mighty",
+      "tree": "warfare",
+      "max_points": 30,
+      "slottable": false,
+      "jump_points": [
+        30
+      ],
+      "unlock_points": 30,
+      "cluster": "extended_might",
+      "links": [],
+      "links_verified": false,
+      "map": {
+        "x": 920.0,
+        "y": 275.0,
+        "lane": 1
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "occult_overload",
+      "eso_skill_id": 32,
+      "name": "Occult Overload",
+      "tree": "warfare",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "links": [
+        "precision"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 640.0,
+        "y": 100.0,
+        "lane": 0
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "piercing",
+      "eso_skill_id": 10,
+      "name": "Piercing",
+      "tree": "warfare",
+      "max_points": 20,
+      "slottable": false,
+      "jump_points": [
+        10,
+        20
+      ],
+      "unlock_points": 10,
+      "links": [
+        "battle_mastery",
+        "biting_aura",
+        "deadly_aim",
+        "eldritch_insight",
+        "exploiter",
+        "flawless_ritual",
+        "force_of_nature",
+        "master_at_arms",
+        "precision",
+        "thaumaturge",
+        "tireless_discipline",
+        "weapons_expert"
+      ],
+      "links_verified": true,
+      "prerequisite_path": [
+        "tireless_discipline"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 164.0,
+        "y": 275.0,
+        "lane": 1
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "precision",
+      "eso_skill_id": 11,
+      "name": "Precision",
+      "tree": "warfare",
+      "max_points": 20,
+      "slottable": false,
+      "jump_points": [
+        10,
+        20
+      ],
+      "unlock_points": 10,
+      "links": [
+        "backstabber",
+        "blessed",
+        "fighting_finesse",
+        "occult_overload",
+        "piercing",
+        "reaving_blows",
+        "wrathful_strikes"
+      ],
+      "links_verified": true,
+      "prerequisite_path": [],
+      "path_verified": true,
+      "map": {
+        "x": 80.0,
+        "y": 100.0,
+        "lane": 0
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "preparation",
+      "eso_skill_id": 14,
+      "name": "Preparation",
+      "tree": "warfare",
+      "max_points": 20,
+      "slottable": false,
+      "jump_points": [
+        10,
+        20
+      ],
+      "unlock_points": 10,
+      "cluster": "staving_death",
+      "links": [
+        "quick_recovery"
+      ],
+      "links_verified": true,
+      "prerequisite_path": [
+        "tireless_discipline",
+        "quick_recovery"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 200.0,
+        "y": 450.0,
+        "lane": 2
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "quick_recovery",
+      "eso_skill_id": 20,
+      "name": "Quick Recovery",
+      "tree": "warfare",
+      "max_points": 20,
+      "slottable": false,
+      "jump_points": [
+        10,
+        20
+      ],
+      "unlock_points": 10,
+      "cluster": "staving_death",
+      "links": [
+        "duelists_rebuff",
+        "eldritch_insight",
+        "elemental_aegis",
+        "enduring_resolve",
+        "hardy",
+        "ironclad",
+        "preparation",
+        "resilience",
+        "tireless_discipline",
+        "unassailable"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 140.0,
+        "y": 450.0,
+        "lane": 2
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "reaving_blows",
+      "eso_skill_id": 30,
+      "name": "Reaving Blows",
+      "tree": "warfare",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "links": [
+        "precision"
+      ],
+      "links_verified": true,
+      "prerequisite_path": [
+        "precision"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 500.0,
+        "y": 100.0,
+        "lane": 0
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "reinforced",
+      "eso_skill_id": 160,
+      "name": "Reinforced",
+      "tree": "warfare",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "cluster": "staving_death",
+      "links": [
+        "bulwark",
+        "cutting_defense",
+        "enduring_resolve",
+        "last_stand",
+        "riposte"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 680.0,
+        "y": 450.0,
+        "lane": 2
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "rejuvenator",
+      "eso_skill_id": 9,
+      "name": "Rejuvenator",
+      "tree": "warfare",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "cluster": "mastered_curation",
+      "links": [],
+      "links_verified": false,
+      "map": {
+        "x": 461.8,
+        "y": 625.0,
+        "lane": 3
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "resilience",
+      "eso_skill_id": 13,
+      "name": "Resilience",
+      "tree": "warfare",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "cluster": "staving_death",
+      "links": [
+        "quick_recovery"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 620.0,
+        "y": 450.0,
+        "lane": 2
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "riposte",
+      "eso_skill_id": 162,
+      "name": "Riposte",
+      "tree": "warfare",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "cluster": "staving_death",
+      "links": [
+        "last_stand",
+        "reinforced"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 920.0,
+        "y": 450.0,
+        "lane": 2
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "salve_of_renewal",
+      "eso_skill_id": 260,
+      "name": "Salve of Renewal",
+      "tree": "warfare",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "cluster": "mastered_curation",
+      "links": [
+        "blessed"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 690.9,
+        "y": 625.0,
+        "lane": 3
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "soothing_tide",
+      "eso_skill_id": 24,
+      "name": "Soothing Tide",
+      "tree": "warfare",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "cluster": "mastered_curation",
+      "links": [
+        "blessed"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 309.1,
+        "y": 625.0,
+        "lane": 3
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "swift_renewal",
+      "eso_skill_id": 28,
+      "name": "Swift Renewal",
+      "tree": "warfare",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "cluster": "mastered_curation",
+      "links": [
+        "blessed"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 385.5,
+        "y": 625.0,
+        "lane": 3
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "thaumaturge",
+      "eso_skill_id": 27,
+      "name": "Thaumaturge",
+      "tree": "warfare",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        25,
+        50
+      ],
+      "unlock_points": 25,
+      "links": [
+        "piercing"
+      ],
+      "links_verified": true,
+      "prerequisite_path": [
+        "tireless_discipline",
+        "piercing"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 500.0,
+        "y": 275.0,
+        "lane": 1
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "tireless_discipline",
+      "eso_skill_id": 6,
+      "name": "Tireless Discipline",
+      "tree": "warfare",
+      "max_points": 20,
+      "slottable": false,
+      "jump_points": [
+        10,
+        20
+      ],
+      "unlock_points": 10,
+      "links": [
+        "piercing",
+        "quick_recovery"
+      ],
+      "links_verified": true,
+      "prerequisite_path": [],
+      "path_verified": true,
+      "map": {
+        "x": 80.0,
+        "y": 275.0,
+        "lane": 1
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "unassailable",
+      "eso_skill_id": 133,
+      "name": "Unassailable",
+      "tree": "warfare",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        25,
+        50
+      ],
+      "unlock_points": 25,
+      "cluster": "staving_death",
+      "links": [
+        "quick_recovery"
+      ],
+      "links_verified": true,
+      "prerequisite_path": [
+        "tireless_discipline",
+        "quick_recovery"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 500.0,
+        "y": 450.0,
+        "lane": 2
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "untamed_aggression",
+      "eso_skill_id": 4,
+      "name": "Untamed Aggression",
+      "tree": "warfare",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "links": [],
+      "links_verified": false,
+      "map": {
+        "x": 920.0,
+        "y": 800.0,
+        "lane": 4
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "war_mage",
+      "eso_skill_id": 21,
+      "name": "War Mage",
+      "tree": "warfare",
+      "max_points": 30,
+      "slottable": false,
+      "jump_points": [
+        30
+      ],
+      "unlock_points": 30,
+      "cluster": "extended_might",
+      "links": [],
+      "links_verified": false,
+      "map": {
+        "x": 156.4,
+        "y": 625.0,
+        "lane": 3
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "weapons_expert",
+      "eso_skill_id": 259,
+      "name": "Weapons Expert",
+      "tree": "warfare",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "cluster": "extended_might",
+      "links": [
+        "piercing"
+      ],
+      "links_verified": true,
+      "prerequisite_path": [
+        "tireless_discipline",
+        "piercing"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 584.0,
+        "y": 275.0,
+        "lane": 1
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "wrathful_strikes",
+      "eso_skill_id": 8,
+      "name": "Wrathful Strikes",
+      "tree": "warfare",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "links": [
+        "precision"
+      ],
+      "links_verified": true,
+      "prerequisite_path": [
+        "precision"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 360.0,
+        "y": 100.0,
+        "lane": 0
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "arcane_alacrity",
+      "eso_skill_id": 61,
+      "name": "Arcane Alacrity",
+      "tree": "fitness",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "links": [],
+      "links_verified": false,
+      "map": {
+        "x": 560.0,
+        "y": 450.0,
+        "lane": 2
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "bashing_brutality",
+      "eso_skill_id": 50,
+      "name": "Bashing Brutality",
+      "tree": "fitness",
+      "max_points": 20,
+      "slottable": false,
+      "jump_points": [
+        10,
+        20
+      ],
+      "unlock_points": 10,
+      "links": [],
+      "links_verified": false,
+      "map": {
+        "x": 500.0,
+        "y": 800.0,
+        "lane": 4
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "bastion",
+      "eso_skill_id": 46,
+      "name": "Bastion",
+      "tree": "fitness",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "links": [],
+      "links_verified": false,
+      "map": {
+        "x": 380.0,
+        "y": 450.0,
+        "lane": 2
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "bloody_renewal",
+      "eso_skill_id": 48,
+      "name": "Bloody Renewal",
+      "tree": "fitness",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "links": [
+        "heros_vigor",
+        "siphoning_spells"
+      ],
+      "links_verified": true,
+      "prerequisite_path": [
+        "sprinter",
+        "hasty",
+        "heros_vigor"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 140.0,
+        "y": 450.0,
+        "lane": 2
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "boundless_vitality",
+      "eso_skill_id": 2,
+      "name": "Boundless Vitality",
+      "tree": "fitness",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "links": [],
+      "links_verified": false,
+      "prerequisite_path": [],
+      "path_verified": true,
+      "map": {
+        "x": 80.0,
+        "y": 100.0,
+        "lane": 0
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "bracing_anchor",
+      "eso_skill_id": 267,
+      "name": "Bracing Anchor",
+      "tree": "fitness",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "cluster": "walking_fortress",
+      "links": [],
+      "links_verified": false,
+      "map": {
+        "x": 710.0,
+        "y": 800.0,
+        "lane": 4
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "celerity",
+      "eso_skill_id": 270,
+      "name": "Celerity",
+      "tree": "fitness",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "cluster": "wind_chaser",
+      "links": [],
+      "links_verified": false,
+      "prerequisite_path": [
+        "sprinter",
+        "hasty"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 416.0,
+        "y": 275.0,
+        "lane": 1
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "defiance",
+      "eso_skill_id": 128,
+      "name": "Defiance",
+      "tree": "fitness",
+      "max_points": 20,
+      "slottable": false,
+      "jump_points": [
+        10,
+        20
+      ],
+      "unlock_points": 10,
+      "links": [],
+      "links_verified": false,
+      "map": {
+        "x": 320.0,
+        "y": 625.0,
+        "lane": 3
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "expert_evasion",
+      "eso_skill_id": 51,
+      "name": "Expert Evasion",
+      "tree": "fitness",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "links": [],
+      "links_verified": false,
+      "prerequisite_path": [
+        "tumbling"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 200.0,
+        "y": 625.0,
+        "lane": 3
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "fortification",
+      "eso_skill_id": 43,
+      "name": "Fortification",
+      "tree": "fitness",
+      "max_points": 30,
+      "slottable": false,
+      "jump_points": [
+        15,
+        30
+      ],
+      "unlock_points": 15,
+      "links": [
+        "tireless_guardian"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 185.0,
+        "y": 800.0,
+        "lane": 4
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "fortified",
+      "eso_skill_id": 34,
+      "name": "Fortified",
+      "tree": "fitness",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "links": [],
+      "links_verified": false,
+      "prerequisite_path": [],
+      "path_verified": true,
+      "map": {
+        "x": 500.0,
+        "y": 100.0,
+        "lane": 0
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "hardened",
+      "eso_skill_id": 55,
+      "name": "Hardened",
+      "tree": "fitness",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "links": [],
+      "links_verified": false,
+      "map": {
+        "x": 920.0,
+        "y": 625.0,
+        "lane": 3
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "hasty",
+      "eso_skill_id": 42,
+      "name": "Hasty",
+      "tree": "fitness",
+      "max_points": 16,
+      "slottable": false,
+      "jump_points": [
+        8,
+        16
+      ],
+      "unlock_points": 8,
+      "cluster": "wind_chaser",
+      "links": [
+        "heros_vigor",
+        "sprinter",
+        "tireless_guardian"
+      ],
+      "links_verified": true,
+      "prerequisite_path": [
+        "sprinter"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 248.0,
+        "y": 275.0,
+        "lane": 1
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "heros_vigor",
+      "eso_skill_id": 113,
+      "name": "Hero's Vigor",
+      "tree": "fitness",
+      "max_points": 20,
+      "slottable": false,
+      "jump_points": [
+        10,
+        20
+      ],
+      "unlock_points": 10,
+      "links": [
+        "bloody_renewal",
+        "hasty",
+        "mystic_tenacity",
+        "piercing_gaze",
+        "shield_master",
+        "siphoning_spells",
+        "strategic_reserve"
+      ],
+      "links_verified": true,
+      "prerequisite_path": [
+        "sprinter",
+        "hasty"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 80.0,
+        "y": 450.0,
+        "lane": 2
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "juggernaut",
+      "eso_skill_id": 59,
+      "name": "Juggernaut",
+      "tree": "fitness",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "links": [],
+      "links_verified": false,
+      "map": {
+        "x": 680.0,
+        "y": 625.0,
+        "lane": 3
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "mystic_tenacity",
+      "eso_skill_id": 53,
+      "name": "Mystic Tenacity",
+      "tree": "fitness",
+      "max_points": 50,
+      "slottable": false,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "cluster": "survivors_spite",
+      "links": [
+        "heros_vigor"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 680.0,
+        "y": 450.0,
+        "lane": 2
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "nimble_protector",
+      "eso_skill_id": 44,
+      "name": "Nimble Protector",
+      "tree": "fitness",
+      "max_points": 6,
+      "slottable": false,
+      "jump_points": [
+        3,
+        6
+      ],
+      "unlock_points": 3,
+      "links": [
+        "tireless_guardian"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 605.0,
+        "y": 800.0,
+        "lane": 4
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "on_guard",
+      "eso_skill_id": 60,
+      "name": "On Guard",
+      "tree": "fitness",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "links": [
+        "tireless_guardian"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 290.0,
+        "y": 800.0,
+        "lane": 4
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "pains_refuge",
+      "eso_skill_id": 275,
+      "name": "Pain's Refuge",
+      "tree": "fitness",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "cluster": "survivors_spite",
+      "links": [],
+      "links_verified": false,
+      "map": {
+        "x": 860.0,
+        "y": 450.0,
+        "lane": 2
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "peace_of_mind",
+      "eso_skill_id": 54,
+      "name": "Peace of Mind",
+      "tree": "fitness",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "links": [],
+      "links_verified": false,
+      "map": {
+        "x": 800.0,
+        "y": 625.0,
+        "lane": 3
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "piercing_gaze",
+      "eso_skill_id": 45,
+      "name": "Piercing Gaze",
+      "tree": "fitness",
+      "max_points": 30,
+      "slottable": false,
+      "jump_points": [
+        10,
+        20,
+        30
+      ],
+      "unlock_points": 10,
+      "links": [
+        "heros_vigor"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 620.0,
+        "y": 450.0,
+        "lane": 2
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "refreshing_stride",
+      "eso_skill_id": 271,
+      "name": "Refreshing Stride",
+      "tree": "fitness",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "cluster": "wind_chaser",
+      "links": [],
+      "links_verified": false,
+      "prerequisite_path": [
+        "sprinter",
+        "hasty"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 752.0,
+        "y": 275.0,
+        "lane": 1
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "rejuvenation",
+      "eso_skill_id": 35,
+      "name": "Rejuvenation",
+      "tree": "fitness",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "links": [],
+      "links_verified": false,
+      "prerequisite_path": [],
+      "path_verified": true,
+      "map": {
+        "x": 920.0,
+        "y": 100.0,
+        "lane": 0
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "relentlessness",
+      "eso_skill_id": 274,
+      "name": "Relentlessness",
+      "tree": "fitness",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "cluster": "survivors_spite",
+      "links": [],
+      "links_verified": false,
+      "prerequisite_path": [
+        "sprinter",
+        "hasty",
+        "heros_vigor",
+        "mystic_tenacity"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 800.0,
+        "y": 450.0,
+        "lane": 2
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "rousing_speed",
+      "eso_skill_id": 62,
+      "name": "Rousing Speed",
+      "tree": "fitness",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "links": [
+        "sprinter"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 920.0,
+        "y": 275.0,
+        "lane": 1
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "savage_defense",
+      "eso_skill_id": 40,
+      "name": "Savage Defense",
+      "tree": "fitness",
+      "max_points": 30,
+      "slottable": false,
+      "jump_points": [
+        15,
+        30
+      ],
+      "unlock_points": 15,
+      "links": [
+        "tireless_guardian"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 395.0,
+        "y": 800.0,
+        "lane": 4
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "shield_master",
+      "eso_skill_id": 63,
+      "name": "Shield Master",
+      "tree": "fitness",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "links": [
+        "heros_vigor"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 320.0,
+        "y": 450.0,
+        "lane": 2
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "siphoning_spells",
+      "eso_skill_id": 47,
+      "name": "Siphoning Spells",
+      "tree": "fitness",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "links": [
+        "bloody_renewal",
+        "heros_vigor",
+        "strategic_reserve"
+      ],
+      "links_verified": true,
+      "prerequisite_path": [
+        "sprinter",
+        "hasty",
+        "heros_vigor"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 200.0,
+        "y": 450.0,
+        "lane": 2
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "slippery",
+      "eso_skill_id": 52,
+      "name": "Slippery",
+      "tree": "fitness",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "links": [],
+      "links_verified": false,
+      "map": {
+        "x": 440.0,
+        "y": 625.0,
+        "lane": 3
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "soothing_shield",
+      "eso_skill_id": 268,
+      "name": "Soothing Shield",
+      "tree": "fitness",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "cluster": "walking_fortress",
+      "links": [],
+      "links_verified": false,
+      "map": {
+        "x": 920.0,
+        "y": 800.0,
+        "lane": 4
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "spirit_mastery",
+      "eso_skill_id": 56,
+      "name": "Spirit Mastery",
+      "tree": "fitness",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "links": [],
+      "links_verified": false,
+      "map": {
+        "x": 500.0,
+        "y": 450.0,
+        "lane": 2
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "sprinter",
+      "eso_skill_id": 38,
+      "name": "Sprinter",
+      "tree": "fitness",
+      "max_points": 20,
+      "slottable": false,
+      "jump_points": [
+        10,
+        20
+      ],
+      "unlock_points": 10,
+      "links": [
+        "hasty",
+        "rousing_speed"
+      ],
+      "links_verified": true,
+      "prerequisite_path": [],
+      "path_verified": true,
+      "map": {
+        "x": 80.0,
+        "y": 275.0,
+        "lane": 1
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "strategic_reserve",
+      "eso_skill_id": 49,
+      "name": "Strategic Reserve",
+      "tree": "fitness",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "links": [
+        "heros_vigor",
+        "siphoning_spells"
+      ],
+      "links_verified": true,
+      "map": {
+        "x": 260.0,
+        "y": 450.0,
+        "lane": 2
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "survival_instincts",
+      "eso_skill_id": 57,
+      "name": "Survival Instincts",
+      "tree": "fitness",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "links": [],
+      "links_verified": false,
+      "prerequisite_path": [
+        "sprinter",
+        "hasty",
+        "heros_vigor",
+        "mystic_tenacity"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 740.0,
+        "y": 450.0,
+        "lane": 2
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "sustained_by_suffering",
+      "eso_skill_id": 273,
+      "name": "Sustained by Suffering",
+      "tree": "fitness",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "cluster": "survivors_spite",
+      "links": [],
+      "links_verified": false,
+      "prerequisite_path": [
+        "sprinter",
+        "hasty",
+        "heros_vigor",
+        "mystic_tenacity"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 920.0,
+        "y": 450.0,
+        "lane": 2
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "tempered_soul",
+      "eso_skill_id": 58,
+      "name": "Tempered Soul",
+      "tree": "fitness",
+      "max_points": 50,
+      "slottable": false,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "links": [],
+      "links_verified": false,
+      "map": {
+        "x": 440.0,
+        "y": 450.0,
+        "lane": 2
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "thrill_of_the_hunt",
+      "eso_skill_id": 272,
+      "name": "Thrill of the Hunt",
+      "tree": "fitness",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "cluster": "wind_chaser",
+      "links": [],
+      "links_verified": false,
+      "prerequisite_path": [
+        "sprinter",
+        "hasty"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 584.0,
+        "y": 275.0,
+        "lane": 1
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "tireless_guardian",
+      "eso_skill_id": 39,
+      "name": "Tireless Guardian",
+      "tree": "fitness",
+      "max_points": 20,
+      "slottable": false,
+      "jump_points": [
+        10,
+        20
+      ],
+      "unlock_points": 10,
+      "cluster": "walking_fortress",
+      "links": [
+        "fortification",
+        "hasty",
+        "nimble_protector",
+        "on_guard",
+        "savage_defense"
+      ],
+      "links_verified": true,
+      "prerequisite_path": [
+        "sprinter",
+        "hasty"
+      ],
+      "path_verified": true,
+      "map": {
+        "x": 80.0,
+        "y": 800.0,
+        "lane": 4
+      },
+      "jump_points_verified": true,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "tumbling",
+      "eso_skill_id": 37,
+      "name": "Tumbling",
+      "tree": "fitness",
+      "max_points": 30,
+      "slottable": false,
+      "jump_points": [
+        15,
+        30
+      ],
+      "unlock_points": 15,
+      "links": [],
+      "links_verified": false,
+      "prerequisite_path": [],
+      "path_verified": true,
+      "map": {
+        "x": 80.0,
+        "y": 625.0,
+        "lane": 3
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": true
+    },
+    {
+      "id": "unchained",
+      "eso_skill_id": 64,
+      "name": "Unchained",
+      "tree": "fitness",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "links": [],
+      "links_verified": false,
+      "map": {
+        "x": 560.0,
+        "y": 625.0,
+        "lane": 3
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    },
+    {
+      "id": "ward_master",
+      "eso_skill_id": 266,
+      "name": "Ward Master",
+      "tree": "fitness",
+      "max_points": 50,
+      "slottable": true,
+      "jump_points": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "unlock_points": 10,
+      "cluster": "walking_fortress",
+      "links": [],
+      "links_verified": false,
+      "map": {
+        "x": 815.0,
+        "y": 800.0,
+        "lane": 4
+      },
+      "jump_points_verified": false,
+      "unlock_points_verified": false
+    }
+  ]
+}

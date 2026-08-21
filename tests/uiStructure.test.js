@@ -345,10 +345,10 @@ test('v3 Equipment and Champion Points present actionable progression rather tha
   assert.match(equipment, /set\.name/)
   for (const heading of ['Type', 'Category', 'Enchantment', 'Trait', 'Quality', 'Status', 'Tradeable']) assert.match(equipment, new RegExp(heading))
   assert.doesNotMatch(equipment, /eyebrow\">\{set\.role/)
-  assert.match(cpCard, /Spend in this order/)
-  assert.match(cpCard, /Bring this star from/)
-  assert.match(cpCard, /nextMilestone/)
-  assert.match(buildCpEditor, /count === 1 \? 'star' : 'stars'/)
+  assert.match(cpCard, /Do this next/)
+  assert.match(cpCard, /Unlock-aware first pass/)
+  assert.match(cpCard, /Constellation Map/)
+  assert.match(buildCpEditor, /First build targets/)
 })
 
 test('v3 Skills overview uses personal quick-add tracking and bottom disclosure rails', () => {
@@ -570,4 +570,49 @@ test('Settings stays concise while character backups live in Character Tracker',
   assert.match(routes, /path="character-data" element=\{<CharacterDataPage \/>\}/)
   assert.match(routes, /path="help\/import-export" element=\{<Navigate to="\/character-data" replace \/>\}/)
   assert.match(routes, /path="build-editor\/settings" element=\{<Navigate to="\/settings\?tab=editor" replace \/>\}/)
+})
+
+
+test('Champion Point locator keeps ESO clusters collapsed to their outer portal', () => {
+  const map = read('src/renderer/components/CPConstellationMap.jsx')
+  const card = read('src/renderer/components/CPCard.jsx')
+  assert.match(map, /Route inside:/)
+  assert.match(map, /portalDetails\.get\(star\.id\)/)
+  assert.match(map, /mainIdFor\(focusId\)/)
+  assert.match(map, /mainIdFor\(nextId\)/)
+  assert.doesNotMatch(map, /cp-map-cluster-inset|Inside \{clusterRootStar/)
+  assert.match(card, /Multi-star ESO clusters stay collapsed to their portal/)
+})
+
+
+test('Champion Point constellation locator focuses the selected route and supports map navigation', () => {
+  const map = read('src/renderer/components/CPConstellationMap.jsx')
+  const card = read('src/renderer/components/CPCard.jsx')
+  const css = read('src/renderer/styles/Character.css')
+  assert.match(map, /route\.slice\(0, index \+ 1\)/)
+  assert.match(map, /later build targets stay dim/)
+  assert.match(map, /onWheel=\{handleWheel\}/)
+  assert.match(map, /onPointerDown=\{handlePointerDown\}/)
+  assert.match(map, /Fit constellation to view/)
+  assert.match(map, /cp-map-hover-tooltip/)
+  assert.match(map, /onPointerEnter=/)
+  assert.match(map, /Route to selected node/)
+  assert.match(card, /nextId=\{isNext \? focusId : null\}/)
+  assert.match(card, /Hover any node for its name/)
+  assert.match(css, /\.cp-map-controls\{position:absolute/)
+  assert.match(css, /\.cp-map-hover-tooltip\{position:absolute/)
+})
+
+
+test('Champion Point node locator opens one full workspace map instead of stacked hover popovers', () => {
+  const map = read('src/renderer/components/CPConstellationMap.jsx')
+  const card = read('src/renderer/components/CPCard.jsx')
+  const css = read('src/renderer/styles/Character.css')
+  assert.match(card, /className="cp-map-workspace/)
+  assert.match(card, /× Close Map/)
+  assert.match(card, /role="dialog" aria-modal="true"/)
+  assert.match(card, /setMapFocusId\(focusId \?\? nextId \?\? null\)/)
+  assert.doesNotMatch(map, /cp-map-popover|Pinned ·|onMouseEnter=|onMouseLeave=/)
+  assert.doesNotMatch(css, /\.cp-map-popover/)
+  assert.match(css, /\.cp-map-workspace\{position:fixed/)
 })

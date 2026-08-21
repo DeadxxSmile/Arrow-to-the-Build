@@ -1,6 +1,6 @@
 # ATTB Theme and CSS Architecture
 
-> **Current app release:** ATTB 3.0.0. Theme Schema 1 is the current theme contract.
+> **Current app release:** ATTB 3.1.0. Theme Schema 1 is the current theme contract.
 
 This document describes the v3 styling and Theme Schema 1 architecture.
 

@@ -2,6 +2,9 @@
 const catalog = require('../catalog')
 const { mergeOverrides } = require('../../shared/variantLogic.cjs')
 const companionCatalog = require('../../../resources/data/eso-companions.json')
+const cpCatalog = require('../../../resources/data/eso-cp-catalog.json')
+const CP_STARS = new Map((cpCatalog.stars || []).map(star => [star.id, star]))
+const CP_TREES = new Set(['craft', 'warfare', 'fitness'])
 const { assertSafeJsonStructure } = require('../../shared/jsonSafety.cjs')
 const { STARTING_POINTS } = require('../../shared/progressionScope.cjs')
 const COMPANION_IDS = new Set((companionCatalog.companions || []).map(row => row.id))
@@ -28,6 +31,7 @@ function planNodes(plan) {
 
 function validateCpPlans(data, errors) {
   for (const [tree, plan] of Object.entries(isObj(data.cp_plans) ? data.cp_plans : {})) {
+    if (!CP_TREES.has(tree)) { errors.push(`cp_plans has unknown constellation "${tree}".`); continue }
     if (!isObj(plan)) { errors.push(`cp_plans.${tree} must be an object.`); continue }
     const { core, flex } = planSections(plan)
     if (!Array.isArray(plan.core)) { errors.push(`cp_plans.${tree} needs a core array.`); continue }
@@ -38,18 +42,39 @@ function validateCpPlans(data, errors) {
       if (!isObj(node) || badId(node?.id)) { errors.push(`${where} needs a slug id.`); return }
       if (nodeIds.has(node.id)) errors.push(`Duplicate CP node id "${node.id}" in ${tree}.`)
       nodeIds.add(node.id)
-      if (typeof node.name !== 'string' || !node.name.trim()) errors.push(`CP node "${node.id}" needs a name.`)
-      const max = Number(node.max_points)
-      if (!Number.isInteger(max) || max <= 0) { errors.push(`CP node "${node.id}" needs a positive whole max_points.`); return }
-      if (max > CP_TREE_MAX) errors.push(`CP node "${node.id}" max_points ${max} is above the ${CP_TREE_MAX} constellation cap.`)
+      const canonical = CP_STARS.get(node.id)
+      if (!canonical) { errors.push(`CP node "${node.id}" is not in the bundled Update 50 Champion Point catalog.`); return }
+      if (canonical.tree !== tree) errors.push(`CP node "${node.id}" belongs to ${canonical.tree}, not ${tree}.`)
+
+      // Legacy duplicated facts are allowed only when they agree with the catalog. normalizeBuild removes them.
+      if (node.name !== undefined && node.name !== canonical.name) errors.push(`CP node "${node.id}" has stale name "${node.name}"; catalog name is "${canonical.name}".`)
+      if (node.max_points !== undefined && Number(node.max_points) !== Number(canonical.max_points)) errors.push(`CP node "${node.id}" says max_points ${node.max_points}; ESO catalog maximum is ${canonical.max_points}. Use first_pass_points for an early routing milestone.`)
+      if (node.slottable !== undefined && node.slottable !== canonical.slottable) errors.push(`CP node "${node.id}" has slottable=${node.slottable}; ESO catalog says ${canonical.slottable}.`)
       if (node.jump_points !== undefined) {
-        if (!Array.isArray(node.jump_points)) { errors.push(`CP node "${node.id}" jump_points must be an array.`); return }
-        for (const jump of node.jump_points) {
-          if (!Number.isInteger(Number(jump)) || Number(jump) <= 0) errors.push(`CP node "${node.id}" has a non-positive stage threshold "${jump}".`)
-          else if (Number(jump) > max) errors.push(`CP node "${node.id}" has stage threshold ${jump} above its own max_points of ${max}.`)
+        const supplied = Array.isArray(node.jump_points) ? node.jump_points.map(Number) : null
+        if (!supplied) errors.push(`CP node "${node.id}" jump_points must be an array.`)
+        else if (canonical.jump_points_verified === true && JSON.stringify(supplied) !== JSON.stringify(canonical.jump_points || [])) errors.push(`CP node "${node.id}" has stale stage thresholds; use the canonical CP catalog instead.`)
+      }
+
+      const first = node.first_pass_points === undefined ? Number(canonical.max_points) : Number(node.first_pass_points)
+      const target = node.target_points === undefined ? Number(canonical.max_points) : Number(node.target_points)
+      if (!Number.isInteger(first) || first <= 0 || first > canonical.max_points) errors.push(`CP node "${node.id}" first_pass_points must be a whole number from 1 to ${canonical.max_points}.`)
+      if (!Number.isInteger(target) || target <= 0 || target > canonical.max_points) errors.push(`CP node "${node.id}" target_points must be a whole number from 1 to ${canonical.max_points}.`)
+      if (Number.isInteger(first) && Number.isInteger(target) && first > target) errors.push(`CP node "${node.id}" first_pass_points cannot exceed target_points.`)
+      if (canonical.jump_points_verified === true && Array.isArray(canonical.jump_points) && canonical.jump_points.length) {
+        const validStages = new Set(canonical.jump_points.map(Number))
+        if (Number.isInteger(first) && !validStages.has(first)) errors.push(`CP node "${node.id}" first_pass_points ${first} is between ESO effect stages. Use one of: ${canonical.jump_points.join(', ')}.`)
+        if (Number.isInteger(target) && !validStages.has(target)) errors.push(`CP node "${node.id}" target_points ${target} is between ESO effect stages. Use one of: ${canonical.jump_points.join(', ')}.`)
+      }
+
+      if (node.requires !== undefined) {
+        if (!Array.isArray(node.requires)) errors.push(`CP node "${node.id}" requires must be an array.`)
+        else for (const req of node.requires) {
+          const required = CP_STARS.get(req)
+          if (!required) errors.push(`CP node "${node.id}" requires unknown Champion star "${req}".`)
+          else if (required.tree !== tree) errors.push(`CP node "${node.id}" requires "${req}" from the wrong constellation.`)
         }
       }
-      if (node.slottable !== undefined && typeof node.slottable !== 'boolean') errors.push(`CP node "${node.id}" slottable must be true or false.`)
     }
 
     core.forEach((node, i) => checkNode(node, `cp_plans.${tree}.core[${i}]`))
@@ -64,22 +89,20 @@ function validateCpPlans(data, errors) {
       group.nodes.forEach((node, i) => checkNode(node, `cp_plans.${tree}.flex.${group.id}[${i}]`))
     })
 
-    const coreTotal = core.reduce((sum, node) => sum + (Number(node?.max_points) || 0), 0)
-    if (coreTotal > CP_TREE_MAX) errors.push(`cp_plans.${tree} core path needs ${coreTotal} points, which no character can reach (the cap is ${CP_TREE_MAX} per constellation).`)
     const finalSlots = Array.isArray(plan.final_slots) ? plan.final_slots : []
     if (plan.final_slots !== undefined && !Array.isArray(plan.final_slots)) errors.push(`cp_plans.${tree}.final_slots must be an array.`)
     if (finalSlots.length > 4) errors.push(`cp_plans.${tree}.final_slots can contain no more than four stars.`)
     if (new Set(finalSlots).size !== finalSlots.length) errors.push(`cp_plans.${tree}.final_slots must not contain duplicate stars.`)
     for (const slot of finalSlots) {
       if (badId(slot)) errors.push(`cp_plans.${tree}.final_slots contains an invalid star id.`)
-      else if (!nodeIds.has(slot)) errors.push(`cp_plans.${tree}.final_slots lists "${slot}", which is not one of its nodes.`)
-    }
-    validateCpGraph(plan, tree, errors)
-    for (const node of planNodes(plan)) {
-      if (isObj(node) && finalSlots.includes(node.id) && node.slottable !== true) {
-        errors.push(`cp_plans.${tree}.final_slots lists "${node.id}", which must explicitly set slottable to true.`)
+      else if (!nodeIds.has(slot)) errors.push(`cp_plans.${tree}.final_slots lists "${slot}", which is not one of its authored build targets.`)
+      else {
+        const canonical = CP_STARS.get(slot)
+        if (!canonical?.slottable) errors.push(`cp_plans.${tree}.final_slots lists "${slot}", but the canonical ESO catalog marks it passive.`)
+        if (canonical && canonical.tree !== tree) errors.push(`cp_plans.${tree}.final_slots lists "${slot}" from the wrong constellation.`)
       }
     }
+    validateCpGraph(plan, tree, errors)
   }
 }
 
@@ -170,6 +193,59 @@ function normalizeCatalogRows(data) {
       data.relevant_lines.push({ id: line.id, name: line.name, max: Number(line.max_rank) || 50, group: line.group })
       relevantIds.add(line.id)
       changed = true
+    }
+  }
+  return changed
+}
+
+function normalizeCpPlans(data) {
+  if (!isObj(data.cp_plans)) return false
+  let changed = false
+  for (const [tree, plan] of Object.entries(data.cp_plans)) {
+    if (!CP_TREES.has(tree) || !isObj(plan)) continue
+    const rows = planNodes(plan)
+    const authoredIds = new Set(rows.map(row => row?.id).filter(Boolean))
+    const authoredIndex = new Map(rows.map((row, index) => [row?.id, index]).filter(([id]) => !!id))
+    const connectorIds = new Set()
+    const connectorTargetIndex = new Map()
+    rows.forEach((target, targetIndex) => {
+      if (!isObj(target)) return
+      const targetStar = CP_STARS.get(target.id)
+      const path = Array.isArray(target.requires)
+        ? target.requires
+        : targetStar?.path_verified === true && Array.isArray(targetStar.prerequisite_path)
+          ? targetStar.prerequisite_path
+          : []
+      for (const id of path) {
+        if (!authoredIds.has(id)) continue
+        connectorIds.add(id)
+        if (!connectorTargetIndex.has(id) || targetIndex < connectorTargetIndex.get(id)) connectorTargetIndex.set(id, targetIndex)
+      }
+    })
+    for (const node of rows) {
+      if (!isObj(node)) continue
+      const canonical = CP_STARS.get(node.id)
+      if (!canonical || canonical.tree !== tree) continue
+      const legacyMax = Number(node.max_points)
+      if (node.first_pass_points === undefined) {
+        const legacyPartial = Number.isInteger(legacyMax) && legacyMax > 0 && legacyMax < canonical.max_points ? legacyMax : 0
+        const unlockMilestone = canonical.unlock_points_verified === true
+          ? Number(canonical.unlock_points) || 0
+          : Array.isArray(canonical.jump_points) ? Number(canonical.jump_points[0]) || 0 : 0
+        const routeHint = /path node|connector|opens?.{0,40}route|routing onward|required path/i.test(String(node.note || ''))
+        const insertedBeforeAuthoredPosition = connectorIds.has(node.id) && (connectorTargetIndex.get(node.id) ?? Infinity) < (authoredIndex.get(node.id) ?? -1)
+        const unlockFirst = connectorIds.has(node.id) && (routeHint || insertedBeforeAuthoredPosition)
+        node.first_pass_points = legacyPartial || (unlockFirst && unlockMilestone > 0 ? Math.min(canonical.max_points, unlockMilestone) : canonical.max_points)
+        changed = true
+      }
+      if (node.target_points === undefined) { node.target_points = canonical.max_points; changed = true }
+      if (node.first_pass_points > node.target_points) { node.first_pass_points = node.target_points; changed = true }
+      for (const key of ['name', 'max_points', 'slottable', 'jump_points', 'eso_skill_id', 'tree']) if (node[key] !== undefined) { delete node[key]; changed = true }
+    }
+    if (Array.isArray(plan.final_slots)) {
+      const authored = new Set(rows.map(row => row?.id).filter(Boolean))
+      const filtered = plan.final_slots.filter(id => authored.has(id) && CP_STARS.get(id)?.tree === tree && CP_STARS.get(id)?.slottable === true).slice(0, 4)
+      if (JSON.stringify(filtered) !== JSON.stringify(plan.final_slots)) { plan.final_slots = filtered; changed = true }
     }
   }
   return changed
@@ -270,18 +346,29 @@ function validateScribedSkills(data, errors) {
 
 function validateCpGraph(plan, tree, errors) {
   const nodes = planNodes(plan).filter(isObj)
-  const ids = new Set(nodes.map(node => node.id))
-  for (const node of nodes) for (const req of (Array.isArray(node.requires) ? node.requires : [])) if (!ids.has(req)) errors.push(`CP node "${node.id}" in ${tree} requires unknown node "${req}".`)
+  const authored = new Set(nodes.map(node => node.id))
+  for (const node of nodes) {
+    const requirements = Array.isArray(node.requires) ? node.requires : []
+    if (requirements.includes(node.id)) errors.push(`CP node "${node.id}" in ${tree} cannot require itself.`)
+    for (const req of requirements) {
+      const canonical = CP_STARS.get(req)
+      if (!canonical) continue
+      if (canonical.tree !== tree) errors.push(`CP node "${node.id}" in ${tree} requires "${req}" from ${canonical.tree}.`)
+    }
+  }
+
+  // Manual requires can reference catalog-only connector nodes, so cycle detection only follows
+  // authored rows that point to other authored rows.
+  const byId = new Map(nodes.map(node => [node.id, node]))
   const state = new Map()
   const walk = id => {
     if (state.get(id) === 'done') return
-    if (state.get(id) === 'open') { errors.push(`CP plan ${tree} has a circular requires path involving "${id}".`); return }
+    if (state.get(id) === 'open') { errors.push(`CP plan ${tree} has a circular manual requires path involving "${id}".`); return }
     state.set(id, 'open')
-    const node = nodes.find(item => item.id === id)
-    for (const req of node?.requires || []) walk(req)
+    for (const req of byId.get(id)?.requires || []) if (authored.has(req)) walk(req)
     state.set(id, 'done')
   }
-  for (const id of ids) walk(id)
+  for (const id of authored) walk(id)
 }
 
 function normalizeDisplaySections(effective) {
@@ -677,6 +764,7 @@ function normalizeBuild(input) {
     errors.push(`schema_version must be 3 or ${CURRENT_SCHEMA_VERSION}; unsupported schemas cannot be imported safely.`)
   }
   if (!errors.length && normalizeCatalogRows(data)) changed = true
+  if (!errors.length && normalizeCpPlans(data)) changed = true
   return { data, changed, errors }
 }
 

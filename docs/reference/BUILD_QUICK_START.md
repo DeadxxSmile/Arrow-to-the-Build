@@ -1,6 +1,6 @@
 # Start Here: Builds, JSON, and the ATTB Build Editor
 
-Every build in Arrow to the Build is a **Schema 4 JSON** file. Bundled builds, builds you make in the visual editor, community files you import, and files you edit by hand all use the same structure. This reference is current for **ATTB 3.0.0**.
+Every build in Arrow to the Build is a **Schema 4 JSON** file. Bundled builds, builds you make in the visual editor, community files you import, and files you edit by hand all use the same structure. This reference is current for **ATTB 3.1.0**.
 
 You do **not** need to know JSON to create a build in ATTB. The Build Editor writes and validates the JSON for you. The JSON format matters because it keeps builds portable, human-readable, easy to back up, and usable outside the app.
 
@@ -31,11 +31,11 @@ The Character Tracker reads this information and turns it into a character-speci
 
 ### If your build uses Scribing
 
-ATTB 3.0.0 stores an exact Scribed Skill recipe when the final ability depends on a specific Grimoire + Focus + Signature + Affix combination. The in-app **Help & Tools -> Progression -> Scribing** page walks from first unlock through acquiring the required ingredients, spending Luminous Ink, crafting the skill, and putting it on the build bar.
+ATTB 3.1.0 stores an exact Scribed Skill recipe when the final ability depends on a specific Grimoire + Focus + Signature + Affix combination. The in-app **Help & Tools -> Progression -> Scribing** page walks from first unlock through acquiring the required ingredients, spending Luminous Ink, crafting the skill, and putting it on the build bar.
 
 ## Build starting point: `progression_scope`
 
-ATTB 3.0.0 adds an **optional, backwards-compatible Schema 4** object that tells the app what kind of progression the build is meant to cover:
+Schema 4 includes an **optional, backwards-compatible** object that tells the app what kind of progression the build is meant to cover:
 
 ```json
 "progression_scope": {
@@ -161,11 +161,11 @@ Create progression stages such as Training Gear, CP160 Starter, Dungeon Upgrade,
 
 ### 7. Champion Points
 
-Edit the Craft, Warfare, and Fitness **strategy** plans. Pick canonical stars, set the first-pass investment and eventual target, organize recommended/optional branches, and choose up to four final slottables. ATTB 3.0.1 supplies true max values, stages, passive/slottable state, prerequisite routing, and constellation-map placement from the canonical CP catalog; addon 1.1.3+ can override that fallback with ESO's live graph.
+Edit the Craft, Warfare, and Fitness **strategy** plans. Pick canonical stars, set the first-pass investment and eventual target, organize recommended/optional branches, and choose up to four final slottables. ATTB 3.1.0 supplies true max values, stages, passive/slottable state, prerequisite routing, and constellation-map placement from the canonical CP catalog; addon 1.1.3+ can override that fallback with ESO's live graph.
 
 ### 8. Companions
 
-ATTB 3.0.0 includes every current combat companion in a dedicated directory plus two starter setups per companion. In the Build Editor you can add a preset, reset an edited setup back to its preset, or author a custom companion target.
+ATTB 3.1.0 includes every current combat companion in a dedicated directory plus two starter setups per companion. In the Build Editor you can add a preset, reset an edited setup back to its preset, or author a custom companion target.
 
 Companion skills are stored separately from player skill IDs and Unlock Plan data.
 

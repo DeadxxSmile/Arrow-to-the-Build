@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Arrow to the Build: ESO character tracker, build editor, and local sync</title>
-  <meta name="description" content="A free, offline Windows app for The Elder Scrolls Online that turns a build guide into a step-by-step plan for the character you actually play. Sync from ESO or track by hand, with a full Build Editor, exact unlock timing, companions, and readable Schema 4 JSON.">
+  <title>Arrow to the Build — ESO Build Planner &amp; Character Tracker</title>
+  <meta name="description" content="Free offline ESO build planner and character tracker for Windows. Sync locally from ESO, track skills, Champion Points, gear, companions, and build progression.">
   <meta name="theme-color" content="#071018">
   <meta name="author" content="DeadxxSmile">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
@@ -35,7 +35,7 @@
   <link rel="manifest" href="/site.webmanifest">
 
   <link rel="preload" as="image" href="assets/v3/hero-basic-info.webp">
-  <link rel="stylesheet" href="styles.css?v=3.0.1-seo">
+  <link rel="stylesheet" href="styles.css?v=3.1.0-v3-site8">
 
   <script type="application/ld+json">
   {
@@ -45,7 +45,7 @@
     "alternateName": "ATTB",
     "applicationCategory": "GameApplication",
     "operatingSystem": "Windows 10, Windows 11",
-    "softwareVersion": "3.0.1",
+    "softwareVersion": "3.1.0",
     "description": "A free, offline Windows companion for The Elder Scrolls Online that turns a build guide into a step-by-step plan for the character you actually play. Track by hand or sync locally from ESO, then follow the exact unlocks, gear, Champion Points, bars, and companions that get you there.",
     "url": "https://arrowtothebuild.com/",
     "downloadUrl": "https://github.com/DeadxxSmile/Arrow-to-the-Build/releases/latest",
@@ -89,7 +89,7 @@
       <img src="assets/logo/attb-logo.png" alt="">
       <strong>ATTB</strong>
       <span aria-hidden="true">|</span>
-      <b>v3.0.1</b>
+      <b>v3.1.0</b>
     </a>
     <div class="window-status"><span class="status-dot"></span> Current release</div>
   </header>
@@ -100,14 +100,14 @@
     <div class="sidebar-cta">
       <a class="sidebar-download" href="https://github.com/DeadxxSmile/Arrow-to-the-Build/releases/latest" target="_blank" rel="noreferrer">
         <span class="dl-icon" aria-hidden="true">&#8615;</span>
-        <span class="dl-text"><b>Download v3.0.1</b><small>Latest release · Windows 10/11</small></span>
+        <span class="dl-text"><b>Download v3.1.0</b><small>Latest release · Windows 10/11</small></span>
       </a>
     </div>
 
     <nav class="sidebar-nav" aria-label="Sections">
       <span class="nav-group">START HERE</span>
       <a href="#overview">Overview</a>
-      <a href="#whats-new">What's new in v3</a>
+      <a href="#whats-new">What's new in v3.1</a>
 
       <span class="nav-group">WORKSPACES</span>
       <a href="#character">Character Tracker</a>
@@ -157,15 +157,15 @@
 
     <section class="content-section" id="whats-new">
       <div class="section-heading">
-        <span class="eyebrow">VERSION 3.0.1</span>
-        <h2>The app grew up.</h2>
-        <p>v3 is not a pile of new features. It is the same app, finally laid out the way it should have been from the start: clearer hierarchy, fewer walls of numbers, and a lot less squinting.</p>
+        <span class="eyebrow">VERSION 3.1.0</span>
+        <h2>Champion Points finally work like a route, not a spreadsheet.</h2>
+        <p>v3.1 turns Champion Point planning into an unlock-aware progression system backed by current ESO data, then refreshes all seven bundled builds around that new foundation.</p>
       </div>
       <div class="feature-cards four">
-        <article class="panel"><span class="card-kicker">UI / UX</span><h3>Every workspace, reworked</h3><p>Character progression, gear, skills, Champion Points, the Build Editor, Help, and settings were rebuilt around what you actually look at, instead of stacking every number in one place and wishing you luck.</p></article>
-        <article class="panel"><span class="card-kicker">THEMES</span><h3>One theme engine</h3><p>Built-in and custom themes now run on the same 57 tokens. Pick colors in a friendly editor, type exact HEX or RGB, watch it change live, and hand the result off as plain JSON.</p></article>
-        <article class="panel"><span class="card-kicker">CHARACTERS</span><h3>Give it a face</h3><p>Drop in a screenshot of your character as Basic Info artwork. ATTB decodes, resizes, and re-encodes it locally before showing it, so the file cannot smuggle anything in.</p></article>
-        <article class="panel"><span class="card-kicker">HARDENING</span><h3>Data stays data</h3><p>Every build, character, and theme import gets checked for size, depth, and nasty keys before ATTB touches it. Imported JSON is read as data, never run as code.</p></article>
+        <article class="panel"><span class="card-kicker">CP ROUTING</span><h3>Spend only what unlocks the next step</h3><p>ATTB now understands connector stages and prerequisites, so it can route through the constellation without telling you to max a node before moving on.</p></article>
+        <article class="panel"><span class="card-kicker">CONSTELLATIONS</span><h3>A real map when you need one</h3><p>Open the selected Champion star in a full constellation workspace, zoom with the wheel, drag to pan, hover any node for its name, and see only the route that matters right now.</p></article>
+        <article class="panel"><span class="card-kicker">LIVE ESO DATA</span><h3>The addon supplies the real graph</h3><p>Addon 1.1.3 exports Champion links, stages, roots, cluster membership, and coordinates so synced characters can use ESO's live constellation geometry instead of the approximate fallback.</p></article>
+        <article class="panel"><span class="card-kicker">MIGHTY SEVEN</span><h3>Every bundled build re-audited</h3><p>All seven class builds were reviewed for the new CP model, current Update 50 passive/slottable rules, automatic route reachability, and current skill-bar guidance.</p></article>
       </div>
     </section>
 
@@ -356,7 +356,7 @@
           </div>
         </div>
         <div class="install-facts">
-          <span><small>Installer</small><b>ATTB-Setup-3.0.1.exe</b></span>
+          <span><small>Installer</small><b>ATTB-Setup-3.1.0.exe</b></span>
           <span><small>Platform</small><b>Windows 10 / 11</b></span>
           <span><small>ESO Addon</small><b>1.1.3</b></span>
           <span><small>Build format</small><b>Schema 4</b></span>
@@ -383,6 +383,6 @@
     <figure><img src="" alt=""><figcaption id="lightbox-title"></figcaption></figure>
   </dialog>
 
-  <script src="app.js?v=3.0.1-seo"></script>
+  <script src="app.js?v=3.1.0-v3-site8"></script>
 </body>
 </html>

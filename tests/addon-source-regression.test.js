@@ -18,13 +18,26 @@ const equipment = read('Collectors', 'Equipment.lua')
 const champion = read('Collectors', 'Champion.lua')
 const core = read('Core.lua')
 const addonSources = [namespace, util, character, skills, equipment, champion, core].join('\n')
+const snapshotCodec = fs.readFileSync(path.resolve(__dirname, '..', 'src', 'main', 'addon', 'snapshotCodec.js'), 'utf8')
 
 test('bundled addon version and SavedVariables policy stay aligned', () => {
-  assert.match(manifest, /^## Version: 1\.1\.1$/m)
-  assert.match(manifest, /^## AddOnVersion: 10101$/m)
+  assert.match(manifest, /^## Version: 1\.1\.3$/m)
+  assert.match(manifest, /^## AddOnVersion: 10103$/m)
   assert.match(manifest, /^## APIVersion: 101050$/m)
   assert.match(manifest, /^## DisableSavedVariablesAutoSaving: 1$/m)
-  assert.match(namespace, /ATTB\.version = "1\.1\.1"/)
+  assert.match(namespace, /ATTB\.version = "1\.1\.3"/)
+})
+
+
+test('Champion graph export preserves ESO constellation and nested-cluster coordinate spaces', () => {
+  assert.match(champion, /graphSchemaVersion = 2/)
+  assert.match(champion, /GetChampionSkillPosition/)
+  assert.match(champion, /GetChampionClusterRootOffset/)
+  assert.match(champion, /GetChampionClusterSkillIds/)
+  assert.match(champion, /clusterRootSkillId = clusterRootSkillId/)
+  assert.match(champion, /rawX = rawX/)
+  assert.match(champion, /constellationX = constellationX/)
+  assert.match(snapshotCodec, /graphSchemaVersion: clampInt\(snapshot\.champion\?\.graphSchemaVersion/)
 })
 
 test('single-exporter source does not regress to retired bridge/schema paths', () => {

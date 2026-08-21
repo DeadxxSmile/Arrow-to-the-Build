@@ -54,13 +54,13 @@ test('runtime files and offline reference data exist and are included in app.asa
     'src/main/themeService.js',
     'src/shared/variantLogic.cjs', 'src/shared/variantLogic.mjs',
     'src/shared/progressionScope.cjs', 'src/shared/progressionScope.mjs',
-    'resources/data/eso-skill-catalog.json', 'resources/data/eso-companions.json',
+    'resources/data/eso-skill-catalog.json', 'resources/data/eso-cp-catalog.json', 'resources/data/eso-companions.json',
     'resources/data/build-editor-guidance.json', 'resources/data/theme-schema.json', 'resources/art/ATTB.ico',
     'resources/themes/builtin-themes.json', 'resources/themes/ATTB_THEME_TEMPLATE.json',
     'docs/reference/BUILD_QUICK_START.md', 'docs/reference/BUILD_EDITOR_GUIDE.md',
     'docs/reference/BUILD_JSON_GUIDE.md', 'docs/reference/ATTB_AI_BUILD_JSON_AUTHORING_GUIDE.md',
     'docs/reference/BUILD_FORMAT.md', 'docs/reference/BUILD_VALIDATION_GUIDE.md',
-    'docs/reference/ESO_ADDON_INTEGRATION.md', 'docs/reference/SKILL_CATALOG.md', 'docs/reference/THEME_AUTHORING.md',
+    'docs/reference/ESO_ADDON_INTEGRATION.md', 'docs/reference/SKILL_CATALOG.md', 'docs/reference/CHAMPION_POINT_CATALOG.md', 'docs/reference/THEME_AUTHORING.md',
     'docs/reference/BUILD_TEMPLATE.json'
   ]
   for (const file of needed) {
@@ -72,8 +72,8 @@ test('runtime files and offline reference data exist and are included in app.asa
 test('the single ESO addon ships once as an external resource', () => {
   const addonRoot = path.join(root, 'resources/addon/ArrowToTheBuild')
   const manifest = read('resources/addon/ArrowToTheBuild/ArrowToTheBuild.txt')
-  assert.match(manifest, /^## Version: 1\.1\.1$/m)
-  assert.match(manifest, /^## AddOnVersion: 10101$/m)
+  assert.match(manifest, /^## Version: 1\.1\.3$/m)
+  assert.match(manifest, /^## AddOnVersion: 10103$/m)
   assert.match(manifest, /^## APIVersion: 101050$/m)
   assert.match(manifest, /^## SavedVariables: ArrowToTheBuildSavedVariables$/m)
   assert.match(manifest, /^## DisableSavedVariablesAutoSaving: 1$/m)

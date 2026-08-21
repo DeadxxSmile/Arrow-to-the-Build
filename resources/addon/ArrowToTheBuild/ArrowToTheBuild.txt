@@ -1,8 +1,8 @@
 ## Title: Arrow to the Build
 ## Description: Exports local character progression data for the Arrow to the Build desktop app.
 ## Author: DeadxxSmile
-## Version: 1.1.1
-## AddOnVersion: 10101
+## Version: 1.1.3
+## AddOnVersion: 10103
 ## APIVersion: 101050
 ## SavedVariables: ArrowToTheBuildSavedVariables
 ## DisableSavedVariablesAutoSaving: 1

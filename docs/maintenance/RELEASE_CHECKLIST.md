@@ -1,6 +1,6 @@
-# ATTB 3.0.0 Release Checklist
+# ATTB 3.1.0 Release Checklist
 
-The release target is **Arrow to the Build v3.0.0** with ESO addon **v1.1.1**, public Build **Schema 4**, and Theme **Schema 1**. v3 is primarily a UI/UX, CSS-architecture, and theming release, with the custom theme engine as the major new user feature. Schema 4 also receives the backwards-compatible optional `progression_scope` extension so builds can explicitly target a new character, an existing Level 50 character, or an existing CP160+ character without inventing irrelevant leveling content.
+The release target is **Arrow to the Build v3.1.0** with ESO addon **v1.1.3**, public Build **Schema 4**, and Theme **Schema 1**. v3.1.0 is the Champion Point overhaul and bundled-build refresh: canonical catalog-backed CP facts, unlock-aware staged routing, live ESO constellation geometry, a dedicated zoomable/pannable constellation map, corrected synced unassigned-point handling, and a full CP-aware audit of the Mighty Seven. Schema 4 and Theme Schema 1 remain backwards compatible.
 
 ## Freeze rules
 
@@ -94,9 +94,20 @@ Confirm:
 - malformed IDs, oversized files, unsupported schema versions, invalid colors, inheritance cycles, and CSS/code-like payloads are rejected or ignored safely;
 - no component CSS introduces raw theme palette values or new cascade-fighting overrides outside the semantic token architecture.
 
+## Champion Point overhaul regression
+
+- Start from a synced character with earned Champion Points and zero spent; confirm each tree reports the ESO unassigned total rather than zero.
+- Verify build routes spend only the first required stage on connector stars before advancing, then return for later target points.
+- Confirm all final default slottables in every bundled build are reachable through the automatic route; optional branches remain opt-in.
+- Open Craft, Warfare, and Fitness constellation maps from recommendation cards and verify the selected node plus only its prerequisite route are emphasized by default.
+- Verify invested styling appears only for points ESO actually reports as invested.
+- Verify mouse-wheel zoom, drag pan, `- / Fit / +` controls, Escape/Close, and hover-name tooltips on normal nodes and cluster portals.
+- With addon 1.1.3 data, verify live ESO roots, links, stage thresholds, outer coordinates, and nested cluster coordinates override the approximate fallback layout.
+- Verify the Build Editor remains explicitly approximate when no live character snapshot is available.
+
 ## ESO addon regression
 
-With bundled **ArrowToTheBuild 1.1.1**:
+With bundled **ArrowToTheBuild 1.1.3**:
 
 - verify manifest/API/version metadata and one-addon/one-SavedVariables architecture;
 - verify install/repair and conservative legacy-bridge cleanup;
@@ -119,7 +130,7 @@ With bundled **ArrowToTheBuild 1.1.1**:
 ## Documentation and repository hygiene
 
 - `README.md` describes the v3 feature set and keeps public/development release wording accurate until publication.
-- All `docs/reference/` guides identify **ATTB 3.0.0 / Build Schema 4** as the current authoring baseline.
+- All `docs/reference/` guides identify **ATTB 3.1.0 / Build Schema 4** as the current authoring baseline.
 - Help & Tools -> Scribing covers free current access, the Scholarium unlock path, Grimoires, all three Script types, Luminous Ink, acquisition sources, ATTB recipe interpretation, and troubleshooting.
 - AI Build JSON Authoring Guide teaches `progression_scope`, the three starting points, and the rule not to fabricate leveling content for established characters.
 - `BUILD_SCHEMA.json`, `BUILD_TEMPLATE.json`, Build Format, JSON Guide, Quick Start, Editor Guide, and Validation Guide agree on the optional field and its backwards-compatible default.
@@ -131,7 +142,7 @@ With bundled **ArrowToTheBuild 1.1.1**:
 
 ## Final release handoff
 
-Before publishing v3.0.0:
+Before publishing v3.1.0:
 
 1. Run the complete native suite twice from a clean install.
 2. Run renderer/check/audit gates and the all-route smoke test.
@@ -139,5 +150,5 @@ Before publishing v3.0.0:
 4. Perform ESO `/reloadui`, discovery/linking, Create Build from Character, and Adapt Build to Character once more.
 5. Validate all seven bundled builds plus representative new-character and CP160+ custom builds.
 6. Exercise all twenty built-in themes plus one custom import/export round trip.
-7. Update the public website/README release status and screenshots only when v3.0.0 is actually being published.
+7. Update the public website/README release status and screenshots only when v3.1.0 is actually being published.
 8. Create the clean source ZIP, record SHA-256, and freeze that tested artifact; do not silently rebuild it afterward.

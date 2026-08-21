@@ -127,7 +127,7 @@ test('the app installs the addon, discovers characters, links builds, syncs, and
   const configured = await ipc.call('addon:configure', { mode: 'install', profileRoot: profile, autoDetect: false })
   assert.equal(configured.enabled, true)
   assert.equal(configured.addon_installed, true)
-  assert.equal(configured.installed_version, '1.1.1')
+  assert.equal(configured.installed_version, '1.1.3')
   assert.equal(configured.snapshot_count, 2)
   assert.ok(fs.existsSync(path.join(profile, 'AddOns', 'ArrowToTheBuild', 'ArrowToTheBuild.txt')))
   assert.equal(fs.existsSync(path.join(profile, 'AddOns', 'ArrowToTheBuildBridge')), false)
@@ -224,7 +224,7 @@ test('a newer archive snapshot updates a linked character from the single SavedV
   assert.equal(ipc.call('characters:get', created.id).level, 22)
 
   const newer = `ArrowToTheBuildSavedVariables = {
-    ["schemaVersion"] = 1, ["revision"] = 13, ["addonVersion"] = "1.1.1", ["apiVersion"] = 101050,
+    ["schemaVersion"] = 1, ["revision"] = 13, ["addonVersion"] = "1.1.3", ["apiVersion"] = 101050,
     ["characters"] = { ${luaCharacter({ key: sample.aKey, id: '1111111111111111', name: 'Talia Test', level: 23, capturedAt: 1786067000 })} }
   }`
   fs.writeFileSync(savePath, newer)
@@ -299,14 +299,14 @@ test('the bridge-to-single-addon cleanup removes both old addon states and insta
   assert.equal(fs.existsSync(retired), false, 'verified legacy bridge addon folder should be removed')
   assert.equal(fs.existsSync(oldBridgeSave), false, 'legacy bridge SavedVariables should be removed for the clean transition')
   assert.equal(fs.existsSync(oldMainSave), false, 'old main SavedVariables should be removed for the clean transition')
-  assert.match(fs.readFileSync(path.join(installed, 'ArrowToTheBuild.txt'), 'utf8'), /## Version: 1\.1\.1/)
+  assert.match(fs.readFileSync(path.join(installed, 'ArrowToTheBuild.txt'), 'utf8'), /## Version: 1\.1\.3/)
 
   fs.writeFileSync(oldMainSave, 'ArrowToTheBuildSavedVariables={schemaVersion=1,revision=1,characters={}}')
   assert.deepEqual(addonIntegration.runPostUpdateAddonCleanup(), [], 'the first-run cleanup must not repeat after its marker is stored')
   assert.equal(fs.existsSync(oldMainSave), true, 'a later fresh save must survive subsequent app launches')
 
   const configured = await ipc.call('addon:configure', { mode: 'existing', profileRoot: profile, autoDetect: false })
-  assert.equal(configured.installed_version, '1.1.1')
+  assert.equal(configured.installed_version, '1.1.3')
   assert.equal(configured.retired_bridge_installed, false)
 })
 

@@ -1,4 +1,5 @@
 import { buildIndex, catalogLineMap, catalogSkillMap, effectiveAllocation, normalizeSkillName } from './catalogLogic.mjs'
+import { cpStarsForTree, getCpStar, observedCpState, resolveCpNode } from './cpCatalog.mjs'
 
 export const CP_TREE_MAX = 1200
 export const CP_ACCOUNT_MAX = 3600
@@ -13,67 +14,403 @@ export function planSections(plan) {
   return { core, flex }
 }
 
-function fill(nodes, remaining) {
-  const out = []
-  for (const node of nodes || []) {
-    const max = Math.max(0, Math.trunc(Number(node?.max_points) || 0))
-    const points = Math.min(remaining, max)
-    remaining -= points
-    const jumps = (node?.jump_points || []).map(Number).filter(n => Number.isFinite(n) && n <= points)
-    out.push({ node: { ...node, max_points: max }, points, stage: jumps.length ? Math.max(...jumps) : 0, full: max > 0 && points === max })
+const cpWhole = (value, fallback = 0) => {
+  const n = Number(value)
+  return Number.isInteger(n) ? n : fallback
+}
+
+function cpAuthoredNodes(plan, tree = null) {
+  const { core, flex } = planSections(plan)
+  const rows = []
+  core.forEach((node, index) => rows.push({
+    raw: node, node: resolveCpNode(node, tree), section: 'core', group: null, groupIndex: -1, authoredIndex: index, optional: false
+  }))
+  flex.forEach((group, groupIndex) => (group.nodes || []).forEach((node, authoredIndex) => rows.push({
+    raw: node, node: resolveCpNode(node, tree), section: 'flex', group, groupIndex, authoredIndex, optional: group.optional === true
+  })))
+  return rows.filter(row => row.node)
+}
+
+function livePrerequisitePath(targetId, liveState, tree, preferredStarts = []) {
+  if (!liveState?.discipline || !Array.isArray(liveState.liveStars) || !liveState.liveStars.length) return null
+  const byId = new Map()
+  const byEso = new Map()
+  for (const live of liveState.liveStars) {
+    const canonical = cpStarsForTree(tree).find(star => Number(star.eso_skill_id) === Number(live?.skillId))
+    if (!canonical || canonical.tree !== tree) continue
+    byId.set(canonical.id, { canonical, live })
+    byEso.set(Number(live.skillId), canonical.id)
   }
-  return { entries: out, remaining }
+  if (!byId.has(targetId)) return null
+  const roots = [...byId.entries()].filter(([, row]) => row.live?.root === true).map(([id]) => id)
+  if (!roots.length) return null
+
+  const unlockCost = id => {
+    const row = byId.get(id)
+    const liveJumps = Array.isArray(row?.live?.jumpPoints) ? row.live.jumpPoints.map(Number).filter(n => n > 0) : []
+    return liveJumps[0] || Number(row?.canonical?.unlock_points) || Number(row?.canonical?.max_points) || 1
+  }
+
+  const findPath = starts => {
+    const usableStarts = [...new Set(starts)].filter(id => byId.has(id))
+    if (!usableStarts.length) return null
+    if (usableStarts.includes(targetId)) return []
+    const distance = new Map(), previous = new Map(), open = new Set(usableStarts)
+    for (const id of usableStarts) distance.set(id, 0)
+    while (open.size) {
+      let current = null
+      for (const id of open) if (current === null || (distance.get(id) ?? Infinity) < (distance.get(current) ?? Infinity)) current = id
+      open.delete(current)
+      if (current === targetId) break
+      const linked = Array.isArray(byId.get(current)?.live?.linkedSkillIds) ? byId.get(current).live.linkedSkillIds : []
+      for (const linkedEso of linked) {
+        const next = byEso.get(Number(linkedEso))
+        if (!next || !byId.has(next)) continue
+        // The chosen start is already part of the earlier authored route, so its
+        // first-pass spend is already budgeted. Only newly traversed connectors
+        // should influence which continuation is cheapest.
+        const edgeCost = usableStarts.includes(current) ? 0 : unlockCost(current)
+        const alt = (distance.get(current) || 0) + edgeCost
+        if (alt < (distance.get(next) ?? Infinity)) { distance.set(next, alt); previous.set(next, current); open.add(next) }
+      }
+    }
+    if (!previous.has(targetId)) return null
+    const reverse = []
+    let cursor = targetId
+    while (previous.has(cursor)) { cursor = previous.get(cursor); reverse.push(cursor) }
+    return reverse.reverse()
+  }
+
+  // Continue from stars the build already told the player to unlock before
+  // falling back to a different root. This prevents needless side spends such
+  // as inserting Precision between Tireless Discipline and Piercing when the
+  // live ESO graph says Tireless already connects directly to Piercing.
+  const preferred = findPath(preferredStarts)
+  return preferred !== null ? preferred : findPath(roots)
+}
+
+function catalogGraphPrerequisitePath(targetId, tree) {
+  const stars = cpStarsForTree(tree)
+  const byId = new Map(stars.map(star => [star.id, star]))
+  if (!byId.has(targetId)) return null
+  const roots = stars.filter(star => star.path_verified === true && Array.isArray(star.prerequisite_path) && star.prerequisite_path.length === 0).map(star => star.id)
+  if (!roots.length) return null
+  if (roots.includes(targetId)) return []
+
+  const adjacency = new Map(stars.map(star => [star.id, new Set()]))
+  for (const star of stars) {
+    if (star.links_verified !== true) continue
+    for (const linkedId of star.links || []) {
+      if (!byId.has(linkedId)) continue
+      adjacency.get(star.id).add(linkedId)
+      adjacency.get(linkedId).add(star.id)
+    }
+  }
+
+  const cost = id => {
+    const star = byId.get(id)
+    return Number(star?.unlock_points_verified ? star.unlock_points : 0) || Number(star?.jump_points?.[0]) || Number(star?.max_points) || 1
+  }
+  const distance = new Map(), previous = new Map(), open = new Set(roots)
+  for (const root of roots) distance.set(root, 0)
+  while (open.size) {
+    let current = null
+    for (const id of open) if (current === null || (distance.get(id) ?? Infinity) < (distance.get(current) ?? Infinity)) current = id
+    open.delete(current)
+    if (current === targetId) break
+    for (const next of adjacency.get(current) || []) {
+      const alt = (distance.get(current) || 0) + cost(current)
+      if (alt < (distance.get(next) ?? Infinity)) { distance.set(next, alt); previous.set(next, current); open.add(next) }
+    }
+  }
+  if (!previous.has(targetId)) return null
+  const reverse = []
+  let cursor = targetId
+  while (previous.has(cursor)) { cursor = previous.get(cursor); reverse.push(cursor) }
+  return reverse.reverse()
+}
+
+function prerequisiteRouteFor(row, tree, liveState = null, preferredStarts = []) {
+  const livePath = livePrerequisitePath(row.node?.id, liveState, tree, preferredStarts)
+  const manual = row.node?.manual_prerequisites === true
+  const staticVerified = row.node?.path_verified === true
+  const graphPath = livePath === null && !manual && !staticVerified ? catalogGraphPrerequisitePath(row.node?.id, tree) : null
+  const ids = livePath !== null
+    ? livePath
+    : manual || staticVerified
+      ? (Array.isArray(row.node?.prerequisite_path) ? row.node.prerequisite_path : [])
+      : graphPath !== null
+        ? graphPath
+        : []
+  const verified = livePath !== null || manual || staticVerified || graphPath !== null
+  const source = livePath !== null ? 'live' : manual ? 'manual' : staticVerified ? 'catalog' : graphPath !== null ? 'catalog-graph' : 'unverified'
+  const nodes = ids.map(id => {
+    const canonical = getCpStar(id)
+    if (!canonical || (tree && canonical.tree !== tree)) return null
+    const live = liveState?.liveStars?.find(star => Number(star?.skillId) === Number(canonical.eso_skill_id))
+    const liveJumps = Array.isArray(live?.jumpPoints) ? live.jumpPoints.map(Number).filter(n => n > 0) : []
+    const first = liveJumps[0] || (canonical.unlock_points_verified ? canonical.unlock_points : 0) || canonical.jump_points?.[0] || canonical.max_points
+    return resolveCpNode({ id, first_pass_points: first }, tree)
+  }).filter(Boolean)
+  return { nodes, verified, source }
 }
 
 /**
- * Spend a constellation total: core path first, then each flex group in order.
- * Anything left once every listed star is full is "unassigned", meaning free points, not an error.
+ * Expand a build's strategy into the actual constellation route.
+ * Build rows describe priorities; the catalog supplies ESO facts and prerequisite paths.
  */
-export function allocateCp(plan, total) {
-  const budget = Math.max(0, Math.min(CP_TREE_MAX, Math.trunc(Number(total) || 0)))
-  const { core, flex } = planSections(plan)
+export function expandCpPlan(plan, tree = null, liveState = null) {
+  const authored = cpAuthoredNodes(plan, tree)
+  const recommended = authored.filter(row => !row.optional)
+  const route = []
+  const byId = new Map()
+  const authoredById = new Map(authored.map(row => [row.node.id, row]))
 
-  const coreFill = fill(core, budget)
-  const coreCapacity = core.reduce((sum, n) => sum + Math.max(0, Math.trunc(Number(n?.max_points) || 0)), 0)
-  const corePoints = budget - coreFill.remaining
-  const coreComplete = corePoints >= coreCapacity
+  const add = (node, meta = {}) => {
+    if (!node) return null
+    const existing = byId.get(node.id)
+    const authoredRow = authoredById.get(node.id)
+    const first = Math.max(
+      cpWhole(existing?.first_pass_points, 0),
+      cpWhole(meta.first_pass_points, 0),
+      cpWhole(authoredRow?.node?.first_pass_points, 0),
+      meta.prerequisite ? cpWhole(node.unlock_points, 1) : cpWhole(node.first_pass_points, 0)
+    )
+    const target = authoredRow
+      ? Math.max(first, cpWhole(authoredRow.node.target_points, authoredRow.node.max_points))
+      : Math.max(first, cpWhole(existing?.target_points, first))
 
-  let remaining = coreFill.remaining
-  const groups = []
-  for (const group of flex) {
-    const capacity = group.nodes.reduce((sum, n) => sum + Math.max(0, Math.trunc(Number(n?.max_points) || 0)), 0)
-    const optional = group.optional === true
-    // Optional branches are real alternatives, not a command to spend every leftover point there.
-    const filled = optional ? fill(group.nodes, 0) : fill(group.nodes, remaining)
-    const spent = optional ? 0 : remaining - filled.remaining
-    if (!optional) remaining = filled.remaining
-    groups.push({ group, entries: filled.entries, capacity, points: spent, optional, full: !optional && capacity > 0 && spent === capacity })
+    if (existing) {
+      existing.first_pass_points = Math.min(existing.node.max_points, first)
+      existing.target_points = Math.min(existing.node.max_points, target)
+      if (authoredRow) {
+        existing.authored = true
+        existing.section = authoredRow.section
+        existing.group = authoredRow.group
+        existing.optional = authoredRow.optional
+        existing.node = { ...node, ...authoredRow.node }
+      }
+      return existing
+    }
+
+    const entry = {
+      node: authoredRow ? { ...node, ...authoredRow.node } : node,
+      id: node.id,
+      authored: !!authoredRow,
+      prerequisite: meta.prerequisite === true && !authoredRow,
+      requiredFor: meta.requiredFor || null,
+      section: authoredRow?.section || 'prerequisite',
+      group: authoredRow?.group || null,
+      optional: authoredRow?.optional === true,
+      routeVerified: meta.routeVerified !== false,
+      routeSource: meta.routeSource || null,
+      first_pass_points: Math.min(node.max_points, Math.max(0, first)),
+      target_points: Math.min(node.max_points, Math.max(0, target))
+    }
+    byId.set(node.id, entry)
+    route.push(entry)
+    return entry
   }
 
-  const recommendedGroups = groups.filter(group => !group.optional)
-  const allEntries = [...coreFill.entries, ...recommendedGroups.flatMap(g => g.entries)]
+  const unresolvedPaths = []
+  for (const row of recommended) {
+    const prereqRoute = prerequisiteRouteFor(row, tree, liveState, route.map(entry => entry.id))
+    for (const prereq of prereqRoute.nodes) add(prereq, { prerequisite: true, requiredFor: row.node.id, routeSource: prereqRoute.source })
+    const entry = add(row.node, { prerequisite: false, routeSource: prereqRoute.source })
+    if (entry) entry.routeVerified = prereqRoute.verified
+    if (!prereqRoute.verified) unresolvedPaths.push({ id: row.node.id, node: row.node, section: row.section, group: row.group })
+  }
+
+  const optionalGroups = []
+  const { flex } = planSections(plan)
+  for (const group of flex.filter(group => group.optional === true)) {
+    const entries = []
+    const seen = new Set()
+    for (const raw of group.nodes || []) {
+      const target = resolveCpNode(raw, tree)
+      if (!target) continue
+      const prereqRoute = prerequisiteRouteFor({ node: target }, tree, liveState)
+      for (const prereq of prereqRoute.nodes) {
+        if (seen.has(prereq.id)) continue
+        seen.add(prereq.id)
+        entries.push({ node: prereq, first_pass_points: prereq.unlock_points || prereq.first_pass_points, target_points: prereq.unlock_points || prereq.first_pass_points, prerequisite: true, requiredFor: target.id, optional: true, routeVerified: prereqRoute.verified, routeSource: prereqRoute.source })
+      }
+      if (!seen.has(target.id)) {
+        seen.add(target.id)
+        entries.push({ node: target, first_pass_points: target.first_pass_points, target_points: target.target_points, optional: true, routeVerified: prereqRoute.verified, routeSource: prereqRoute.source })
+      }
+    }
+    optionalGroups.push({ group, entries })
+  }
+
+  return { route, authored, optionalGroups, unresolvedPaths }
+}
+
+function stageFor(node, points) {
+  const jumps = (node?.jump_points || []).map(Number).filter(n => Number.isFinite(n) && n <= points)
+  return jumps.length ? Math.max(...jumps) : 0
+}
+
+function allocateRoute(route, budget) {
+  const points = new Map(route.map(item => [item.id, 0]))
+  let remaining = budget
+  const firstPassSteps = []
+  const laterSteps = []
+
+  const spendTo = (item, target, phase, steps) => {
+    const current = points.get(item.id) || 0
+    const safeTarget = Math.max(current, Math.min(item.node.max_points, cpWhole(target, current)))
+    const needed = Math.max(0, safeTarget - current)
+    const spent = Math.min(remaining, needed)
+    if (spent > 0) points.set(item.id, current + spent)
+    remaining -= spent
+    steps.push({ id: item.id, target: safeTarget, before: current, spent, after: current + spent, phase, item })
+  }
+
+  for (const item of route) spendTo(item, item.first_pass_points, 'first-pass', firstPassSteps)
+  for (const item of route.filter(item => item.authored && item.target_points > item.first_pass_points)) spendTo(item, item.target_points, 'later', laterSteps)
+
+  return { points, remaining, firstPassSteps, laterSteps }
+}
+
+function nextInstruction(route, planned, observedState = null) {
+  const source = observedState?.discipline ? observedState.points : planned.points
+  const phaseRows = [
+    ...route.map(item => ({ item, target: item.first_pass_points, phase: 'first-pass' })),
+    ...route.filter(item => item.authored && item.target_points > item.first_pass_points).map(item => ({ item, target: item.target_points, phase: 'later' }))
+  ]
+  for (const row of phaseRows) {
+    const current = Math.max(0, Number(source.get(row.item.id)) || 0)
+    if (current < row.target) return {
+      node: row.item.node,
+      item: row.item,
+      points: current,
+      target: row.target,
+      add: row.target - current,
+      phase: row.phase,
+      observed: !!observedState?.discipline,
+      requiredFor: row.item.requiredFor || null
+    }
+  }
+  return null
+}
+
+/**
+ * Spend a constellation budget using an unlock-aware first pass, then return to
+ * authored stars for eventual targets. Optional branches are shown but never auto-spent.
+ */
+export function allocateCp(plan, total, options = {}) {
+  const budget = Math.max(0, Math.min(CP_TREE_MAX, Math.trunc(Number(total) || 0)))
+  const tree = options.tree || plan?.tree || null
+  const observed = observedCpState(options.observedChampion, tree)
+  const expanded = expandCpPlan(plan, tree, observed)
+  const planned = allocateRoute(expanded.route, budget)
+  const next = nextInstruction(expanded.route, planned, observed)
+
+  const allocationById = new Map()
+  const routeEntries = expanded.route.map(item => {
+    const points = planned.points.get(item.id) || 0
+    const actualPoints = observed.discipline ? (observed.points.get(item.id) || 0) : null
+    const entry = {
+      node: { ...item.node, first_pass_points: item.first_pass_points, target_points: item.target_points },
+      points,
+      actualPoints,
+      stage: stageFor(item.node, points),
+      full: points >= item.target_points,
+      firstPassComplete: points >= item.first_pass_points,
+      prerequisite: item.prerequisite,
+      requiredFor: item.requiredFor,
+      authored: item.authored,
+      section: item.section,
+      group: item.group,
+      optional: false
+    }
+    allocationById.set(item.id, entry)
+    return entry
+  })
+
+  const { core, flex } = planSections(plan)
+  const coreIds = new Set(core.map(row => row?.id))
+  const coreEntries = routeEntries.filter(entry => coreIds.has(entry.node.id) || (entry.prerequisite && routeEntries.findIndex(x => x.node.id === entry.node.id) < routeEntries.findIndex(x => coreIds.has(x.node.id))))
+  const coreTargetIds = new Set(core.map(row => row?.id))
+  const coreCapacity = routeEntries.filter(entry => coreTargetIds.has(entry.node.id)).reduce((sum, entry) => sum + entry.node.first_pass_points, 0)
+  const corePoints = routeEntries.filter(entry => coreTargetIds.has(entry.node.id)).reduce((sum, entry) => sum + Math.min(entry.points, entry.node.first_pass_points), 0)
+
+  const groups = flex.map(group => {
+    const optional = group.optional === true
+    const ids = new Set((group.nodes || []).map(node => node?.id))
+    let entries
+    if (optional) {
+      const source = expanded.optionalGroups.find(row => row.group.id === group.id)?.entries || []
+      entries = source.map(item => ({
+        node: { ...item.node, first_pass_points: item.first_pass_points, target_points: item.target_points },
+        points: 0, actualPoints: observed.discipline ? (observed.points.get(item.node.id) || 0) : null,
+        stage: 0, full: false, firstPassComplete: false, prerequisite: item.prerequisite, requiredFor: item.requiredFor, optional: true
+      }))
+    } else {
+      // Include catalog-inserted prerequisites immediately before this group's authored targets.
+      const targetIndexes = routeEntries.map((entry, index) => ids.has(entry.node.id) ? index : -1).filter(index => index >= 0)
+      const firstIndex = targetIndexes.length ? Math.min(...targetIndexes) : -1
+      const priorBoundary = flex.slice(0, flex.indexOf(group)).filter(g => g.optional !== true).flatMap(g => g.nodes || []).map(n => routeEntries.findIndex(e => e.node.id === n.id)).filter(i => i >= 0)
+      const boundary = priorBoundary.length ? Math.max(...priorBoundary) : -1
+      entries = routeEntries.filter((entry, index) => ids.has(entry.node.id) || (entry.prerequisite && index > boundary && (firstIndex < 0 || index <= Math.max(...targetIndexes))))
+    }
+    const capacity = entries.reduce((sum, entry) => sum + (optional ? entry.node.target_points : (entry.authored ? entry.node.target_points : entry.node.first_pass_points)), 0)
+    const points = optional ? 0 : entries.reduce((sum, entry) => sum + entry.points, 0)
+    return { group, entries, capacity, points, optional, full: !optional && capacity > 0 && entries.every(entry => entry.points >= (entry.authored ? entry.node.target_points : entry.node.first_pass_points)) }
+  })
+
+  const firstPassCapacity = expanded.route.reduce((sum, item) => sum + item.first_pass_points, 0)
+  const routeCapacity = expanded.route.reduce((sum, item) => sum + (item.authored ? item.target_points : item.first_pass_points), 0)
+  const spentOnRoute = budget - planned.remaining
+  const hasObservedAllocation = !!observed.discipline
+  const observedFirstPassSpent = hasObservedAllocation
+    ? expanded.route.reduce((sum, item) => sum + Math.min(Math.max(0, Number(observed.points.get(item.id)) || 0), item.first_pass_points), 0)
+    : Math.min(spentOnRoute, firstPassCapacity)
+  const observedRouteSpent = hasObservedAllocation
+    ? expanded.route.reduce((sum, item) => {
+      const cap = item.authored ? item.target_points : item.first_pass_points
+      return sum + Math.min(Math.max(0, Number(observed.points.get(item.id)) || 0), cap)
+    }, 0)
+    : spentOnRoute
+  const unassigned = hasObservedAllocation ? observed.unspent : planned.remaining
+  const firstPassComplete = hasObservedAllocation
+    ? expanded.route.every(item => (observed.points.get(item.id) || 0) >= item.first_pass_points)
+    : expanded.route.every(item => (planned.points.get(item.id) || 0) >= item.first_pass_points)
+
   return {
     total: budget,
-    core: coreFill.entries,
+    tree,
+    core: coreEntries,
     coreCapacity,
     corePoints,
-    coreComplete,
+    coreComplete: coreCapacity === 0 || corePoints >= coreCapacity,
     coreRemaining: Math.max(0, coreCapacity - corePoints),
     groups,
-    flexPoints: budget - corePoints,
-    flexCapacity: recommendedGroups.reduce((sum, g) => sum + g.capacity, 0),
-    optionalCapacity: groups.filter(group => group.optional).reduce((sum, g) => sum + g.capacity, 0),
-    unassigned: remaining,
-    next: allEntries.find(x => x.points < x.node.max_points) || null,
-    allocations: [...coreFill.entries, ...groups.flatMap(g => g.entries)],
+    flexPoints: Math.max(0, spentOnRoute - corePoints),
+    flexCapacity: Math.max(0, routeCapacity - coreCapacity),
+    optionalCapacity: groups.filter(group => group.optional).reduce((sum, group) => sum + group.capacity, 0),
+    unassigned,
+    plannedUnassigned: planned.remaining,
+    firstPassSpent: observedFirstPassSpent,
+    routeSpent: observedRouteSpent,
+    totalSpent: hasObservedAllocation ? observed.spent : spentOnRoute,
+    next,
+    allocations: [...routeEntries, ...groups.filter(group => group.optional).flatMap(group => group.entries)],
+    route: routeEntries,
+    firstPassCapacity,
+    routeCapacity,
+    firstPassComplete,
+    laterUpgrades: expanded.route.filter(item => item.authored && item.target_points > item.first_pass_points).map(item => allocationById.get(item.id)).filter(Boolean),
+    observed,
+    unresolvedPaths: expanded.unresolvedPaths,
     overCap: Math.max(0, Math.trunc(Number(total) || 0) - budget)
   }
 }
 
-export function cpPlanCapacity(plan) {
-  const { core, flex } = planSections(plan)
-  const sum = nodes => (nodes || []).reduce((n, node) => n + Math.max(0, Math.trunc(Number(node?.max_points) || 0)), 0)
-  return sum(core) + flex.reduce((n, group) => n + sum(group.nodes), 0)
+export function cpPlanCapacity(plan, tree = null) {
+  const expanded = expandCpPlan(plan, tree)
+  return expanded.route.reduce((sum, item) => sum + (item.authored ? item.target_points : item.first_pass_points), 0)
 }
 
 /**

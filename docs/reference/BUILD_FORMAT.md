@@ -1,6 +1,6 @@
 # ATTB Schema 4 Format Reference
 
-Schema 4 is the stable public build contract for Arrow to the Build. This reference is current for **ATTB 3.0.0**. It preserves the original progression model while adding enough structure for current ESO systems and future authoring tools.
+Schema 4 is the stable public build contract for Arrow to the Build. This reference is current for **ATTB 3.1.0**. It preserves the original progression model while adding enough structure for current ESO systems and future authoring tools.
 
 ## Compatibility policy
 
@@ -120,7 +120,7 @@ Each phase includes:
 
 ## Companion setups
 
-`companions` remains an optional Schema 4 root array. ATTB 3.0.0 documents these additive companion fields:
+`companions` remains an optional Schema 4 root array. ATTB 3.1.0 documents these additive companion fields:
 
 - `id` - stable setup ID;
 - `companion_id` - stable ID from `resources/data/eso-companions.json`;
@@ -142,7 +142,7 @@ Sources can record type, location, zone, access, DLC/chapter, ESO Plus relevance
 
 ## Champion Points
 
-ATTB 3.0.1 keeps Champion Point **ESO facts** in the bundled `resources/data/eso-cp-catalog.json` instead of duplicating them inside every build. The catalog owns each star's canonical ID/name, constellation, ESO skill ID, true maximum, stage thresholds, slottable/passive state, verified graph links, and schematic map position.
+ATTB 3.1.0 keeps Champion Point **ESO facts** in the bundled `resources/data/eso-cp-catalog.json` instead of duplicating them inside every build. The catalog owns each star's canonical ID/name, constellation, ESO skill ID, true maximum, stage thresholds, slottable/passive state, verified graph links, and schematic map position.
 
 Every build still supplies `craft`, `warfare`, and `fitness` plans, but those plans now describe **strategy**:
 
@@ -163,7 +163,7 @@ Use **variants** for smaller situational changes inside a compatible loadout: ea
 
 ## Scribing
 
-Scribing is a free base-game system in the current ATTB 3.0.0 / ESO Update 50 baseline. A character can begin the Scribing introduction at Level 30 or with access to the Champion System. The finished active skill is built from exactly four authored pieces:
+Scribing is a free base-game system in the current ATTB 3.1.0 / ESO Update 50 baseline. A character can begin the Scribing introduction at Level 30 or with access to the Champion System. The finished active skill is built from exactly four authored pieces:
 
 - one Grimoire, which defines the base skill and parent skill line;
 - one Focus Script, which defines the main function and usually the skill name, resource type, and cost;

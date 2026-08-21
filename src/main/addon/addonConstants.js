@@ -1,7 +1,7 @@
 'use strict'
 
 const PROFILE_NAMES = ['live', 'liveeu', 'pts']
-const BUNDLED_ADDON_VERSION = '1.1.1'
+const BUNDLED_ADDON_VERSION = '1.1.3'
 const ADDON_FOLDER = 'ArrowToTheBuild'
 const RETIRED_BRIDGE_FOLDER = 'ArrowToTheBuildBridge'
 const SAVED_VARIABLES_FILE = 'ArrowToTheBuild.lua'

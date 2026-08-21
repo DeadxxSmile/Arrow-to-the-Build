@@ -165,3 +165,26 @@ test('purchased rank-zero inherent passives are treated as unlocked and expose a
   assert.equal(live.skill_max_points.dark_elf__dynamic, 3)
 })
 
+
+test('Champion snapshot normalization keeps empty Lua list fields iterable', () => {
+  const snapshot = normalizeSnapshot('@Player|NA Megaserver|cp-empty-lists', {
+    addonVersion: '1.1.3', snapshotSchemaVersion: 2,
+    identity: {
+      accountName: '@Player', worldName: 'NA Megaserver', characterId: 'cp-empty-lists', name: 'Talia', level: 50,
+      class: { id: 117, name: 'Arcanist' }, race: { id: 4, name: 'Dark Elf' }, alliance: { id: 2, name: 'Ebonheart Pact' },
+      progression: {}, attributes: {}
+    },
+    skills: { lines: [] }, equipment: { items: [] },
+    champion: {
+      graphSchemaVersion: 2,
+      disciplines: [{ disciplineId: 3, name: 'Craft', spent: 0, unspent: 102, stars: [{
+        skillId: 66, name: "Steed's Blessing", points: 0, root: true, maximumPoints: 50,
+        linkedSkillIds: {}, jumpPoints: {}, constellationX: 873.59, constellationY: 4.14
+      }] }],
+      slotted: { supported: true, slots: [] }
+    }, metadata: {}
+  }, { addonVersion: '1.1.3', apiVersion: 101050 })
+  const star = snapshot.champion.disciplines[0].stars[0]
+  assert.deepEqual(star.linkedSkillIds, [])
+  assert.deepEqual(star.jumpPoints, [])
+})

@@ -135,11 +135,19 @@ function normalizeSnapshot(characterKey, raw, topLevel) {
     equipment: { items: asArray(snapshot.equipment?.items) },
     champion: {
       totalEarned: clampInt(snapshot.champion?.totalEarned, 0, 10000, 0),
+      graphSchemaVersion: clampInt(snapshot.champion?.graphSchemaVersion, 0, 99, 0),
       // Coerce nested stars to an array too: an empty Lua stars table decodes to {} and the
       // reconciliation path iterates discipline.stars, so a bare object would throw there.
       disciplines: asArray(snapshot.champion?.disciplines).map(discipline => ({
         ...objectOrEmpty(discipline),
-        stars: asArray(discipline?.stars)
+        stars: asArray(discipline?.stars).map(star => ({
+          ...objectOrEmpty(star),
+          // ESO serializes an empty Lua table as `{}`. Keep list-shaped Champion
+          // fields arrays even when they are empty so renderer routing/map code
+          // never receives a truthy-but-non-iterable object.
+          linkedSkillIds: asArray(star?.linkedSkillIds),
+          jumpPoints: asArray(star?.jumpPoints)
+        }))
       })),
       slotted: (() => {
         const slotted = objectOrEmpty(snapshot.champion?.slotted)

@@ -44,10 +44,10 @@ test('Champion Point editor exposes all trees, ordered routes, branches, and fou
   assert.match(page, /Warfare/)
   assert.match(page, /Fitness/)
   assert.match(page, /Craft/)
-  assert.match(page, /Required connection path/)
+  assert.match(page, /Automatic prerequisite route/)
   assert.match(page, /Recommended routes and optional alternatives/)
   assert.match(page, /Final four slottables/)
-  assert.match(page, /validSlottableIds/)
+  assert.match(page, /slottableNodes/)
   assert.match(page, /\[0, 1, 2, 3\]/)
 })
 
@@ -73,10 +73,9 @@ test('new editor-authored gear, CP, loadout, and variant data remains valid Sche
     }]
   })
   build.cp_plans.warfare.core.push({
-    id: 'editor_test_star', name: 'Editor Test Star', max_points: 50,
-    slottable: true, jump_points: [10, 20, 30, 40, 50], note: 'Created in the editor.'
+    id: 'fighting_finesse', first_pass_points: 50, target_points: 50, note: 'Created in the editor.'
   })
-  build.cp_plans.warfare.final_slots = ['editor_test_star']
+  build.cp_plans.warfare.final_slots = ['fighting_finesse']
   build.loadouts.push({
     id: 'editor_test_loadout', name: 'Editor Test Loadout', summary: 'A complete alternative.',
     roles: ['damage'], content: ['dungeons'], available: true, conditions: [],

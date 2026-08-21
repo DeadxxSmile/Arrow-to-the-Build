@@ -426,7 +426,9 @@ function register(ipcMain) {
   ipcMain.handle('builds:get', (_e, id) => {
     const row = dbModule.getDb().prepare('SELECT * FROM builds WHERE id=?').get(String(id || ''))
     if (!row) return null
-    return { ...rowToSummary(row), data: JSON.parse(row.data_json) }
+    const raw = JSON.parse(row.data_json)
+    const normalized = normalizeBuild(raw)
+    return { ...rowToSummary(row), data: normalized.data, normalized: normalized.changed }
   })
 
   ipcMain.handle('builds:openDraft', (_e, buildId) => openDraftForBuild(buildId))

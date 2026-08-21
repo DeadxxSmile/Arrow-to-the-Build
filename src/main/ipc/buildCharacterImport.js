@@ -1,6 +1,8 @@
 'use strict'
 
 const { inferStartingPoint, scopeForStartingPoint } = require('../../shared/progressionScope.cjs')
+const cpCatalog = require('../../../resources/data/eso-cp-catalog.json')
+const CP_BY_ESO_ID = new Map((cpCatalog.stars || []).map(star => [Number(star.eso_skill_id), star]))
 
 // Pure-ish transformation layer for turning reconciled ESO character state into Schema 4 build data.
 // Persistence, drafts, revisions, and IPC stay in buildHandlers.js. Dependencies are injected to keep
@@ -143,22 +145,27 @@ function createCharacterBuildImport(deps) {
     return Object.fromEntries(Object.entries(defs).map(([tree, def]) => {
       const discipline = disciplines.find(row => Number(row?.disciplineId) === def.id) || {}
       const stars = Array.isArray(discipline.stars) ? discipline.stars : []
-      const used = new Set()
-      const nodes = stars.filter(star => Number(star?.skillId || 0) > 0).map(star => {
-        const id = uniqueLocalId(`eso-${star.skillId || star.name}`, used)
+      // Addon 1.1.3+ exports all stars so the desktop app can use ESO's live graph.
+      // A generated build should author only what the character actually invested in,
+      // and it must use canonical ATTB CP ids rather than ad-hoc eso-123 ids.
+      const nodes = stars.map(star => {
+        const canonical = CP_BY_ESO_ID.get(Number(star?.skillId || 0))
+        const points = Math.max(0, Number(star?.points) || 0)
+        if (!canonical || canonical.tree !== tree || points <= 0) return null
+        const safePoints = Math.min(Number(canonical.max_points) || points, Math.trunc(points))
         return {
-          id,
-          name: String(star.name || `ESO star ${star.skillId}`),
-          max_points: Math.max(1, Number(star.maximumPoints) || Number(star.points) || 1),
-          slottable: star.slottable === true,
-          current_points: Math.max(0, Number(star.points) || 0),
-          eso_skill_id: Number(star.skillId || 0) || 0,
-          note: `Imported with ${Math.max(0, Number(star.points) || 0)} point(s) invested. Refine this into a target CP plan in the editor.`
+          id: canonical.id,
+          first_pass_points: Math.max(1, safePoints),
+          target_points: Math.max(1, safePoints),
+          current_points: safePoints,
+          note: `Imported with ${safePoints} point(s) invested. Refine this current-state snapshot into the intended target strategy in the editor.`
         }
-      })
-      const byEsoId = new Map(nodes.map(node => [Number(node.eso_skill_id), node.id]))
+      }).filter(Boolean)
+      const authoredIds = new Set(nodes.map(node => node.id))
       const finalSlots = slots.filter(slot => Number(slot?.disciplineId) === def.id && Number(slot?.skillId || 0) > 0)
-        .map(slot => byEsoId.get(Number(slot.skillId))).filter(Boolean).slice(0, 4)
+        .map(slot => CP_BY_ESO_ID.get(Number(slot.skillId)))
+        .filter(star => star?.tree === tree && star.slottable === true && authoredIds.has(star.id))
+        .map(star => star.id).slice(0, 4)
       return [tree, {
         label: def.label,
         color: def.color,

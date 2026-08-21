@@ -1,6 +1,6 @@
 # Visual Build Editor Guide
 
-This **ATTB 3.0.0** guide explains the complete in-app authoring workflow. It assumes you are using the visual Build Editor rather than typing the Schema 4 JSON directly.
+This **ATTB 3.1.0** guide explains the complete in-app authoring workflow. It assumes you are using the visual Build Editor rather than typing the Schema 4 JSON directly.
 
 For a quick orientation, read **Start Here** first. For exact field names and merge rules, use **Manual JSON Authoring** and **Format & Skill IDs**.
 
@@ -335,7 +335,7 @@ Deleting a gear stage cleans phase references to that stage.
 
 ## 11. Champion Points
 
-ATTB 3.0.1 rebuilds this editor around the canonical Champion Point catalog. You author **what the build wants**; ATTB supplies the current ESO facts and required route.
+ATTB 3.1.0 rebuilds this editor around the canonical Champion Point catalog. You author **what the build wants**; ATTB supplies the current ESO facts and required route.
 
 ### Primary priorities
 
@@ -367,7 +367,7 @@ Deleting a target removes any final-slot reference to that target.
 
 ## 12. Companions
 
-The Companion editor is a first-class Schema 4 authoring page in ATTB 3.0.0. It shows every companion in the bundled companion catalog with two researched starter identities and lets you copy either setup into the current build.
+The Companion editor is a first-class Schema 4 authoring page in ATTB 3.1.0. It shows every companion in the bundled companion catalog with two researched starter identities and lets you copy either setup into the current build.
 
 Adding a preset copies ordinary JSON into the build. It is then fully editable and does not require the preset library to exist at runtime. You can also create a custom companion setup.
 

@@ -1,6 +1,6 @@
 {
   "name": "arrow-to-the-build",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Offline-first ESO build and progression companion with optional local addon synchronization",
   "main": "src/main/main.js",
   "imports": {
@@ -55,6 +55,7 @@
       "docs/reference/ATTB_AI_BUILD_JSON_AUTHORING_GUIDE.md",
       "docs/reference/BUILD_FORMAT.md",
       "docs/reference/SKILL_CATALOG.md",
+      "docs/reference/CHAMPION_POINT_CATALOG.md",
       "docs/reference/BUILD_VALIDATION_GUIDE.md",
       "docs/reference/ESO_ADDON_INTEGRATION.md",
       "docs/reference/BUILD_TEMPLATE.json",
@@ -98,7 +99,7 @@
     "type": "git",
     "url": "https://github.com/DeadxxSmile/Arrow-to-the-Build.git"
   },
-  "homepage": "https://deadxxsmile.github.io/Arrow-to-the-Build/",
+  "homepage": "https://arrowtothebuild.com/",
   "bugs": {
     "url": "https://github.com/DeadxxSmile/Arrow-to-the-Build/issues"
   }

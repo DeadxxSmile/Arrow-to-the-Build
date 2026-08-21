@@ -225,3 +225,81 @@
 
 /* Character data and backup utilities. */
 .character-backup-panel .button-row{margin-top:4px}.character-backup-contents{margin-top:16px}.character-backup-contents b{display:block;margin-bottom:5px}.character-backup-contents p{margin:0}
+
+/* v3.1.0 Champion Point catalog / routing / map */
+.cp-map-button-wrap{position:absolute;right:8px;top:8px;z-index:3;display:inline-flex}.cp-map-button{width:27px;height:27px;padding:0;border:1px solid var(--color-border);border-radius:8px;background:var(--color-surface-high);color:var(--color-accent-secondary);font-weight:900;cursor:pointer}.cp-map-button:hover,.cp-map-button:focus-visible{border-color:var(--color-accent-primary);color:var(--color-accent-primary);background:var(--color-selected-bg)}
+.cp-constellation-map{position:relative;width:100%;overflow:hidden}.cp-constellation-map svg{display:block;width:100%;height:auto;min-height:220px;border:1px solid var(--color-border);border-radius:12px;background:var(--color-panel-deep)}.cp-constellation-map.compact svg{min-height:190px}.cp-map-source{position:absolute;left:10px;top:10px;z-index:2;border:1px solid var(--color-border);border-radius:999px;background:var(--color-surface-raised);padding:4px 8px;color:var(--color-text-secondary);font-size:.66rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase}.cp-map-source.live{border-color:var(--color-success);color:var(--color-success)}.cp-map-source.fallback{border-color:var(--color-warning);color:var(--color-warning)}.cp-map-edges line{stroke:var(--color-border-strong);stroke-width:2;opacity:.3}.cp-map-edges line.route{stroke:var(--color-accent-secondary);stroke-width:5;opacity:.9}.cp-map-node circle,.cp-map-node rect{fill:var(--color-surface-high);stroke:var(--color-border-strong);stroke-width:3}.cp-map-node.slottable circle{stroke-dasharray:5 3}.cp-map-node.portal rect{stroke:var(--color-accent-secondary);stroke-width:3}.cp-map-node.route circle,.cp-map-node.route rect{stroke:var(--color-accent-secondary);stroke-width:5}.cp-map-node.target circle,.cp-map-node.target rect{fill:color-mix(in srgb,var(--color-accent-primary) 24%,var(--color-surface-high))}.cp-map-node.focus circle,.cp-map-node.focus rect{stroke:var(--color-accent-primary);stroke-width:7}.cp-map-node.next circle,.cp-map-node.next rect{stroke:var(--color-success);stroke-width:8}.cp-map-node .invested-ring{fill:none;stroke:var(--color-info);stroke-width:4;stroke-dasharray:none}.cp-map-node text{fill:var(--color-text-primary);font-size:17px;font-weight:800;paint-order:stroke;stroke:var(--color-panel-deep);stroke-width:5;stroke-linejoin:round}.cp-map-node text.cp-map-node-points{font-size:11px;stroke-width:2}.cp-map-legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:9px;font-size:.75rem}.cp-map-legend span{display:flex;align-items:center;gap:5px}.cp-map-legend i{width:12px;height:12px;border-radius:50%;border:2px solid var(--color-border-strong);display:block}.cp-map-legend i.target{background:color-mix(in srgb,var(--color-accent-primary) 30%,var(--color-surface-high));border-color:var(--color-accent-primary)}.cp-map-legend i.route{border-color:var(--color-accent-secondary)}.cp-map-legend i.invested{border-color:var(--color-info)}.cp-map-legend i.next{border-color:var(--color-success)}.cp-map-legend i.portal{border-radius:3px;border-color:var(--color-accent-secondary)}
+.cp-full-map-toggle{margin-top:10px}.cp-do-next{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:15px;border:1px solid color-mix(in srgb,var(--color-accent-primary) 55%,var(--color-border));border-radius:14px;padding:15px;background:color-mix(in srgb,var(--color-accent-primary) 7%,var(--color-surface-raised));box-shadow:inset 4px 0 var(--color-accent-primary)}.cp-do-next.complete{grid-template-columns:1fr;border-color:color-mix(in srgb,var(--color-success) 45%,var(--color-border));box-shadow:inset 4px 0 var(--color-success)}.cp-do-next-badge{border-radius:999px;padding:7px 9px;background:var(--color-accent-primary);color:var(--color-text-on-accent);font-weight:900;font-size:.72rem}.cp-do-next h2{margin:3px 0}.cp-do-next-action{text-align:right;min-width:120px}.cp-do-next-action small,.cp-do-next-action b,.cp-do-next-action span{display:block}.cp-do-next-action b{font-size:1.7rem;color:var(--color-accent-primary);line-height:1}.cp-do-next-action span{margin-top:4px;font-size:.76rem}.cp-path-section.later{border-style:dashed}.cp-path-node{padding-right:44px}.cp-path-node-head>div{min-width:0}.cp-path-node-head h3{overflow-wrap:normal}
+@media(max-width:700px){.cp-do-next{grid-template-columns:1fr}.cp-do-next-badge{justify-self:start}.cp-do-next-action{text-align:left}.cp-constellation-map.full svg{min-height:180px}.cp-map-node text{font-size:15px}}
+
+/* v3.1.0 CP map workspace + stable route cards */
+.cp-map-button{display:grid;place-items:center;line-height:1}
+
+/* Keep route cards at a predictable readable width. The old auto-fit layout
+   stretched two-card rows enormously and crushed long routes into tiny cards. */
+.cp-linear-path:not(.compact){grid-template-columns:repeat(4,minmax(0,1fr));row-gap:14px}
+.cp-linear-path:not(.compact) .cp-path-step{min-width:0}
+.cp-linear-path:not(.compact) .cp-path-step:nth-child(4n):not(:last-child) .cp-path-connector{visibility:hidden}
+.cp-path-node{min-height:220px;padding:14px 44px 14px 14px}
+.cp-path-node-head h3{word-break:normal;hyphens:none;line-height:1.25}
+.cp-path-node>p{line-height:1.5}
+.cp-path-node>small{line-height:1.4}
+.cp-linear-path.compact .cp-path-node{min-height:0}
+
+/* Full-map mode replaces the Champion Point rail + content workspace while
+   leaving the global ATTB navigation and character/build header visible. */
+.cp-map-workspace{position:fixed;z-index:70;left:var(--layout-sidebar-width);right:0;top:calc(var(--layout-titlebar-height) + var(--layout-workspace-header-height));bottom:0;display:flex;flex-direction:column;gap:14px;min-width:0;min-height:0;padding:20px 24px 22px;background:radial-gradient(circle at 75% 0%,color-mix(in srgb,var(--color-main-glow) 16%,transparent),transparent 40%),var(--color-app-bg);overflow:hidden}
+.cp-map-workspace-header{display:flex;align-items:flex-start;justify-content:space-between;gap:28px;flex:none;padding:16px 18px;border:1px solid var(--color-border);border-radius:15px;background:linear-gradient(145deg,var(--color-panel-header-start),var(--color-panel-deep));box-shadow:var(--shadow-panel)}
+.cp-map-workspace-title{min-width:0;max-width:1000px}
+.cp-map-workspace-title h1{margin:4px 0 6px;font-size:2rem;line-height:1.08}
+.cp-map-workspace-title p{max-width:900px;font-size:.86rem;line-height:1.5}
+.cp-map-workspace-heading-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.cp-map-workspace-next{display:inline-flex;align-items:center;min-height:26px;padding:4px 9px;border-radius:999px;background:var(--color-accent-primary);color:var(--color-text-on-accent);font-size:.69rem;font-weight:900;text-transform:uppercase;letter-spacing:.06em}
+.cp-map-workspace-close{flex:none;min-width:132px;font-weight:850}
+.cp-map-workspace-meta{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;flex:none}
+.cp-map-workspace-meta>div{min-width:0;padding:10px 12px;border:1px solid var(--color-border);border-radius:10px;background:var(--color-surface-raised)}
+.cp-map-workspace-meta small,.cp-map-workspace-meta b{display:block}
+.cp-map-workspace-meta small{font-size:.66rem;text-transform:uppercase;letter-spacing:.07em;color:var(--color-text-secondary);font-weight:850}
+.cp-map-workspace-meta b{margin-top:4px;font-size:.82rem;line-height:1.3;overflow-wrap:break-word}
+.cp-map-workspace-body{flex:1;min-height:0;overflow:hidden;padding:14px;border:1px solid var(--color-border);border-radius:15px;background:var(--color-surface)}
+.cp-map-workspace .cp-constellation-map{height:100%;min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto}
+.cp-map-workspace .cp-constellation-map svg{width:100%;height:100%;min-height:0}
+.cp-map-workspace .cp-map-legend{margin-top:10px;padding:0 4px 2px}
+
+@media(max-width:1600px){
+  .cp-linear-path:not(.compact){grid-template-columns:repeat(3,minmax(0,1fr))}
+  .cp-linear-path:not(.compact) .cp-path-step:nth-child(4n):not(:last-child) .cp-path-connector{visibility:visible}
+  .cp-linear-path:not(.compact) .cp-path-step:nth-child(3n):not(:last-child) .cp-path-connector{visibility:hidden}
+}
+@media(max-width:1300px){
+  .cp-linear-path:not(.compact){grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cp-linear-path:not(.compact) .cp-path-step:nth-child(3n):not(:last-child) .cp-path-connector{visibility:visible}
+  .cp-linear-path:not(.compact) .cp-path-step:nth-child(2n):not(:last-child) .cp-path-connector{visibility:hidden}
+}
+@media(max-width:1180px){
+  .cp-linear-path:not(.compact){grid-template-columns:1fr}
+  .cp-linear-path:not(.compact) .cp-path-step{grid-template-columns:1fr;grid-template-rows:auto 28px}
+  .cp-linear-path:not(.compact) .cp-path-step:last-child{grid-template-columns:1fr;grid-template-rows:auto}
+  .cp-linear-path:not(.compact) .cp-path-connector:before{width:2px;height:100%}
+  .cp-linear-path:not(.compact) .cp-path-connector i{right:auto;bottom:4px;transform:rotate(135deg)}
+  .cp-linear-path:not(.compact) .cp-path-step .cp-path-connector{visibility:visible}
+  .cp-map-workspace-meta{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:760px){
+  .cp-map-workspace{left:0;padding:12px;top:var(--layout-titlebar-height)}
+  .cp-map-workspace-header{gap:14px;flex-direction:column}
+  .cp-map-workspace-close{width:100%}
+  .cp-map-workspace-meta{grid-template-columns:1fr 1fr}
+}
+
+/* v3.1.0 CP constellation locator interaction pass */
+.cp-constellation-map.full svg{cursor:grab;touch-action:none;user-select:none}
+.cp-constellation-map.dragging svg{cursor:grabbing}
+.cp-constellation-map.dragging .cp-map-node{pointer-events:none}
+.cp-map-node{cursor:help}
+.cp-map-controls{position:absolute;right:12px;top:10px;z-index:5;display:flex;align-items:center;gap:4px;padding:4px;border:1px solid var(--color-border);border-radius:10px;background:color-mix(in srgb,var(--color-surface-raised) 94%,transparent);box-shadow:var(--shadow-panel)}
+.cp-map-controls button{display:grid;place-items:center;min-width:31px;height:29px;padding:0 8px;border:1px solid transparent;border-radius:7px;background:transparent;color:var(--color-text-primary);font:inherit;font-size:.76rem;font-weight:850;cursor:pointer}
+.cp-map-controls button:hover,.cp-map-controls button:focus-visible{border-color:var(--color-accent-secondary);background:var(--color-selected-bg);color:var(--color-accent-secondary)}
+.cp-map-controls span{min-width:43px;padding:0 5px;color:var(--color-text-secondary);font-size:.68rem;font-weight:800;text-align:right}
+.cp-map-hover-tooltip{position:absolute;z-index:8;pointer-events:none;max-width:260px;padding:6px 9px;border:1px solid color-mix(in srgb,var(--color-accent-secondary) 55%,var(--color-border));border-radius:8px;background:var(--color-surface-high);color:var(--color-text-primary);box-shadow:var(--shadow-panel);font-size:.75rem;font-weight:800;line-height:1.2;white-space:nowrap}
+.cp-constellation-map.focused-route .cp-map-node.target:not(.focus):not(.next) circle,.cp-constellation-map.focused-route .cp-map-node.target:not(.focus):not(.next) rect{fill:var(--color-surface-high)}

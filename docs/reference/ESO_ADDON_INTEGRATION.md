@@ -1,6 +1,6 @@
 # ESO Addon Integration
 
-This reference covers the **ATTB 3.0.1 development** addon integration built from the public 3.0.0 baseline. Arrow to the Build can read character state from its optional ESO addon. The integration is deliberately one-way and local:
+This reference covers the **ATTB 3.1.0** addon integration. Arrow to the Build can read character state from its optional ESO addon. The integration is deliberately one-way and local:
 
 ```text
 ESO character
@@ -67,7 +67,7 @@ Install / Repair copies it to the selected ESO profile:
 
 ATTB recognizes the normal `live`, `liveeu`, and `pts` profile folders. A manually installed or Minion-installed copy is also supported.
 
-The legacy cleanup introduced in v2.1.3 remains supported in ATTB 3.0.0 and performs a one-time migration from the retired dual-addon layout. On first launch, ATTB scans the configured profile and normally detected ESO profiles. If it finds either the verified old bridge manifest or a recognizable old bridge SavedVariables file, it removes the verified bridge addon, removes the managed `ArrowToTheBuild` addon, deletes both old addon SavedVariables files, and installs the bundled single exporter fresh.
+The legacy cleanup introduced in v2.1.3 remains supported in ATTB 3.1.0 and performs a one-time migration from the retired dual-addon layout. On first launch, ATTB scans the configured profile and normally detected ESO profiles. If it finds either the verified old bridge manifest or a recognizable old bridge SavedVariables file, it removes the verified bridge addon, removes the managed `ArrowToTheBuild` addon, deletes both old addon SavedVariables files, and installs the bundled single exporter fresh.
 
 The cleanup only claims files it can identify as ATTB data. An unrelated folder named `ArrowToTheBuildBridge` is not deleted. A migration marker prevents the cleanup from repeating on later launches, and a newly generated `ArrowToTheBuild.lua` is therefore preserved. If a custom ESO profile is configured later, the same legacy-artifact check runs for that profile before synchronization starts.
 

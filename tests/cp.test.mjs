@@ -71,7 +71,7 @@ test('overflow past every listed star becomes free points, not a warning', () =>
   const a = allocateCp(plan, 200)
   assert.equal(a.coreComplete, true)
   assert.equal(a.groups.every(g => g.full), true)
-  assert.equal(a.flexPoints, 180)
+  assert.equal(a.flexPoints, 80, 'only points actually assigned to recommended flex targets count as flex spend')
   assert.equal(a.unassigned, 200 - cpPlanCapacity(plan))
   assert.equal(a.unassigned, 100, 'core 20 + flex 80 listed, so 100 of the 200 are free')
   assert.equal(a.next, null, 'nothing is still waiting for points')
@@ -129,12 +129,13 @@ test('a plan with no core at all is entirely flexible', () => {
   assert.equal(a.groups[0].points, 4)
 })
 
-test('the bundled Arcanist plans reach core completion at ordinary CP levels', () => {
+test('the bundled Arcanist plans reach their authored core milestones before later upgrades', () => {
   for (const [tree, plan] of Object.entries(arcanist.cp_plans)) {
-    const capacity = plan.core.reduce((n, x) => n + x.max_points, 0)
-    assert.ok(capacity <= 50, `${tree} core path should be reachable early, needs ${capacity}`)
-    assert.equal(allocateCp(plan, capacity).coreComplete, true)
-    assert.equal(allocateCp(plan, capacity - 1).coreComplete, false)
+    const full = allocateCp(plan, 1200, { tree })
+    const capacity = full.coreCapacity
+    assert.ok(Number.isFinite(capacity) && capacity > 0, `${tree} core milestone must be finite`)
+    assert.equal(allocateCp(plan, capacity, { tree }).coreComplete, true)
+    assert.equal(allocateCp(plan, capacity - 1, { tree }).coreComplete, false)
   }
 })
 
@@ -178,9 +179,112 @@ test('all bundled builds include real optional routes in every constellation', (
   }
 })
 
+test('Fitness routing spends only the connector milestone needed to unlock Bloody Renewal', () => {
+  const bloody = { core: [{ id: 'bloody_renewal', first_pass_points: 50, target_points: 50 }], flex: [], final_slots: ['bloody_renewal'] }
+  const atUnlock = allocateCp(bloody, 28, { tree: 'fitness' })
+  assert.deepEqual(atUnlock.route.map(entry => [entry.node.id, entry.points]), [
+    ['sprinter', 10], ['hasty', 8], ['heros_vigor', 10], ['bloody_renewal', 0]
+  ])
+  assert.equal(atUnlock.next.node.id, 'bloody_renewal')
+  assert.equal(atUnlock.next.add, 50)
+  const complete = allocateCp(bloody, 78, { tree: 'fitness' })
+  assert.equal(complete.next, null)
+  assert.equal(complete.route.find(entry => entry.node.id === 'sprinter').points, 10, 'connector is not unnecessarily maxed')
+})
+
+
+test('Craft routing reaches Inspiration Boost through Fortune\'s Favor instead of pretending it is directly purchasable', () => {
+  const goldCraft = { core: [
+    { id: 'gilded_fingers', first_pass_points: 50, target_points: 50 },
+    { id: 'inspiration_boost', first_pass_points: 45, target_points: 45 }
+  ], flex: [], final_slots: [] }
+  const afterGold = allocateCp(goldCraft, 50, { tree: 'craft' })
+  assert.deepEqual(afterGold.route.map(entry => entry.node.id), ['gilded_fingers', 'fortunes_favor', 'inspiration_boost'])
+  assert.equal(afterGold.next.node.id, 'fortunes_favor')
+  assert.equal(afterGold.next.target, 10)
+  const unlocked = allocateCp(goldCraft, 60, { tree: 'craft' })
+  assert.equal(unlocked.next.node.id, 'inspiration_boost')
+})
+
+test('a live addon graph overrides the bundled fallback path when ESO supplies current links', () => {
+  const plan = { core: [{ id: 'bloody_renewal', first_pass_points: 50, target_points: 50 }], flex: [], final_slots: ['bloody_renewal'] }
+  const observedChampion = { disciplines: [{ name: 'Fitness', spent: 0, unspent: 100, stars: [
+    { skillId: 38, points: 0, root: true, jumpPoints: [10, 20], linkedSkillIds: [39] },
+    { skillId: 39, points: 0, root: false, jumpPoints: [10, 20], linkedSkillIds: [38, 113] },
+    { skillId: 113, points: 0, root: false, jumpPoints: [10, 20], linkedSkillIds: [39, 48] },
+    { skillId: 48, points: 0, root: false, jumpPoints: [10, 20, 30, 40, 50], linkedSkillIds: [113] }
+  ] }] }
+  const result = allocateCp(plan, 100, { tree: 'fitness', observedChampion })
+  assert.deepEqual(result.route.map(entry => entry.node.id), ['sprinter', 'tireless_guardian', 'heros_vigor', 'bloody_renewal'])
+  assert.equal(result.next.node.id, 'sprinter')
+  assert.equal(result.next.observed, true)
+})
+
+test('all bundled recommended CP targets have a verified offline route', () => {
+  for (const build of bundledBuilds) {
+    for (const [tree, plan] of Object.entries(build.cp_plans)) {
+      const allocation = allocateCp(plan, 1200, { tree })
+      assert.deepEqual(allocation.unresolvedPaths, [], `${build.id} ${tree} must not ship an unverified recommended route`)
+    }
+  }
+})
+
 test('the base plan object is never mutated by allocation', () => {
   const before = JSON.stringify(plan)
   allocateCp(plan, 999)
   allocateCp(plan, 0)
   assert.equal(JSON.stringify(plan), before)
+})
+
+test('verified catalog links can derive an offline prerequisite route even without a hand-authored path', () => {
+  const plan = { core: [{ id: 'liquid_efficiency', first_pass_points: 50, target_points: 50 }], flex: [], final_slots: [] }
+  const result = allocateCp(plan, 1200, { tree: 'craft' })
+  assert.deepEqual(result.unresolvedPaths, [])
+  assert.deepEqual(result.route.map(entry => entry.node.id), ['steadfast_enchantment', 'rationer', 'liquid_efficiency'])
+  assert.equal(result.route[0].node.first_pass_points, 10)
+  assert.equal(result.route[1].node.first_pass_points, 10)
+})
+
+test('live CP routing tolerates empty Lua tables for link lists', () => {
+  const plan = { core: [{ id: 'steeds_blessing', first_pass_points: 50, target_points: 50 }], flex: [], final_slots: ['steeds_blessing'] }
+  const observedChampion = { disciplines: [{ name: 'Craft', spent: 0, unspent: 102, stars: [
+    { skillId: 66, points: 0, root: true, jumpPoints: {}, linkedSkillIds: {} }
+  ] }] }
+  const result = allocateCp(plan, 102, { tree: 'craft', observedChampion })
+  assert.equal(result.next.node.id, 'steeds_blessing')
+})
+
+test('live routing continues from an earlier authored connector instead of buying an unnecessary root', () => {
+  const plan = { core: [
+    { id: 'tireless_discipline', first_pass_points: 10, target_points: 20 },
+    { id: 'piercing', first_pass_points: 10, target_points: 20 }
+  ], flex: [], final_slots: [] }
+  const observedChampion = { disciplines: [{ name: 'Warfare', spent: 0, unspent: 102, stars: [
+    { skillId: 6, points: 0, root: true, jumpPoints: [0, 10, 20], linkedSkillIds: [10] },
+    { skillId: 11, points: 0, root: true, jumpPoints: [0, 10, 20], linkedSkillIds: [10] },
+    { skillId: 10, points: 0, root: false, clusterRoot: true, jumpPoints: [0, 10, 20], linkedSkillIds: [6, 11] }
+  ] }] }
+  const result = allocateCp(plan, 102, { tree: 'warfare', observedChampion })
+  assert.deepEqual(result.route.map(entry => entry.node.id), ['tireless_discipline', 'piercing'])
+  assert.equal(result.next.node.id, 'tireless_discipline')
+  assert.equal(result.next.target, 10)
+})
+
+test('synced ESO allocation reports truly unassigned points instead of the simulated route remainder', () => {
+  const livePlan = {
+    core: [{ id: 'gilded_fingers', first_pass_points: 50, target_points: 50 }],
+    flex: [{ id: 'economy', label: 'Economy', purpose: 'economy', nodes: [{ id: 'fortunes_favor', first_pass_points: 10, target_points: 50 }] }],
+    final_slots: []
+  }
+  const observedChampion = { disciplines: [{ name: 'Craft', spent: 0, unspent: 102, stars: [
+    { skillId: 74, points: 0, root: true, jumpPoints: [10, 20, 30, 40, 50], linkedSkillIds: [] }
+  ] }] }
+  const result = allocateCp(livePlan, 102, { tree: 'craft', observedChampion })
+  assert.equal(result.total, 102)
+  assert.equal(result.unassigned, 102, 'all earned points are still unassigned in ESO')
+  assert.equal(result.totalSpent, 0)
+  assert.equal(result.firstPassSpent, 0)
+  assert.equal(result.routeSpent, 0)
+  assert.equal(result.firstPassComplete, false)
+  assert.equal(result.next.node.id, 'gilded_fingers')
 })

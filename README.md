@@ -2,8 +2,8 @@
 
 > **I Used To Be Meta Like You, Then I Took An Arrow To The Build**
 
-Current public release: **v3.0.0**  
-Current development version: **v3.0.0**
+Current public release: **v3.1.0**  
+Current development version: **v3.1.0**
 
 **Arrow to the Build** is an offline-first Windows companion for **The Elder Scrolls Online**. It combines a character progression tracker with a full visual build editor so a static build guide becomes an actual plan for a specific character: what to unlock next, which skill-line ranks matter, how to spend Champion Points, what gear to chase, what belongs on each bar, and how the finished build fits together.
 
@@ -67,7 +67,7 @@ Highlights include:
 - automatic human-readable JSON mirrors for saved user builds
 - configurable user-build storage, defaulting to `Documents\Arrow to the Build\Builds`
 
-The visual editor and imported files use the same public **Schema 4** build format. ATTB 3.0.0 extends Schema 4 additively with optional `progression_scope` metadata; older Schema 4 files that omit it retain the historical new-character/leveling behavior.
+The visual editor and imported files use the same public **Schema 4** build format. Schema 4 includes optional `progression_scope` metadata; older Schema 4 files that omit it retain the historical new-character/leveling behavior.
 
 ---
 

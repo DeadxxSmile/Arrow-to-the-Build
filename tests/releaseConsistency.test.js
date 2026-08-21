@@ -22,7 +22,7 @@ function capturedVersion(text, pattern, label) {
   return match[1]
 }
 
-test('desktop release version stays synchronized across package metadata and README', () => {
+test('release package, README, and lockfile stay synchronized at v3.1.0', () => {
   const pkg = readJson('package.json')
   const lock = readJson('package-lock.json')
   const readme = read('README.md')
@@ -31,16 +31,18 @@ test('desktop release version stays synchronized across package metadata and REA
 
   assert.equal(lock.version, pkg.version, 'package-lock top-level version differs from package.json')
   assert.equal(lock.packages?.['']?.version, pkg.version, 'package-lock root package version differs from package.json')
-  assert.equal(publicRelease, pkg.version, 'README public release differs from package.json')
   assert.equal(development, pkg.version, 'README development release differs from package.json')
+  assert.equal(publicRelease, pkg.version, 'README public release differs from package.json')
+  assert.equal(pkg.version, '3.1.0', 'release source should identify itself as v3.1.0')
 })
 
-test('published GitHub Pages release version stays synchronized with the desktop release', () => {
-  const pkg = readJson('package.json')
+test('published GitHub Pages follows the v3.1.0 public release', () => {
+  const readme = read('README.md')
   const site = read('docs/index.html')
+  const publicRelease = capturedVersion(readme, /Current public release:\s*\*\*v([^*]+)\*\*/, 'README public release')
   const version = capturedVersion(site, /<b>v([^<]+)<\/b>/, 'GitHub Pages title-bar version')
 
-  assert.equal(version, pkg.version, 'site title-bar version differs from package.json')
+  assert.equal(version, publicRelease, 'site title-bar version should follow the public release, not the development package')
   assert.ok(site.includes(`Download v${version}`), 'site download call-to-action differs from title-bar version')
   assert.ok(site.includes(`ATTB-Setup-${version}.exe`), 'site installer filename differs from version pill')
   assert.ok(site.includes(`styles.css?v=${version}-v3-site`), 'site stylesheet cache version differs from version pill')
@@ -49,20 +51,17 @@ test('published GitHub Pages release version stays synchronized with the desktop
   assert.doesNotMatch(site, /Release candidate/i)
 })
 
-test('current public and maintenance guides identify ATTB 3.0.0 as their release baseline', () => {
-  const pkg = readJson('package.json')
+test('current public and maintenance guides identify the ATTB 3.1.0 release baseline', () => {
   for (const relativeDir of ['docs/reference', 'docs/maintenance']) {
     const dir = path.join(root, relativeDir)
     const guides = fs.readdirSync(dir).filter(name => name.endsWith('.md')).sort()
     assert.ok(guides.length > 0, `no Markdown guides found in ${relativeDir}`)
     for (const guide of guides) {
       const source = fs.readFileSync(path.join(dir, guide), 'utf8')
-      assert.ok(source.includes(`3.0.0`), `${relativeDir}/${guide} does not identify the ATTB 3.0.0 baseline`)
+      assert.ok(source.includes('3.1.0'), `${relativeDir}/${guide} does not identify the current v3.1.0 release baseline`)
     }
   }
-  assert.equal(pkg.version, '3.0.0', 'this release gate is intentionally pinned to the v3.0.0 publication')
 })
-
 
 test('React Router release dependency is patched and lockfile-synchronized', () => {
   const pkg = readJson('package.json')
@@ -84,8 +83,8 @@ test('bundled addon version metadata stays synchronized', () => {
   const constants = read('src/main/addon/addonConstants.js')
 
   const addonVersion = manifestField(addonManifest, 'Version')
-  assert.equal(addonVersion, '1.1.1')
-  assert.equal(manifestField(addonManifest, 'AddOnVersion'), '10101')
+  assert.equal(addonVersion, '1.1.3')
+  assert.equal(manifestField(addonManifest, 'AddOnVersion'), '10103')
   assert.equal(manifestField(addonManifest, 'APIVersion'), '101050')
   assert.equal(capturedVersion(namespaceLua, /ATTB\.version\s*=\s*"([^"]+)"/, 'Namespace.lua'), addonVersion)
   assert.equal(capturedVersion(constants, /BUNDLED_ADDON_VERSION\s*=\s*'([^']+)'/, 'addonConstants.js'), addonVersion)

@@ -203,3 +203,34 @@ test('the Arcanist beam explanation stays contained to the actual beam build', (
     assert.doesNotMatch(JSON.stringify(build), /\bbeam(?:ing)?\b/i, `${file}: stale Arcanist beam text escaped into another class`)
   }
 })
+
+test('every default Champion Bar star is on the automatic route rather than hidden in an optional branch', () => {
+  for (const [file, build] of Object.entries(builds)) {
+    for (const [tree, plan] of Object.entries(build.cp_plans || {})) {
+      const automatic = new Set([
+        ...(plan.core || []).map(row => row.id),
+        ...(plan.flex || []).filter(group => group.optional !== true).flatMap(group => (group.nodes || []).map(row => row.id))
+      ])
+      for (const id of plan.final_slots || []) {
+        assert.ok(automatic.has(id), `${file}/${tree}: default slot ${id} must be reachable by the automatic route`)
+      }
+    }
+  }
+})
+
+test('Magicka Templar uses the current U50 Soul Burst base recipe while keeping Solar Barrage as an alternative', () => {
+  const build = builds['magicka_templar_solo_duo.json']
+  const recipeId = 'templar_soul_burst_bleed_lingering_resolve'
+  const recipe = (build.scribed_skills || []).find(row => row.id === recipeId)
+  assert.ok(recipe, 'Templar needs the exact Soul Burst recipe')
+  assert.equal(recipe.focus_script, 'Bleed Damage')
+  assert.equal(recipe.signature_script, 'Lingering Torment')
+  assert.equal(recipe.affix_script, 'Resolve')
+  for (const phaseId of ['30-50', 'final']) {
+    const phase = build.phases.find(row => row.id === phaseId)
+    assert.ok(phase?.back_bar?.slots?.some(slot => slot.scribed_skill_id === recipeId), `${phaseId} should use Soul Burst on the base back bar`)
+    assert.equal(phase.back_bar.slots.some(slot => slot.catalog_skill_id === 'dawns_wrath__solar_barrage'), false, `${phaseId} should not use Solar Barrage on the base back bar`)
+  }
+  const barrage = build.unlock_order.find(row => row.id === 'solar_barrage')
+  assert.equal(barrage?.status, 'optional', 'Solar Barrage remains available as an alternative rather than the base target')
+})

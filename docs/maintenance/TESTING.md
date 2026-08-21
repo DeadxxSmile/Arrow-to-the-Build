@@ -1,6 +1,6 @@
 # ATTB Testing Guide
 
-Use this checklist for the current **ATTB 3.0.0** codebase. It replaces the historical per-milestone and pre-v3 checklists.
+Use this checklist for the current **ATTB 3.1.0** codebase. It replaces the historical per-milestone and pre-v3 checklists.
 
 ## Automated test policy
 
@@ -13,7 +13,7 @@ ATTB keeps automated tests focused on contracts that can break data, behavior, p
 - Avoid testing the same release contract in multiple files. Version, schema, and packaging ownership should each have one authoritative check.
 - A regression test should explain the bug class it protects, not freeze unrelated implementation details.
 
-The historical v2.1.3 test-suite audit reduced the suite from 335 to 278 tests while retaining the behavioral and data-safety coverage. ATTB 3.0.0 has since expanded the suite as new systems and regressions were added. See `TEST_SUITE_AUDIT_2_1_3.md` only for that historical cleanup record.
+The historical v2.1.3 test-suite audit reduced the suite from 335 to 278 tests while retaining the behavioral and data-safety coverage. ATTB 3.1.0 has since expanded the suite as new systems and regressions were added. See `TEST_SUITE_AUDIT_2_1_3.md` only for that historical cleanup record.
 
 ## Automated checks
 
@@ -124,7 +124,7 @@ npm start 2>&1 | Tee-Object -FilePath ".\attb-dev.log"
 
 ### Upgrade from addon 1.0.0
 
-- Create the old `<profile>\AddOns\ArrowToTheBuildBridge` folder with the exact ATTB 1.0.0 Sync Bridge manifest and create both old addon SavedVariables files. The cleanup originated in v2.1.3. On the first ATTB 3.0.0 launch, confirm it removes the verified bridge folder, removes the managed main addon folder, deletes both old SavedVariables files, and immediately reinstalls the bundled single addon.
+- Create the old `<profile>\AddOns\ArrowToTheBuildBridge` folder with the exact ATTB 1.0.0 Sync Bridge manifest and create both old addon SavedVariables files. The cleanup originated in v2.1.3. On the first ATTB 3.1.0 launch, confirm it removes the verified bridge folder, removes the managed main addon folder, deletes both old SavedVariables files, and immediately reinstalls the bundled single addon.
 - After the cleanup marker is stored, create a fresh `ArrowToTheBuild.lua` and restart ATTB. Confirm the one-time cleanup does not run again and the fresh save remains intact.
 - Put an unrelated manifest in a folder named `ArrowToTheBuildBridge`; confirm ATTB refuses to delete it.
 - Confirm the main `ArrowToTheBuild.lua` archive and existing desktop character links survive the upgrade.
@@ -142,7 +142,7 @@ npm start 2>&1 | Tee-Object -FilePath ".\attb-dev.log"
 
 ### ESO-controlled save timing
 
-- Fresh-install the current bundled `ArrowToTheBuild` addon (1.1.3 in the 3.0.1 CP-overhaul development build), enable it in ESO, and log into one character.
+- Fresh-install the current bundled `ArrowToTheBuild` addon (1.1.3 in the 3.1.0 release), enable it in ESO, and log into one character.
 - Confirm ESO creates `<profile>\SavedVariables\ArrowToTheBuild.lua` after a save opportunity or `/reloadui`.
 - Confirm Settings reports one addon path and one SavedVariables path; there must be no live bridge budget/status UI.
 - Change level/progression, equipment, action bars, attributes, and Champion Points. Confirm the in-memory addon revision advances through the relevant event capture.
@@ -151,7 +151,7 @@ npm start 2>&1 | Tee-Object -FilePath ".\attb-dev.log"
 - Confirm `/attbexport` refreshes the in-memory snapshot and clearly tells the user to use `/reloadui` for immediate desktop disk refresh.
 - Confirm `/attbstatus` reports the archive/memory revisions, latest capture, pending sections, and the `/reloadui` reminder without bridge/priority/budget diagnostics.
 
-### Champion Point catalog, routing, and map regression (3.0.1 development)
+### Champion Point catalog, routing, and map regression (3.1.0)
 
 - Open a character/build with Champion Points and confirm **Do this next** identifies the first incomplete prerequisite or target rather than simply maxing each authored row in order.
 - Confirm a Bloody Renewal-only Fitness target expands through **Sprinter 10/20 -> Hasty 8/16 -> Hero's Vigor 10/20 -> Bloody Renewal** and does not demand the connector stars be maxed first.

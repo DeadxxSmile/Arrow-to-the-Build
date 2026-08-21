@@ -5,7 +5,7 @@
   "short_name": "Magicka Warden",
   "author": "DeadxxSmile / ATTB Community Launch Bundle",
   "game_version": "Update 50",
-  "verified_date": "2026-08-07",
+  "verified_date": "2026-08-20",
   "progression_scope": {
     "starting_point": "new_character",
     "leveling_content_required": true,
@@ -145,143 +145,91 @@
       "core": [
         {
           "id": "tireless_discipline",
-          "name": "Tireless Discipline",
-          "max_points": 10,
-          "slottable": false,
-          "jump_points": [
-            10
-          ],
-          "note": "Required path node; also adds Max Stamina."
+          "note": "Useful path node that also adds Max Stamina. Spend the first 10-point stage when routing onward; finish 20 later.",
+          "first_pass_points": 10,
+          "target_points": 20
         },
         {
           "id": "piercing",
-          "name": "Piercing",
-          "max_points": 10,
-          "slottable": false,
-          "jump_points": [
-            10
-          ],
-          "note": "Required path node; adds penetration."
+          "note": "Useful path node that adds Offensive Penetration. Spend the first 10-point stage when routing onward; finish 20 later.",
+          "first_pass_points": 10,
+          "target_points": 20
         }
       ],
       "flex": [
         {
           "id": "damage",
-          "label": "Damage",
+          "label": "Default damage bar",
           "purpose": "damage",
           "nodes": [
             {
               "id": "master_at_arms",
-              "name": "Master-at-Arms",
-              "max_points": 50,
-              "slottable": true,
-              "jump_points": [
-                25,
-                50
-              ],
-              "note": "Primary direct-damage slottable."
+              "note": "Primary direct-damage slottable for the baseline rotation.",
+              "first_pass_points": 50,
+              "target_points": 50
             },
             {
-              "id": "biting_aura",
-              "name": "Biting Aura",
-              "max_points": 50,
-              "slottable": true,
-              "jump_points": [
-                25,
-                50
-              ],
-              "note": "Boosts area damage."
+              "id": "deadly_aim",
+              "note": "Primary single-target damage slottable for the baseline rotation.",
+              "first_pass_points": 50,
+              "target_points": 50
             },
             {
               "id": "fighting_finesse",
-              "name": "Fighting Finesse",
-              "max_points": 50,
-              "slottable": true,
-              "jump_points": [
-                25,
-                50
-              ],
-              "note": "Critical damage and healing."
+              "note": "Strong general damage choice. In organized groups, replace it if support buffs already push Critical Damage to the 125% cap.",
+              "first_pass_points": 50,
+              "target_points": 50
             },
             {
               "id": "wrathful_strikes",
-              "name": "Wrathful Strikes",
-              "max_points": 50,
-              "slottable": true,
-              "jump_points": [
-                25,
-                50
-              ],
-              "note": "Weapon and Spell Damage."
+              "note": "Strong general fourth damage slottable for solo/flexible PvE.",
+              "first_pass_points": 50,
+              "target_points": 50
             }
           ]
         },
         {
           "id": "alternate_damage",
           "label": "Alternate damage",
-          "purpose": "alternate damage",
+          "purpose": "alternate damage / solo healing",
           "optional": true,
           "note": "Swap these in when the encounter or a full build variant values a different damage profile.",
           "nodes": [
             {
+              "id": "biting_aura",
+              "note": "AoE-focused alternative when the encounter rewards area damage more than Deadly Aim.",
+              "first_pass_points": 50,
+              "target_points": 50
+            },
+            {
               "id": "thaumaturge",
-              "name": "Thaumaturge",
-              "max_points": 50,
-              "slottable": true,
-              "jump_points": [
-                25,
-                50
-              ],
-              "note": "Damage-over-time alternative."
+              "note": "DoT-heavy alternative when a build variant shifts a larger share of damage into damage-over-time effects.",
+              "first_pass_points": 50,
+              "target_points": 50
             },
             {
               "id": "exploiter",
-              "name": "Exploiter",
-              "max_points": 50,
-              "slottable": true,
-              "jump_points": [
-                10,
-                20,
-                30,
-                40,
-                50
-              ],
-              "note": "Situational damage against Off Balance enemies."
+              "note": "Situational damage option when Off Balance uptime is reliable.",
+              "first_pass_points": 50,
+              "target_points": 50
             },
             {
               "id": "weapons_expert",
-              "name": "Weapons Expert",
-              "max_points": 50,
-              "slottable": true,
-              "jump_points": [
-                10,
-                20,
-                30,
-                40,
-                50
-              ],
-              "note": "Light- and Heavy-Attack focused alternative."
+              "note": "Low-priority alternative for Light/Heavy Attack-focused setups rather than the default two-bar rotation.",
+              "first_pass_points": 50,
+              "target_points": 50
             },
             {
               "id": "reaving_blows",
-              "name": "Reaving Blows",
-              "max_points": 50,
-              "slottable": true,
-              "jump_points": [
-                50
-              ],
-              "note": "Solo sustain through healing from direct damage."
+              "note": "Solo healing flex: direct damage heals you for a portion of damage dealt; use when extra HPS matters more than a damage slot.",
+              "first_pass_points": 50,
+              "target_points": 50
             },
             {
-              "id": "deadly_aim",
-              "name": "Deadly Aim",
-              "max_points": 50,
-              "slottable": true,
-              "jump_points": [
-                25,
-                50
-              ],
-              "note": "Default single-target damage slottable for the U50 baseline."
+              "id": "untamed_aggression",
+              "note": "Organized-group alternative to Fighting Finesse when support buffs already put you at the Critical Damage cap.",
+              "first_pass_points": 50,
+              "target_points": 50
             }
           ]
         },
@@ -290,51 +238,64 @@
           "label": "PvE defense passives",
           "purpose": "solo defense",
           "optional": true,
-          "note": "Passive defensive spending after the damage route is comfortable.",
+          "note": "Passive defensive spending after the default damage route is comfortable.",
           "nodes": [
             {
               "id": "preparation",
-              "name": "Preparation",
-              "max_points": 20,
-              "slottable": false,
-              "jump_points": [
-                10,
-                20
-              ],
-              "note": "Reduces damage taken from non-player attacks."
+              "note": "Reduces damage taken from non-player attacks.",
+              "first_pass_points": 20,
+              "target_points": 20
             },
             {
               "id": "hardy",
-              "name": "Hardy",
-              "max_points": 20,
-              "slottable": false,
-              "jump_points": [
-                10,
-                20
-              ],
-              "note": "Reduces Martial damage taken."
+              "note": "Reduces Martial damage taken.",
+              "first_pass_points": 20,
+              "target_points": 20
             },
             {
               "id": "elemental_aegis",
-              "name": "Elemental Aegis",
-              "max_points": 20,
-              "slottable": false,
-              "jump_points": [
-                10,
-                20
-              ],
-              "note": "Reduces Magical damage taken."
+              "note": "Reduces Magical damage taken.",
+              "first_pass_points": 20,
+              "target_points": 20
             },
             {
               "id": "quick_recovery",
-              "name": "Quick Recovery",
-              "max_points": 20,
-              "slottable": false,
-              "jump_points": [
-                10,
-                20
-              ],
-              "note": "Increases healing received."
+              "note": "Increases healing received.",
+              "first_pass_points": 20,
+              "target_points": 20
+            }
+          ]
+        },
+        {
+          "id": "hard_content_mitigation",
+          "label": "Hard-content mitigation",
+          "purpose": "boss-specific mitigation",
+          "optional": true,
+          "note": "For difficult solo bosses, replace one or two damage slottables with mitigation matched to the incoming damage profile.",
+          "nodes": [
+            {
+              "id": "ironclad",
+              "note": "Reduces Direct Damage taken.",
+              "first_pass_points": 50,
+              "target_points": 50
+            },
+            {
+              "id": "duelists_rebuff",
+              "note": "Reduces Single Target damage taken.",
+              "first_pass_points": 50,
+              "target_points": 50
+            },
+            {
+              "id": "enduring_resolve",
+              "note": "Reduces Damage over Time taken.",
+              "first_pass_points": 50,
+              "target_points": 50
+            },
+            {
+              "id": "unassailable",
+              "note": "Reduces Area of Effect damage taken.",
+              "first_pass_points": 50,
+              "target_points": 50
             }
           ]
         }
@@ -344,6 +305,10 @@
         "deadly_aim",
         "fighting_finesse",
         "wrathful_strikes"
+      ],
+      "notes": [
+        "The four default Champion Bar stars are authored on the automatic route; optional alternatives are never silently spent.",
+        "Required connector milestones are derived from the canonical Update 50 CP catalog rather than duplicated in the build."
       ]
     },
     "fitness": {
@@ -352,117 +317,67 @@
       "core": [
         {
           "id": "sprinter",
-          "name": "Sprinter",
-          "max_points": 10,
-          "slottable": false,
-          "jump_points": [
-            10
-          ],
-          "note": "Start here; this opens the Wind Chaser route."
+          "note": "Useful movement path node. Spend the first 10-point stage when routing onward; finish 20 later.",
+          "first_pass_points": 10,
+          "target_points": 20
         },
         {
           "id": "hasty",
-          "name": "Hasty",
-          "max_points": 8,
-          "slottable": false,
-          "jump_points": [
-            8
-          ],
-          "note": "Required connector before Hero’s Vigor."
+          "note": "Connector toward the build’s deeper Fitness targets. Spend the first 8-point stage when routing onward; finish 16 later.",
+          "first_pass_points": 8,
+          "target_points": 16
         },
         {
           "id": "heros_vigor",
-          "name": "Hero’s Vigor",
-          "max_points": 10,
-          "slottable": false,
-          "jump_points": [
-            10
-          ],
-          "note": "Required connector before Bloody Renewal."
+          "note": "Useful Max Health connector before Bloody Renewal / Siphoning Spells. Spend the first 10-point stage to continue the route; finish 20 later.",
+          "first_pass_points": 10,
+          "target_points": 20
         }
       ],
       "flex": [
         {
-          "id": "sustain",
-          "label": "Sustain",
-          "purpose": "sustain",
+          "id": "default_bar",
+          "label": "Default Champion Bar",
+          "purpose": "general solo survivability / sustain",
           "nodes": [
             {
-              "id": "bloody_renewal",
-              "name": "Bloody Renewal",
-              "max_points": 50,
-              "slottable": true,
-              "jump_points": [
-                10,
-                20,
-                30,
-                40,
-                50
-              ],
-              "note": "Restores Stamina after kills; exceptional while leveling."
-            },
-            {
-              "id": "rejuvenation",
-              "name": "Rejuvenation",
-              "max_points": 50,
-              "slottable": true,
-              "jump_points": [
-                10,
-                20,
-                30,
-                40,
-                50
-              ],
-              "note": "Adds resource recovery."
+              "id": "boundless_vitality",
+              "note": "General survivability through a larger Max Health pool.",
+              "first_pass_points": 50,
+              "target_points": 50
             },
             {
               "id": "siphoning_spells",
-              "name": "Siphoning Spells",
-              "max_points": 50,
-              "slottable": true,
-              "jump_points": [
-                10,
-                20,
-                30,
-                40,
-                50
-              ],
-              "note": "Restores Magicka after kills; default kill-sustain choice for Magicka Warden."
+              "note": "Restores Magicka after kills; excellent for solo, trash, arenas, and add-heavy fights.",
+              "first_pass_points": 50,
+              "target_points": 50
+            },
+            {
+              "id": "rejuvenation",
+              "note": "Adds Health, Magicka, and Stamina Recovery; reliable general-purpose sustain.",
+              "first_pass_points": 50,
+              "target_points": 50
+            },
+            {
+              "id": "fortified",
+              "note": "General survivability through additional Armor.",
+              "first_pass_points": 50,
+              "target_points": 50
             }
           ]
         },
         {
-          "id": "solo_defense",
-          "label": "Solo defense",
-          "purpose": "solo defense",
+          "id": "alternate_sustain",
+          "label": "Alternate sustain",
+          "purpose": "kill sustain / recovery",
+          "optional": true,
+          "note": "Use these when the encounter or resource profile benefits more from a different sustain star.",
           "nodes": [
             {
-              "id": "boundless_vitality",
-              "name": "Boundless Vitality",
-              "max_points": 50,
-              "slottable": true,
-              "jump_points": [
-                10,
-                20,
-                30,
-                40,
-                50
-              ],
-              "note": "Adds Max Health."
-            },
-            {
-              "id": "fortified",
-              "name": "Fortified",
-              "max_points": 50,
-              "slottable": true,
-              "jump_points": [
-                10,
-                20,
-                30,
-                40,
-                50
-              ],
-              "note": "Adds armor."
+              "id": "bloody_renewal",
+              "note": "Restores Stamina after kills; excellent for solo, trash, arenas, and add-heavy fights.",
+              "first_pass_points": 50,
+              "target_points": 50
             }
           ]
         },
@@ -475,51 +390,27 @@
           "nodes": [
             {
               "id": "celerity",
-              "name": "Celerity",
-              "max_points": 50,
-              "slottable": true,
-              "jump_points": [
-                10,
-                20,
-                30,
-                40,
-                50
-              ],
-              "note": "Movement-speed option."
+              "note": "Default movement-speed slottable for builds that value repositioning and mechanic avoidance.",
+              "first_pass_points": 50,
+              "target_points": 50
             },
             {
               "id": "expert_evasion",
-              "name": "Expert Evasion",
-              "max_points": 50,
-              "slottable": true,
-              "jump_points": [
-                50
-              ],
-              "note": "Periodic free Roll Dodge."
+              "note": "Periodic free Roll Dodge; excellent general solo utility when it is part of the default bar.",
+              "first_pass_points": 50,
+              "target_points": 50
             },
             {
               "id": "survival_instincts",
-              "name": "Survival Instincts",
-              "max_points": 50,
-              "slottable": true,
-              "jump_points": [
-                10,
-                20,
-                30,
-                40,
-                50
-              ],
-              "note": "Reduces core-combat costs while affected by a status effect."
+              "note": "Reduces core-combat costs while affected by a status effect.",
+              "first_pass_points": 50,
+              "target_points": 50
             },
             {
               "id": "relentlessness",
-              "name": "Relentlessness",
-              "max_points": 50,
-              "slottable": true,
-              "jump_points": [
-                50
-              ],
-              "note": "Major Protection after being stunned or feared."
+              "note": "Grants Major Protection after being stunned or feared.",
+              "first_pass_points": 50,
+              "target_points": 50
             }
           ]
         },
@@ -528,54 +419,52 @@
           "label": "Core-combat passives",
           "purpose": "block / dodge / break free",
           "optional": true,
-          "note": "Spend here when the character needs cheaper defensive actions more than another slottable.",
+          "note": "Spend here when cheaper defensive actions matter more than another slottable.",
           "nodes": [
             {
               "id": "tumbling",
-              "name": "Tumbling",
-              "max_points": 30,
-              "slottable": false,
-              "jump_points": [
-                15,
-                30
-              ],
-              "note": "Reduces Roll Dodge cost."
+              "note": "Reduces Roll Dodge cost.",
+              "first_pass_points": 30,
+              "target_points": 30
             },
             {
               "id": "defiance",
-              "name": "Defiance",
-              "max_points": 20,
-              "slottable": false,
-              "jump_points": [
-                10,
-                20
-              ],
-              "note": "Reduces Break Free cost."
+              "note": "Reduces Break Free cost.",
+              "first_pass_points": 20,
+              "target_points": 20
             },
             {
               "id": "tireless_guardian",
-              "name": "Tireless Guardian",
-              "max_points": 20,
-              "slottable": false,
-              "jump_points": [
-                10,
-                20
-              ],
-              "note": "Reduces Block cost."
+              "note": "Reduces Block cost.",
+              "first_pass_points": 20,
+              "target_points": 20
             },
             {
               "id": "mystic_tenacity",
-              "name": "Mystic Tenacity",
-              "max_points": 50,
-              "slottable": false,
-              "jump_points": [
-                10,
-                20,
-                30,
-                40,
-                50
-              ],
-              "note": "Reduces elemental status-effect duration."
+              "note": "Reduces elemental status-effect duration.",
+              "first_pass_points": 50,
+              "target_points": 50
+            }
+          ]
+        },
+        {
+          "id": "situational_solo",
+          "label": "Situational solo swaps",
+          "purpose": "debuff sustain / block mitigation",
+          "optional": true,
+          "note": "Encounter-specific alternatives rather than default Champion Bar choices.",
+          "nodes": [
+            {
+              "id": "sustained_by_suffering",
+              "note": "Strong sustain swap in encounters where negative effects are applied to you frequently.",
+              "first_pass_points": 50,
+              "target_points": 50
+            },
+            {
+              "id": "bracing_anchor",
+              "note": "Block-heavy encounter swap when the movement-speed penalty is acceptable.",
+              "first_pass_points": 50,
+              "target_points": 50
             }
           ]
         }
@@ -585,6 +474,10 @@
         "siphoning_spells",
         "rejuvenation",
         "fortified"
+      ],
+      "notes": [
+        "The four default Champion Bar stars are all on the automatic first-pass route.",
+        "Fitness connector milestones are only authored when they are genuinely needed by this build’s default bar."
       ]
     },
     "craft": {
@@ -592,219 +485,171 @@
       "color": "green",
       "core": [
         {
-          "id": "discipline_artisan",
-          "name": "Discipline Artisan",
-          "max_points": 50,
-          "slottable": false,
-          "jump_points": [
-            10,
-            20,
-            30,
-            40,
-            50
-          ],
-          "note": "Increases active skill and skill-line XP."
+          "id": "steeds_blessing",
+          "note": "Universal quality-of-life default: faster out-of-combat movement. This is the one Craft Champion Bar star the generic bundled builds recommend by default.",
+          "first_pass_points": 50,
+          "target_points": 50
+        },
+        {
+          "id": "gilded_fingers",
+          "note": "Broad passive economy value: increases gold gained and no longer consumes a Champion Bar slot in Update 50.",
+          "first_pass_points": 50,
+          "target_points": 50
         }
       ],
       "flex": [
         {
-          "id": "movement",
-          "label": "Movement",
-          "purpose": "movement",
-          "nodes": [
-            {
-              "id": "steeds_blessing",
-              "name": "Steed’s Blessing",
-              "max_points": 50,
-              "slottable": true,
-              "jump_points": [
-                10,
-                20,
-                30,
-                40,
-                50
-              ],
-              "note": "Out-of-combat movement speed."
-            }
-          ]
-        },
-        {
-          "id": "quality_of_life",
-          "label": "Quality of life",
-          "purpose": "quality of life",
+          "id": "consumable_economy",
+          "label": "Consumable economy",
+          "purpose": "food / potion savings",
           "nodes": [
             {
               "id": "rationer",
-              "name": "Rationer",
-              "max_points": 30,
-              "slottable": true,
-              "jump_points": [
-                10,
-                20,
-                30
-              ],
-              "note": "Extends food and drink duration."
+              "note": "Passive in Update 50. Extends the duration of stat food and drink without using a Champion Bar slot.",
+              "first_pass_points": 30,
+              "target_points": 30
+            },
+            {
+              "id": "liquid_efficiency",
+              "note": "Passive in Update 50. Gives a chance not to consume a potion or poison; increasingly valuable with expensive combat consumables.",
+              "first_pass_points": 50,
+              "target_points": 50
             }
           ]
         },
         {
-          "id": "gathering",
-          "label": "Gathering",
-          "purpose": "gathering",
+          "id": "loot_quality",
+          "label": "Loot quality",
+          "purpose": "treasure chest value",
           "nodes": [
             {
               "id": "treasure_hunter",
-              "name": "Treasure Hunter",
-              "max_points": 50,
-              "slottable": true,
-              "jump_points": [
-                10,
-                20,
-                30,
-                40,
-                50
-              ],
-              "note": "Improves chest loot quality."
+              "note": "Passive in Update 50. Improves treasure-chest item quality and no longer consumes a Craft Champion Bar slot.",
+              "first_pass_points": 50,
+              "target_points": 50
+            }
+          ]
+        },
+        {
+          "id": "progression",
+          "label": "Character progression",
+          "purpose": "skill-line catch-up",
+          "optional": true,
+          "note": "Useful while a character still has important skills or lines to rank; lower priority on a finished character.",
+          "nodes": [
+            {
+              "id": "discipline_artisan",
+              "note": "Passive skill/skill-line XP support for characters still finishing progression.",
+              "first_pass_points": 50,
+              "target_points": 50
             }
           ]
         },
         {
           "id": "resource_farming",
-          "label": "Resource farming",
-          "purpose": "gathering / refining",
+          "label": "Resource farming & deconstruction",
+          "purpose": "gathering / refining / deconstruction",
           "optional": true,
-          "note": "A farming-focused loadout can promote this branch and change the recommended Craft bar.",
+          "note": "High-value long-term branch for survey runs, material farming, and crafting.",
           "nodes": [
             {
               "id": "plentiful_harvest",
-              "name": "Plentiful Harvest",
-              "max_points": 50,
-              "slottable": false,
-              "jump_points": [
-                10,
-                20,
-                30,
-                40,
-                50
-              ],
-              "note": "Chance to double normal resource-node yield."
+              "note": "Passive chance to gain extra yield from resource nodes.",
+              "first_pass_points": 50,
+              "target_points": 50
             },
             {
               "id": "master_gatherer",
-              "name": "Master Gatherer",
-              "max_points": 75,
-              "slottable": true,
-              "jump_points": [
-                15,
-                30,
-                45,
-                60,
-                75
-              ],
-              "note": "Faster harvesting."
-            },
-            {
-              "id": "meticulous_disassembly",
-              "name": "Meticulous Disassembly",
-              "max_points": 50,
-              "slottable": false,
-              "jump_points": [
-                50
-              ],
-              "note": "Improves extraction and refining results."
+              "note": "Champion Bar option for faster harvesting during dedicated farming routes.",
+              "first_pass_points": 75,
+              "target_points": 75
             }
           ]
         },
         {
           "id": "mounts_and_travel",
           "label": "Mounts & travel",
-          "purpose": "travel",
+          "purpose": "travel / survey routes",
           "optional": true,
-          "note": "Useful for exploration, survey routes, and characters that spend a lot of time mounted.",
+          "note": "Swap these onto the Craft bar when long travel or survey routes make them worthwhile.",
           "nodes": [
             {
               "id": "gifted_rider",
-              "name": "Gifted Rider",
-              "max_points": 50,
-              "slottable": true,
-              "jump_points": [
-                10,
-                20,
-                30,
-                40,
-                50
-              ],
-              "note": "Increases mount speed."
+              "note": "Champion Bar option that increases mount speed.",
+              "first_pass_points": 50,
+              "target_points": 50
             },
             {
               "id": "war_mount",
-              "name": "War Mount",
-              "max_points": 75,
-              "slottable": true,
-              "jump_points": [
-                75
-              ],
-              "note": "Removes mount Stamina costs outside combat."
+              "note": "Champion Bar option that removes mount Stamina costs outside combat.",
+              "first_pass_points": 75,
+              "target_points": 75
             },
             {
               "id": "breakfall",
-              "name": "Breakfall",
-              "max_points": 50,
-              "slottable": false,
-              "jump_points": [
-                10,
-                20,
-                30,
-                40,
-                50
-              ],
-              "note": "Reduces fall damage."
+              "note": "Passive fall-damage reduction.",
+              "first_pass_points": 50,
+              "target_points": 50
+            }
+          ]
+        },
+        {
+          "id": "fishing",
+          "label": "Fishing",
+          "purpose": "fishing",
+          "optional": true,
+          "note": "Fishing-only Champion Bar options; slot them only when deliberately fishing.",
+          "nodes": [
+            {
+              "id": "reel_technique",
+              "note": "Reduces the time for a fish to bite.",
+              "first_pass_points": 50,
+              "target_points": 50
+            },
+            {
+              "id": "anglers_instincts",
+              "note": "Improves the chance to catch higher-quality fish.",
+              "first_pass_points": 25,
+              "target_points": 25
             }
           ]
         },
         {
           "id": "economy_and_crime",
           "label": "Economy & crime",
-          "purpose": "gold / legerdemain",
+          "purpose": "repair savings / legerdemain",
           "optional": true,
-          "note": "Personal utility branch; a thief or economy variant can replace the normal quality-of-life route with this.",
+          "note": "Secondary personal utility after the broad movement, gold, consumable, and loot passives.",
           "nodes": [
             {
               "id": "professional_upkeep",
-              "name": "Professional Upkeep",
-              "max_points": 50,
-              "slottable": false,
-              "note": "Reduces armor-repair costs."
+              "note": "Passive armor-repair cost reduction.",
+              "first_pass_points": 50,
+              "target_points": 50
             },
             {
               "id": "infamous",
-              "name": "Infamous",
-              "max_points": 25,
-              "slottable": false,
-              "jump_points": [
-                25
-              ],
-              "note": "Increases the value of fenced items."
+              "note": "Increases the value of fenced items; only relevant when actively doing crime/Legerdemain.",
+              "first_pass_points": 25,
+              "target_points": 25
             },
             {
               "id": "out_of_sight",
-              "name": "Out of Sight",
-              "max_points": 30,
-              "slottable": false,
-              "jump_points": [
-                10,
-                20,
-                30
-              ],
-              "note": "Reduces detection radius while Sneaking."
+              "note": "Reduces detection radius while Sneaking.",
+              "first_pass_points": 30,
+              "target_points": 30
             }
           ]
         }
       ],
       "final_slots": [
-        "steeds_blessing",
-        "rationer",
-        "treasure_hunter"
+        "steeds_blessing"
+      ],
+      "final_slots_note": "Craft does not affect combat. Steed’s Blessing is the only universal default slot in the bundled builds; the other three Craft bar slots are intentionally left to personal activity. Rationer, Liquid Efficiency, Treasure Hunter, Gilded Fingers, and many other Update 50 utility stars are passive and should not be placed on the Champion Bar.",
+      "notes": [
+        "Generic bundled-build priority: Steed’s Blessing first for universal movement quality of life, then broad passive economy/consumable value.",
+        "Required connector milestones for Rationer, Liquid Efficiency, and Treasure Hunter are inserted automatically from the canonical Champion Point catalog.",
+        "Do not copy character-specific Craft priorities blindly; a dedicated crafter, fisher, thief, or gold-farming character should use the optional branches that match the activity."
       ]
     }
   },
@@ -3633,7 +3478,8 @@
     "Dark Elf is the flexible damage baseline; Nord remains the defensive hard-solo alternative.",
     "Use Wild Guardian on the front bar and Northern Storm on the back for the solo/duo baseline. Double-bar the bear only for a dedicated group-DPS configuration.",
     "Scribe Wield Soul as Frost / Druid’s Resurgence / Resolve; Traveling Knife as Poison / Assassin’s Misery / Force; and Ulfsild’s Contingency as Frost / Lingering Torment / Resolve.",
-    "ATTB only treats Medicinal Use as a combat-required crafting passive. Spend the rest of your crafting skill points according to the professions you actually want to develop."
+    "ATTB only treats Medicinal Use as a combat-required crafting passive. Spend the rest of your crafting skill points according to the professions you actually want to develop.",
+    "Champion Points in ATTB 3.1.0 are unlock-aware: follow the next-spend route instead of maxing connector stars before moving onward; come back for later targets after the first-pass route is established."
   ],
   "variants": [
     {
@@ -3705,7 +3551,8 @@
   },
   "format_notes": [
     "Schema 4: flexible PvE progression, explicit hotbars and ultimates, complete loadouts, structured rotations, individual equipment slots, and acquisition-aware set groups.",
-    "Schema 4 supports metadata, class-line configurations, Scribing recipes, multiple loadouts, variants, quickslots, transformations, companions, performance notes, and namespaced extensions."
+    "Schema 4 supports metadata, class-line configurations, Scribing recipes, multiple loadouts, variants, quickslots, transformations, companions, performance notes, and namespaced extensions.",
+    "2026-08-20 bundled-build audit: Champion Point plans were rebuilt for ATTB 3.1.0 catalog-backed, unlock-aware routing; every default slottable now lives on the automatic route, optional branches remain opt-in, and Craft reflects current Update 50 passive/slottable classifications."
   ],
   "metadata": {
     "roles": [
@@ -3860,21 +3707,21 @@
       "title": "Hyperioxes: Magicka Warden Solo Build (Update 50)",
       "url": "https://hyperioxes.com/eso/solo/magicka-warden-build",
       "author": "Hyperioxes",
-      "accessed": "2026-08-07",
+      "accessed": "2026-08-20",
       "notes": "Current pure-class solo reference used to cross-check Update 50 skill direction, survivability, gear direction, Champion Points, and practical gameplay. ATTB authors its own progression and flexible PvE presentation."
     },
     {
       "title": "ESO Update 50 Live Patch Notes: All Platforms",
       "url": "https://forums.elderscrollsonline.com/en/discussion/693682/update-50-live-patch-notes-all-platforms",
       "author": "ZeniMax Online Studios",
-      "accessed": "2026-08-07",
+      "accessed": "2026-08-20",
       "notes": "Official game-version and system reference for Update 50."
     },
     {
       "title": "Class Mastery - The Elder Scrolls Online",
       "url": "https://help.elderscrollsonline.com/app/answers/detail/a_id/74901/",
       "author": "ZeniMax Online Studios",
-      "accessed": "2026-08-07",
+      "accessed": "2026-08-20",
       "notes": "Official Class Mastery unlock, availability, point, and respec rules."
     },
     {
@@ -3883,9 +3730,25 @@
       "author": "Hyperioxes",
       "accessed": "2026-08-07",
       "notes": "Current group-DPS cross-check used alongside the solo reference to distinguish personal-damage choices from group-support alternatives."
+    },
+    {
+      "title": "ESO Decoded - Champion Points (Update 50 datamined game data)",
+      "url": "https://esodecoded.com/champion-points",
+      "author": "ESO Decoded / UESP esolog data",
+      "accessed": "2026-08-20",
+      "notes": "Datamined Update 50 CP values used to audit max points, passive/slottable classifications, and the bundled-build CP plans against the canonical ATTB catalog."
     }
   ],
-  "extensions": {},
+  "extensions": {
+    "attb_bundle_audit": {
+      "reviewed_for_app_version": "3.1.0",
+      "reviewed_at": "2026-08-20",
+      "game_version": "Update 50",
+      "cp_model": "catalog-backed unlock-aware first-pass routing",
+      "cp_audit": "default final slottables moved onto automatic routes; optional alternatives remain opt-in; Craft updated for U50 passive/slottable classifications",
+      "skill_bar_audit": "Current U50 base bars rechecked; no material baseline bar change required in this pass."
+    }
+  },
   "default_loadout_id": "flexible-pve",
   "loadouts": [
     {

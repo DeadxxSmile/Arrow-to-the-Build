@@ -74,7 +74,11 @@ test('companion build data is wired through both workspaces, persistence, docs, 
   assert.equal(companion.properties.skills.uniqueItems, true)
 
   const guide = read('docs/reference/ATTB_AI_BUILD_JSON_AUTHORING_GUIDE.md')
-  assert.match(guide, /Guide revision:\*\* 3\.0/)
+  const appVersion = json('package.json').version
+  const guideRevision = appVersion.split('.').slice(0, 2).join('.')
+  const escapedGuideRevision = guideRevision.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  assert.match(guide, new RegExp(`Guide revision:\\*\\* ${escapedGuideRevision}(?:\\b|\\s|-)`))
+  assert.match(guide, new RegExp(`Current baseline when this guide was revised:\\*\\* ATTB ${appVersion.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`))
   assert.match(guide, /eso-companions\.json/)
   assert.match(guide, /separate from player skill/i)
 })

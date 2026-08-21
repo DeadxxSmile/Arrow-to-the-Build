@@ -1,6 +1,6 @@
 # Updating ATTB for ESO game patches
 
-> **Current app release:** ATTB 3.0.0. Use this workflow for post-v3 game-patch maintenance.
+> **Current app release:** ATTB 3.1.0. Use this workflow for post-v3 game-patch maintenance.
 
 ATTB is built so a new ESO update does not require touching React or Electron. Almost everything a
 patch changes lives in three data layers:
@@ -111,7 +111,7 @@ The combat-companion roster and curated presets live in `resources/data/eso-comp
 
 ## Scenario: CP nodes or paths changed
 
-ATTB 3.0.1 has a canonical Champion Point catalog at `resources/data/eso-cp-catalog.json`. CP facts no longer live independently inside every build. A game-patch CP audit should update the catalog first, then review affected build **strategy**.
+ATTB 3.1.0 has a canonical Champion Point catalog at `resources/data/eso-cp-catalog.json`. CP facts no longer live independently inside every build. A game-patch CP audit should update the catalog first, then review affected build **strategy**.
 
 Audit the catalog for:
 

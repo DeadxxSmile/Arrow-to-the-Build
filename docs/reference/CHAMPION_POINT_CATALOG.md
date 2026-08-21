@@ -1,6 +1,6 @@
-# Champion Point Catalog - ATTB 3.0.1 development
+# Champion Point Catalog - ATTB 3.1.0
 
-ATTB's canonical Champion Point data lives in `resources/data/eso-cp-catalog.json`. The public 3.0.0 release is the baseline this 3.0.1 development change builds from.
+ATTB 3.1.0's canonical Champion Point data lives in `resources/data/eso-cp-catalog.json`. This release promotes the catalog-backed, unlock-aware Champion Point system to the public release line.
 
 The catalog separates ESO-owned facts from build-owned strategy. Each star records a stable ATTB ID, ESO skill ID, tree, true maximum, passive/slottable state, stage thresholds, unlock milestone, graph/link verification metadata, and a schematic map coordinate.
 

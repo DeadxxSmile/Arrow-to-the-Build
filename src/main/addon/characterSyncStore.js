@@ -17,6 +17,12 @@ function createCharacterSyncStore(deps) {
 
   function valueWithOverride(overrides, pathName, live) { return overrides.has(pathName) ? overrides.get(pathName) : live }
 
+  function normalizedStoredSnapshot(row) {
+    if (!row) return null
+    const parsed = parseJson(row.snapshot_json, null)
+    return parsed ? normalizeSnapshot(row.character_key, parsed, parsed) : null
+  }
+
   function applySnapshotToCharacter(characterId, snapshot = null) {
     const db = dbModule.getDb()
     const link = db.prepare(`SELECT l.character_key,s.snapshot_json FROM character_addon_links l JOIN addon_character_snapshots s ON s.character_key=l.character_key WHERE l.character_id=?`).get(characterId)
@@ -100,7 +106,7 @@ function createCharacterSyncStore(deps) {
       WHERE l.character_id IS NULL AND s.profile_root=? AND s.discovery_status IN ('new','prompted') ORDER BY s.captured_at DESC,s.character_name`).all(profileRoot)
       .filter(row => includePrompted || row.discovery_status === 'new')
       .map(row => {
-        const snapshot = parseJson(row.snapshot_json, null)
+        const snapshot = normalizedStoredSnapshot(row)
         const live = snapshot ? liveCharacterState(snapshot) : null
         return {
           character_key: row.character_key,
@@ -178,7 +184,7 @@ function createCharacterSyncStore(deps) {
     }
     const existingLink = db.prepare('SELECT character_id FROM character_addon_links WHERE character_key=?').get(characterKey)
     if (existingLink) return { id: existingLink.character_id, linked: true, existing: true, character_key: characterKey }
-    const snapshot = parseJson(row.snapshot_json, null)
+    const snapshot = normalizedStoredSnapshot(row)
     if (!snapshot) throw new Error('The saved addon snapshot could not be read.')
     let characterId = String(options.link_character_id || '')
     let createdDraft = null
@@ -260,7 +266,7 @@ function createCharacterSyncStore(deps) {
       s.class_name,s.race_name,s.alliance_name,s.level AS live_level,s.champion_points,s.captured_at,s.addon_version,s.snapshot_schema,s.snapshot_json,s.profile_root
       FROM character_addon_links l JOIN addon_character_snapshots s ON s.character_key=l.character_key WHERE l.character_id=?`).get(characterId)
     if (!row) return { linked: false, overrides: [] }
-    const snapshot = parseJson(row.snapshot_json, null)
+    const snapshot = normalizedStoredSnapshot(row)
     const live = snapshot ? liveCharacterState(snapshot) : null
     return {
       linked: true,
