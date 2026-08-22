@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { cpStarsForTree, getCpStar, getCpStarByEsoId } from '../utils/cpCatalog.mjs'
+import { cpLayoutForTree, cpStarsForTree, getCpLayout, getCpStar } from '../utils/cpCatalog.mjs'
 
 const LABELS = { craft: 'Craft', warfare: 'Warfare', fitness: 'Fitness' }
 const MAIN_FRAME = { x: 72, y: 72, width: 856, height: 536 }
@@ -66,9 +66,11 @@ function NodeGlyph({ star, point, routeIds, targetIds, focusId, nextId, observed
   </g>
 }
 
-export default function CPConstellationMap({ tree, route = [], focusId = null, nextId = null, observedPoints = null, liveStars = [], compact = false }) {
+export default function CPConstellationMap({ tree, route = [], focusId = null, nextId = null, observedPoints = null, compact = false }) {
   const stars = useMemo(() => cpStarsForTree(tree), [tree])
   const byId = useMemo(() => new Map(stars.map(star => [star.id, star])), [stars])
+  const layoutRows = useMemo(() => cpLayoutForTree(tree), [tree])
+  const layoutById = useMemo(() => new Map(layoutRows.map(row => [row.id, row])), [layoutRows])
   const svgRef = useRef(null)
   const mapRef = useRef(null)
   const dragRef = useRef(null)
@@ -76,18 +78,17 @@ export default function CPConstellationMap({ tree, route = [], focusId = null, n
   const [dragging, setDragging] = useState(false)
   const [tooltip, setTooltip] = useState(null)
 
-  const liveById = useMemo(() => {
-    const map = new Map()
-    for (const row of liveStars || []) {
-      const star = getCpStarByEsoId(row?.skillId)
-      if (star?.tree === tree) map.set(star.id, { ...row, id: star.id })
-    }
-    return map
-  }, [liveStars, tree])
+  // The constellation belongs to ESO, not to a character. ATTB ships the
+  // verified Update 50 geometry as canonical offline data so this map is exact
+  // even when the ESO addon has never been installed. Sync only supplies CURRENT
+  // investment/slotted state; it is never required to place nodes.
+  const mainIdFor = id => {
+    const row = layoutById.get(id) || getCpLayout(id)
+    return row?.cluster_root_id || id
+  }
 
-  // In the Character Tracker workspace, the map is a locator for one selected
-  // star. Only show the documented route up to that star so later build targets
-  // do not look like points the player already owns or needs to buy immediately.
+  // The map is a locator for one selected star. Only show the documented route
+  // up to that star so later build targets do not look already owned or immediate.
   const focusedRoute = useMemo(() => {
     if (!focusId) return route
     const index = route.findIndex(entry => (entry?.node?.id || entry?.id) === focusId)
@@ -104,81 +105,37 @@ export default function CPConstellationMap({ tree, route = [], focusId = null, n
     return new Set(route.filter(entry => entry?.authored !== false && !entry?.prerequisite).map(entry => entry?.node?.id || entry?.id).filter(Boolean))
   }, [route, focusedRoute, focusId])
 
-  // Addon graph schema 2 preserves ESO's two coordinate spaces: the outer
-  // constellation and each nested cluster. Older snapshots cannot distinguish
-  // those spaces, so they intentionally use the catalog fallback instead of
-  // pretending their mixed coordinates reproduce the in-game tree.
-  const hasEsoGeometry = [...liveById.values()].filter(row => finite(row?.constellationX) && finite(row?.constellationY)).length >= 3
-  const liveClusterRootByEso = useMemo(() => {
-    const map = new Map()
-    for (const row of liveById.values()) if (Number(row?.skillId) > 0) map.set(Number(row.skillId), Number(row?.clusterRootSkillId) || 0)
-    return map
-  }, [liveById])
-
-  const canonicalForMainEso = esoId => {
-    const rootEso = liveClusterRootByEso.get(Number(esoId)) || 0
-    return getCpStarByEsoId(rootEso || Number(esoId))
-  }
-  const mainIdFor = id => {
-    if (!hasEsoGeometry) return id
-    const row = liveById.get(id)
-    if (!row) return id
-    return canonicalForMainEso(row.skillId)?.id || id
-  }
-
-  const mainRows = hasEsoGeometry
-    ? [...liveById.values()].filter(row => !Number(row.clusterRootSkillId) || row.clusterRoot === true)
-    : stars.map(star => ({ id: star.id, map: star.map }))
-  const mainPositions = fitPoints(
-    mainRows,
-    row => hasEsoGeometry ? { x: row.constellationX, y: row.constellationY } : { x: row.map?.x, y: row.map?.y },
-    MAIN_FRAME,
-    hasEsoGeometry // ESO normalized coordinates are +Y up; SVG is +Y down.
-  )
-
-  const mainRouteIds = useMemo(() => new Set([...routeIds].map(mainIdFor)), [routeIds, hasEsoGeometry, liveById])
-  const mainTargetIds = useMemo(() => new Set([...targetIds].map(mainIdFor)), [targetIds, hasEsoGeometry, liveById])
+  // Nested ESO clusters stay collapsed to their outer portal on this locator.
+  // Exact cluster membership is bundled beside the canonical CP catalog.
+  const mainRows = layoutRows.filter(row => !row.cluster_root_id || row.cluster_root === true)
+  const mainPositions = fitPoints(mainRows, row => ({ x: row.x, y: row.y }), MAIN_FRAME, true)
+  const mainRouteIds = useMemo(() => new Set([...routeIds].map(mainIdFor)), [routeIds, layoutById])
+  const mainTargetIds = useMemo(() => new Set([...targetIds].map(mainIdFor)), [targetIds, layoutById])
   const mainFocusId = focusId ? mainIdFor(focusId) : null
   const mainNextId = nextId ? mainIdFor(nextId) : null
 
   useEffect(() => {
     setViewBox(BASE_VIEW)
     setTooltip(null)
-  }, [tree, focusId, hasEsoGeometry])
+  }, [tree, focusId])
 
+  // Topology remains canonical catalog data. Map nested cluster members back to
+  // their visible portal before drawing the outer constellation graph.
   const edges = []
   const seen = new Set()
-  if (hasEsoGeometry) {
-    for (const row of mainRows) {
-      const from = canonicalForMainEso(row.skillId)
-      if (!from || !byId.has(from.id)) continue
-      const linkedSkillIds = Array.isArray(row?.linkedSkillIds) ? row.linkedSkillIds : []
-      for (const linkedSkillId of linkedSkillIds) {
-        const to = canonicalForMainEso(linkedSkillId)
-        if (!to || to.tree !== tree || !byId.has(to.id) || to.id === from.id) continue
-        const key = lineKey(from.id, to.id)
-        if (seen.has(key)) continue
-        seen.add(key)
-        edges.push([from, to, mainRouteIds.has(from.id) && mainRouteIds.has(to.id)])
-      }
-    }
-  } else {
-    for (const star of stars) for (const linkedId of star.links || []) {
-      if (!star.links_verified || !byId.has(linkedId)) continue
-      const key = lineKey(star.id, linkedId)
-      if (seen.has(key)) continue
-      seen.add(key)
-      edges.push([star, byId.get(linkedId), routeIds.has(star.id) && routeIds.has(linkedId)])
-    }
+  for (const star of stars) for (const linkedId of star.links || []) {
+    if (!star.links_verified || !byId.has(linkedId)) continue
+    const fromId = mainIdFor(star.id)
+    const toId = mainIdFor(linkedId)
+    if (!fromId || !toId || fromId === toId || !byId.has(fromId) || !byId.has(toId)) continue
+    const key = lineKey(fromId, toId)
+    if (seen.has(key)) continue
+    seen.add(key)
+    edges.push([byId.get(fromId), byId.get(toId), mainRouteIds.has(fromId) && mainRouteIds.has(toId)])
   }
 
-  // Nested ESO clusters are represented by their outer portal only. The locator's
-  // job is to tell the player which visible constellation node to open, not to
-  // reproduce ESO's second-level cluster screen. Only the focused route is listed
-  // on the portal so future recommendations stay visually quiet.
   const portalDetails = useMemo(() => {
     const result = new Map()
-    if (!hasEsoGeometry) return result
     for (const id of routeIds) {
       const mainId = mainIdFor(id)
       if (!mainId || mainId === id) continue
@@ -188,7 +145,7 @@ export default function CPConstellationMap({ tree, route = [], focusId = null, n
       result.get(mainId).add(star.name)
     }
     return new Map([...result].map(([id, names]) => [id, `Route inside: ${[...names].join(', ')}`]))
-  }, [routeIds, hasEsoGeometry, liveById])
+  }, [routeIds, layoutById])
 
   const zoom = BASE_VIEW.width / viewBox.width
   const changeZoom = (factor, anchor = null) => {
@@ -276,10 +233,12 @@ export default function CPConstellationMap({ tree, route = [], focusId = null, n
     setTooltip({ name, left, top })
   }
 
-  const aria = `${LABELS[tree] || tree} Champion Point map. ${hasEsoGeometry ? 'Layout follows ESO node coordinates from the synced addon snapshot.' : 'Showing an approximate offline fallback layout.'} ${focusId ? `Only the route through ${getCpStar(focusId)?.name || focusId} is emphasized; later build targets stay dim.` : ''}`
+  const aria = `${LABELS[tree] || tree} Champion Point map. Layout follows the canonical Update 50 ESO constellation bundled with ATTB and works without addon sync. ${focusId ? `Only the route through ${getCpStar(focusId)?.name || focusId} is emphasized; later build targets stay dim.` : ''}`
 
-  return <div ref={mapRef} className={`cp-constellation-map ${compact ? 'compact' : 'full'} ${hasEsoGeometry ? 'eso-layout' : 'fallback-layout'} ${focusId ? 'focused-route' : 'full-route'} ${dragging ? 'dragging' : ''}`}>
-    <div className={`cp-map-source ${hasEsoGeometry ? 'live' : 'fallback'}`}>{hasEsoGeometry ? 'ESO layout · live sync' : 'Approximate fallback · sync addon 1.1.3+'}</div>
+  const sourceLabel = 'ESO layout · Update 50'
+
+  return <div ref={mapRef} className={`cp-constellation-map ${compact ? 'compact' : 'full'} eso-layout ${focusId ? 'focused-route' : 'full-route'} ${dragging ? 'dragging' : ''}`}>
+    <div className="cp-map-source live">{sourceLabel}</div>
     {!compact && <div className="cp-map-controls" aria-label="Constellation map zoom controls">
       <button type="button" onClick={() => changeZoom(1 / 1.2)} aria-label="Zoom out">−</button>
       <button type="button" onClick={() => { setViewBox(BASE_VIEW); setTooltip(null) }} aria-label="Fit constellation to view">Fit</button>
@@ -305,9 +264,9 @@ export default function CPConstellationMap({ tree, route = [], focusId = null, n
         })}
       </g>
       <g className="cp-map-nodes">
-        {(hasEsoGeometry ? mainRows.map(row => canonicalForMainEso(row.skillId)).filter(Boolean) : stars).filter((star, index, rows) => rows.findIndex(row => row.id === star.id) === index).map(star => {
-          const row = liveById.get(star.id)
-          const portal = !!(hasEsoGeometry && row?.clusterRoot === true)
+        {mainRows.map(row => byId.get(row.id)).filter(Boolean).map(star => {
+          const row = layoutById.get(star.id)
+          const portal = row?.cluster_root === true
           const label = star.id === mainFocusId || star.id === mainNextId
           return <NodeGlyph key={star.id} star={star} point={mainPositions.get(star.id)} routeIds={mainRouteIds} targetIds={mainTargetIds} focusId={mainFocusId} nextId={mainNextId} observedPoints={observedPoints} portal={portal} label={label} portalDetail={portalDetails.get(star.id) || ''} onHover={handleHover} />
         })}

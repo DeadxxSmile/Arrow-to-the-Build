@@ -16,7 +16,7 @@ function publicVersion() {
 }
 
 function jsonLdBlocks(html) {
-  return [...html.matchAll(/<script\s+type="application\/ld\+json">([\s\S]*?)<\/script>/gi)]
+  return [...html.matchAll(/<script\s+type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/gi)]
     .map(match => JSON.parse(match[1]))
 }
 
@@ -67,14 +67,18 @@ test('web manifest is valid and every declared icon exists', () => {
   }
 })
 
-test('structured data parses and follows the public release rather than development version', () => {
-  const blocks = jsonLdBlocks(read('docs/index.html'))
+test('structured data stays release-agnostic in source and receives the live GitHub version at runtime', () => {
+  const html = read('docs/index.html')
+  const script = read('docs/app.js')
+  const blocks = jsonLdBlocks(html)
   assert.ok(blocks.length >= 2, 'expected SoftwareApplication and WebSite JSON-LD blocks')
   const software = blocks.find(block => block['@type'] === 'SoftwareApplication')
   const website = blocks.find(block => block['@type'] === 'WebSite')
   assert.ok(software, 'SoftwareApplication JSON-LD is missing')
   assert.ok(website, 'WebSite JSON-LD is missing')
-  assert.equal(software.softwareVersion, publicVersion())
+  assert.equal(software.softwareVersion, undefined, 'source JSON-LD should not hard-code a release number that can go stale')
+  assert.match(html, /id="software-jsonld"/)
+  assert.match(script, /jsonLd\.softwareVersion\s*=\s*release\.version/)
   assert.equal(software.url, 'https://arrowtothebuild.com/')
   assert.equal(website.url, 'https://arrowtothebuild.com/')
   assert.equal(software.offers?.price, '0')

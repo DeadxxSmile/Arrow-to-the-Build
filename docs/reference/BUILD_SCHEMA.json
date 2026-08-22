@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://deadxxsmile.github.io/Arrow-to-the-Build/reference/BUILD_SCHEMA.json",
   "title": "Arrow to the Build JSON (schema 4)",
-  "description": "Stable public ATTB build schema. Schema 4 adds build metadata, native/subclassed class-line configuration, Class Mastery, Scribing recipes, reusable loadouts, requirements, transformations, companions, quickslots, performance targets, research sources, and namespaced extension data while preserving the schema-3 progression, gear, Champion Point, and variant model. ATTB 3.1.0 documents an optional progression_scope that declares whether a build starts from a new character, Level 50, or CP160+ without breaking older Schema 4 files.",
+  "description": "Stable public ATTB build schema. Schema 4 adds build metadata, native/subclassed class-line configuration, Class Mastery, Scribing recipes, reusable loadouts, requirements, transformations, companions, quickslots, performance targets, research sources, and namespaced extension data while preserving the schema-3 progression, gear, Champion Point, and variant model. ATTB 3.1.1 documents an optional progression_scope that declares whether a build starts from a new character, Level 50, or CP160+ without breaking older Schema 4 files.",
   "type": "object",
   "required": [
     "schema_version",

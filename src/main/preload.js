@@ -36,6 +36,7 @@ contextBridge.exposeInMainWorld('api', {
     exportById: id => ipcRenderer.invoke('builds:exportById', id),
     exportTemplate: () => ipcRenderer.invoke('builds:exportTemplate'),
     getAuthoringGuide: () => ipcRenderer.invoke('builds:getAuthoringGuide'),
+    exportAiAuthoringGuide: () => ipcRenderer.invoke('builds:exportAiAuthoringGuide'),
     getStorageInfo: () => ipcRenderer.invoke('builds:getStorageInfo'),
     chooseStorageDirectory: () => ipcRenderer.invoke('builds:chooseStorageDirectory'),
     restoreDefaultStorageDirectory: () => ipcRenderer.invoke('builds:restoreDefaultStorageDirectory'),

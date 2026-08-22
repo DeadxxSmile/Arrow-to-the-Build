@@ -54,7 +54,7 @@ test('runtime files and offline reference data exist and are included in app.asa
     'src/main/themeService.js',
     'src/shared/variantLogic.cjs', 'src/shared/variantLogic.mjs',
     'src/shared/progressionScope.cjs', 'src/shared/progressionScope.mjs',
-    'resources/data/eso-skill-catalog.json', 'resources/data/eso-cp-catalog.json', 'resources/data/eso-companions.json',
+    'resources/data/eso-skill-catalog.json', 'resources/data/eso-cp-catalog.json', 'resources/data/eso-cp-layout.json', 'resources/data/eso-companions.json',
     'resources/data/build-editor-guidance.json', 'resources/data/theme-schema.json', 'resources/art/ATTB.ico',
     'resources/themes/builtin-themes.json', 'resources/themes/ATTB_THEME_TEMPLATE.json',
     'docs/reference/BUILD_QUICK_START.md', 'docs/reference/BUILD_EDITOR_GUIDE.md',

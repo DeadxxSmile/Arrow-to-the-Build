@@ -4,9 +4,11 @@
 
 **Audience:** AI assistants and humans authoring ATTB builds. No prior ATTB knowledge should be assumed.
 
-**Guide revision:** 3.1 - updated for ATTB 3.1.0, Schema 4 progression scope, current companion authoring, retirement behavior, and stricter actionable-progression guidance.
+> **Exporting this guide from ATTB:** Open **Help & Tools → ATTB Guides → AI Build Authoring** and choose **Save AI Guide (.md)**. Attach the saved Markdown file to the AI assistant you want to create the build.
 
-**Current baseline when this guide was revised:** ATTB 3.1.0, public Build Schema 4. Player-skill IDs still follow the game version named by the current bundled `eso-skill-catalog.json`; companion presets use the separately maintained current companion catalog.
+**Guide revision:** 3.1 - updated for ATTB 3.1.1, Schema 4 progression scope, current companion authoring, retirement behavior, and stricter actionable-progression guidance.
+
+**Current baseline when this guide was revised:** ATTB 3.1.1, public Build Schema 4. Player-skill IDs still follow the game version named by the current bundled `eso-skill-catalog.json`; companion presets use the separately maintained current companion catalog.
 
 **Document goal:** By the time an unfamiliar AI finishes the **START HERE** section, it should understand what ATTB is, how a build file relates to a character, what Schema 4 is trying to represent, which questions it must ask, where exact IDs come from, how sections cross-reference each other, and what must be validated before a JSON file is delivered.
 
@@ -47,7 +49,7 @@ Do not "correct" a target build merely because an attached character backup does
 
 ## Build starting point is part of the target
 
-ATTB 3.1.0 can distinguish a full leveling guide from a rebuild for an existing character. Before authoring progression, decide the intended starting point and write the optional Schema 4 `progression_scope`:
+ATTB 3.1.1 can distinguish a full leveling guide from a rebuild for an existing character. Before authoring progression, decide the intended starting point and write the optional Schema 4 `progression_scope`:
 
 ```json
 "progression_scope": {
@@ -86,11 +88,11 @@ A complete build can describe:
 - consumables;
 - Scribing recipes;
 - loadouts and variants;
-- structured companion setup recommendations, including ATTB 3.1.0 companion preset identities;
+- structured companion setup recommendations, including ATTB 3.1.1 companion preset identities;
 - performance/responsibility notes;
 - human-readable build notes.
 
-For ATTB 3.1.0, new builds still use the stable **Schema 4** public build format.
+For ATTB 3.1.1, new builds still use the stable **Schema 4** public build format.
 
 Think of Schema 4 as a structured build guide plus a dependency graph. Many fields reference IDs defined elsewhere in the same build or in ATTB's bundled ESO skill catalog. A file can therefore be valid JSON and still be a bad or warning-filled ATTB build if those references do not line up.
 
@@ -163,7 +165,7 @@ That is why incomplete cross-references are harmful: they break the progression 
 | **Schema 4** | Current public ATTB build-file contract for the baseline covered by this guide. |
 | **Build `id`** | Permanent identifier for the build itself. Stable across normal revisions. |
 | **Display `name`** | Human-readable build name. Can change without changing identity. |
-| **Catalog** | ATTB's canonical player-skill list: ESO skill lines, skills, morphs, passives, ultimates, and stable IDs. ATTB 3.1.0 also ships a separate companion preset catalog. |
+| **Catalog** | ATTB's canonical player-skill list: ESO skill lines, skills, morphs, passives, ultimates, and stable IDs. ATTB 3.1.1 also ships a separate companion preset catalog. |
 | **`catalog_skill_id`** | Stable ATTB ID for an ordinary ESO player skill/passive/ultimate/Grimoire. Never guess it. |
 | **Unlock row ID** | `unlock_order[].id`, a build-local persistent row ID. This is what `requires[]` references. |
 | **Relevant line** | A skill line that this build tracks and uses. |
@@ -385,7 +387,7 @@ Use this order of authority:
 3. Current exported ATTB template/build files I provide.
 4. Only after those, prior conversation context or memory.
 
-For ATTB 3.1.0 / Schema 4, inspect the current versions of these files when available:
+For ATTB 3.1.1 / Schema 4, inspect the current versions of these files when available:
 
 - `docs/reference/BUILD_QUICK_START.md`
 - `docs/reference/BUILD_JSON_GUIDE.md`
@@ -658,7 +660,7 @@ This separation is mandatory.
 
 # 8. Required Schema 4 foundation
 
-For the current ATTB 3.1.0 Schema 4 baseline, a complete build contains usable versions of:
+For the current ATTB 3.1.1 Schema 4 baseline, a complete build contains usable versions of:
 
 - `schema_version`
 - `id`
@@ -684,7 +686,7 @@ Current metadata requires at least:
 - `bar_count`
 - `class_style`
 
-`progression_scope` is optional for backwards compatibility, but **new ATTB 3.1.0 authoring should set it deliberately** when the build is for an existing Level 50 / CP160+ character.
+`progression_scope` is optional for backwards compatibility, but **new ATTB 3.1.1 authoring should set it deliberately** when the build is for an existing Level 50 / CP160+ character.
 
 Use optional sections when they materially improve the build:
 
@@ -1139,7 +1141,7 @@ Do not make a beautifully written final bar that requires skills the progression
 
 ### Catalog unlock gates: use them, do not re-research them by hand
 
-ATTB 3.1.0's bundled Update 50 player catalog carries a complete audited unlock model:
+ATTB 3.1.1's bundled Update 50 player catalog carries a complete audited unlock model:
 
 - every ordinary Skill Point passive has one exact per-purchase line-rank gate in `unlock_ranks`;
 - `required_rank` is the first passive point's gate or the base skill family's line-rank gate;
@@ -1442,7 +1444,7 @@ If I request low-friction gear, do not bury the build behind trial sets.
 
 Every complete current Schema 4 build needs `craft`, `warfare`, and `fitness`.
 
-ATTB 3.1.0 separates **ESO facts** from **build strategy**. Do not author a CP star's name, true maximum, stage thresholds, tree, map position, or passive/slottable state from memory or a guide. Those belong to the current bundled `resources/data/eso-cp-catalog.json`.
+ATTB 3.1.1 separates **ESO facts** from **build strategy**. Do not author a CP star's name, true maximum, stage thresholds, tree, map position, or passive/slottable state from memory or a guide. Those belong to the current bundled `resources/data/eso-cp-catalog.json`.
 
 For each authored target, use:
 
@@ -1454,7 +1456,7 @@ For each authored target, use:
 
 The important distinction is **route investment versus star maximum**. If Hero's Vigor truly maxes at 20 but only 10 points are needed to open the next connection, author a 10-point first pass and a 20-point eventual target when appropriate. Never redefine `max_points` as 10.
 
-ATTB expands non-optional priorities through the verified CP graph, inserts required connectors, spends their unlock milestones first, then returns for later target completion. Optional branches stay visible and receive no automatic spend. Addon 1.1.3+ can supply ESO's current live graph and coordinates; when a fallback route is not verified, ATTB warns instead of inventing prerequisites.
+ATTB expands non-optional priorities through the verified CP graph, inserts required connectors, spends their unlock milestones first, then returns for later target completion. Optional branches stay visible and receive no automatic spend. Exact Update 50 constellation geometry is app-owned in `resources/data/eso-cp-layout.json` and does not depend on addon sync. Addon 1.1.3+ may still supply ESO's current live graph for routing verification; when a catalog route is not verified, ATTB warns instead of inventing prerequisites.
 
 For each tree:
 
@@ -1471,7 +1473,7 @@ Do not spend every imaginable CP point merely because the user has high CP. Buil
 
 # 19. Scribing
 
-Scribing must be researched as a **recipe**, not merely recognized as a Grimoire name. In the ATTB 3.1.0 / ESO Update 50 baseline, Scribing is a free base-game system. A character can begin the Scribing introduction at Level 30 or after gaining access to the Champion System. Access and ownership are still character-specific enough that a build should not assume the target character already knows the required Grimoire or Scripts.
+Scribing must be researched as a **recipe**, not merely recognized as a Grimoire name. In the ATTB 3.1.1 / ESO Update 50 baseline, Scribing is a free base-game system. A character can begin the Scribing introduction at Level 30 or after gaining access to the Champion System. Access and ownership are still character-specific enough that a build should not assume the target character already knows the required Grimoire or Scripts.
 
 ## Understand the four recipe pieces
 
@@ -1578,11 +1580,11 @@ An override that looks reasonable by itself can still break the effective build.
 
 ---
 
-# 21. Companion section - ATTB 3.1.0
+# 21. Companion section - ATTB 3.1.1
 
-ATTB 3.1.0 treats companions as a first-class authoring surface rather than a small recommendation field. The app ships a current companion directory and **two editable starter presets per current combat companion**. A build can use one of those presets as a starting point or store a completely custom companion setup.
+ATTB 3.1.1 treats companions as a first-class authoring surface rather than a small recommendation field. The app ships a current companion directory and **two editable starter presets per current combat companion**. A build can use one of those presets as a starting point or store a completely custom companion setup.
 
-Companion data still lives in the root Schema 4 `companions` array. **Schema 4 is not being replaced merely because the UI got richer.** ATTB 3.1.0 keeps the documented companion object additive.
+Companion data still lives in the root Schema 4 `companions` array. **Schema 4 is not being replaced merely because the UI got richer.** ATTB 3.1.1 keeps the documented companion object additive.
 
 ## Companion source of truth
 
@@ -1596,7 +1598,7 @@ Use it to determine the supported companion IDs, current roster, ATTB starter pr
 
 The companion catalog is **not** the player skill catalog. Do not look for companion abilities in `eso-skill-catalog.json`, and do not invent `catalog_skill_id` values for them.
 
-## Recommended ATTB 3.1.0 companion object
+## Recommended ATTB 3.1.1 companion object
 
 A current companion setup may look like:
 
@@ -1655,7 +1657,7 @@ The example above teaches the shape only. **Use the actual current companion pre
 
 ## Character Tracker target vs build JSON
 
-ATTB 3.1.0 also lets the Character Tracker remember which preset the player intends to use beside a particular character. That selection is **character progression/preferences data**, not a reason to mutate the target build JSON automatically.
+ATTB 3.1.1 also lets the Character Tracker remember which preset the player intends to use beside a particular character. That selection is **character progression/preferences data**, not a reason to mutate the target build JSON automatically.
 
 Keep the same CURRENT-vs-TARGET mental model:
 
@@ -1757,7 +1759,7 @@ Run this entire checklist **before** giving me the file.
 ## B. Required sections
 
 - [ ] `metadata` is complete.
-- [ ] `progression_scope` is intentionally chosen for new ATTB 3.1.0 builds; if omitted, the legacy new-character default is truly intended.
+- [ ] `progression_scope` is intentionally chosen for new ATTB 3.1.1 builds; if omitted, the legacy new-character default is truly intended.
 - [ ] `class_configuration` is complete.
 - [ ] `defaults` is complete.
 - [ ] `relevant_lines` is non-empty.

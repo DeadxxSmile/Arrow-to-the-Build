@@ -3680,7 +3680,7 @@
     "Master Ritualist is intentionally omitted: it does not materially help this solo/duo damage baseline, so keep those skill points for higher-value combat or crafting passives.",
     "Medicinal Use is the only crafting passive treated as part of the combat baseline; other crafting trees are left to your character’s profession goals.",
     "ATTB only treats Medicinal Use as a combat-required crafting passive. Spend the rest of your crafting skill points according to the professions you actually want to develop.",
-    "Champion Points in ATTB 3.1.0 are unlock-aware: follow the next-spend route instead of maxing connector stars before moving onward; come back for later targets after the first-pass route is established.",
+    "Champion Points in ATTB 3.1.1 are unlock-aware: follow the next-spend route instead of maxing connector stars before moving onward; come back for later targets after the first-pass route is established.",
     "Update 50 base-bar refresh: use Soul Burst - Bleed / Lingering Torment / Resolve for the normal solo setup; Solar Barrage remains a full-damage or no-Scribing alternative."
   ],
   "variants": [
@@ -3811,7 +3811,7 @@
   "format_notes": [
     "Schema 4: flexible PvE progression, explicit hotbars and ultimates, complete loadouts, structured rotations, individual equipment slots, and acquisition-aware set groups.",
     "Schema 4 supports metadata, class-line configurations, Scribing recipes, multiple loadouts, variants, quickslots, transformations, companions, performance notes, and namespaced extensions.",
-    "2026-08-20 bundled-build audit: Champion Point plans were rebuilt for ATTB 3.1.0 catalog-backed, unlock-aware routing; every default slottable now lives on the automatic route, optional branches remain opt-in, and Craft reflects current Update 50 passive/slottable classifications."
+    "2026-08-20 bundled-build audit: Champion Point plans were rebuilt for ATTB 3.1.1 catalog-backed, unlock-aware routing; every default slottable now lives on the automatic route, optional branches remain opt-in, and Craft reflects current Update 50 passive/slottable classifications."
   ],
   "metadata": {
     "roles": [
@@ -3972,7 +3972,7 @@
   ],
   "extensions": {
     "attb_bundle_audit": {
-      "reviewed_for_app_version": "3.1.0",
+      "reviewed_for_app_version": "3.1.1",
       "reviewed_at": "2026-08-20",
       "game_version": "Update 50",
       "cp_model": "catalog-backed unlock-aware first-pass routing",

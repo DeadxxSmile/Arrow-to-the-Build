@@ -1,10 +1,13 @@
 import cpCatalogData from '../../../resources/data/eso-cp-catalog.json' with { type: 'json' }
+import cpLayoutData from '../../../resources/data/eso-cp-layout.json' with { type: 'json' }
 
 export const CP_CATALOG = cpCatalogData
+export const CP_LAYOUT = cpLayoutData
 export const CP_TREES = ['craft', 'warfare', 'fitness']
 
 export const cpStarMap = new Map((cpCatalogData.stars || []).map(star => [star.id, star]))
 export const cpStarByEsoId = new Map((cpCatalogData.stars || []).map(star => [Number(star.eso_skill_id), star]))
+export const cpLayoutMap = new Map((cpLayoutData.stars || []).map(row => [row.id, row]))
 
 export function getCpStar(id) {
   return cpStarMap.get(id) || null
@@ -16,6 +19,14 @@ export function getCpStarByEsoId(skillId) {
 
 export function cpStarsForTree(tree) {
   return (cpCatalogData.stars || []).filter(star => star.tree === tree)
+}
+
+export function getCpLayout(id) {
+  return cpLayoutMap.get(id) || null
+}
+
+export function cpLayoutForTree(tree) {
+  return (cpLayoutData.stars || []).filter(row => row.tree === tree)
 }
 
 export function cpTreeInfo(tree) {

@@ -1,6 +1,6 @@
 # ATTB Testing Guide
 
-Use this checklist for the current **ATTB 3.1.0** codebase. It replaces the historical per-milestone and pre-v3 checklists.
+Use this checklist for the current **ATTB 3.1.1** codebase. It replaces the historical per-milestone and pre-v3 checklists.
 
 ## Automated test policy
 
@@ -13,7 +13,7 @@ ATTB keeps automated tests focused on contracts that can break data, behavior, p
 - Avoid testing the same release contract in multiple files. Version, schema, and packaging ownership should each have one authoritative check.
 - A regression test should explain the bug class it protects, not freeze unrelated implementation details.
 
-The historical v2.1.3 test-suite audit reduced the suite from 335 to 278 tests while retaining the behavioral and data-safety coverage. ATTB 3.1.0 has since expanded the suite as new systems and regressions were added. See `TEST_SUITE_AUDIT_2_1_3.md` only for that historical cleanup record.
+The historical v2.1.3 test-suite audit reduced the suite from 335 to 278 tests while retaining the behavioral and data-safety coverage. ATTB 3.1.1 has since expanded the suite as new systems and regressions were added. See `TEST_SUITE_AUDIT_2_1_3.md` only for that historical cleanup record.
 
 ## Automated checks
 
@@ -124,7 +124,7 @@ npm start 2>&1 | Tee-Object -FilePath ".\attb-dev.log"
 
 ### Upgrade from addon 1.0.0
 
-- Create the old `<profile>\AddOns\ArrowToTheBuildBridge` folder with the exact ATTB 1.0.0 Sync Bridge manifest and create both old addon SavedVariables files. The cleanup originated in v2.1.3. On the first ATTB 3.1.0 launch, confirm it removes the verified bridge folder, removes the managed main addon folder, deletes both old SavedVariables files, and immediately reinstalls the bundled single addon.
+- Create the old `<profile>\AddOns\ArrowToTheBuildBridge` folder with the exact ATTB 1.0.0 Sync Bridge manifest and create both old addon SavedVariables files. The cleanup originated in v2.1.3. On the first ATTB 3.1.1 launch, confirm it removes the verified bridge folder, removes the managed main addon folder, deletes both old SavedVariables files, and immediately reinstalls the bundled single addon.
 - After the cleanup marker is stored, create a fresh `ArrowToTheBuild.lua` and restart ATTB. Confirm the one-time cleanup does not run again and the fresh save remains intact.
 - Put an unrelated manifest in a folder named `ArrowToTheBuildBridge`; confirm ATTB refuses to delete it.
 - Confirm the main `ArrowToTheBuild.lua` archive and existing desktop character links survive the upgrade.
@@ -142,7 +142,7 @@ npm start 2>&1 | Tee-Object -FilePath ".\attb-dev.log"
 
 ### ESO-controlled save timing
 
-- Fresh-install the current bundled `ArrowToTheBuild` addon (1.1.3 in the 3.1.0 release), enable it in ESO, and log into one character.
+- Fresh-install the current bundled `ArrowToTheBuild` addon (1.1.3 in the 3.1.1 release), enable it in ESO, and log into one character.
 - Confirm ESO creates `<profile>\SavedVariables\ArrowToTheBuild.lua` after a save opportunity or `/reloadui`.
 - Confirm Settings reports one addon path and one SavedVariables path; there must be no live bridge budget/status UI.
 - Change level/progression, equipment, action bars, attributes, and Champion Points. Confirm the in-memory addon revision advances through the relevant event capture.
@@ -151,14 +151,15 @@ npm start 2>&1 | Tee-Object -FilePath ".\attb-dev.log"
 - Confirm `/attbexport` refreshes the in-memory snapshot and clearly tells the user to use `/reloadui` for immediate desktop disk refresh.
 - Confirm `/attbstatus` reports the archive/memory revisions, latest capture, pending sections, and the `/reloadui` reminder without bridge/priority/budget diagnostics.
 
-### Champion Point catalog, routing, and map regression (3.1.0)
+### Champion Point catalog, routing, and map regression (3.1.1)
 
 - Open a character/build with Champion Points and confirm **Do this next** identifies the first incomplete prerequisite or target rather than simply maxing each authored row in order.
 - Confirm a Bloody Renewal-only Fitness target expands through **Sprinter 10/20 -> Hasty 8/16 -> Hero's Vigor 10/20 -> Bloody Renewal** and does not demand the connector stars be maxed first.
 - Confirm a Craft route targeting Inspiration Boost after Gilded Fingers inserts **Fortune's Favor 10/50** as the route-opening milestone.
-- Hover the map icon on a CP bubble and confirm the compact constellation popover appears; click to pin it, press Escape/click outside to close it, and confirm the highlighted star/path match the bubble.
-- Open the full constellation map in Craft, Warfare, and Fitness. Confirm target, required-route, invested, and next-action states remain visually distinct and the map stays usable at reduced window sizes.
-- With addon 1.1.3+, `/reloadui`, then confirm the desktop snapshot contains all Champion stars (including zero-point stars), exact max points, jump points, slottable type, root/link data, and coordinates; CURRENT invested points must overlay the TARGET route without rewriting it.
+- Click the map icon on a CP bubble and confirm it opens one dedicated constellation workspace rather than a floating/stacked popover. Press Escape or **Close Map** to return, and confirm the highlighted prerequisite path matches the selected bubble.
+- In Craft, Warfare, and Fitness, confirm the bundled canonical Update 50 geometry renders correctly **before any addon sync**. Verify mouse-wheel zoom, click-drag panning, Fit/-/+ controls, and simple hover-name tooltips.
+- Confirm only the route needed to reach the selected node is emphasized; later/future build targets stay dim and zero-spent characters do not look invested.
+- With addon 1.1.3+, `/reloadui`, then confirm CURRENT invested/slotted Champion state overlays the same app-owned map without changing its geometry. The addon snapshot may contain the live full graph for routing/audit verification, but map placement must remain available if that graph is absent.
 - Temporarily test an older Schema 4 build carrying stale `max_points`, `slottable`, and `jump_points`; import normalization should preserve its intended strategy while canonical catalog facts win.
 - In Build Editor, confirm passive stars cannot be selected for the final Champion Bar and verified staged stars offer only real effect thresholds for first-pass/eventual targets.
 - Author a CP star in the wrong tree, an unknown star, a passive final slot, and a between-stage target; Review & Save must reject each case with a useful CP-specific validation error.

@@ -1,6 +1,6 @@
 # ESO Build-System Audit for ATTB Schema 4
 
-> **Current app release:** ATTB 3.1.0. Historical v3.0.0 references below identify when the Schema 4 progression-scope work was introduced.
+> **Current app release:** ATTB 3.1.1. Historical v3.0.0 references below identify when the Schema 4 progression-scope work was introduced.
 This audit was completed before declaring Schema 4 the public build format. Its purpose was not to copy another build editor. It was to confirm that an ATTB file can represent the character decisions current ESO builds depend on, while leaving safe expansion points for later game systems and the visual Build Editor.
 
 ## Research target

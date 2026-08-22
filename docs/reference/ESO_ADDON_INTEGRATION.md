@@ -1,6 +1,6 @@
 # ESO Addon Integration
 
-This reference covers the **ATTB 3.1.0** addon integration. Arrow to the Build can read character state from its optional ESO addon. The integration is deliberately one-way and local:
+This reference covers the **ATTB 3.1.1** addon integration. Arrow to the Build can read character state from its optional ESO addon. The integration is deliberately one-way and local:
 
 ```text
 ESO character
@@ -40,7 +40,7 @@ Static regression tests protect these source-level contracts so the enum-prefix 
 
 ### 1.1.3 Champion graph export
 
-Addon 1.1.3 extends the Champion snapshot so the desktop app can validate and route CP against ESO itself instead of relying only on bundled fallback data. It now exports **every Champion star**, including zero-point stars, with:
+Addon 1.1.3 extends the Champion snapshot so the desktop app can validate CP graph facts against ESO itself and capture CURRENT investment state. ATTB 3.1.1 no longer depends on addon graph coordinates for map placement; exact Update 50 geometry ships with the desktop app. It now exports **every Champion star**, including zero-point stars, with:
 
 - ESO Champion skill ID and current invested points;
 - true maximum points and current skill type/slottable state;
@@ -49,7 +49,7 @@ Addon 1.1.3 extends the Champion snapshot so the desktop app can validate and ro
 - root and cluster-root flags;
 - ESO raw node coordinates, outer-constellation coordinates, cluster-root offsets, and nested cluster membership.
 
-The desktop still imports only actually invested stars when it creates a build from a character. The full zero-point star list exists solely as a live graph/data overlay for routing, validation, and constellation-map placement. Graph schema 2 keeps ESO's outer constellation and nested cluster coordinate spaces separate so the locator can mirror the in-game tree shape rather than flatten every star into one synthetic graph.
+The desktop still imports only actually invested stars when it creates a build from a character. The full zero-point star list exists as a live graph/data overlay for routing and validation. Graph schema 2 preserves ESO's outer constellation and nested-cluster coordinate spaces so maintainers can compare live game geometry against the canonical `eso-cp-layout.json` after an ESO update; ordinary map rendering does not require that snapshot.
 
 ## Installation
 
@@ -67,7 +67,7 @@ Install / Repair copies it to the selected ESO profile:
 
 ATTB recognizes the normal `live`, `liveeu`, and `pts` profile folders. A manually installed or Minion-installed copy is also supported.
 
-The legacy cleanup introduced in v2.1.3 remains supported in ATTB 3.1.0 and performs a one-time migration from the retired dual-addon layout. On first launch, ATTB scans the configured profile and normally detected ESO profiles. If it finds either the verified old bridge manifest or a recognizable old bridge SavedVariables file, it removes the verified bridge addon, removes the managed `ArrowToTheBuild` addon, deletes both old addon SavedVariables files, and installs the bundled single exporter fresh.
+The legacy cleanup introduced in v2.1.3 remains supported in ATTB 3.1.1 and performs a one-time migration from the retired dual-addon layout. On first launch, ATTB scans the configured profile and normally detected ESO profiles. If it finds either the verified old bridge manifest or a recognizable old bridge SavedVariables file, it removes the verified bridge addon, removes the managed `ArrowToTheBuild` addon, deletes both old addon SavedVariables files, and installs the bundled single exporter fresh.
 
 The cleanup only claims files it can identify as ATTB data. An unrelated folder named `ArrowToTheBuildBridge` is not deleted. A migration marker prevents the cleanup from repeating on later launches, and a newly generated `ArrowToTheBuild.lua` is therefore preserved. If a custom ESO profile is configured later, the same legacy-artifact check runs for that profile before synchronization starts.
 
@@ -80,7 +80,7 @@ The current snapshot contains the observed ESO state that Character Tracker need
 - skill-line ranks and purchased actives, morphs, passives, and ultimates;
 - current action bars and active weapon pair;
 - equipped gear, item IDs, traits, sets, and enchantments;
-- Champion Point disciplines, all constellation stars/links for live graph verification, purchased-point state, and slotted Champion Bar nodes.
+- Champion Point disciplines, all constellation stars/links/coordinates for live graph verification, purchased-point state, and slotted Champion Bar nodes. The app's canonical map geometry remains available without the addon.
 
 This is **CURRENT** state. Builds remain **TARGET** plans owned by the desktop app. Syncing cannot rewrite a build definition.
 

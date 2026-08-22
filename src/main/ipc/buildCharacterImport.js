@@ -145,7 +145,8 @@ function createCharacterBuildImport(deps) {
     return Object.fromEntries(Object.entries(defs).map(([tree, def]) => {
       const discipline = disciplines.find(row => Number(row?.disciplineId) === def.id) || {}
       const stars = Array.isArray(discipline.stars) ? discipline.stars : []
-      // Addon 1.1.3+ exports all stars so the desktop app can use ESO's live graph.
+      // Addon 1.1.3+ exports all stars for CURRENT-state capture and graph verification.
+      // Constellation placement itself is app-owned in resources/data/eso-cp-layout.json.
       // A generated build should author only what the character actually invested in,
       // and it must use canonical ATTB CP ids rather than ad-hoc eso-123 ids.
       const nodes = stars.map(star => {

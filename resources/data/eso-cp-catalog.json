@@ -4,10 +4,10 @@
   "verified_date": "2026-08-20",
   "source_notes": [
     "Star identity, ESO skill ID, discipline, maximum points, and passive/slottable classification are Update 50 game-data values cross-checked against ESO Decoded / UESP-derived CP2 data.",
-    "jump_points_verified marks stage arrays individually. Unverified stage arrays are retained only as a bundled fallback display hint and are not used as validator authority.",
+    "jump_points_verified marks stage arrays individually. Unverified stage arrays are retained only as a bundled display hint and are not used as validator authority.",
     "prerequisite_path/path_verified identify offline routes that were explicitly checked. ATTB never treats an unverified empty path as proof that a star is directly purchasable.",
-    "Addon 1.1.3+ exports the live ESO Champion graph, root flags, jump points, outer-constellation coordinates, nested-cluster membership, and cluster-local coordinates; live game data takes precedence for routing and locator geometry whenever a current character snapshot is available.",
-    "map coordinates are an ATTB schematic fallback for orientation, not copied ESO UI pixels."
+    "Exact Update 50 outer-constellation coordinates and nested-cluster membership are app-owned in eso-cp-layout.json, so map rendering never depends on addon sync.",
+    "Addon 1.1.3+ still exports the live ESO Champion graph, roots, links, stages, and coordinates for CURRENT state, routing assistance, and maintenance-time drift verification after game updates."
   ],
   "trees": {
     "craft": {

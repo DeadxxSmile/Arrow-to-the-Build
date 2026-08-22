@@ -102,3 +102,16 @@ test('Help reference pages keep contextual navigation instead of ending in dead 
   assert.match(guides, /Build Setup Guide/)
   assert.match(guides, /ATTB Guides/)
 })
+
+test('AI Build Authoring guide can be saved as a standalone Markdown file', () => {
+  const guide = read(path.join(rendererRoot, 'components', 'BuildSetupGuide.jsx'))
+  const preload = read(path.join(root, 'src', 'main', 'preload.js'))
+  const handlers = read(path.join(root, 'src', 'main', 'ipc', 'buildHandlers.js'))
+  const markdown = read(path.join(root, 'docs', 'reference', 'ATTB_AI_BUILD_JSON_AUTHORING_GUIDE.md'))
+  assert.match(guide, /Save AI Guide \(\.md\)/)
+  assert.match(guide, /exportAiAuthoringGuide/)
+  assert.match(preload, /builds:exportAiAuthoringGuide/)
+  assert.match(handlers, /ATTB_AI_BUILD_JSON_AUTHORING_GUIDE\.md/)
+  assert.match(handlers, /Save ATTB AI Build Authoring Guide/)
+  assert.match(markdown, /Save AI Guide \(\.md\)/)
+})

@@ -85,7 +85,6 @@ function CPMapWorkspace({ tree, label, focusId, allocation, onClose }) {
   const optionalGroup = focusId ? allocation.groups.find(group => group.optional && group.entries.some(row => row.node?.id === focusId)) : null
   const route = optionalGroup?.entries || allocation.route || []
   const observedPoints = allocation.observed?.points || new Map()
-  const liveStars = allocation.observed?.liveStars || []
   const star = focusId ? getCpStar(focusId) : null
   const entry = focusId ? allocation.allocations.find(row => row.node?.id === focusId) : null
   const points = entry ? (entry.actualPoints ?? entry.points ?? 0) : (focusId ? observedPoints.get(focusId) || 0 : null)
@@ -103,7 +102,7 @@ function CPMapWorkspace({ tree, label, focusId, allocation, onClose }) {
           <h1>{star?.name || `${label} Constellation`}</h1>
           {isNext && <span className="cp-map-workspace-next">Do this next</span>}
         </div>
-        <p>{star ? 'Locate this Champion Point star in ESO. Only the route needed to reach the selected star is highlighted; later build targets stay dim. Hover any node for its name, use the mouse wheel to zoom, and drag to pan. Multi-star ESO clusters stay collapsed to their portal.' : 'Full constellation view using the latest ESO geometry available from the synced addon snapshot. Hover any node for its name, use the mouse wheel to zoom, and drag to pan. Multi-star ESO clusters stay collapsed to their portal.'}</p>
+        <p>{star ? 'Locate this Champion Point star in ESO. Only the route needed to reach the selected star is highlighted; later build targets stay dim. Hover any node for its name, use the mouse wheel to zoom, and drag to pan. Multi-star ESO clusters stay collapsed to their portal.' : 'Full constellation view using the canonical Update 50 ESO geometry bundled with ATTB. No addon sync is required for map placement. Hover any node for its name, use the mouse wheel to zoom, and drag to pan. Multi-star ESO clusters stay collapsed to their portal.'}</p>
       </div>
       <button type="button" className="btn secondary cp-map-workspace-close" onClick={onClose} aria-label="Close constellation map">× Close Map</button>
     </header>
@@ -114,7 +113,7 @@ function CPMapWorkspace({ tree, label, focusId, allocation, onClose }) {
       <div><small>Purpose</small><b>{requiredFor ? `Reach ${requiredFor}` : isNext ? `Spend +${allocation.next.add} now` : star ? 'Build route locator' : 'Entire constellation'}</b></div>
     </div>
     <div className="cp-map-workspace-body">
-      <CPConstellationMap tree={tree} route={route} focusId={focusId} nextId={isNext ? focusId : null} observedPoints={observedPoints} liveStars={liveStars} />
+      <CPConstellationMap tree={tree} route={route} focusId={focusId} nextId={isNext ? focusId : null} observedPoints={observedPoints} />
     </div>
   </section>
 }
@@ -153,7 +152,7 @@ export default function CPCard({ tree, plan, total, onChange, detailed = false, 
 
     <section className="cp-plan-summary"><div><small>First-pass route</small><b>{allocation.firstPassSpent}/{allocation.firstPassCapacity}</b></div><div><small>Full documented route</small><b>{allocation.routeSpent}/{routeCapacity}</b></div><div><small>Unassigned</small><b>{allocation.unassigned}</b></div><div><small>Next spend</small><b>{allocation.next ? `${allocation.next.node.name} +${allocation.next.add}` : 'Route complete'}</b></div></section>
 
-    {!!allocation.unresolvedPaths?.length && !allocation.observed?.discipline && <div className="notice-banner warn-banner cp-route-warning"><b>Offline route needs a live graph check.</b> {allocation.unresolvedPaths.map(row => row.node?.name || row.id).join(', ')} uses a constellation path that is not fully verified in the bundled fallback. Sync addon 1.1.3+ to let ATTB read ESO's exact links before following that target.</div>}
+    {!!allocation.unresolvedPaths?.length && <div className="notice-banner warn-banner cp-route-warning"><b>Route needs catalog verification.</b> {allocation.unresolvedPaths.map(row => row.node?.name || row.id).join(', ')} uses a prerequisite path that is not fully verified in the bundled Champion Point catalog. The constellation map remains available because its Update 50 geometry is bundled with ATTB.</div>}
     <DoThisNext allocation={allocation} />
 
     {!!route.length && <section className="cp-path-section required">

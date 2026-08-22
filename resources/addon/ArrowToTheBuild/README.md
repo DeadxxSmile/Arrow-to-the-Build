@@ -2,7 +2,7 @@
 
 Arrow to the Build is a small data-export companion for the Arrow to the Build desktop app. It has no in-game UI and does not send data over the network.
 
-The addon records the active character's identity, attributes, skills, action bars, equipped items, and Champion Points in ESO SavedVariables. Version 1.1.3 exports the full Champion constellation graph (all stars, links, stage thresholds, slottable state, roots, outer-map coordinates, nested cluster membership, and cluster-local coordinates) so ATTB 3.1.0 can route CP and reproduce the relative in-game tree layout without shipping ESO screenshots. The desktop app reads that local file.
+The addon records the active character's identity, attributes, skills, action bars, equipped items, and Champion Points in ESO SavedVariables. Version 1.1.3 exports the full Champion constellation graph (all stars, links, stage thresholds, slottable state, roots, outer-map coordinates, nested cluster membership, and cluster-local coordinates) so ATTB 3.1.1 can route CP and reproduce the relative in-game tree layout without shipping ESO screenshots. The desktop app reads that local file.
 
 ## Install
 

@@ -1,6 +1,6 @@
 # Build Editor Architecture
 
-ATTB 3.1.0 uses one Electron window with three coordinated React workspaces:
+ATTB 3.1.1 uses one Electron window with three coordinated React workspaces:
 
 - **Character Tracker** follows a saved build and records what a player actually has in game.
 - **Build Editor** creates, forks, imports, reviews, and maintains Schema 4 builds.
@@ -34,7 +34,7 @@ Visual editor → Schema 4 object → shared validator → saved revision → Ch
 
 Manual JSON and visually authored builds remain interchangeable.
 
-## Progression scope (ATTB 3.1.0)
+## Progression scope (ATTB 3.1.1)
 
 Schema 4 now has an optional `progression_scope` block that tells ATTB where the authored plan begins:
 

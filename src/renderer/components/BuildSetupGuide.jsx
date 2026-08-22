@@ -15,11 +15,30 @@ export default function BuildSetupGuide({ flash }) {
   const [guide, setGuide] = useState(null)
   const [documentKey, setDocumentKey] = useState('quick_start')
   const [search, setSearch] = useState('')
+  const [exportingAiGuide, setExportingAiGuide] = useState(false)
 
   useEffect(() => { window.api.builds.getAuthoringGuide().then(setGuide).catch(error => flash(error.message)) }, [flash])
 
+  const exportAiGuide = async () => {
+    setExportingAiGuide(true)
+    try {
+      const savedPath = await window.api.builds.exportAiAuthoringGuide()
+      if (savedPath) flash('AI Build Authoring Guide saved as Markdown. Attach that file to your AI assistant when requesting a build.')
+    } catch (error) {
+      flash(error.message)
+    } finally {
+      setExportingAiGuide(false)
+    }
+  }
+
   return <section className="panel guide-reader">
-    <div className="guide-reader-head"><div><span className="eyebrow">Complete offline documentation</span><h2>Build Editor, JSON &amp; AI guides</h2></div><label className="guide-search"><span>Search this page</span><input value={search} onChange={event => setSearch(event.target.value)} placeholder="guided builds, AI authoring, companions, skill IDs…" /></label></div>
+    <div className="guide-reader-head">
+      <div><span className="eyebrow">Complete offline documentation</span><h2>Build Editor, JSON &amp; AI guides</h2></div>
+      <div className="guide-reader-tools">
+        {documentKey === 'ai_authoring' && <button type="button" className="btn secondary" onClick={exportAiGuide} disabled={exportingAiGuide}>{exportingAiGuide ? 'Saving…' : 'Save AI Guide (.md)'}</button>}
+        <label className="guide-search"><span>Search this page</span><input value={search} onChange={event => setSearch(event.target.value)} placeholder="guided builds, AI authoring, companions, skill IDs…" /></label>
+      </div>
+    </div>
     <nav className="guide-nav" aria-label="Build Setup Guide sections">{DOCUMENTS.map(([key, label, description]) => <button type="button" key={key} className={documentKey === key ? 'active' : ''} onClick={() => { setDocumentKey(key); setSearch('') }}><b>{label}</b><small>{description}</small></button>)}</nav>
     <div className="guide-document">{guide ? <MarkdownDocument markdown={guide[documentKey]} search={search} /> : <div className="quiet-box">Loading bundled guide…</div>}</div>
   </section>

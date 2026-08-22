@@ -22,7 +22,7 @@ function capturedVersion(text, pattern, label) {
   return match[1]
 }
 
-test('release package, README, and lockfile stay synchronized at v3.1.0', () => {
+test('release package, README, and lockfile stay synchronized at v3.1.1', () => {
   const pkg = readJson('package.json')
   const lock = readJson('package-lock.json')
   const readme = read('README.md')
@@ -33,32 +33,37 @@ test('release package, README, and lockfile stay synchronized at v3.1.0', () => 
   assert.equal(lock.packages?.['']?.version, pkg.version, 'package-lock root package version differs from package.json')
   assert.equal(development, pkg.version, 'README development release differs from package.json')
   assert.equal(publicRelease, pkg.version, 'README public release differs from package.json')
-  assert.equal(pkg.version, '3.1.0', 'release source should identify itself as v3.1.0')
+  assert.equal(pkg.version, '3.1.1', 'release source should identify itself as v3.1.1')
 })
 
-test('published GitHub Pages follows the v3.1.0 public release', () => {
+test('published GitHub Pages keeps a release fallback and auto-resolves the latest stable GitHub release', () => {
   const readme = read('README.md')
   const site = read('docs/index.html')
+  const siteScript = read('docs/app.js')
   const publicRelease = capturedVersion(readme, /Current public release:\s*\*\*v([^*]+)\*\*/, 'README public release')
-  const version = capturedVersion(site, /<b>v([^<]+)<\/b>/, 'GitHub Pages title-bar version')
+  const fallback = capturedVersion(site, /<b data-release-version>v([^<]+)<\/b>/, 'GitHub Pages fallback version')
 
-  assert.equal(version, publicRelease, 'site title-bar version should follow the public release, not the development package')
-  assert.ok(site.includes(`Download v${version}`), 'site download call-to-action differs from title-bar version')
-  assert.ok(site.includes(`ATTB-Setup-${version}.exe`), 'site installer filename differs from version pill')
-  assert.ok(site.includes(`styles.css?v=${version}-v3-site`), 'site stylesheet cache version differs from version pill')
-  assert.ok(site.includes(`app.js?v=${version}-v3-site`), 'site script cache version differs from version pill')
+  assert.equal(fallback, publicRelease, 'site fallback should match the release packaged with the repository')
+  assert.match(site, /data-release-version/)
+  assert.match(site, /data-installer-name/)
+  assert.match(site, /data-release-link/)
+  assert.match(siteScript, /api\.github\.com\/repos\/DeadxxSmile\/Arrow-to-the-Build\/releases\/latest/)
+  assert.match(siteScript, /RELEASE_CACHE_TTL_MS\s*=\s*30\s*\*\s*60\s*\*\s*1000/)
+  assert.match(siteScript, /softwareVersion\s*=\s*release\.version/)
+  assert.doesNotMatch(site, /styles\.css\?v=3\.1\.1/)
+  assert.doesNotMatch(site, /app\.js\?v=3\.1\.1/)
   assert.match(site, /Current release/)
   assert.doesNotMatch(site, /Release candidate/i)
 })
 
-test('current public and maintenance guides identify the ATTB 3.1.0 release baseline', () => {
+test('current public and maintenance guides identify the ATTB 3.1.1 release baseline', () => {
   for (const relativeDir of ['docs/reference', 'docs/maintenance']) {
     const dir = path.join(root, relativeDir)
     const guides = fs.readdirSync(dir).filter(name => name.endsWith('.md')).sort()
     assert.ok(guides.length > 0, `no Markdown guides found in ${relativeDir}`)
     for (const guide of guides) {
       const source = fs.readFileSync(path.join(dir, guide), 'utf8')
-      assert.ok(source.includes('3.1.0'), `${relativeDir}/${guide} does not identify the current v3.1.0 release baseline`)
+      assert.ok(source.includes('3.1.1'), `${relativeDir}/${guide} does not identify the current v3.1.1 release baseline`)
     }
   }
 })

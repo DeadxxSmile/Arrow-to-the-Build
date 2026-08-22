@@ -1,6 +1,6 @@
 # Validation & Troubleshooting
 
-This **ATTB 3.1.0** page covers the most common Build Editor, JSON, draft, revision, and file-sync problems.
+This **ATTB 3.1.1** page covers the most common Build Editor, JSON, draft, revision, and file-sync problems.
 
 ## Recovery autosave and permanent saves
 
@@ -87,7 +87,7 @@ The Level 50 target and phase targets cannot allocate more than 64 total points 
 
 ### Invalid CP plan or final slot
 
-ATTB 3.1.0 validates CP rows against the canonical `eso-cp-catalog.json`. A CP target must use a real canonical ID in the correct constellation, and its `first_pass_points` / `target_points` must fit the catalog maximum. When the catalog has verified discrete effect stages, those targets must also land on real ESO stage thresholds; ATTB rejects between-stage values.
+ATTB 3.1.1 validates CP rows against the canonical `eso-cp-catalog.json`. A CP target must use a real canonical ID in the correct constellation, and its `first_pass_points` / `target_points` must fit the catalog maximum. When the catalog has verified discrete effect stages, those targets must also land on real ESO stage thresholds; ATTB rejects between-stage values.
 
 A final Champion Bar ID must:
 
@@ -104,7 +104,7 @@ A phase’s `recommended_gear_stage_ids` must refer to existing gear-stage IDs. 
 
 ### Invalid companion setup
 
-ATTB 3.1.0 validates companion rows independently from player skills. Check that the setup has a valid row ID, name, and role; that `companion_id` exists in the bundled companion catalog when present; and that a normal companion bar has no more than five unique non-empty skill names plus a separate ultimate.
+ATTB 3.1.1 validates companion rows independently from player skills. Check that the setup has a valid row ID, name, and role; that `companion_id` exists in the bundled companion catalog when present; and that a normal companion bar has no more than five unique non-empty skill names plus a separate ultimate.
 
 Never fix a companion validation issue by inventing player `catalog_skill_id` values. Companion abilities are plain companion skill names.
 

@@ -1,6 +1,6 @@
 # Manual Schema 4 JSON Authoring
 
-This **ATTB 3.1.0** field-level guide is for authors who want to **hand-make or directly edit ATTB build JSON**. The visual Build Editor and manual JSON use the same Schema 4 object, so a build can move between the two workflows without conversion.
+This **ATTB 3.1.1** field-level guide is for authors who want to **hand-make or directly edit ATTB build JSON**. The visual Build Editor and manual JSON use the same Schema 4 object, so a build can move between the two workflows without conversion.
 
 Read **Start Here** for the basic app model and **Visual Build Editor Guide** for normal in-app authoring. Use this document when you need exact fields, subclassing, Scribing, loadout overrides, merge behavior, extensions, or direct text-editor control.
 
@@ -362,7 +362,7 @@ Temporary rows may omit `retire_when`, which leaves retirement entirely to the p
 
 # 8. Scribed Skills
 
-ATTB 3.1.0 treats a Scribed Skill as an exact recipe when the build depends on the specific result. In the current ESO baseline, Scribing is free base-game access; a character can begin at Level 30 or after gaining access to the Champion System. The player still has to unlock the Scholarium, acquire/learn the required Grimoire and Scripts on that character, and spend Luminous Ink at the Scribing Altar.
+ATTB 3.1.1 treats a Scribed Skill as an exact recipe when the build depends on the specific result. In the current ESO baseline, Scribing is free base-game access; a character can begin at Level 30 or after gaining access to the Champion System. The player still has to unlock the Scholarium, acquire/learn the required Grimoire and Scripts on that character, and spend Luminous Ink at the Scribing Altar.
 
 A finished recipe is:
 
@@ -584,7 +584,7 @@ The root `quickslots` array describes the recommended wheel. `consumables.quicks
 
 # 12. Champion Point plans
 
-Every build needs all three trees. In ATTB 3.1.0, the build JSON authors **priorities and targets** while `resources/data/eso-cp-catalog.json` owns the ESO facts. Do not copy star names, max values, stage thresholds, or slottable flags into new builds.
+Every build needs all three trees. In ATTB 3.1.1, the build JSON authors **priorities and targets** while `resources/data/eso-cp-catalog.json` owns the ESO facts. Do not copy star names, max values, stage thresholds, or slottable flags into new builds.
 
 ```json
 {
@@ -666,14 +666,14 @@ The first three numbers are **first-pass unlock investments**, not fake maximums
 3. The first pass spends only the amount needed to reach each priority's `first_pass_points`.
 4. Once the first-pass route is reached, ATTB returns to authored stars that have higher `target_points`.
 5. Optional groups stay visible but receive no automatic allocation.
-6. If addon 1.1.3+ supplies a live ESO graph, that graph overrides bundled fallback pathing and map geometry.
-7. If an offline path is not verified and no live graph is available, ATTB warns instead of inventing a route.
+6. Constellation-map placement comes from ATTB's bundled canonical Update 50 layout and never requires addon sync.
+7. Addon 1.1.3+ may supply a live ESO graph as an additional routing/verification source. If a catalog path is not verified and no usable live graph is available, ATTB warns instead of inventing a route.
 
 Legacy Schema 4 files may still contain `name`, `max_points`, `slottable`, and `jump_points`. Import normalization strips those duplicated facts and converts an older lower `max_points` into a first-pass milestone when it can do so safely. New authoring should use the catalog-backed strategy format above.
 
 # 13. Companions and performance notes
 
-ATTB 3.1.0 has a dedicated companion directory in the Character Tracker and a Companion page in the Build Editor. Schema 4 remains the public format; richer companion fields are additive inside the existing root `companions` array.
+ATTB 3.1.1 has a dedicated companion directory in the Character Tracker and a Companion page in the Build Editor. Schema 4 remains the public format; richer companion fields are additive inside the existing root `companions` array.
 
 Use the bundled `resources/data/eso-companions.json` as the current roster/preset source. Companion ability names are plain text and **must not** be added to the player `relevant_lines` or `unlock_order`.
 

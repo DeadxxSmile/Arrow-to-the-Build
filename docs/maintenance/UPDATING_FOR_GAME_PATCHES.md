@@ -1,6 +1,6 @@
 # Updating ATTB for ESO game patches
 
-> **Current app release:** ATTB 3.1.0. Use this workflow for post-v3 game-patch maintenance.
+> **Current app release:** ATTB 3.1.1. Use this workflow for post-v3 game-patch maintenance.
 
 ATTB is built so a new ESO update does not require touching React or Electron. Almost everything a
 patch changes lives in three data layers:
@@ -111,9 +111,9 @@ The combat-companion roster and curated presets live in `resources/data/eso-comp
 
 ## Scenario: CP nodes or paths changed
 
-ATTB 3.1.0 has a canonical Champion Point catalog at `resources/data/eso-cp-catalog.json`. CP facts no longer live independently inside every build. A game-patch CP audit should update the catalog first, then review affected build **strategy**.
+ATTB 3.1.1 keeps Champion Point facts in two app-owned canonical files: `resources/data/eso-cp-catalog.json` for rules/topology and `resources/data/eso-cp-layout.json` for exact constellation placement and cluster membership. CP facts no longer live independently inside every build, and the map does not depend on addon synchronization. A game-patch CP audit should update these canonical files first, then review affected build **strategy**.
 
-Audit the catalog for:
+Audit `eso-cp-catalog.json` for:
 
 - ESO skill ID and canonical name;
 - constellation (`craft`, `warfare`, `fitness`);
@@ -121,10 +121,16 @@ Audit the catalog for:
 - stage/jump thresholds and the first route-opening milestone;
 - passive/slottable state;
 - root/cluster-root status;
-- graph links and verified prerequisite paths;
-- schematic map position.
+- graph links and verified prerequisite paths.
 
-Addon 1.1.3+ exports all Champion stars with live max values, stages, slottable state, links, roots, and coordinates. Use a current ESO snapshot as a regression/source-of-truth check. Do not silently promote unverified fallback data to authoritative status.
+Audit `eso-cp-layout.json` for:
+
+- one row for every canonical Champion star;
+- exact Update-specific constellation X/Y coordinates;
+- matching ESO skill IDs and tree ownership;
+- nested-cluster membership and cluster-root flags.
+
+Addon 1.1.3+ exports all Champion stars with live max values, stages, slottable state, links, roots, and coordinates. Use a fresh ESO snapshot to **verify** the bundled catalog/layout and detect drift after a game patch. If the live graph differs, investigate and deliberately update the app-owned canonical data; never make correct map rendering contingent on a character having synchronized first.
 
 For affected builds in `resources/builds/`:
 

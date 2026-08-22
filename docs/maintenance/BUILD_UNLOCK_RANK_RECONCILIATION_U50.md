@@ -1,6 +1,6 @@
 # Bundled Build Unlock-Rank Reconciliation - ESO Update 50
 
-> **Current app release:** ATTB 3.1.0. This is a generated Update 50 reconciliation record and is preserved as maintenance provenance.
+> **Current app release:** ATTB 3.1.1. This is a generated Update 50 reconciliation record and is preserved as maintenance provenance.
 
 **Catalog:** `0.6.0-u50-full-unlock-audit`  
 **Verified:** 2026-08-09  

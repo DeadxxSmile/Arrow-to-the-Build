@@ -1,6 +1,6 @@
 # ATTB Theme Schema 1 and Custom Theme Guide
 
-Arrow to the Build **v3.1.0** uses one semantic color engine for built-in and user-created themes. The in-app Theme Editor and hand-edited JSON files are two interfaces to the same format.
+Arrow to the Build **v3.1.1** uses one semantic color engine for built-in and user-created themes. The in-app Theme Editor and hand-edited JSON files are two interfaces to the same format.
 
 ## Recommended workflow
 
@@ -13,7 +13,7 @@ Arrow to the Build **v3.1.0** uses one semantic color engine for built-in and us
 
 ## Built-in themes
 
-ATTB 3.1.0 ships twenty built-in themes that can also be used as bases for custom themes: **ATTB Default**, **Deep Dark**, **Light**, **Old Scrolls**, **SkyTrim**, **Woodland**, **Watermelon**, **Rainbow Light**, **Rainbow Dark**, **Deadx_xSmile**, **Midnight Blurple**, **Tokyo Dusk**, **Velvet Plum**, **Emberbox**, **Polar Night**, **OLED Aurora**, **Carbon Crimson**, **Paper Azure**, **Latte Rose**, and **Sage Fog**. Built-ins cannot be overwritten or deleted by imported custom files.
+ATTB 3.1.1 ships twenty built-in themes that can also be used as bases for custom themes: **ATTB Default**, **Deep Dark**, **Light**, **Old Scrolls**, **SkyTrim**, **Woodland**, **Watermelon**, **Rainbow Light**, **Rainbow Dark**, **Deadx_xSmile**, **Midnight Blurple**, **Tokyo Dusk**, **Velvet Plum**, **Emberbox**, **Polar Night**, **OLED Aurora**, **Carbon Crimson**, **Paper Azure**, **Latte Rose**, and **Sage Fog**. Built-ins cannot be overwritten or deleted by imported custom files.
 
 ## Theme folder
 

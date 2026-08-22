@@ -1,6 +1,6 @@
 # Mighty Seven build research
 
-> **Current app release:** ATTB 3.1.0. The research dates and older release references in this file describe when individual build audits were performed.
+> **Current app release:** ATTB 3.1.1. The research dates and older release references in this file describe when individual build audits were performed.
 
 The seven bundled JSON files are ATTB-authored **flexible PvE progression guides**, not verbatim copies of another creator's page. They combine current Update 50 pure-class skill direction with ATTB's own Level 1-50 unlock order, early and late ultimate guidance, temporary skills, prerequisites, Champion Point graph, gear stages, solo safety, and ordinary group-play considerations.
 

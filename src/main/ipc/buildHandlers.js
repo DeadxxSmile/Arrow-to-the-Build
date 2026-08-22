@@ -516,6 +516,19 @@ ${[...new Set(errors)].join('\n')}`)
     return result.filePath
   })
 
+  ipcMain.handle('builds:exportAiAuthoringGuide', async () => {
+    const source = path.join(__dirname, '../../../docs/reference/ATTB_AI_BUILD_JSON_AUTHORING_GUIDE.md')
+    const markdown = fs.readFileSync(source, 'utf8')
+    const result = await dialog.showSaveDialog({
+      title: 'Save ATTB AI Build Authoring Guide',
+      defaultPath: 'ATTB_AI_BUILD_JSON_AUTHORING_GUIDE.md',
+      filters: [{ name: 'Markdown Document', extensions: ['md'] }]
+    })
+    if (result.canceled || !result.filePath) return null
+    fs.writeFileSync(result.filePath, markdown.endsWith('\n') ? markdown : `${markdown}\n`, 'utf8')
+    return result.filePath
+  })
+
   ipcMain.handle('builds:getAuthoringGuide', () => {
     const dir = path.join(__dirname, '../../../docs/reference')
     const read = name => fs.readFileSync(path.join(dir, name), 'utf8')

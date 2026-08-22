@@ -1,6 +1,6 @@
 # ESO Update 50 - Full Player Skill & Passive Unlock Audit
 
-> **Current app release:** ATTB 3.1.0. This generated Update 50 ledger remains the current unlock-gate reference for the bundled player catalog.
+> **Current app release:** ATTB 3.1.1. This generated Update 50 ledger remains the current unlock-gate reference for the bundled player catalog.
 
 **ATTB catalog:** `0.6.0-u50-full-unlock-audit`  
 **Game baseline:** Update 50  

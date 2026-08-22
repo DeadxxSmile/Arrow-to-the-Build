@@ -1,6 +1,100 @@
 /* Arrow to the Build marketing site behavior.
    Kept vanilla and dependency-free so GitHub Pages can serve it as-is. */
 
+
+/* ---------- latest GitHub release ----------
+   GitHub Pages has no server process, so the public site resolves the latest
+   published stable release in the browser. Static HTML stays as a working
+   fallback for offline/API-failure cases. */
+const RELEASE_API_URL = 'https://api.github.com/repos/DeadxxSmile/Arrow-to-the-Build/releases/latest'
+const RELEASE_PAGE_URL = 'https://github.com/DeadxxSmile/Arrow-to-the-Build/releases/latest'
+const RELEASE_CACHE_KEY = 'attb-latest-release-v1'
+const RELEASE_CACHE_TTL_MS = 30 * 60 * 1000
+
+function normalizeRelease(payload) {
+  const rawTag = String(payload?.tag_name || '').trim()
+  const version = rawTag.replace(/^v/i, '')
+  if (!/^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$/.test(version)) return null
+
+  const installerAsset = Array.isArray(payload?.assets)
+    ? payload.assets.find(asset => /^ATTB-Setup-.+\.exe$/i.test(String(asset?.name || '')))
+    : null
+
+  return {
+    tag: `v${version}`,
+    version,
+    installer: installerAsset?.name || `ATTB-Setup-${version}.exe`,
+    url: typeof payload?.html_url === 'string' && payload.html_url.startsWith('https://github.com/')
+      ? payload.html_url
+      : RELEASE_PAGE_URL
+  }
+}
+
+function applyRelease(release) {
+  if (!release) return
+  document.querySelectorAll('[data-release-version]').forEach(node => { node.textContent = release.tag })
+  document.querySelectorAll('[data-installer-name]').forEach(node => { node.textContent = release.installer })
+  document.querySelectorAll('[data-release-link]').forEach(node => { node.href = release.url })
+
+  // Keep SoftwareApplication structured data current without hard-coding a
+  // release number into the source HTML that would immediately go stale.
+  const jsonLdNode = document.querySelector('#software-jsonld')
+  if (jsonLdNode) {
+    try {
+      const jsonLd = JSON.parse(jsonLdNode.textContent)
+      jsonLd.softwareVersion = release.version
+      jsonLdNode.textContent = JSON.stringify(jsonLd)
+    } catch {
+      // Static metadata is still valid even if this enhancement cannot run.
+    }
+  }
+}
+
+function readCachedRelease() {
+  try {
+    const cached = JSON.parse(localStorage.getItem(RELEASE_CACHE_KEY) || 'null')
+    if (!cached || Date.now() - cached.savedAt >= RELEASE_CACHE_TTL_MS) return null
+    return normalizeRelease(cached.release)
+  } catch {
+    return null
+  }
+}
+
+function writeCachedRelease(payload) {
+  try {
+    localStorage.setItem(RELEASE_CACHE_KEY, JSON.stringify({ savedAt: Date.now(), release: payload }))
+  } catch {
+    // Storage may be disabled; the live lookup still works without caching.
+  }
+}
+
+async function loadLatestRelease() {
+  const cached = readCachedRelease()
+  if (cached) {
+    applyRelease(cached)
+    return
+  }
+
+  try {
+    const response = await fetch(RELEASE_API_URL, {
+      headers: {
+        Accept: 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28'
+      }
+    })
+    if (!response.ok) return
+    const payload = await response.json()
+    const release = normalizeRelease(payload)
+    if (!release) return
+    writeCachedRelease(payload)
+    applyRelease(release)
+  } catch {
+    // Network/API failures intentionally leave the static fallback visible.
+  }
+}
+
+loadLatestRelease()
+
 /* ---------- lightbox ---------- */
 const lightbox = document.querySelector('#lightbox')
 const lightboxImage = lightbox?.querySelector('img')

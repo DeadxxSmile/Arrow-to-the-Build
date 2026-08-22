@@ -2,8 +2,8 @@
 
 > **I Used To Be Meta Like You, Then I Took An Arrow To The Build**
 
-Current public release: **v3.1.0**  
-Current development version: **v3.1.0**
+Current public release: **v3.1.1**  
+Current development version: **v3.1.1**
 
 **Arrow to the Build** is an offline-first Windows companion for **The Elder Scrolls Online**. It combines a character progression tracker with a full visual build editor so a static build guide becomes an actual plan for a specific character: what to unlock next, which skill-line ranks matter, how to spend Champion Points, what gear to chase, what belongs on each bar, and how the finished build fits together.
 
@@ -107,6 +107,8 @@ It can export:
 - current action bars
 - equipped gear
 - Champion Point investments and slotted Champion skills
+
+**v3.1.1 CP map hotfix:** the exact Update 50 Champion constellation geometry now ships with the desktop app as canonical offline data. Every character and class gets the same correct map even if the ESO addon is not installed or has never been synced. Addon data remains character-specific CURRENT state and may verify future graph drift, but map placement no longer depends on SavedVariables.
 
 The integration uses one addon and one SavedVariables file:
 

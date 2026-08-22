@@ -490,7 +490,9 @@ input[type=number]{appearance:textfield;-moz-appearance:textfield}
 .guide-reader{padding:0;overflow:hidden}
 .guide-reader-head{display:flex;align-items:end;justify-content:space-between;gap:18px;padding:20px 22px;border-bottom:1px solid var(--color-border)}
 .guide-reader-head h2{margin:3px 0 0}
-.guide-search{display:grid;gap:6px;min-width:min(340px,42%)}
+.guide-reader-tools{display:flex;align-items:flex-end;justify-content:flex-end;gap:10px;min-width:min(520px,58%)}
+.guide-reader-tools>.btn{flex:0 0 auto;margin-bottom:1px}
+.guide-search{display:grid;gap:6px;min-width:min(340px,100%);flex:1 1 340px}
 .guide-nav{display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:8px;padding:12px;border-bottom:1px solid var(--color-border);background:color-mix(in srgb,var(--color-text-primary) 5%,transparent)}
 .guide-nav button{min-height:82px;display:grid;text-align:left;align-content:start;gap:3px;border:1px solid transparent;background:transparent;color:var(--color-text-primary);padding:11px;border-radius:9px;cursor:pointer}
 .guide-nav button small{color:var(--color-text-secondary);line-height:1.35}
@@ -528,6 +530,8 @@ input[type=number]{appearance:textfield;-moz-appearance:textfield}
 @media(max-width:900px){
   .about-details,.authoring-choice-grid{grid-template-columns:1fr}
   .guide-reader-head{align-items:stretch;flex-direction:column}
+  .guide-reader-tools{align-items:stretch;flex-direction:column;min-width:0;width:100%}
+  .guide-reader-tools>.btn{align-self:flex-start}
   .guide-search{min-width:0;width:100%}
   .guide-document{padding:20px}
 }

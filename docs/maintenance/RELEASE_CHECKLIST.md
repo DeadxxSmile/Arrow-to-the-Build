@@ -1,6 +1,6 @@
-# ATTB 3.1.0 Release Checklist
+# ATTB 3.1.1 Release Checklist
 
-The release target is **Arrow to the Build v3.1.0** with ESO addon **v1.1.3**, public Build **Schema 4**, and Theme **Schema 1**. v3.1.0 is the Champion Point overhaul and bundled-build refresh: canonical catalog-backed CP facts, unlock-aware staged routing, live ESO constellation geometry, a dedicated zoomable/pannable constellation map, corrected synced unassigned-point handling, and a full CP-aware audit of the Mighty Seven. Schema 4 and Theme Schema 1 remain backwards compatible.
+The release target is **Arrow to the Build v3.1.1** with ESO addon **v1.1.3**, public Build **Schema 4**, and Theme **Schema 1**. v3.1.1 is the maintenance follow-up to the v3.1.0 Champion Point overhaul: it promotes the verified Update 50 constellation geometry into app-owned canonical data so every class and no-addon/manual character gets the same exact map. The v3.1.0 unlock-aware routing, zoomable/pannable map, corrected synced unassigned-point handling, and CP-aware Mighty Seven audit remain intact. Schema 4 and Theme Schema 1 remain backwards compatible.
 
 ## Freeze rules
 
@@ -102,8 +102,9 @@ Confirm:
 - Open Craft, Warfare, and Fitness constellation maps from recommendation cards and verify the selected node plus only its prerequisite route are emphasized by default.
 - Verify invested styling appears only for points ESO actually reports as invested.
 - Verify mouse-wheel zoom, drag pan, `- / Fit / +` controls, Escape/Close, and hover-name tooltips on normal nodes and cluster portals.
-- With addon 1.1.3 data, verify live ESO roots, links, stage thresholds, outer coordinates, and nested cluster coordinates override the approximate fallback layout.
-- Verify the Build Editor remains explicitly approximate when no live character snapshot is available.
+- With no addon configured at all, verify Craft, Warfare, and Fitness still use the correct canonical Update 50 layout for every class.
+- With addon 1.1.3 data, verify CURRENT invested/slotted state overlays the same canonical map without changing node placement.
+- Compare an addon graph-schema-2 snapshot against the bundled layout during maintenance to catch future ESO coordinate/cluster drift.
 
 ## ESO addon regression
 
@@ -130,9 +131,10 @@ With bundled **ArrowToTheBuild 1.1.3**:
 ## Documentation and repository hygiene
 
 - `README.md` describes the v3 feature set and keeps public/development release wording accurate until publication.
-- All `docs/reference/` guides identify **ATTB 3.1.0 / Build Schema 4** as the current authoring baseline.
+- All `docs/reference/` guides identify **ATTB 3.1.1 / Build Schema 4** as the current authoring baseline.
 - Help & Tools -> Scribing covers free current access, the Scholarium unlock path, Grimoires, all three Script types, Luminous Ink, acquisition sources, ATTB recipe interpretation, and troubleshooting.
 - AI Build JSON Authoring Guide teaches `progression_scope`, the three starting points, and the rule not to fabricate leveling content for established characters.
+- AI Build Authoring guide can be exported directly from the in-app guide reader as `ATTB_AI_BUILD_JSON_AUTHORING_GUIDE.md`.
 - `BUILD_SCHEMA.json`, `BUILD_TEMPLATE.json`, Build Format, JSON Guide, Quick Start, Editor Guide, and Validation Guide agree on the optional field and its backwards-compatible default.
 - Theme Authoring documents Theme Schema 1 and the twenty built-in themes/current editor behavior.
 - Maintainer architecture/testing/patch guides mention progression scope where it affects their workflow.
@@ -142,7 +144,7 @@ With bundled **ArrowToTheBuild 1.1.3**:
 
 ## Final release handoff
 
-Before publishing v3.1.0:
+Before publishing v3.1.1:
 
 1. Run the complete native suite twice from a clean install.
 2. Run renderer/check/audit gates and the all-route smoke test.
@@ -150,5 +152,5 @@ Before publishing v3.1.0:
 4. Perform ESO `/reloadui`, discovery/linking, Create Build from Character, and Adapt Build to Character once more.
 5. Validate all seven bundled builds plus representative new-character and CP160+ custom builds.
 6. Exercise all twenty built-in themes plus one custom import/export round trip.
-7. Update the public website/README release status and screenshots only when v3.1.0 is actually being published.
+7. Update the README/package release status when v3.1.1 is published. The GitHub Pages version pill, download label, installer filename, release links, and runtime SoftwareApplication version resolve automatically from GitHub’s latest published stable release; only edit website copy/screenshots when the release actually changes what the site should describe.
 8. Create the clean source ZIP, record SHA-256, and freeze that tested artifact; do not silently rebuild it afterward.

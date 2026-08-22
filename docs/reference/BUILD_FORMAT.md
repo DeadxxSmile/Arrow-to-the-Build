@@ -1,6 +1,6 @@
 # ATTB Schema 4 Format Reference
 
-Schema 4 is the stable public build contract for Arrow to the Build. This reference is current for **ATTB 3.1.0**. It preserves the original progression model while adding enough structure for current ESO systems and future authoring tools.
+Schema 4 is the stable public build contract for Arrow to the Build. This reference is current for **ATTB 3.1.1**. It preserves the original progression model while adding enough structure for current ESO systems and future authoring tools.
 
 ## Compatibility policy
 
@@ -120,7 +120,7 @@ Each phase includes:
 
 ## Companion setups
 
-`companions` remains an optional Schema 4 root array. ATTB 3.1.0 documents these additive companion fields:
+`companions` remains an optional Schema 4 root array. ATTB 3.1.1 documents these additive companion fields:
 
 - `id` - stable setup ID;
 - `companion_id` - stable ID from `resources/data/eso-companions.json`;
@@ -142,7 +142,7 @@ Sources can record type, location, zone, access, DLC/chapter, ESO Plus relevance
 
 ## Champion Points
 
-ATTB 3.1.0 keeps Champion Point **ESO facts** in the bundled `resources/data/eso-cp-catalog.json` instead of duplicating them inside every build. The catalog owns each star's canonical ID/name, constellation, ESO skill ID, true maximum, stage thresholds, slottable/passive state, verified graph links, and schematic map position.
+ATTB 3.1.1 keeps Champion Point **ESO facts** in the bundled `resources/data/eso-cp-catalog.json` instead of duplicating them inside every build. The catalog owns each star's canonical ID/name, constellation, ESO skill ID, true maximum, stage thresholds, slottable/passive state, and verified graph links. Exact Update 50 map geometry lives separately in the app-owned `resources/data/eso-cp-layout.json`.
 
 Every build still supplies `craft`, `warfare`, and `fitness` plans, but those plans now describe **strategy**:
 
@@ -153,7 +153,7 @@ Every build still supplies `craft`, `warfare`, and `fitness` plans, but those pl
 - optional manual `requires` overrides only when the author intentionally overrides catalog/live routing;
 - up to four unique canonical slottable IDs in `final_slots`.
 
-ATTB expands those authored priorities through the verified constellation graph, inserts required connector nodes automatically, and can replace the bundled fallback graph with the exact live graph exported by addon 1.1.3+. Legacy Schema 4 CP rows that duplicated `name`, `max_points`, `slottable`, or `jump_points` remain importable through normalization, but new files should not author those ESO-owned facts.
+ATTB expands those authored priorities through the verified constellation graph and inserts required connector nodes automatically. Addon 1.1.3+ may provide a live graph as a routing/verification source, but constellation placement always comes from the canonical app-owned Update 50 layout. Legacy Schema 4 CP rows that duplicated `name`, `max_points`, `slottable`, or `jump_points` remain importable through normalization, but new files should not author those ESO-owned facts.
 
 ## Loadouts and variants
 
@@ -163,7 +163,7 @@ Use **variants** for smaller situational changes inside a compatible loadout: ea
 
 ## Scribing
 
-Scribing is a free base-game system in the current ATTB 3.1.0 / ESO Update 50 baseline. A character can begin the Scribing introduction at Level 30 or with access to the Champion System. The finished active skill is built from exactly four authored pieces:
+Scribing is a free base-game system in the current ATTB 3.1.1 / ESO Update 50 baseline. A character can begin the Scribing introduction at Level 30 or with access to the Champion System. The finished active skill is built from exactly four authored pieces:
 
 - one Grimoire, which defines the base skill and parent skill line;
 - one Focus Script, which defines the main function and usually the skill name, resource type, and cost;

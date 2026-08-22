@@ -1,0 +1,1076 @@
+{
+  "layout_version": 1,
+  "game_version": "Update 50",
+  "api_version": 101050,
+  "verified_date": "2026-08-20",
+  "source": "ESO Champion graph coordinates captured from the live Update 50 client and promoted into ATTB as canonical offline layout data.",
+  "notes": [
+    "Constellation geometry is app-owned and available without the ESO addon or any character sync.",
+    "The addon may report current Champion investments and can be used to detect future ESO graph drift, but it is not a rendering dependency.",
+    "Nested ESO clusters are represented by cluster_root_id and stay collapsed to their portal in the outer constellation map."
+  ],
+  "stars": [
+    {
+      "id": "anglers_instincts",
+      "tree": "craft",
+      "eso_skill_id": 89,
+      "x": 624.3439331055,
+      "y": -22.1640720367,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "breakfall",
+      "tree": "craft",
+      "eso_skill_id": 69,
+      "x": 340.3783874512,
+      "y": -162.8115997314,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "cutpurses_art",
+      "tree": "craft",
+      "eso_skill_id": 90,
+      "x": -438.738861084,
+      "y": 23.5553760529,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "discipline_artisan",
+      "tree": "craft",
+      "eso_skill_id": 279,
+      "x": 750.4463500977,
+      "y": -256.5500488281,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "fade_away",
+      "tree": "craft",
+      "eso_skill_id": 84,
+      "x": -130.7158050537,
+      "y": 256.5140075684,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "fleet_phantom",
+      "tree": "craft",
+      "eso_skill_id": 67,
+      "x": -376.616607666,
+      "y": -205.5207061768,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "fortunes_favor",
+      "tree": "craft",
+      "eso_skill_id": 71,
+      "x": 11.6478595734,
+      "y": -109.7488021851,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "friends_in_low_places",
+      "tree": "craft",
+      "eso_skill_id": 76,
+      "x": -130.7158050537,
+      "y": -78.6875534058,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "gifted_rider",
+      "tree": "craft",
+      "eso_skill_id": 92,
+      "x": -116.4794006348,
+      "y": 437.7041015625,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "gilded_fingers",
+      "tree": "craft",
+      "eso_skill_id": 74,
+      "x": -47.8859786987,
+      "y": -210.6974945068,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "homemaker",
+      "tree": "craft",
+      "eso_skill_id": 91,
+      "x": 254.9602966309,
+      "y": 286.2810058594,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "infamous",
+      "tree": "craft",
+      "eso_skill_id": 77,
+      "x": -592.7504272461,
+      "y": -279.2908935547,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "inspiration_boost",
+      "tree": "craft",
+      "eso_skill_id": 72,
+      "x": 9.0594911575,
+      "y": 35.2033195496,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "liquid_efficiency",
+      "tree": "craft",
+      "eso_skill_id": 86,
+      "x": 664.0936279297,
+      "y": -200.3522949219,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "master_gatherer",
+      "tree": "craft",
+      "eso_skill_id": 78,
+      "x": 3.8825950623,
+      "y": 335.4612121582,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "meticulous_disassembly",
+      "tree": "craft",
+      "eso_skill_id": 83,
+      "x": 6.4710431099,
+      "y": 155.5653076172,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "out_of_sight",
+      "tree": "craft",
+      "eso_skill_id": 68,
+      "x": -261.4314880371,
+      "y": -310.3521118164,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "plentiful_harvest",
+      "tree": "craft",
+      "eso_skill_id": 81,
+      "x": 111.3024978638,
+      "y": 449.3521118164,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "professional_upkeep",
+      "tree": "craft",
+      "eso_skill_id": 1,
+      "x": 850.2991943359,
+      "y": 206.0397033691,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "rationer",
+      "tree": "craft",
+      "eso_skill_id": 85,
+      "x": 528.0396118164,
+      "y": -306.4695129395,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "reel_technique",
+      "tree": "craft",
+      "eso_skill_id": 88,
+      "x": 449.0924987793,
+      "y": 42.9685783386,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "shadowstrike",
+      "tree": "craft",
+      "eso_skill_id": 80,
+      "x": -820.5322875977,
+      "y": -1.0347260237,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "soul_reservoir",
+      "tree": "craft",
+      "eso_skill_id": 87,
+      "x": 330.024810791,
+      "y": -323.2941894531,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "steadfast_enchantment",
+      "tree": "craft",
+      "eso_skill_id": 75,
+      "x": 192.8379974365,
+      "y": 143.9174041748,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "steeds_blessing",
+      "tree": "craft",
+      "eso_skill_id": 66,
+      "x": 873.594909668,
+      "y": 4.1421709061,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "sustaining_shadows",
+      "tree": "craft",
+      "eso_skill_id": 65,
+      "x": 663.9321899414,
+      "y": 216.3934020996,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "treasure_hunter",
+      "tree": "craft",
+      "eso_skill_id": 79,
+      "x": 120.3619003296,
+      "y": 252.6313934326,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "wanderer",
+      "tree": "craft",
+      "eso_skill_id": 70,
+      "x": 144.9519958496,
+      "y": -68.3338394165,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "war_mount",
+      "tree": "craft",
+      "eso_skill_id": 82,
+      "x": -14.2363901138,
+      "y": 602.0693969727,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "arcane_supremacy",
+      "tree": "warfare",
+      "eso_skill_id": 3,
+      "x": 513.8032226562,
+      "y": 96.0314407349,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "backstabber",
+      "tree": "warfare",
+      "eso_skill_id": 31,
+      "x": 101.5018005371,
+      "y": 466.9103088379,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "battle_mastery",
+      "tree": "warfare",
+      "eso_skill_id": 18,
+      "x": 661.3436279297,
+      "y": 266.8678894043,
+      "cluster_root_id": "piercing",
+      "cluster_root": false
+    },
+    {
+      "id": "biting_aura",
+      "tree": "warfare",
+      "eso_skill_id": 23,
+      "x": 619.9287719727,
+      "y": 450.6463012695,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "blessed",
+      "tree": "warfare",
+      "eso_skill_id": 108,
+      "x": -408.9719848633,
+      "y": -37.2726783752,
+      "cluster_root_id": "blessed",
+      "cluster_root": true
+    },
+    {
+      "id": "bulwark",
+      "tree": "warfare",
+      "eso_skill_id": 159,
+      "x": 173.424697876,
+      "y": -144.6925048828,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "cleansing_revival",
+      "tree": "warfare",
+      "eso_skill_id": 29,
+      "x": -785.5883789062,
+      "y": 394.9950866699,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "cutting_defense",
+      "tree": "warfare",
+      "eso_skill_id": 33,
+      "x": 213.5453948975,
+      "y": -307.7636108398,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "deadly_aim",
+      "tree": "warfare",
+      "eso_skill_id": 25,
+      "x": 524.1569824219,
+      "y": 558.0661010742,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "duelists_rebuff",
+      "tree": "warfare",
+      "eso_skill_id": 134,
+      "x": -85.4368591309,
+      "y": -42.7899017334,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "eldritch_insight",
+      "tree": "warfare",
+      "eso_skill_id": 99,
+      "x": -164.3654022217,
+      "y": 53.3223686218,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "elemental_aegis",
+      "tree": "warfare",
+      "eso_skill_id": 15,
+      "x": 265.3139038086,
+      "y": -35.97838974,
+      "cluster_root_id": "quick_recovery",
+      "cluster_root": false
+    },
+    {
+      "id": "endless_endurance",
+      "tree": "warfare",
+      "eso_skill_id": 5,
+      "x": 429.6792907715,
+      "y": -143.3983001709,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "enduring_resolve",
+      "tree": "warfare",
+      "eso_skill_id": 136,
+      "x": 55.6511917114,
+      "y": -90.3354721069,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "enlivening_overflow",
+      "tree": "warfare",
+      "eso_skill_id": 263,
+      "x": -773.9406738281,
+      "y": -285.7619018555,
+      "cluster_root_id": "blessed",
+      "cluster_root": false
+    },
+    {
+      "id": "exploiter",
+      "tree": "warfare",
+      "eso_skill_id": 277,
+      "x": 760.087890625,
+      "y": 569.4948120117,
+      "cluster_root_id": "piercing",
+      "cluster_root": false
+    },
+    {
+      "id": "fighting_finesse",
+      "tree": "warfare",
+      "eso_skill_id": 12,
+      "x": 164.3016967773,
+      "y": 336.9294128418,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "flawless_ritual",
+      "tree": "warfare",
+      "eso_skill_id": 17,
+      "x": 247.1949005127,
+      "y": 225.4530029297,
+      "cluster_root_id": "piercing",
+      "cluster_root": false
+    },
+    {
+      "id": "focused_mending",
+      "tree": "warfare",
+      "eso_skill_id": 26,
+      "x": -665.2265014648,
+      "y": 209.9223022461,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "force_of_nature",
+      "tree": "warfare",
+      "eso_skill_id": 276,
+      "x": 343.3725891113,
+      "y": 630.542175293,
+      "cluster_root_id": "piercing",
+      "cluster_root": false
+    },
+    {
+      "id": "foresight",
+      "tree": "warfare",
+      "eso_skill_id": 163,
+      "x": -830.8859863281,
+      "y": 572.3024902344,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "from_the_brink",
+      "tree": "warfare",
+      "eso_skill_id": 262,
+      "x": -500.8612670898,
+      "y": -253.4065093994,
+      "cluster_root_id": "blessed",
+      "cluster_root": false
+    },
+    {
+      "id": "hardy",
+      "tree": "warfare",
+      "eso_skill_id": 16,
+      "x": -208.3688049316,
+      "y": 143.9174041748,
+      "cluster_root_id": "quick_recovery",
+      "cluster_root": false
+    },
+    {
+      "id": "hope_infusion",
+      "tree": "warfare",
+      "eso_skill_id": 261,
+      "x": 49.1800117493,
+      "y": -19.153629303,
+      "cluster_root_id": "blessed",
+      "cluster_root": false
+    },
+    {
+      "id": "ironclad",
+      "tree": "warfare",
+      "eso_skill_id": 265,
+      "x": 217.4279022217,
+      "y": 167.2133026123,
+      "cluster_root_id": "quick_recovery",
+      "cluster_root": false
+    },
+    {
+      "id": "last_stand",
+      "tree": "warfare",
+      "eso_skill_id": 161,
+      "x": -75.0645294189,
+      "y": -319.4114074707,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "master_at_arms",
+      "tree": "warfare",
+      "eso_skill_id": 264,
+      "x": 700.1702270508,
+      "y": 549.0065917969,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "mighty",
+      "tree": "warfare",
+      "eso_skill_id": 22,
+      "x": 702.7584838867,
+      "y": 14.4959802628,
+      "cluster_root_id": "piercing",
+      "cluster_root": false
+    },
+    {
+      "id": "occult_overload",
+      "tree": "warfare",
+      "eso_skill_id": 32,
+      "x": -54.7672309875,
+      "y": 529.7100219727,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "piercing",
+      "tree": "warfare",
+      "eso_skill_id": 10,
+      "x": 379.2048950195,
+      "y": 317.3421936035,
+      "cluster_root_id": "piercing",
+      "cluster_root": true
+    },
+    {
+      "id": "precision",
+      "tree": "warfare",
+      "eso_skill_id": 11,
+      "x": 29.7668209076,
+      "y": 243.5718994141,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "preparation",
+      "tree": "warfare",
+      "eso_skill_id": 14,
+      "x": 49.1800308228,
+      "y": -156.3403930664,
+      "cluster_root_id": "quick_recovery",
+      "cluster_root": false
+    },
+    {
+      "id": "quick_recovery",
+      "tree": "warfare",
+      "eso_skill_id": 20,
+      "x": 51.7685012817,
+      "y": 57.2050094604,
+      "cluster_root_id": "quick_recovery",
+      "cluster_root": true
+    },
+    {
+      "id": "reaving_blows",
+      "tree": "warfare",
+      "eso_skill_id": 30,
+      "x": -164.3016052246,
+      "y": 260.9855957031,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "reinforced",
+      "tree": "warfare",
+      "eso_skill_id": 160,
+      "x": 68.59324646,
+      "y": -244.3470001221,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "rejuvenator",
+      "tree": "warfare",
+      "eso_skill_id": 9,
+      "x": -657.4611816406,
+      "y": 488.1784973145,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "resilience",
+      "tree": "warfare",
+      "eso_skill_id": 13,
+      "x": 55.6510696411,
+      "y": 350.9917907715,
+      "cluster_root_id": "quick_recovery",
+      "cluster_root": false
+    },
+    {
+      "id": "riposte",
+      "tree": "warfare",
+      "eso_skill_id": 162,
+      "x": -75.0645294189,
+      "y": -167.9882965088,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "salve_of_renewal",
+      "tree": "warfare",
+      "eso_skill_id": 260,
+      "x": -377.9107971191,
+      "y": 196.9801940918,
+      "cluster_root_id": "blessed",
+      "cluster_root": false
+    },
+    {
+      "id": "soothing_tide",
+      "tree": "warfare",
+      "eso_skill_id": 24,
+      "x": -518.9802246094,
+      "y": 288.8693847656,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "swift_renewal",
+      "tree": "warfare",
+      "eso_skill_id": 28,
+      "x": -653.5786132812,
+      "y": 350.9917907715,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "thaumaturge",
+      "tree": "warfare",
+      "eso_skill_id": 27,
+      "x": 662.637878418,
+      "y": 671.9569702148,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "tireless_discipline",
+      "tree": "warfare",
+      "eso_skill_id": 6,
+      "x": 183.778503418,
+      "y": 159.4479980469,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "unassailable",
+      "tree": "warfare",
+      "eso_skill_id": 133,
+      "x": 171.6040039062,
+      "y": -1.8970650434,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "untamed_aggression",
+      "tree": "warfare",
+      "eso_skill_id": 4,
+      "x": 623.8114013672,
+      "y": -46.3321800232,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "war_mage",
+      "tree": "warfare",
+      "eso_skill_id": 21,
+      "x": 47.8858108521,
+      "y": 101.2082977295,
+      "cluster_root_id": "piercing",
+      "cluster_root": false
+    },
+    {
+      "id": "weapons_expert",
+      "tree": "warfare",
+      "eso_skill_id": 259,
+      "x": 384.3817138672,
+      "y": 75.3240280151,
+      "cluster_root_id": "piercing",
+      "cluster_root": false
+    },
+    {
+      "id": "wrathful_strikes",
+      "tree": "warfare",
+      "eso_skill_id": 8,
+      "x": -159.9203033447,
+      "y": 453.766204834,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "arcane_alacrity",
+      "tree": "fitness",
+      "eso_skill_id": 61,
+      "x": 85.4181365967,
+      "y": 442.8810119629,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "bashing_brutality",
+      "tree": "fitness",
+      "eso_skill_id": 50,
+      "x": 732.5255126953,
+      "y": 571.0083007812,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "bastion",
+      "tree": "fitness",
+      "eso_skill_id": 46,
+      "x": 71.1817169189,
+      "y": 297.9289855957,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "bloody_renewal",
+      "tree": "fitness",
+      "eso_skill_id": 48,
+      "x": 374.0280151367,
+      "y": 22.2611999512,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "boundless_vitality",
+      "tree": "fitness",
+      "eso_skill_id": 2,
+      "x": -874.8892822266,
+      "y": 369.1108093262,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "bracing_anchor",
+      "tree": "fitness",
+      "eso_skill_id": 267,
+      "x": 1030.1949462891,
+      "y": -277.9967041016,
+      "cluster_root_id": "nimble_protector",
+      "cluster_root": false
+    },
+    {
+      "id": "celerity",
+      "tree": "fitness",
+      "eso_skill_id": 270,
+      "x": 313.199798584,
+      "y": -378.9454040527,
+      "cluster_root_id": "hasty",
+      "cluster_root": false
+    },
+    {
+      "id": "defiance",
+      "tree": "fitness",
+      "eso_skill_id": 128,
+      "x": -665.2265014648,
+      "y": 33.909160614,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "expert_evasion",
+      "tree": "fitness",
+      "eso_skill_id": 51,
+      "x": -367.5570983887,
+      "y": -302.5867004395,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "fortification",
+      "tree": "fitness",
+      "eso_skill_id": 43,
+      "x": 678.1685180664,
+      "y": -239.1701965332,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "fortified",
+      "tree": "fitness",
+      "eso_skill_id": 34,
+      "x": -623.8115844727,
+      "y": 407.9371948242,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "hardened",
+      "tree": "fitness",
+      "eso_skill_id": 55,
+      "x": -784.2943115234,
+      "y": 224.158706665,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "hasty",
+      "tree": "fitness",
+      "eso_skill_id": 42,
+      "x": 372.733795166,
+      "y": -103.2777023315,
+      "cluster_root_id": "hasty",
+      "cluster_root": true
+    },
+    {
+      "id": "heros_vigor",
+      "tree": "fitness",
+      "eso_skill_id": 113,
+      "x": 24.5900192261,
+      "y": -47.6263999939,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "juggernaut",
+      "tree": "fitness",
+      "eso_skill_id": 59,
+      "x": -693.69921875,
+      "y": -202.9320983887,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "mystic_tenacity",
+      "tree": "fitness",
+      "eso_skill_id": 53,
+      "x": -239.4297943115,
+      "y": 5.4363851547,
+      "cluster_root_id": "mystic_tenacity",
+      "cluster_root": true
+    },
+    {
+      "id": "nimble_protector",
+      "tree": "fitness",
+      "eso_skill_id": 44,
+      "x": 864.5355224609,
+      "y": 53.3222999573,
+      "cluster_root_id": "nimble_protector",
+      "cluster_root": true
+    },
+    {
+      "id": "on_guard",
+      "tree": "fitness",
+      "eso_skill_id": 60,
+      "x": 827.003112793,
+      "y": 200.8628997803,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "pains_refuge",
+      "tree": "fitness",
+      "eso_skill_id": 275,
+      "x": -231.6645050049,
+      "y": 345.8149108887,
+      "cluster_root_id": "mystic_tenacity",
+      "cluster_root": false
+    },
+    {
+      "id": "peace_of_mind",
+      "tree": "fitness",
+      "eso_skill_id": 54,
+      "x": -639.1259765625,
+      "y": 225.5697937012,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "piercing_gaze",
+      "tree": "fitness",
+      "eso_skill_id": 45,
+      "x": -50.4745101929,
+      "y": 116.738899231,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "refreshing_stride",
+      "tree": "fitness",
+      "eso_skill_id": 271,
+      "x": 168.2478027344,
+      "y": 106.3851013184,
+      "cluster_root_id": "hasty",
+      "cluster_root": false
+    },
+    {
+      "id": "rejuvenation",
+      "tree": "fitness",
+      "eso_skill_id": 35,
+      "x": -447.7984008789,
+      "y": 577.4793701172,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "relentlessness",
+      "tree": "fitness",
+      "eso_skill_id": 274,
+      "x": -104.8315963745,
+      "y": -277.9966125488,
+      "cluster_root_id": "mystic_tenacity",
+      "cluster_root": false
+    },
+    {
+      "id": "rousing_speed",
+      "tree": "fitness",
+      "eso_skill_id": 62,
+      "x": -239.4297943115,
+      "y": -276.7025146484,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "savage_defense",
+      "tree": "fitness",
+      "eso_skill_id": 40,
+      "x": 705.3469848633,
+      "y": 133.5637054443,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "shield_master",
+      "tree": "fitness",
+      "eso_skill_id": 63,
+      "x": 64.7106399536,
+      "y": 123.2099685669,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "siphoning_spells",
+      "tree": "fitness",
+      "eso_skill_id": 47,
+      "x": 355.9089050293,
+      "y": 169.8016967773,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "slippery",
+      "tree": "fitness",
+      "eso_skill_id": 52,
+      "x": -394.7355957031,
+      "y": 159.4479980469,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "soothing_shield",
+      "tree": "fitness",
+      "eso_skill_id": 268,
+      "x": 393.4413146973,
+      "y": -244.3471069336,
+      "cluster_root_id": "nimble_protector",
+      "cluster_root": false
+    },
+    {
+      "id": "spirit_mastery",
+      "tree": "fitness",
+      "eso_skill_id": 56,
+      "x": -174.7191009521,
+      "y": 423.4678039551,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "sprinter",
+      "tree": "fitness",
+      "eso_skill_id": 38,
+      "x": 59.5337600708,
+      "y": -189.9900054932,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "strategic_reserve",
+      "tree": "fitness",
+      "eso_skill_id": 49,
+      "x": 239.4295959473,
+      "y": 225.4528961182,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "survival_instincts",
+      "tree": "fitness",
+      "eso_skill_id": 57,
+      "x": -178.6018066406,
+      "y": 160.7422027588,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "sustained_by_suffering",
+      "tree": "fitness",
+      "eso_skill_id": 273,
+      "x": -464.6231994629,
+      "y": -239.1701965332,
+      "cluster_root_id": "mystic_tenacity",
+      "cluster_root": false
+    },
+    {
+      "id": "tempered_soul",
+      "tree": "fitness",
+      "eso_skill_id": 58,
+      "x": -128.1273956299,
+      "y": 277.221496582,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "thrill_of_the_hunt",
+      "tree": "fitness",
+      "eso_skill_id": 272,
+      "x": 425.7965698242,
+      "y": 190.5090789795,
+      "cluster_root_id": "hasty",
+      "cluster_root": false
+    },
+    {
+      "id": "tireless_guardian",
+      "tree": "fitness",
+      "eso_skill_id": 39,
+      "x": 692.4047851562,
+      "y": -7.5057401657,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "tumbling",
+      "tree": "fitness",
+      "eso_skill_id": 37,
+      "x": -302.8463134766,
+      "y": -147.2810058594,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "unchained",
+      "tree": "fitness",
+      "eso_skill_id": 64,
+      "x": -424.5025939941,
+      "y": 391.1123962402,
+      "cluster_root_id": null,
+      "cluster_root": false
+    },
+    {
+      "id": "ward_master",
+      "tree": "fitness",
+      "eso_skill_id": 266,
+      "x": 1069.0209960938,
+      "y": 209.9223022461,
+      "cluster_root_id": "nimble_protector",
+      "cluster_root": false
+    }
+  ]
+}

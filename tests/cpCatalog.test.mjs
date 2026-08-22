@@ -2,7 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import { createRequire } from 'node:module'
-import { CP_CATALOG, cpStarsForTree, getCpStar } from '../src/renderer/utils/cpCatalog.mjs'
+import { CP_CATALOG, CP_LAYOUT, cpLayoutForTree, cpStarsForTree, getCpLayout, getCpStar } from '../src/renderer/utils/cpCatalog.mjs'
 
 const require = createRequire(import.meta.url)
 const { validateBuild, normalizeBuild } = require('../src/main/ipc/buildValidation.js')
@@ -19,6 +19,41 @@ test('Update 50 CP catalog has the complete 118-star constellation split', () =>
   assert.equal(cpStarsForTree('fitness').filter(star => star.slottable).length, 28)
 })
 
+
+
+test('Update 50 canonical CP layout ships exact app-owned geometry for every star', () => {
+  assert.equal(CP_LAYOUT.layout_version, 1)
+  assert.equal(CP_LAYOUT.game_version, 'Update 50')
+  assert.equal(CP_LAYOUT.api_version, 101050)
+  assert.equal(CP_LAYOUT.stars.length, CP_CATALOG.stars.length)
+  assert.equal(cpLayoutForTree('craft').length, 29)
+  assert.equal(cpLayoutForTree('warfare').length, 48)
+  assert.equal(cpLayoutForTree('fitness').length, 41)
+
+  const catalog = new Map(CP_CATALOG.stars.map(star => [star.id, star]))
+  const layout = new Map(CP_LAYOUT.stars.map(row => [row.id, row]))
+  assert.equal(layout.size, CP_CATALOG.stars.length, 'layout ids must be unique')
+  for (const star of CP_CATALOG.stars) {
+    const row = layout.get(star.id)
+    assert.ok(row, `${star.id} needs canonical layout geometry`)
+    assert.equal(row.tree, star.tree, `${star.id} layout tree`)
+    assert.equal(Number(row.eso_skill_id), Number(star.eso_skill_id), `${star.id} ESO skill identity`)
+    assert.equal(Number.isFinite(Number(row.x)), true, `${star.id} canonical x`)
+    assert.equal(Number.isFinite(Number(row.y)), true, `${star.id} canonical y`)
+    if (row.cluster_root_id) {
+      const root = layout.get(row.cluster_root_id)
+      assert.ok(root, `${star.id} cluster root must exist`)
+      assert.equal(root.tree, star.tree, `${star.id} cluster root must stay in tree`)
+      assert.equal(root.cluster_root, true, `${star.id} cluster root must be a portal`)
+    }
+  }
+
+  assert.deepEqual([getCpLayout('gilded_fingers').x, getCpLayout('gilded_fingers').y], [-47.8859786987, -210.6974945068])
+  assert.deepEqual([getCpLayout('precision').x, getCpLayout('precision').y], [29.7668209076, 243.5718994141])
+  assert.deepEqual([getCpLayout('sprinter').x, getCpLayout('sprinter').y], [59.5337600708, -189.9900054932])
+  assert.equal(getCpLayout('mighty').cluster_root_id, 'piercing')
+  assert.equal(getCpLayout('pains_refuge').cluster_root_id, 'mystic_tenacity')
+})
 test('known stale v3.0.0 CP facts are corrected in the canonical catalog', () => {
   const expected = {
     tireless_discipline: [20, false], piercing: [20, false], sprinter: [20, false], hasty: [16, false], heros_vigor: [20, false],

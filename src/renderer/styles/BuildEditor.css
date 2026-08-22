@@ -444,5 +444,5 @@
 @media(max-width:950px){.build-library-command-panel{grid-template-columns:1fr}.build-library-command-actions{justify-content:flex-start}.editable-build-grid,.bundled-build-grid{grid-template-columns:1fr}}
 @media(max-width:680px){.build-library-quick-facts{grid-template-columns:1fr}.build-library-quick-facts>span{border-left:0;border-top:1px solid var(--color-border)}.build-library-quick-facts>span:first-child{border-top:0}.build-library-empty{align-items:flex-start;flex-direction:column}}
 
-/* v3.1.0 catalog-backed CP editor */
+/* v3.1.1 catalog-backed CP editor */
 .cp-node-editor-row.catalog-backed .cp-canonical-facts{min-height:38px;display:flex;align-items:center;flex-wrap:wrap;gap:6px;border:1px solid var(--color-border);border-radius:8px;background:var(--color-panel-deep);padding:7px 9px}.cp-canonical-facts span,.cp-canonical-facts b{font-size:.74rem}.cp-canonical-facts b{color:var(--color-accent-secondary)}.cp-editor-route-hint{margin-top:7px;border-left:3px solid var(--color-accent-secondary);padding:6px 9px;background:var(--color-panel-deep);border-radius:0 8px 8px 0;font-size:.76rem}.cp-editor-map .cp-constellation-map{max-width:1100px;margin:0 auto}.cp-editor-totals{align-items:center}

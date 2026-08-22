@@ -1,6 +1,6 @@
 # Visual Build Editor Guide
 
-This **ATTB 3.1.0** guide explains the complete in-app authoring workflow. It assumes you are using the visual Build Editor rather than typing the Schema 4 JSON directly.
+This **ATTB 3.1.1** guide explains the complete in-app authoring workflow. It assumes you are using the visual Build Editor rather than typing the Schema 4 JSON directly.
 
 For a quick orientation, read **Start Here** first. For exact field names and merge rules, use **Manual JSON Authoring** and **Format & Skill IDs**.
 
@@ -335,7 +335,7 @@ Deleting a gear stage cleans phase references to that stage.
 
 ## 11. Champion Points
 
-ATTB 3.1.0 rebuilds this editor around the canonical Champion Point catalog. You author **what the build wants**; ATTB supplies the current ESO facts and required route.
+ATTB 3.1.1 rebuilds this editor around the canonical Champion Point catalog. You author **what the build wants**; ATTB supplies the current ESO facts and required route.
 
 ### Primary priorities
 
@@ -357,7 +357,9 @@ The character view expands authored priorities through the constellation graph. 
 
 ### Constellation map
 
-Each tree has a full schematic map. In the character view every CP bubble also has a map button: hover/focus for a quick preview, click to pin it. The map can show authored targets, required route nodes, actual invested points from ESO, and the next recommended spend. Addon 1.1.3+ provides ESO's live links and coordinates and overrides fallback geometry when available.
+Each tree has a dedicated full-workspace constellation map. In Character Tracker, the map button on a CP recommendation opens that workspace and focuses the selected star; Build Editor uses the same map for authoring context. The map can show authored targets, the prerequisite route to the selected node, actual invested points from ESO when synchronized, and the next recommended spend.
+
+Exact Update 50 placement and cluster membership are **app-owned canonical data** in `resources/data/eso-cp-layout.json`. The map therefore works identically for every class and for characters that never install or synchronize the ESO addon. Addon 1.1.3+ graph data remains useful for CURRENT investment state, routing assistance, and maintenance-time drift checks, but it is not a rendering dependency.
 
 ### Final Champion Bar
 
@@ -367,7 +369,7 @@ Deleting a target removes any final-slot reference to that target.
 
 ## 12. Companions
 
-The Companion editor is a first-class Schema 4 authoring page in ATTB 3.1.0. It shows every companion in the bundled companion catalog with two researched starter identities and lets you copy either setup into the current build.
+The Companion editor is a first-class Schema 4 authoring page in ATTB 3.1.1. It shows every companion in the bundled companion catalog with two researched starter identities and lets you copy either setup into the current build.
 
 Adding a preset copies ordinary JSON into the build. It is then fully editable and does not require the preset library to exist at runtime. You can also create a custom companion setup.
 
